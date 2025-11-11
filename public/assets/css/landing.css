@@ -1,0 +1,87 @@
+
+        :root {
+            --color-dslng-blue: #0033A0;
+            --color-dslng-light-blue: #0072CE;
+            --color-dslng-red: #E4002B;
+            --color-dslng-gray: #53565A;
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, var(--color-dslng-blue), var(--color-dslng-light-blue));
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .required-info-item {
+            border-left: 4px solid var(--color-dslng-red);
+            transition: all 0.3s ease;
+        }
+
+        .required-info-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        /* Sticky Header */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sticky-header.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Desktop Navigation */
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-dslng-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Language Dropdown */
+        .language-dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 50;
+        }
+
+        /* Mobile Menu */
+        @media (max-width: 767px) {
+            .sticky-header {
+                z-index: 1001;
+            }
+        }

@@ -52,7 +52,7 @@
                         class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
 
                         {{-- Indonesia --}}
-                        <button wire:click="changeLanguage('id')"
+                        <button onclick="changeLanguage('id')"
                             @click="open = false"
                             class="w-full text-left px-4 py-2 flex items-center gap-2 text-sm rounded-md
                                 {{ $currentLocale === 'id' ? 'text-blue-600 font-semibold bg-blue-50' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -63,7 +63,7 @@
                         </button>
 
                         {{-- English --}}
-                        <button wire:click="changeLanguage('en')"
+                        <button onclick="changeLanguage('en')"
                             @click="open = false"
                             class="w-full text-left px-4 py-2 flex items-center gap-2 text-sm rounded-md
                                 {{ $currentLocale === 'en' ? 'text-blue-600 font-semibold bg-blue-50' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -72,6 +72,11 @@
                                 <i class="fas fa-check ml-auto text-blue-600"></i>
                             @endif
                         </button>
+                        
+
+                       
+        </button>
+
                     </div>
                 </div>
             </nav>
@@ -110,7 +115,7 @@
 
                 <div x-show="open" x-transition class="pl-4 space-y-2 mt-2">
                     {{-- English --}}
-                    <button wire:click="changeLanguage('en')"
+                    <button onclick="changeLanguage('en')"
                         @click="open = false; document.getElementById('mobileMenu').classList.add('hidden'); document.getElementById('mobileMenuButton').innerHTML = '<i class=&quot;fas fa-bars text-xl&quot;></i>';"
                         class="w-full text-left block text-sm py-2 flex items-center gap-2 rounded-lg
                             {{ $currentLocale === 'en' ? 'text-blue-600 font-semibold bg-blue-50' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -121,7 +126,7 @@
                     </button>
 
                     {{-- Indonesia --}}
-                    <button wire:click="changeLanguage('id')"
+                    <button onclick="changeLanguage('id')"
                         @click="open = false; document.getElementById('mobileMenu').classList.add('hidden'); document.getElementById('mobileMenuButton').innerHTML = '<i class=&quot;fas fa-bars text-xl&quot;></i>';"
                         class="w-full text-left block text-sm py-2 flex items-center gap-2 rounded-lg
                             {{ $currentLocale === 'id' ? 'text-blue-600 font-semibold bg-blue-50' : 'text-gray-700 hover:bg-gray-100' }}">
