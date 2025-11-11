@@ -8,40 +8,91 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 
+    {{-- Lucide Icons --}}
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         :root {
-            --primary: #004A8F;
-            --primary-light: #1E90D1;
-            --primary-lighter: #66C6F0;
+            --color-start: #003B73;
+            --color-mid: #0077C8;
+            --color-end: #6EC1E4;
         }
 
-        .sidebar-link {
-            @apply flex items-center px-4 py-2 rounded-lg transition-all duration-200;
+        .sidebar-gradient {
+            background: linear-gradient(180deg, var(--color-start), var(--color-mid), var(--color-end));
+        }
+        table th {
+            background: var(--color-end);
         }
 
-        .sidebar-link:hover {
-            background-color: var(--primary-light);
-            color: white;
+        
+
+        .active-link {
+            background-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
-        .sidebar-link.active {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
+        .sidebar-collapsed .menu-text {
+            display: none;
         }
 
-        .submenu-link {
-            @apply block px-4 py-1.5 text-sm rounded-md transition-all duration-200;
+        .sidebar-collapsed .sidebar {
+            width: 5rem;
         }
 
-        .submenu-link:hover {
-            background-color: var(--primary-lighter);
-            color: white;
+        .sidebar-collapsed .sidebar-logo h1 {
+            display: none;
         }
 
-        .submenu-link.active {
-            background-color: var(--primary-light);
-            color: white;
+        .sidebar-collapsed .sidebar-logo img {
+            margin: 0 auto;
+        }
+
+        /* Perbaikan untuk layout yang seimbang */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        /* Sidebar tetap di posisinya */
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        /* Header tetap di atas */
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Untuk tampilan mobile */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -59,34 +110,40 @@ $menus = Menu::whereNull('parent_id')
 @endphp
 
 <div class="flex min-h-screen">
-
     {{-- SIDEBAR --}}
-    <aside class="w-64 bg-white shadow-lg border-r hidden md:flex flex-col">
-        <div class="flex items-center justify-between p-4 border-b">
-            <div class="flex items-center gap-2">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-8 h-8">
-                <h1 class="text-lg font-bold text-[var(--primary)]">RBAC System</h1>
+    <aside id="sidebar"
+           class="sidebar sidebar-gradient w-72 text-white shadow-2xl flex flex-col transition-all duration-300">
+
+        {{-- Logo & Title --}}
+        <div class="sidebar-logo flex items-center justify-between px-5 py-4 border-b border-white/20">
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 rounded-full bg-white p-1 shadow-md">
+                <h1 class="text-lg font-semibold">RBAC System</h1>
             </div>
+            <button id="closeSidebar" class="md:hidden text-white text-2xl font-bold">&times;</button>
         </div>
 
-        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+        {{-- Navigation --}}
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2">
             @foreach ($menus as $menu)
                 <div>
                     <a href="{{ $menu->route ? route($menu->route) : '#' }}"
-                       class="sidebar-link {{ request()->routeIs($menu->route) ? 'active' : 'text-gray-700 hover:text-white' }}">
+                       class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-white/10
+                       {{ request()->routeIs($menu->route) ? 'active-link' : '' }}">
                         @if($menu->icon)
-                            <i class="{{ $menu->icon }} mr-2"></i>
+                            <i data-lucide="{{ $menu->icon }}" class="w-5 h-5"></i>
                         @endif
-                        {{ $menu->name }}
+                        <span class="menu-text">{{ $menu->name }}</span>
                     </a>
 
-                    {{-- Submenu --}}
                     @if ($menu->children->count())
-                        <div class="ml-6 mt-1 border-l-2 border-gray-200 pl-3 space-y-1">
+                        <div class="ml-6 mt-1 border-l border-white/20 pl-3 space-y-1">
                             @foreach ($menu->children as $child)
                                 <a href="{{ $child->route ? route($child->route) : '#' }}"
-                                   class="submenu-link {{ request()->routeIs($child->route) ? 'active' : 'text-gray-600 hover:text-white' }}">
-                                    {{ $child->name }}
+                                   class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition hover:bg-white/10
+                                   {{ request()->routeIs($child->route) ? 'active-link' : '' }}">
+                                    <i data-lucide="circle" class="w-3 h-3"></i>
+                                    <span class="menu-text">{{ $child->name }}</span>
                                 </a>
                             @endforeach
                         </div>
@@ -94,20 +151,26 @@ $menus = Menu::whereNull('parent_id')
                 </div>
             @endforeach
         </nav>
+
+        {{-- Footer --}}
+        <div class="text-center text-sm text-white/70 border-t border-white/20 py-3">
+            © {{ date('Y') }} RBAC System
+        </div>
     </aside>
 
-    {{-- MAIN CONTENT --}}
-    <div class="flex-1 flex flex-col">
+    {{-- Overlay for mobile --}}
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-black/40 hidden md:hidden z-30"></div>
 
-        {{-- HEADER / NAVBAR --}}
-        <header class="bg-white shadow-sm border-b sticky top-0 z-20">
+    {{-- MAIN CONTENT --}}
+    <div class="main-content">
+        {{-- Header --}}
+        <header class="header-sticky sticky bg-white shadow-sm border-b">
             <div class="flex items-center justify-between px-6 py-3">
                 <div class="flex items-center gap-3">
-                    {{-- tombol menu mobile --}}
-                    <button id="sidebarToggle" class="md:hidden p-2 rounded hover:bg-gray-100">
+                    <button id="sidebarToggle" class="md:hidden p-2 rounded hover:bg-gray-100 text-gray-700 text-xl">
                         ☰
                     </button>
-                    <h2 class="text-lg font-semibold text-[var(--primary)]">{{ $title ?? 'Dashboard' }}</h2>
+                    <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? 'Dashboard' }}</h2>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -115,17 +178,16 @@ $menus = Menu::whereNull('parent_id')
                     @auth
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button type="submit" class="px-3 py-1 rounded bg-red-100 text-red-600 hover:bg-red-200 transition">
-                                Logout
-                            </button>
+                            <button type="submit"
+                                    class="text-red-500 hover:bg-red-50 px-3 py-1 rounded-md transition">Logout</button>
                         </form>
                     @endauth
                 </div>
             </div>
         </header>
 
-        {{-- PAGE CONTENT --}}
-        <main class="p-6">
+        {{-- Page Content --}}
+        <main class="content-area">
             <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
                 {{ $slot }}
             </div>
@@ -133,11 +195,29 @@ $menus = Menu::whereNull('parent_id')
     </div>
 </div>
 
-{{-- Script toggle sidebar mobile --}}
+{{-- Scripts --}}
 <script>
-    const btn = document.getElementById('sidebarToggle');
-    const sidebar = document.querySelector('aside');
-    btn?.addEventListener('click', () => sidebar.classList.toggle('hidden'));
+    lucide.createIcons();
+
+    const sidebar = document.getElementById('sidebar');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+    const openBtn = document.getElementById('sidebarToggle');
+    const closeBtn = document.getElementById('closeSidebar');
+
+    openBtn?.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        sidebarBackdrop.classList.remove('hidden');
+    });
+    
+    closeBtn?.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        sidebarBackdrop.classList.add('hidden');
+    });
+    
+    sidebarBackdrop?.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        sidebarBackdrop.classList.add('hidden');
+    });
 </script>
 
 @livewireScripts

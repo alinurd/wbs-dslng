@@ -43,12 +43,6 @@
                                     @else
                                         -
                                     @endif
-                                     <input 
-                                            type="checkbox" 
-                                            wire:click="togglePermission('{{ $permName }}')" 
-                                            @checked(in_array($permName, $selectedPermissions))
-                                            class="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                                        >
                                 </td>
                             @endforeach
                         </tr>

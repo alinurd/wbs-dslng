@@ -5,3 +5,32 @@
 [x-cloak] {
     display: none;
 }
+
+ :root {
+            --color-start: #3DB2FF;
+            --color-mid: #0074E4;
+            --color-end: #6A5ACD;
+        }
+
+        .sidebar-gradient {
+            background: linear-gradient(180deg, var(--color-start), var(--color-mid), var(--color-end));
+        }
+
+        .sidebar-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-link.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 10px rgba(255,255,255,0.4);
+        }
+
+        .sidebar-collapsed .menu-text {
+            display: none;
+        }
+        .sidebar-collapsed .sidebar {
+            width: 5rem;
+        }
+        .sidebar-collapsed .sidebar-logo h1 {
+            display: none;
+        }
