@@ -1,0 +1,51 @@
+<?php
+
+use App\Livewire\Combo\Form as ComboForm;
+use App\Livewire\Combo\Index as ComboIndex;
+
+use App\Livewire\Menus\Form as MenuForm;
+use App\Livewire\Menus\Index as MenuIndex;
+
+use App\Livewire\PermissionManagement;
+use App\Livewire\Roles\Editor as RoleEditor;
+use App\Livewire\Roles\Form as RoleForm;
+use App\Livewire\Roles\Index as RoleIndex;
+
+
+use App\Livewire\UserManagement;
+use Illuminate\Support\Facades\Route;
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/users', UserManagement::class)->name('users');
+     Route::get('/permissions', PermissionManagement::class)->name('permissions');
+
+    Route::get('/roles', RoleIndex::class)->name('roles.index');
+    Route::get('/roles/create', RoleForm::class)->name('roles.create');
+    Route::get('/roles/{id}/edit', RoleForm::class)->name('roles.edit');
+    Route::get('/roles/{id}/permissions', RoleEditor::class)->name('roles.permissions');
+
+
+    Route::get('/menus', MenuIndex::class)->name('menus.index');
+    Route::get('/menus/create', MenuForm::class)->name('menus.create');
+    Route::get('/menus/{id}/edit', MenuForm::class)->name('menus.edit');
+
+ 
+
+    Route::get('/combo', ComboIndex::class)->name('combo');
+});
