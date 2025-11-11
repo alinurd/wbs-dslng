@@ -49,3 +49,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/combo', ComboIndex::class)->name('combo');
 });
+
+
+// routes/web.php (sementara)
+
+Route::get('/test-helpers', function() {
+    return [
+        'can_combo_view' => can('combo.view', false),
+        'module_perms' => module_permissions('combo'),
+        'crud_access' => can_crud('combo')
+    ];
+});

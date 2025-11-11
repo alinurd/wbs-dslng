@@ -25,8 +25,6 @@
             background: var(--color-end);
         }
 
-        
-
         .active-link {
             background-color: rgba(255, 255, 255, 0.25);
             box-shadow: 0 0 10px rgba(255,255,255,0.3);
@@ -98,17 +96,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
 
-@php
-use App\Models\Menu;
-$menus = Menu::whereNull('parent_id')
-    ->where('is_active', true)
-    ->orderBy('order')
-    ->with(['children' => function ($query) {
-        $query->where('is_active', true)->orderBy('order');
-    }])
-    ->get();
-@endphp
-
 <div class="flex min-h-screen">
     {{-- SIDEBAR --}}
     <aside id="sidebar"
@@ -126,17 +113,31 @@ $menus = Menu::whereNull('parent_id')
         {{-- Navigation --}}
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2">
             @foreach ($menus as $menu)
+                @php
+                    $hasAccessibleChildren = $menu->children->count() > 0;
+                    $isActiveParent = request()->routeIs($menu->route) || 
+                                     $menu->children->contains(function($child) {
+                                         return request()->routeIs($child->route);
+                                     });
+                @endphp
+                
                 <div>
                     <a href="{{ $menu->route ? route($menu->route) : '#' }}"
                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-white/10
-                       {{ request()->routeIs($menu->route) ? 'active-link' : '' }}">
+                       {{ $isActiveParent ? 'active-link' : '' }}
+                       {{ !$menu->route && !$hasAccessibleChildren ? 'cursor-not-allowed opacity-50' : '' }}">
                         @if($menu->icon)
                             <i data-lucide="{{ $menu->icon }}" class="w-5 h-5"></i>
                         @endif
                         <span class="menu-text">{{ $menu->name }}</span>
+                        
+                        {{-- Indicator untuk menu dengan children --}}
+                        @if($hasAccessibleChildren)
+                            <i data-lucide="chevron-down" class="w-4 h-4 ml-auto menu-text"></i>
+                        @endif
                     </a>
 
-                    @if ($menu->children->count())
+                    @if ($hasAccessibleChildren)
                         <div class="ml-6 mt-1 border-l border-white/20 pl-3 space-y-1">
                             @foreach ($menu->children as $child)
                                 <a href="{{ $child->route ? route($child->route) : '#' }}"
@@ -150,6 +151,14 @@ $menus = Menu::whereNull('parent_id')
                     @endif
                 </div>
             @endforeach
+            
+            {{-- Fallback jika tidak ada menu yang accessible --}}
+            @if($menus->count() == 0)
+                <div class="text-center text-white/60 py-8">
+                    <i data-lucide="lock" class="w-8 h-8 mx-auto mb-2"></i>
+                    <p class="text-sm">No accessible menus</p>
+                </div>
+            @endif
         </nav>
 
         {{-- Footer --}}

@@ -15,11 +15,8 @@ class Index extends Component
     public $title = "Combo";
     public $showModal = false;
     public $updateMode = false;
-    public $highlightId = null; // id untuk highlight baris baru
-
+    public $highlightId = null;
     public $search = '';
-
-    // Form fields
     public $comboId, $kelompok, $data, $param_int, $param_str, $is_active = true;
 
     protected $rules = [
@@ -36,7 +33,11 @@ class Index extends Component
         'param_int.numeric' => 'Param Int harus berupa angka!',
     ];
 
-    // Reset halaman setiap kali search berubah
+    public function mount()
+    {
+        can_any(['combo.view']);
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -48,17 +49,28 @@ class Index extends Component
 
         if ($this->search) {
             $query->where('kelompok', 'like', "%{$this->search}%")
-                  ->orWhere('data', 'like', "%{$this->search}%")
-                  ->orWhere('param_str', 'like', "%{$this->search}%");
+                ->orWhere('data', 'like', "%{$this->search}%")
+                ->orWhere('param_str', 'like', "%{$this->search}%");
         }
 
         $dataList = $query->orderBy('id', 'desc')->paginate(10);
 
-        return view('livewire.combo.index', compact('dataList'));
+        $permissions = module_permissions('combo');
+
+        return view('livewire.combo.index', compact('dataList'))->with([
+            'CanCreate' => $permissions['can']['create'],
+            'CanView' => $permissions['can']['view'],
+            'CanEdit' => $permissions['can']['edit'],
+            'CanDelete' => $permissions['can']['delete'],
+            'CanManage' => $permissions['can']['manage'],
+        ]);
     }
 
     public function openModal($id = null)
     {
+        // SINGLE LINE CHECK!
+        $id ? can('combo.edit') : can('combo.create');
+
         $this->resetInput();
 
         if ($id) {
@@ -94,6 +106,9 @@ class Index extends Component
 
     public function store()
     {
+        // SINGLE LINE CHECK!
+        can('combo.create');
+
         $this->validate();
 
         $combo = Combo::create([
@@ -111,6 +126,9 @@ class Index extends Component
 
     public function update()
     {
+        // SINGLE LINE CHECK!
+        can('combo.edit');
+
         $this->validate();
 
         $combo = Combo::findOrFail($this->comboId);
@@ -129,6 +147,9 @@ class Index extends Component
 
     public function delete($id)
     {
+        // SINGLE LINE CHECK!
+        can('combo.delete');
+
         Combo::findOrFail($id)->delete();
         session()->flash('message', "{$this->title} berhasil dihapus!");
     }

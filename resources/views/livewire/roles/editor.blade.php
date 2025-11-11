@@ -7,11 +7,10 @@
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="border border-gray-200 px-4 py-2 text-left">Module</th>
-                        <th class="border border-gray-200 px-4 py-2 text-center">MANAGE</th>
-                        <th class="border border-gray-200 px-4 py-2 text-center">CREATE</th>
+                        <th class="border border-gray-200 px-4 py-2 text-center">VIEW</th>
+                         <th class="border border-gray-200 px-4 py-2 text-center">CREATE</th>
                         <th class="border border-gray-200 px-4 py-2 text-center">EDIT</th>
                         <th class="border border-gray-200 px-4 py-2 text-center">DELETE</th>
-                        <th class="border border-gray-200 px-4 py-2 text-center">VIEW</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,7 +27,7 @@
                                 {{ ucfirst($module) }}
                             </td>
 
-                            @foreach (['manage', 'create', 'edit', 'delete', 'view',] as $action)
+                            @foreach (['view', 'create', 'edit', 'delete',] as $action)
                                 @php
                                     $permName = $module . '.' . $action;
                                 @endphp
