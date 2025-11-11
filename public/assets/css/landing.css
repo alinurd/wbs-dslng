@@ -1,5 +1,4 @@
-
-        :root {
+:root {
             --color-dslng-blue: #0033A0;
             --color-dslng-light-blue: #0072CE;
             --color-dslng-red: #E4002B;
@@ -65,7 +64,6 @@
             width: 100%;
         }
 
-        /* Language Dropdown */
         .language-dropdown {
             position: relative;
         }
