@@ -108,12 +108,7 @@
 <body class="bg-gray-50 font-sans">
     <livewire:wbs-landing.layout />
 
-    
-
-    {{ $slot }}
-
-    
-
+ 
     @livewireScripts
     <script>
         // Mobile Menu Functionality
