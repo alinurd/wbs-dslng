@@ -19,20 +19,22 @@
             <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
                 {{ __('wbs.required_info.title') }}
             </h2>
-            
+
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach(['what', 'where', 'when', 'who', 'how', 'evidence'] as $item)
-                <div class="required-info-item p-6 bg-white rounded-lg shadow-md">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-{{ $item }}-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-{{ $item === 'what' ? 'question-circle' : ($item === 'where' ? 'map-marker-alt' : ($item === 'when' ? 'clock' : ($item === 'who' ? 'user-friends' : ($item === 'how' ? 'cogs' : 'file-alt')))) }} text-{{ $item }}-600 text-xl"></i>
+                @foreach (['what', 'where', 'when', 'who', 'how', 'evidence'] as $item)
+                    <div class="required-info-item p-6 bg-white rounded-lg shadow-md">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div
+                                class="w-12 h-12 bg-{{ $item }}-100 rounded-full flex items-center justify-center">
+                                <i
+                                    class="fas fa-{{ $item === 'what' ? 'question-circle' : ($item === 'where' ? 'map-marker-alt' : ($item === 'when' ? 'clock' : ($item === 'who' ? 'user-friends' : ($item === 'how' ? 'cogs' : 'file-alt')))) }} text-{{ $item }}-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 uppercase">{{ $item }}</h3>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 uppercase">{{ $item }}</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            {{ __('wbs.required_info.' . $item) }}
+                        </p>
                     </div>
-                    <p class="text-gray-600 leading-relaxed">
-                        {{ __('wbs.required_info.' . $item) }}
-                    </p>
-                </div>
                 @endforeach
             </div>
         </div>
@@ -46,19 +48,21 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-8">
-                @foreach(range(1, 4) as $index)
-                <div class="news-card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('wbs.news.news' . $index . '_title') }}</h3>
-                        <p class="text-gray-600 mb-4 leading-relaxed">
-                            {{ __('wbs.news.news' . $index . '_desc') }}
-                        </p>
-                        <a href="#" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-800">
-                            {{ __('wbs.news.read_more') }}
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
+                @foreach (range(1, 4) as $index)
+                    <div class="news-card bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                                {{ __('wbs.news.news' . $index . '_title') }}</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                {{ __('wbs.news.news' . $index . '_desc') }}
+                            </p>
+                            <a href="#"
+                                class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-800">
+                                {{ __('wbs.news.read_more') }}
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
                     </div>
-                </div>
                 @endforeach
             </div>
         </div>
@@ -79,28 +83,5 @@
         </div>
     </section>
 
-    {{-- Footer --}}
-    <footer class="bg-gray-900 text-white py-8">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold text-xs mx-auto md:mx-0">
-                        DSLNG
-                    </div>
-                </div>
-                <div class="text-gray-400">
-                    {{ __('wbs.footer.copyright') }}
-                </div>
-            </div>
-        </div>
-    </footer>
 
-    {{-- Floating Report Button --}}
-    <div class="fixed bottom-6 right-6 z-50">
-        <a href="#" 
-           class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full shadow-lg font-semibold flex items-center gap-2 transition transform hover:scale-105">
-            <i class="fas fa-whistle"></i>
-            {{ __('wbs.buttons.report_now') }}
-        </a>
-    </div>
 </div>
