@@ -6,6 +6,8 @@ return [
         'register' => 'DAFTAR',
         'login' => 'MASUK',
         'language' => 'BAHASA',
+        'id' => 'Indonesia',
+        'en' => 'English',
     ],
     'hero' => [
         'welcome' => 'SELAMAT DATANG DI',

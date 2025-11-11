@@ -6,6 +6,8 @@ return [
         'register' => 'REGISTER',
         'login' => 'LOGIN',
         'language' => 'LANGUAGE',
+        'id' => 'Indonesia',
+        'en' => 'English',
     ],
     'hero' => [
         'welcome' => 'WELCOME TO',
