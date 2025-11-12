@@ -1,14 +1,24 @@
-<div class="d">
+<div>
+    <section class="new-bg-page text-white py-20">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4" style="text-shadow: 1px 4px 4px rgba(0,0,0,0.78);">
+                {{ __('auth.register.title') }}
+            </h1>
+            <p class="text-gray-50 m-3 text-lg max-w-2xl mx-auto">
+                {{ __('auth.register.dsc') }}
+            </p>
+        </div>
+    </section>
     <div>
         <div class="min-h-screen bg-gray-50 py-8 px-4">
             <div class="max-w-7xl mx-auto">
                 <!-- Form Container -->
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                  <div class="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <p class="text-sm text-yellow-800 font-medium italic">
-                                {{ __('auth.register.note') }}
-                            </p>
-                        </div>
+                    <div class="mb-8 p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
+                        <p class="text-sm text-red-800 font-medium italic">
+                            {{ __('auth.register.note') }}
+                        </p>
+                    </div>
                     <form wire:submit.prevent="register" class="space-y-6">
 
                         <div class="grid  grid-cols-1 lg:grid-cols-2">
@@ -134,10 +144,34 @@
                                     <input wire:model="phone" id="phone" name="phone" type="text"
                                         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
+
                             </div>
 
-                            <!-- Type of Reporter -->
                             <div>
+                                <div class="flex items-start space-x-4">
+                                    <!-- Gambar di samping kiri -->
+                                    <div class="flex-shrink-0 mt-7">
+                                        <img src="{{ asset('assets/images/key.jpg') }}" alt="Logo"
+                                            class="max-w-[90%] h-auto">
+                                    </div>
+
+                                    <!-- Input verification code -->
+                                    <div class="flex-1 pr-5">
+                                        <label for="verification_code"
+                                            class="block text-sm font-medium text-gray-700 mb-2 required">
+                                            Verification Code(*)
+                                        </label>
+                                        <input wire:model="verification_code" id="verification_code"
+                                            name="verification_code" type="text" required
+                                            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
+                                            @error('verification_code') border-red-500 @enderror">
+                                        @error('verification_code')
+                                            <p class="mt-1 text-sm text-red-600">{{ __($message) }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div> 
+                                <div class="pl-5">
                                 <label class="block text-sm font-medium text-gray-700 mb-3 required">
                                     {{ __('auth.register.type_of_reporter') }}
                                 </label>
@@ -154,65 +188,49 @@
                                         <input wire:model="reporter_type" id="non_employee" name="reporter_type"
                                             type="radio" value="non_employee"
                                             class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                        <label for="non_employee" class="ml-2 block text-sm text-gray-700">
                                             {{ __('auth.register.non_employee') }}
                                         </label>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Verification Code -->
-                            <div>
-                                <label for="verification_code"
-                                    class="block text-sm font-medium text-gray-700 mb-2 required">
-                                    {{ __('auth.register.verification_code') }}
-                                </label>
-                                <input wire:model="verification_code" id="verification_code" name="verification_code"
-                                    type="text" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
-                            @error('verification_code') border-red-500 @enderror">
-                                @error('verification_code')
-                                    <p class="mt-1 text-sm text-red-600">{{ __($message) }}</p>
-                                @enderror
-                            </div>
+                            </div> 
 
                         </div>
                         <div class="border-t border-gray-200 pt-8">
-                                <div class="flex items-start space-x-4 bg-blue-50 p-6 rounded-2xl">
-                                    <div class="flex items-center h-5 mt-1">
-                                        <input wire:model="confirmation" id="confirmation" name="confirmation"
-                                            type="checkbox" required
-                                            class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded
+                            <div class="flex items-start space-x-4 bg-blue-50 p-6 rounded-2xl">
+                                <div class="flex items-center h-5 mt-1">
+                                    <input wire:model="confirmation" id="confirmation" name="confirmation"
+                                        type="checkbox" required
+                                        class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded
                                         @error('confirmation') border-red-500 ring-1 ring-red-500 @enderror">
-                                    </div>
-                                    <div class="flex-1">
-                                        <label for="confirmation"
-                                            class="block text-sm font-medium text-gray-800 leading-6">
-                                            {{ __('auth.register.confirmation_text') }}
-                                        </label>
-                                        @error('confirmation')
-                                            <p class="mt-2 text-sm text-red-600">{{ __($message) }}</p>
-                                        @enderror
-                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <label for="confirmation"
+                                        class="block text-sm font-medium text-gray-800 leading-6">
+                                        {{ __('auth.register.confirmation_text') }}
+                                    </label>
+                                    @error('confirmation')
+                                        <p class="mt-2 text-sm text-red-600">{{ __($message) }}</p>
+                                    @enderror
                                 </div>
                             </div>
+                        </div>
+                        <button type="submit"
+                            class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[rgb(0,95,160)] hover:bg-[rgb(0,110,160)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            {{ __('auth.register.submit') }}
+                        </button>
 
-                            <button type="submit"
-                        class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        {{ __('auth.register.submit') }}
-                    </button>
 
-
-                    <div class="text-center">
-                    <p class="text-sm text-gray-600">
-                        {{ __('auth.register.already_registered') }}
-                        <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:text-blue-500">
-                            {{ __('auth.register.login_here') }}
-                        </a>
-                    </p>
+                        <div class="text-center">
+                            <p class="text-sm text-gray-600">
+                                {{ __('auth.register.already_registered') }}
+                                <a href="{{ route('login.form') }}"
+                                    class="font-medium text-blue-600 hover:text-blue-500">
+                                    {{ __('auth.register.login_here') }}
+                                </a>
+                            </p>
+                        </div>
                 </div>
-                </div>
-              
+
                 </form>
             </div>
         </div>

@@ -21,7 +21,7 @@
             </div>
 
             <div class="mt-4">
-                <x-label for="password" value="{{ __('auth.password') }}" />
+                <x-label for="password" value="{{ __('password') }}" />
                 <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
             </div>
 
@@ -40,7 +40,7 @@
                 @endif
 
                 <x-button class="ms-4">
-                   {{ __('auth.login') }}
+                   {{ __('login') }}
                 </x-button>
             </div>
         </form>
