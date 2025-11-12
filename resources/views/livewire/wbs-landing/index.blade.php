@@ -2,7 +2,7 @@
 
     {{-- Hero Section --}}
     <section class="hero-bg text-white py-20">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+         {{-- <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                 {{ __('wbs.hero.welcome') }}<br>
                 <span class="text-yellow-300">{{ __('wbs.hero.system') }}</span><br>
@@ -11,7 +11,7 @@
             <p class="text-xl text-blue-100 max-w-3xl mx-auto">
                 {{ __('wbs.hero.subtitle') }}
             </p>
-        </div>
+        </div> --}}
     </section>
 
     {{-- Required Information Section --}}
