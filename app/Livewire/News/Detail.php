@@ -31,7 +31,7 @@ class Detail extends Component
 
     public function render()
     {
-        return view('livewire.news.index')
+        return view('livewire.news-detail.index')
             ->layout('components.layouts.guest', [
                 'title' => 'News Detail',
                 'currentLocale' => app()->getLocale(),
