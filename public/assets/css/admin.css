@@ -1,0 +1,80 @@
+ :root {
+            --color-start: #003B73;
+            --color-mid: #0077C8;
+            --color-end: #6EC1E4;
+        }
+
+        .sidebar-gradient {
+            background: linear-gradient(180deg, var(--color-start), var(--color-mid), var(--color-end));
+        }
+        table th {
+            background: var(--color-end);
+        }
+
+        .active-link {
+            background-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .sidebar-collapsed .menu-text {
+            display: none;
+        }
+
+        .sidebar-collapsed .sidebar {
+            width: 5rem;
+        }
+
+        .sidebar-collapsed .sidebar-logo h1 {
+            display: none;
+        }
+
+        .sidebar-collapsed .sidebar-logo img {
+            margin: 0 auto;
+        }
+
+        /* Perbaikan untuk layout yang seimbang */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        /* Sidebar tetap di posisinya */
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        /* Header tetap di atas */
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Untuk tampilan mobile */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                width: 100%;
+            }
+        }

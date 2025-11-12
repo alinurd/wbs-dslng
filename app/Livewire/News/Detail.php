@@ -11,7 +11,7 @@ class Detail extends Component
     public $title = "PT DONGGI-SENORO LNG";
     public $currentLocale = 'en';
 
-        public $locale;
+    public $locale;
         
     public function mount()
     {

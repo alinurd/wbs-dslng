@@ -3,6 +3,9 @@
 namespace App\Livewire\Combo;
 
 use App\Models\Combo;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
+
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -18,6 +21,9 @@ class Index extends Component
     public $highlightId = null;
     public $search = '';
     public $comboId, $kelompok, $data, $param_int, $param_str, $is_active = true;
+    public $currentLocale = 'en';
+
+    public $locale;
 
     protected $rules = [
         'kelompok' => 'required|string',
@@ -36,12 +42,24 @@ class Index extends Component
     public function mount()
     {
         can_any(['combo.view']);
+        $this->locale = Session::get('locale', config('app.locale'));
+        App::setLocale($this->locale);
+        
     }
 
     public function updatingSearch()
     {
         $this->resetPage();
     }
+     public function changeLanguage($lang)
+    {
+        $this->locale = $lang;
+        Session::put('locale', $lang);
+        App::setLocale($lang);
+
+        $this->dispatch('reload-page');
+    }
+    
 
     public function render()
     {
@@ -58,6 +76,8 @@ class Index extends Component
         $permissions = module_permissions('combo');
 
         return view('livewire.combo.index', compact('dataList'))->with([
+            'title' => $this->title,
+            'currentLocale' => $this->currentLocale,
             'CanCreate' => $permissions['can']['create'],
             'CanView' => $permissions['can']['view'],
             'CanEdit' => $permissions['can']['edit'],

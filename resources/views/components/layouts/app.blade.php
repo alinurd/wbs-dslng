@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,94 +8,18 @@
     <title>{{ $title ?? 'PT DONGGI-SENORO LNG' }}</title>
     <link rel="Shortcut Icon" href="{{ asset('assets/images/logo_donggi.ico') }}">
     
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.tailwindcss.css" />
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}">
+
     @livewireStyles
 
     {{-- Lucide Icons --}}
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        :root {
-            --color-start: #003B73;
-            --color-mid: #0077C8;
-            --color-end: #6EC1E4;
-        }
-
-        .sidebar-gradient {
-            background: linear-gradient(180deg, var(--color-start), var(--color-mid), var(--color-end));
-        }
-        table th {
-            background: var(--color-end);
-        }
-
-        .active-link {
-            background-color: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-
-        .sidebar-collapsed .menu-text {
-            display: none;
-        }
-
-        .sidebar-collapsed .sidebar {
-            width: 5rem;
-        }
-
-        .sidebar-collapsed .sidebar-logo h1 {
-            display: none;
-        }
-
-        .sidebar-collapsed .sidebar-logo img {
-            margin: 0 auto;
-        }
-
-        /* Perbaikan untuk layout yang seimbang */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        .content-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-        }
-
-        /* Sidebar tetap di posisinya */
-        .sidebar {
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            overflow-y: auto;
-        }
-
-        /* Header tetap di atas */
-        .header-sticky {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        /* Untuk tampilan mobile */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
 
@@ -205,32 +130,24 @@
         </main>
     </div>
 </div>
-
-{{-- Scripts --}}
-<script>
-    lucide.createIcons();
-
-    const sidebar = document.getElementById('sidebar');
-    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
-    const openBtn = document.getElementById('sidebarToggle');
-    const closeBtn = document.getElementById('closeSidebar');
-
-    openBtn?.addEventListener('click', () => {
-        sidebar.classList.add('open');
-        sidebarBackdrop.classList.remove('hidden');
-    });
-    
-    closeBtn?.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        sidebarBackdrop.classList.add('hidden');
-    });
-    
-    sidebarBackdrop?.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        sidebarBackdrop.classList.add('hidden');
-    });
-</script>
-
 @livewireScripts
+<script>
+     window.AppConfig = {
+        routes: {
+            languageChange: '{{ route('language.change') }}'
+        },
+        csrfToken: '{{ csrf_token() }}',
+     };
+</script>
+    <script src="{{ asset('assets/js/admin.js') }}"></script>
+
 </body>
 </html>
+
+
+
+    {{-- https://code.jquery.com/jquery-3.7.1.js
+    https://cdn.tailwindcss.com
+    https://cdn.datatables.net/2.3.4/js/dataTables.js
+    https://cdn.datatables.net/2.3.4/js/dataTables.tailwindcss.js
+    https://cdn.tailwindcss.com --}}
