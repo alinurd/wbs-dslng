@@ -3,20 +3,42 @@
 namespace App\Livewire\Combo;
 
 use App\Models\Combo;
- use Livewire\Component;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination;
+
+    public $filters = [];
+
+    protected $listeners = ['filter-updated' => 'applyFilters'];
+
+    public function applyFilters($filters)
+    {
+        $this->filters = $filters;
+        $this->resetPage(); // reset ke halaman 1
+    }
+
     public function render()
     {
-        $dataList = Combo::select('id', 'kelompok', 'data', 'is_active')->paginate(10);
+        $query = Combo::query()
+            ->select('id', 'kelompok', 'data', 'is_active');
 
-                $permissions = module_permissions('combo');
+        // terapkan filter
+        foreach ($this->filters as $field => $value) {
+            if ($value !== null && $value !== '') {
+                $query->where($field, 'like', "%$value%");
+            }
+        }
 
-         return view('livewire.combo.index-tes', compact('dataList'))->with([
-             'dataList' => $dataList,
+        $dataList = $query->paginate(10);
+
+        $permissions = module_permissions('combo');
+
+        return view('livewire.combo.index-tes', [
+            'dataList' => $dataList,
             'title' => 'Combo Data Table',
-            'currentLocale' => 'en',
             'permissions' => $permissions['can'],
         ]);
     }
