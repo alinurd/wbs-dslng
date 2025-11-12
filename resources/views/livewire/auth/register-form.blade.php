@@ -198,7 +198,7 @@
                         <div class="border-t border-gray-200 pt-8">
                             <div class="flex items-start space-x-4 bg-blue-50 p-6 rounded-2xl">
                                 <div class="flex items-center h-5 mt-1">
-                                    <input wire:model="confirmation" id="confirmation" name="confirmation"
+                                    <input wire:model.live="confirmation" id="confirmation" name="confirmation"
                                         type="checkbox" required
                                         class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded
                                         @error('confirmation') border-red-500 ring-1 ring-red-500 @enderror">
@@ -214,11 +214,12 @@
                                 </div>
                             </div>
                         </div>
+                        @if ($confirmation)
                         <button type="submit"
                             class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[rgb(0,95,160)] hover:bg-[rgb(0,110,160)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             {{ __('auth.register.submit') }}
                         </button>
-
+                        @endif
 
                         <div class="text-center">
                             <p class="text-sm text-gray-600">
