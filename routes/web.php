@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\LanguageController;
-use App\Livewire\Combo\Index as ComboIndex;
+use App\Livewire\Combo\IndexManual as IndexManual;
+// use App\Livewire\Combo\Index as ComboIndex;
 
 use App\Livewire\Menus\Form as MenuForm;
 
@@ -51,7 +52,8 @@ Route::middleware(['auth'])->group(function () {
 
  
 
-    Route::get('/combo', ComboIndex::class)->name('combo');
+    Route::get('/combo', IndexManual::class)->name('combo');
+    // Route::get('/combo', ComboIndex::class)->name('combo');
 });
 
 
