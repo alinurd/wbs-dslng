@@ -31,8 +31,8 @@ return [
             'c' => 'green'
         ],  
          'when' =>[
-            't'=>'dimana',
-            'd'=>'Dimana tempat terjadinya perbuatan tersebut dilakukan',
+            't'=>'kapan',
+            'd'=>'Kapan waktu perbuatan tersebut dilakukan',
             'i' => 'clock',
             'c' => 'yellow'
         ], 

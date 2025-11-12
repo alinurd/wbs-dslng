@@ -21,9 +21,9 @@
                 {{ __('wbs.required_info.title') }}
             </h2>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
                 @php
-                    $items = ['what', 'where', 'when', 'who', 'how', 'evidence'];
+                    $items = ['what',  'who', 'where', 'how', 'when', 'evidence'];
                 @endphp
 
                 @foreach ($items as $item)
@@ -40,7 +40,7 @@
                         }
                     @endphp
 
-                    <div class="required-info-item p-6 bg-white rounded-lg shadow-md">
+                    <div class="required-info-item p-3 bg-white rounded-lg shadow-md">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-12 h-12 bg-{{ $color }} rounded-full flex items-center justify-center">
                                 <i class="fas fa-{{ $icon }} text-{{ $color }}-600 text-xl"></i>
