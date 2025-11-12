@@ -39,7 +39,7 @@
 
                         <div class="p-6">
                             <p class="text-gray-600 mb-4 leading-relaxed line-clamp-3">{{ $news['desc'] }}</p>
-                            <a href="#"
+                            <a href="{{ route('new-detail.index', ['slug' => $news['slug']]) }}"
                                 class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-800">
                                 {{ __('wbs.news.read_more') }}
                                 <i class="fas fa-arrow-right ml-2"></i>

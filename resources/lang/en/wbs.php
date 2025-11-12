@@ -78,6 +78,8 @@ return [
 
     'items' => [
         [
+                        'slug'=>'guideline-1',
+
             'category' => 'Guideline',
             'title' => 'How To Use The Whistleblowing System',
             'desc' => 'WHISTLEBLOWING SYSTEM (WBS) The Company is committed to maintaining the highest standards of integrity and ethical behavior...',
@@ -85,13 +87,17 @@ return [
             'created' => '2025-11-01',
         ],
         [
+                        'slug'=>'Partnership-1',
+
             'category' => 'Partnership',
             'title' => 'Value and Engage for Business Partners',
-            'desc' => 'DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...',
-            'image' => 'assets/images/news/2.png',
+            'desc' => 'DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...DSLNG recognizes the important role which our stakeholders, especially our business partners, play in achieving our mission...',
+            'image' => 'assets/images/news/1.jpg',
             'created' => '2025-10-27',
         ],
         [
+                        'slug'=>'Ethics-1',
+
             'category' => 'Ethics',
             'title' => 'Our Foundation of Actions',
             'desc' => 'The foundation of all our actions is based on the principles of integrity, transparency, and accountability that guide our operations...',
@@ -99,6 +105,8 @@ return [
             'created' => '2025-10-10',
         ],
         [
+                        'slug'=>'Compliance-1',
+
             'category' => 'Compliance',
             'title' => 'Overview of the Code of Conduct',
             'desc' => 'This Code of Conduct serves as a guideline for all employees and stakeholders, outlining our commitment to ethical business practices...',
@@ -106,6 +114,8 @@ return [
             'created' => '2025-09-30',
         ],
         [
+                        'slug'=>'Ethics-2',
+
             'category' => 'Ethics',
             'title' => 'Our Foundation of Actions',
             'desc' => 'The foundation of all our actions is based on the principles of integrity, transparency, and accountability that guide our operations...',
@@ -113,6 +123,8 @@ return [
             'created' => '2025-10-10',
         ],
         [
+                        'slug'=>'Compliance-2',
+
             'category' => 'Compliance',
             'title' => 'Overview of the Code of Conduct',
             'desc' => 'This Code of Conduct serves as a guideline for all employees and stakeholders, outlining our commitment to ethical business practices...',
@@ -120,6 +132,8 @@ return [
             'created' => '2025-09-30',
         ],
         [
+                        'slug'=>'Ethics-5',
+
             'category' => 'Ethics',
             'title' => 'Our Foundation of Actions',
             'desc' => 'The foundation of all our actions is based on the principles of integrity, transparency, and accountability that guide our operations...',
@@ -127,6 +141,8 @@ return [
             'created' => '2025-10-10',
         ],
         [
+                        'slug'=>'Compliance-4',
+
             'category' => 'Compliance',
             'title' => 'Overview of the Code of Conduct',
             'desc' => 'This Code of Conduct serves as a guideline for all employees and stakeholders, outlining our commitment to ethical business practices...',

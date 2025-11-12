@@ -77,6 +77,8 @@ return [
     'read_more' => 'Baca Selengkapnya',
     'items' => [
         [
+                       'slug'=>'guideline-1',
+
             'category' => 'Panduan',
             'title' => 'Cara Menggunakan Sistem Whistleblowing',
             'desc' => 'SISTEM WHISTLEBLOWING (WBS) Perusahaan berkomitmen untuk menjaga standar tertinggi integritas dan perilaku etis dalam semua operasinya...',
@@ -84,13 +86,15 @@ return [
             'created' => '2025-11-01',
         ],
         [
+             'slug'=>'Partnership-1',
             'category' => 'Kemitraan',
             'title' => 'Nilai dan Keterlibatan untuk Mitra Bisnis',
-            'desc' => 'DSLNG mengakui peran penting para pemangku kepentingan, terutama mitra bisnis, dalam mencapai misi perusahaan...',
-            'image' => 'assets/images/news/2.png',
+            'desc' => 'DSLNG mengakui peran penting para pemangku kepentingan, terutama mitra bisnis, dalam mencapai misi perusahaanDSLNG mengakui peran penting para pemangku kepentingan, terutama mitra bisnis, dalam mencapai misi perusahaanDSLNG mengakui peran penting para pemangku kepentingan, terutama mitra bisnis, dalam mencapai misi perusahaanDSLNG mengakui peran penting para pemangku kepentingan, terutama mitra bisnis, dalam mencapai misi perusahaan',
+            'image' => 'assets/images/news/1.jpg',
             'created' => '2025-10-27',
         ],
         [
+            'slug'=>'Ethics-1',
             'category' => 'Etika',
             'title' => 'Landasan Semua Tindakan Kami',
             'desc' => 'Landasan semua tindakan kami didasarkan pada prinsip integritas, transparansi, dan akuntabilitas yang menjadi panduan operasional perusahaan...',
@@ -98,6 +102,7 @@ return [
             'created' => '2025-10-10',
         ],
         [
+            'slug'=>'Compliance-1',
             'category' => 'Kepatuhan',
             'title' => 'Gambaran Umum Kode Etik',
             'desc' => 'Kode Etik ini menjadi pedoman bagi seluruh karyawan dan pemangku kepentingan, menjelaskan komitmen perusahaan terhadap praktik bisnis yang etis...',
@@ -105,6 +110,7 @@ return [
             'created' => '2025-09-30',
         ],
         [
+            'slug'=>'Ethics-2',
             'category' => 'Etika',
             'title' => 'Landasan Semua Tindakan Kami',
             'desc' => 'Landasan semua tindakan kami didasarkan pada prinsip integritas, transparansi, dan akuntabilitas yang menjadi panduan operasional perusahaan...',
@@ -112,6 +118,7 @@ return [
             'created' => '2025-10-10',
         ],
         [
+            'slug'=>'Compliance-2',
             'category' => 'Kepatuhan',
             'title' => 'Gambaran Umum Kode Etik',
             'desc' => 'Kode Etik ini menjadi pedoman bagi seluruh karyawan dan pemangku kepentingan, menjelaskan komitmen perusahaan terhadap praktik bisnis yang etis...',
@@ -119,6 +126,7 @@ return [
             'created' => '2025-09-30',
         ],
         [
+            'slug'=>'Ethics-5',
             'category' => 'Etika',
             'title' => 'Landasan Semua Tindakan Kami',
             'desc' => 'Landasan semua tindakan kami didasarkan pada prinsip integritas, transparansi, dan akuntabilitas yang menjadi panduan operasional perusahaan...',
@@ -126,6 +134,7 @@ return [
             'created' => '2025-10-10',
         ],
         [
+            'slug'=>'Compliance-4',
             'category' => 'Kepatuhan',
             'title' => 'Gambaran Umum Kode Etik',
             'desc' => 'Kode Etik ini menjadi pedoman bagi seluruh karyawan dan pemangku kepentingan, menjelaskan komitmen perusahaan terhadap praktik bisnis yang etis...',
