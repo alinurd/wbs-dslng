@@ -1,7 +1,7 @@
 <div>
 
-    {{-- Hero Section --}}
-    <section class="hero-bg text-white py-20">
+    {{-- Hero div --}}
+    <div class="hero-bg text-white py-20">
         {{-- <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                 {{ __('wbs.hero.welcome') }}<br>
@@ -12,10 +12,10 @@
                 {{ __('wbs.hero.subtitle') }}
             </p>
         </div> --}}
-    </section>
+    </div>
 
-    {{-- Required Information Section --}}
-    <section class="py-16 bg-white">
+    {{-- Required Information div --}}
+    <div class="py-16 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
                 {{ __('wbs.required_info.title') }}
@@ -54,10 +54,10 @@
                 @endforeach
             </div>
         </div>
-    </section>
+    </div>
 
-    {{-- News Section --}}
-    <section class="py-16 bg-gray-50 new-bg">
+    {{-- News div --}}
+    <div class="py-16 bg-gray-50 new-bg">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="font-bold text-white text-3xl" style="text-shadow: 1px 4px 4px rgba(0,0,0,0.78);">
@@ -107,10 +107,10 @@
 
             </div>
         </div>
-    </section>
+    </div>
 
     {{-- Confidentiality Notice --}}
-    <section class="py-12 bg-blue-900 text-white">
+    <div class="py-12 bg-blue-900 text-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="bg-blue-800 rounded-2xl p-8">
                 <i class="fas fa-shield-alt text-4xl mb-6 text-yellow-300"></i>
@@ -122,7 +122,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
 
 </div>

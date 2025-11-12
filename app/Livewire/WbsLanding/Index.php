@@ -10,15 +10,12 @@ class Index extends Component
 {
     public $title = "PT DONGGI-SENORO LNG";
     public $currentLocale = 'en';
-
-        public $locale;
-        
+    public $locale;
     public function mount()
     {
         $this->locale = Session::get('locale', config('app.locale'));
         App::setLocale($this->locale);
     }
-
     public function changeLanguage($lang)
     {
         $this->locale = $lang;
@@ -27,13 +24,12 @@ class Index extends Component
 
         $this->dispatch('reload-page');
     }
-    
-
     public function render()
     {
         return view('livewire.wbs-landing.index')
-            ->layout('components.layouts.wbs-landing', [
-                 'currentLocale' => $this->currentLocale
+            ->layout('components.layouts.guest', [
+                'title' => 'Home',
+                'currentLocale' => app()->getLocale(),
             ]);
     }
 }

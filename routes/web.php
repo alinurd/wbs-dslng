@@ -6,7 +6,7 @@ use App\Livewire\Combo\Index as ComboIndex;
 use App\Livewire\Menus\Form as MenuForm;
 
 use App\Livewire\Menus\Index as MenuIndex;
-use App\Livewire\NewsDetail\Index as NewsDetailIndex;
+use App\Livewire\News\Detail as NewsDetail;
 use App\Livewire\News\Index as NewsIndex;
 use App\Livewire\PermissionManagement;
 use App\Livewire\Roles\Editor as RoleEditor;
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingIndex::class)->name('landing.index');
 Route::get('/news', NewsIndex::class)->name('new.index');
-Route::get('/news-detail/{slug}', NewsDetailIndex::class)->name('new-detail.index');
+Route::get('/news-detail/{slug}', NewsDetail::class)->name('new-detail.index');
 Route::post('/change-language', [LanguageController::class, 'change'])->name('language.change');
 
 Route::middleware([

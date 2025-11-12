@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Livewire\WbsLanding;
+namespace App\Livewire\News;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
-class Login extends Component
+class Detail extends Component
 {
-    public $title = "Whistleblowing System - PT DONGGI-SENORO LNG";
+    public $title = "PT DONGGI-SENORO LNG";
     public $currentLocale = 'en';
 
         public $locale;
@@ -29,14 +29,12 @@ class Login extends Component
     }
     
 
-
-
     public function render()
     {
-        return view('livewire.wbs-auth.login')
-            ->layout('components.layouts.wbs-landing', [
-                'title' => $this->title,
-                'currentLocale' => $this->currentLocale
+        return view('livewire.news.index')
+            ->layout('components.layouts.guest', [
+                'title' => 'News Detail',
+                'currentLocale' => app()->getLocale(),
             ]);
     }
 }

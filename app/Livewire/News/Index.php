@@ -28,12 +28,13 @@ class Index extends Component
         $this->dispatch('reload-page');
     }
     
-
     public function render()
     {
         return view('livewire.news.index')
-            ->layout('components.layouts.news', [
-                 'currentLocale' => $this->currentLocale
+            ->layout('components.layouts.guest', [
+                'title' => 'News',
+                'currentLocale' => app()->getLocale(),
             ]);
     }
+    
 }
