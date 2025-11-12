@@ -15,7 +15,7 @@
     min-height: 800px;
 } */
 .hero-bg {
-            background: url('../images/nw11.jpg') no-repeat center center;
+            background: url('../images/hero.jpg') no-repeat center center;
             background-size: cover;
             -webkit-background-size: cover;
             -moz-background-size: cover;
@@ -25,8 +25,34 @@
             display: flex;
             align-items: center;
         }
+.new-bg {
+            background: url('../images/bg-new.jpg') no-repeat center center;
+           background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+        }
 
- /* .hero-bg::before {
+
+        #toTop {
+    display: none;
+    text-decoration: none;
+    position: fixed;
+    bottom: 24px;
+    right: 3%;
+    overflow: hidden;
+    z-index: 999;
+    width: 32px;
+    height: 38px;
+    border: none;
+    text-indent: 100%;
+    background: url(../images/move-top.png) no-repeat 0px 0px;
+}
+
+
+        /* .new-bg . */
+ /* .new-bg::before {
             content: '';
             position: absolute;
             top: 0;
