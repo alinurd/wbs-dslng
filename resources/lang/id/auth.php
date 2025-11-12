@@ -37,7 +37,7 @@ return [
         'type_of_reporter' => 'Jenis Pelapor',
         'employee' => 'Karyawan',
         'non_employee' => 'Bukan Karyawan',
-        'verification_code' => 'Kode Verifikasi',
+        
         'confirmation_text' => 'Saya dengan ini mengkonfirmasi bahwa setiap dan semua data serta informasi yang dikirimkan akurat dan/atau diperoleh apa adanya dan tidak dibuat-buat atau dipalsukan berdasarkan niat buruk.',
         'submit' => 'Daftar',
         'already_registered' => 'Sudah terdaftar?',
@@ -45,6 +45,7 @@ return [
         'note' => 'Catatan: Form Bertanda Tangan (*) Wajib Diisi',
     ],
 
+    'verification_code' => 'Kode Verifikasi',
     'validation' => [
         'required' => 'Field ini wajib diisi',
         'email' => 'Format email tidak valid',

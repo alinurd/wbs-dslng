@@ -3,7 +3,9 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 class LoginFrom extends Component
@@ -53,9 +55,32 @@ class LoginFrom extends Component
         'confirmation.accepted' => 'auth.validation.required',
     ];
 
+    public $currentLocale = 'en';
+
+        public $locale;
+        
+    public function mount()
+    {
+        $this->locale = Session::get('locale', config('app.locale'));
+        App::setLocale($this->locale);
+    }
+
+      public function changeLanguage($lang)
+    {
+        $this->locale = $lang;
+        Session::put('locale', $lang);
+        App::setLocale($lang);
+
+        $this->dispatch('reload-page');
+    }
+    
     public function render()
     {
-        return view('livewire.register-form');
+        return view('livewire.auth.login-form')
+         ->layout('components.layouts.guest', [
+                'title' => 'Login',
+                'currentLocale' => app()->getLocale(),
+            ]);;
     }
 
     public function updated($propertyName)

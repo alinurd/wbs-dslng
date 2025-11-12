@@ -5,7 +5,6 @@ return [
         'title' => 'Login',
         'dsc' => 'Sign in to your account to continue',
         'email' => 'Email Address',
-        'password' => 'Password',
         'remember_me' => 'Remember Me',
         'forgot_password' => 'Forgot Your Password?',
         'submit' => 'Sign In',
@@ -17,8 +16,6 @@ return [
     'register' => [
         'title' => 'Registration',
         'dsc' => 'Please complete the form below to create a new account.',
-        'username' => 'Username',
-        'username_placeholder' => 'Enter username',
         'security_question' => 'Security Question',
         'choose_question' => '- Choose Question -',
         'security_questions' => [
@@ -43,7 +40,7 @@ return [
         'type_of_reporter' => 'Type of Reporter',
         'employee' => 'Employee',
         'non_employee' => 'Non Employee',
-        'verification_code' => 'Verification Code',
+        
         'verification_code_placeholder' => 'Enter verification code',
         'confirmation_text' => 'I hereby confirm that each and all data and information submitted are accurate and/or obtained as is and not made-up or fabricated in the basis of ill intention.',
         'submit' => 'Register',
@@ -58,7 +55,7 @@ return [
     ],
 
  
-
+'verification_code' => 'Verification Code',
     'validation' => [
         'required' => 'This field is required',
         'email' => 'Invalid email format',
@@ -82,6 +79,12 @@ return [
             'back_to_login' => 'Back to login page',
         ],
     ],
+
+    
+        'password' => 'Password',
+        
+        'username' => 'Username',
+        'username_placeholder' => 'Enter username',
 
     'logout' => 'Logout',
     'name' => 'Full Name',

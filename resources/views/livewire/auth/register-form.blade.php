@@ -159,7 +159,7 @@
                                     <div class="flex-1 pr-5">
                                         <label for="verification_code"
                                             class="block text-sm font-medium text-gray-700 mb-2 required">
-                                            Verification Code(*)
+                                            {{ __('auth.verification_code') }}
                                         </label>
                                         <input wire:model="verification_code" id="verification_code"
                                             name="verification_code" type="text" required
