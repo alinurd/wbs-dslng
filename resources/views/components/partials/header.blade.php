@@ -3,18 +3,7 @@
         <div class="flex justify-between items-center py-4">
             {{-- Logo --}}
             <div class="flex items-center gap-4">
-                
-                <div
-                    class="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    DSLNG
-                </div>
-                <div class="border-l border-gray-300 h-8"></div>
-                <div>
-                    <a href="{{ route('landing.index')}}" >
-                    <div class="font-bold text-gray-900 text-lg tracking-tight">DONGGI SENORO</div>
-                    <div class="text-gray-600 text-sm">Liquefied Natural Gas</div>
-                </a>
-                </div>
+                 <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" style="max-width: 80%">                  
             </div>
 
             {{-- Desktop Navigation --}}

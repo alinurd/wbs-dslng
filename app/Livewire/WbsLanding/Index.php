@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $title = "Whistleblowing System - PT DONGGI-SENORO LNG";
+    public $title = "PT DONGGI-SENORO LNG";
     public $currentLocale = 'en';
 
         public $locale;
@@ -29,14 +29,11 @@ class Index extends Component
     }
     
 
-
-
     public function render()
     {
         return view('livewire.wbs-landing.index')
             ->layout('components.layouts.wbs-landing', [
-                'title' => $this->title,
-                'currentLocale' => $this->currentLocale
+                 'currentLocale' => $this->currentLocale
             ]);
     }
 }
