@@ -36,7 +36,7 @@
             </div>
             <button id="closeSidebar" class="md:hidden text-white text-2xl font-bold">&times;</button>
         </div>
-
+{{-- {{dd($module_permissions)}} --}}
         {{-- Navigation --}}
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2">
             @foreach ($menus as $menu)

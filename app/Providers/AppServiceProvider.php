@@ -21,24 +21,32 @@ class AppServiceProvider extends ServiceProvider
 
         // Share menus data dengan semua views
         View::composer('*', function ($view) {
-            // Helper function untuk cek permission menu
-            $hasMenuAccess = function ($menu) {
-                if ($menu->default) return true; // Menu default selalu tampil
-                
-                if ($menu->route) {
-                    // Cek permission berdasarkan route name
-                    $routeName = $menu->route;
-                    $permissionBase = str_replace('.', '-', $routeName);
-                    
-                    // Cek view permission untuk route tersebut
-                    return auth()->check() && auth()->user()->can($permissionBase . '.view');
+            $user = auth()->user();
+
+            $hasMenuAccess = function ($menu) use ($user) {
+                if (!$user) return false;
+
+                // Menu default 2 selalu tampil untuk semua role
+                if ($menu->default == 2) {
+                    return true;
                 }
-                
-                // Untuk menu parent tanpa route, tampilkan jika ada children yang accessible
-                return true;
+
+                // Menu default 1 hanya untuk role 1
+                if ($menu->default == 1 && $user->role_id == 1) {
+                    return true;
+                }
+
+                // Menu dengan route: cek permission
+                if ($menu->route) {
+                    $permissionBase = str_replace('.', '-', $menu->route);
+                    return $user->can($permissionBase . '.view');
+                }
+
+                // Parent menu tanpa route: tampil jika ada children yang bisa diakses
+                return $menu->children->isNotEmpty();
             };
 
-            // Get menus dengan filter permission
+            // Ambil menu parent
             $menus = Menu::whereNull('parent_id')
                 ->where('is_active', true)
                 ->orderBy('order')
@@ -46,18 +54,20 @@ class AppServiceProvider extends ServiceProvider
                     $query->where('is_active', true)->orderBy('order');
                 }])
                 ->get()
-                ->filter(function($menu) use ($hasMenuAccess) {
-                    return $hasMenuAccess($menu);
-                })
-                ->map(function($menu) use ($hasMenuAccess) {
-                    // Filter children berdasarkan permission juga
-                    $menu->children = $menu->children->filter(function($child) use ($hasMenuAccess) {
-                        return $hasMenuAccess($child);
-                    });
+                ->map(function ($menu) use ($hasMenuAccess) {
+                    // Filter children
+                    $menu->children = $menu->children->filter(fn($child) => $hasMenuAccess($child));
                     return $menu;
-                });
+                })
+                // Filter parent menu sesuai akses
+                ->filter(fn($menu) => $hasMenuAccess($menu));
 
-            $view->with('menus', $menus);
+            // Bagikan ke semua view
+            $view->with([
+                'menus' => $menus,
+                'user' => $user,
+                'module_permissions' => module_permissions('dashboard'),
+            ]);
         });
     }
 }
