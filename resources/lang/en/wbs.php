@@ -70,9 +70,10 @@ return [
 
 
 
-    'news' => [
-    'title' => 'NEWS',
-    'all_new' => 'All News',
+    'news' => ['title' => 'NEWS',
+'dsc' => 'Stay updated with the latest news, guides, and important insights about the Whistleblowing System at PT DONGGI-SENORO LNG.',
+
+'all_new' => 'All News',
     'read_more' => 'Read More',
 
     'items' => [

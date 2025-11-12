@@ -63,9 +63,10 @@
                 <h2 class="font-bold text-white text-3xl" style="text-shadow: 1px 4px 4px rgba(0,0,0,0.78);">
                     {{ __('wbs.news.title') }}
                 </h2>
-                <x-button class="mt-4 ms-4 bg-red-500">
-                    <i class="fa fa-globe"></i> &nbsp;{{ __('wbs.news.all_new') }}
-                </x-button>
+                <x-button href="{{ route('new.index') }}" class="mt-4 ml-4 bg-red-500 px-5 py-2 rounded-lg text-white inline-flex items-center">
+        <i class="fa fa-globe mr-2"></i> {{ __('wbs.news.all_new') }}
+    </x-button>
+     
             </div>
 
             <div class="grid md:grid-cols-4 gap-8">

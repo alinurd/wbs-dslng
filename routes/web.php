@@ -6,11 +6,12 @@ use App\Livewire\Combo\Index as ComboIndex;
 use App\Livewire\Menus\Form as MenuForm;
 
 use App\Livewire\Menus\Index as MenuIndex;
+use App\Livewire\News\Index as NewsIndex;
 use App\Livewire\PermissionManagement;
 use App\Livewire\Roles\Editor as RoleEditor;
+
+
 use App\Livewire\Roles\Form as RoleForm;
-
-
 use App\Livewire\Roles\Index as RoleIndex;
 use App\Livewire\UserManagement;
 use App\Livewire\WbsLanding\Index as LandingIndex;
@@ -18,6 +19,7 @@ use App\Livewire\WbsLanding\Index as LandingIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingIndex::class)->name('landing.index');
+Route::get('/news', NewsIndex::class)->name('new.index');
 Route::post('/change-language', [LanguageController::class, 'change'])->name('language.change');
 
 Route::middleware([

@@ -73,6 +73,7 @@ return [
    'news' => [
     'title' => 'BERITA',
     'all_new' => 'Semua Berita',
+'dsc' => 'Dapatkan informasi terbaru, panduan, dan wawasan penting seputar Sistem Whistleblowing di PT DONGGI-SENORO LNG.',
     'read_more' => 'Baca Selengkapnya',
     'items' => [
         [

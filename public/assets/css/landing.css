@@ -33,6 +33,16 @@
     -o-background-size: cover;
     -moz-background-size: cover;
         }
+.new-bg-page {
+                background: url('../images/hero.jpg') ;
+
+    /* background-image: url('../images/news/1.jpg'); */
+    background-repeat: no-repeat;
+    background-position: center top; /* gambar berada di bawah */
+    background-size: cover; /* gambar menutupi area container */
+    min-height: 45vh;
+}
+
 
 
         #toTop {
