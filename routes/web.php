@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\LanguageController;
+use App\Livewire\Auth\LoginFrom;
+use App\Livewire\Auth\RegisterFrom;
 use App\Livewire\Combo\IndexManual as IndexManual;
 // use App\Livewire\Combo\Index as ComboIndex;
 
@@ -20,6 +22,8 @@ use App\Livewire\WbsLanding\Index as LandingIndex;
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/auth/register', RegisterFrom::class)->name('register.form');
+Route::get('/auth/login', LoginFrom::class)->name('login.form');
 Route::get('/', LandingIndex::class)->name('landing.index');
 Route::get('/news', NewsIndex::class)->name('new.index');
 Route::get('/news-detail/{slug}', NewsDetail::class)->name('new-detail.index');
