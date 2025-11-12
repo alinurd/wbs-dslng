@@ -106,8 +106,8 @@
         {{-- Logo & Title --}}
         <div class="sidebar-logo flex items-center justify-between px-5 py-4 border-b border-white/20">
             <div class="flex items-center gap-3">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 rounded-full bg-white p-1 shadow-md">
-                <h1 class="text-lg font-semibold">{{env("APP_NAME")}}</h1>
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" style="max-width: 90%; filter: brightness(0) invert(1);">
+
             </div>
             <button id="closeSidebar" class="md:hidden text-white text-2xl font-bold">&times;</button>
         </div>
