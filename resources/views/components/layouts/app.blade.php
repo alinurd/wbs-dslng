@@ -29,13 +29,27 @@
            class="sidebar sidebar-gradient w-72 text-white shadow-2xl flex flex-col transition-all duration-300">
 
         {{-- Logo & Title --}}
-        <div class="sidebar-logo flex items-center justify-between px-5 py-4 border-b border-white/20">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" style="max-width: 90%; filter: brightness(0) invert(1);">
+      <div class="sidebar-logo flex flex-col items-center px-5 py-4 border-b border-white/20">
+    <div class="flex flex-col items-center gap-2">
+        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" 
+             class="max-w-[90%] p-1 filter brightness-0 invert">
 
-            </div>
-            <button id="closeSidebar" class="md:hidden text-white text-2xl font-bold">&times;</button>
+        {{-- Nama user dan role --}}
+        <div class="text-center mt-2">
+            <p class="text-white text-base font-semibold">{{ $user->name }}</p>
+
+            {{-- Roles --}}
+            @php
+                $roles = $user->getRoleNames()->implode(', ');
+            @endphp
+            <p class="text-xs text-white/70 italic">{{ $roles ?: 'No Role' }}</p>
         </div>
+    </div>
+
+    {{-- Tombol close sidebar untuk mobile --}}
+    <button id="closeSidebar" class="md:hidden text-white text-2xl font-bold mt-3">&times;</button>
+</div>
+
 {{-- {{dd($module_permissions)}} --}}
         {{-- Navigation --}}
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2">
@@ -89,7 +103,7 @@
         </nav>
 
         {{-- Footer --}}
-        <div class="text-center text-sm text-white/70 border-t border-white/20 py-3">
+        <div class="text-center text-sm text-white border-t border-white/20 py-3">
             © {{ date('Y') }} {{env("APP_NAME")}}
         </div>
     </aside>
@@ -115,7 +129,13 @@
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit"
-                                    class="text-red-500 hover:bg-red-50 px-3 py-1 rounded-md transition">Logout</button>
+                                    class="
+                                    inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-red-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:z-10 focus:ring-1 focus:ring-[rgb(0,111,188)] focus:text-[rgb(0,111,188)] transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
+                        <span class="whitespace-nowrap
+                        ">
+                    <span class="whitespace-nowrap">Logout</span>
+                        <i class="fas fa-sign-out ml-1.5 text-xs"></i>
+                    </button>
                         </form>
                     @endauth
                 </div>
