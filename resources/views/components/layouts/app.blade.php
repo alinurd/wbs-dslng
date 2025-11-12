@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}">
 
     @livewireStyles
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {{-- Lucide Icons --}}
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -106,7 +106,7 @@
                     <button id="sidebarToggle" class="md:hidden p-2 rounded hover:bg-gray-100 text-gray-700 text-xl">
                         ☰
                     </button>
-                    <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? 'Dashboard' }}</h2>
+                    <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
                 </div>
 
                 <div class="flex items-center gap-3">
