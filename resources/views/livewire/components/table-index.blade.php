@@ -15,22 +15,45 @@
     </div>
 
     {{-- Table --}}
-    <div class="overflow-x-auto">
-        <table id="datatable" class="min-w-full text-sm text-left text-gray-500 border">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr>
-                    <th class="px-4 py-2 text-center">No</th>
+    <table class="min-w-full text-sm text-left text-gray-500 border">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+                @foreach ($columns as $key => $label)
+                                    <th scope="col" class="px-4 py-2 text-center">No</th>
+
+                    <th scope="col" class="px-4 py-2">{{ $label }}</th>
+                @endforeach
+                @if (!empty($permissions))
+                    <th scope="col" class="px-4 py-2 text-center">Aksi</th>
+                @endif
+            </tr>
+        </thead>
+        <tbody>
+            @php
+                $n=1;
+            @endphp
+            @foreach ($dataList as $row)
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-2">{{ $n++ }}</td>
                     @foreach ($columns as $key => $label)
-                        <th class="px-4 py-2">{{ $label }}</th>
+                        <td class="px-4 py-2">{{ $row->$key }}</td>
                     @endforeach
                     @if (!empty($permissions))
-                        <th class="px-4 py-2 text-center">Aksi</th>
+                        <td class="px-4 py-2 text-center space-x-2">
+                            @if($permissions['edit'] ?? false)
+                                <button wire:click="$emit('editData', {{ $row->id }})" class="text-blue-600 hover:underline">Edit</button>
+                            @endif
+                            @if($permissions['delete'] ?? false)
+                                <button wire:click="$emit('deleteData', {{ $row->id }})" class="text-red-600 hover:underline">Hapus</button>
+                            @endif
+                        </td>
                     @endif
                 </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="mt-4">{{ $dataList->links() }}</div>
 </div>
 
 {{-- Modal Filter --}}
@@ -77,46 +100,3 @@
         </div>
     </div>
 @endif
-
-<script>
-document.addEventListener('livewire:load', function () {
-    let filters = {};
-    let table = $('#datatable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: @json($dataUrl),
-            data: function (d) {
-                d.filters = filters;
-            }
-        },
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            @foreach ($columns as $key => $label)
-                { data: '{{ $key }}', name: '{{ $key }}' },
-            @endforeach
-            @if (!empty($permissions))
-            {
-                data: 'action',
-                name: 'action',
-                orderable: false,
-                searchable: false,
-                className: 'text-center'
-            }
-            @endif
-        ]
-    });
-
-    // Apply filter dari Livewire
-    Livewire.on('apply-filters', (filterValues) => {
-        filters = filterValues;
-        table.ajax.reload(null, false);
-    });
-
-    // Refresh datatable manual
-    Livewire.on('refresh-datatable', () => {
-        table.ajax.reload(null, false);
-    });
-});
-</script>
-

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Components;
 
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class TableIndex extends Component
@@ -9,52 +10,30 @@ class TableIndex extends Component
     public $columns = [];
     public $title = 'Data Table';
     public $filters = [];
-    public $filterValues = []; // menyimpan nilai filter
-    public $showFilterModal = false;
-    public $permissions = [];
+    public $filterValues = []; // untuk menyimpan input user
+        public $showFilterModal = false;
+    protected $dataList;
+    protected $permissions;
 
-    // Route sumber data DataTables
-    public $dataUrl;
-
-    public function mount($columns, $permissions, $dataUrl, $filters = [])
+    public function mount($dataList, $permissions, $filters = [])
     {
-        $this->columns = $columns;
+        $this->dataList = $dataList;
         $this->permissions = $permissions;
-        $this->filters = collect($filters);
-        $this->dataUrl = $dataUrl;
+        $this->filters = collect($filters); // pastikan jadi koleksi agar mudah dikelola
     }
 
-    /** Buka modal filter */
-    public function openFilterModal()
+    public function updatedFilterValues()
     {
-        $this->showFilterModal = true;
-    }
-
-    /** Tutup modal filter */
-    public function closeFilterModal()
-    {
-        $this->showFilterModal = false;
-    }
-
-    /** Reset semua filter */
-    public function resetFilters()
-    {
-        $this->filterValues = [];
-        $this->dispatch('refresh-datatable');
-    }
-
-    /** Terapkan filter */
-    public function applyFilters()
-    {
-        $this->dispatch('apply-filters', $this->filterValues);
-        $this->showFilterModal = false;
+        $this->dispatch('filter-updated', $this->filterValues);
     }
 
     public function render()
     {
         return view('livewire.components.table-index', [
+            'dataList' => $this->dataList,
             'permissions' => $this->permissions,
             'filters' => $this->filters,
+                        'showFilterModal' => $this->showFilterModal,
         ]);
     }
 }

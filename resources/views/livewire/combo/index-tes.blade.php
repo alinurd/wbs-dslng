@@ -5,8 +5,7 @@
         'data' => ['type' => 'text'],
         'is_active' => ['type' => 'radio', 'data' => ['Aktif', 'Nonaktif']]
     ]"
-        data-url="{{ route('_cari') }}"
-    :dataList="$dataList"
+     :dataList="$dataList"
     :permissions="$permissions"
     :title="$title"
 />
