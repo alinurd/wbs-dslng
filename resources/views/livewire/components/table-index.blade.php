@@ -1,57 +1,73 @@
-<div class="p-4 bg-white shadow rounded-lg">
-    <h2 class="text-xl font-semibold mb-4">{{ $title }}</h2>
+<div class="p-4 bg-white rounded-lg shadow">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold">{{ $title ?? 'Data Table' }}</h2>
 
-    <div class="overflow-x-auto">
-        <table class="min-w-full border border-gray-200">
-            <thead class="bg-gray-100">
-                <tr>
-                    @foreach ($columns as $col)
-                        <th class="px-4 py-2 text-left text-gray-700 font-semibold border-b">
-                            {{ $col }}
-                        </th>
-                    @endforeach
+        <div class="space-x-2">
+            {{-- Tombol Tambah --}}
+            @if ($permissions['create'] ?? false)
+                <x-button wire:click="$emit('openCreateModal')" class="bg-blue-600 text-white">
+                    Tambah {{ $title }}
+                </x-button>
+            @endif
 
-                    @if ($actions)
-                        <th class="px-4 py-2 text-center text-gray-700 font-semibold border-b">Actions</th>
-                    @endif
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($data as $row)
-                    <tr class="hover:bg-gray-50">
-                        @foreach (array_keys($columns) as $key)
-                            <td class="px-4 py-2 border-b">{{ $row[$key] ?? '-' }}</td>
-                        @endforeach
-
-                        @if ($actions)
-                            <td class="px-4 py-2 text-center border-b">
-                                @if (in_array('edit', $actions))
-                                    <button wire:click="$emit('editData', {{ $row['id'] ?? 0 }})"
-                                            class="text-blue-600 hover:underline">Edit</button>
-                                @endif
-                                @if (in_array('delete', $actions))
-                                    <button wire:click="$emit('deleteData', {{ $row['id'] ?? 0 }})"
-                                            class="text-red-600 hover:underline ml-2">Delete</button>
-                                @endif
-                            </td>
-                        @endif
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="{{ count($columns) + ($actions ? 1 : 0) }}" 
-                            class="text-center py-4 text-gray-500">
-                            Tidak ada data
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+            {{-- Tombol Filter (hanya untuk yang punya hak manage) --}}
+            @if ($permissions['manage'] ?? false)
+                <x-button wire:click="$emit('openFilterModal')" class="bg-green-600 text-white">
+                    Filter Custom
+                </x-button>
+            @endif
+        </div>
     </div>
 
-    {{-- Pagination (kalau data adalah Paginator) --}}
-    @if (method_exists($data, 'links'))
-        <div class="mt-3">
-            {{ $data->links() }}
-        </div>
-    @endif
+    <table class="min-w-full text-sm text-left text-gray-700 border">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+                @foreach ($columns as $key => $label)
+                    <th scope="col" class="px-4 py-2">{{ $label }}</th>
+                @endforeach
+                @if (($permissions['edit'] ?? false) || ($permissions['delete'] ?? false))
+                    <th scope="col" class="px-4 py-2 text-center">Aksi</th>
+                @endif
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($dataList as $row)
+                <tr class="border-b hover:bg-gray-50">
+                    @foreach ($columns as $key => $label)
+                        <td class="px-4 py-2">{{ $row->$key }}</td>
+                    @endforeach
+
+                    @if (($permissions['edit'] ?? false) || ($permissions['delete'] ?? false))
+                        <td class="px-4 py-2 text-center space-x-2">
+                            {{-- Edit --}}
+                            @if ($permissions['edit'] ?? false)
+                                <button wire:click="$emit('editData', {{ $row->id }})"
+                                        class="text-blue-600 hover:underline">
+                                    Edit
+                                </button>
+                            @endif
+
+                            {{-- Delete --}}
+                            @if ($permissions['delete'] ?? false)
+                                <button wire:click="$emit('deleteData', {{ $row->id }})"
+                                        class="text-red-600 hover:underline">
+                                    Hapus
+                                </button>
+                            @endif
+                        </td>
+                    @endif
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="{{ count($columns) + 1 }}" class="text-center py-4 text-gray-500">
+                        Tidak ada data
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        {{ $dataList->links() }}
+    </div>
 </div>

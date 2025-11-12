@@ -1,27 +1,29 @@
 <?php
 
-namespace App\Http\Livewire\Components;
+namespace App\Livewire\Components;
 
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class TableIndex extends Component
 {
-    use WithPagination;
-
-    // Props dari parent
     public $columns = [];
-    public $data;
-    public $actions = [];
+     public $title = 'Data Table';
 
-    public $title = 'Data Table';
-    public $perPage = 10;
+    protected $dataList;
+    protected $permissions;
 
-    // Listener agar bisa refresh data dari luar
-    protected $listeners = ['refreshTable' => '$refresh'];
+    public function mount($dataList,$permissions)
+    {
+        // dd($permissions);
+        $this->dataList = $dataList;
+        $this->permissions = $permissions;
+    }
 
     public function render()
     {
-        return view('livewire.components.table-index');
+        return view('livewire.components.table-index', [
+            'dataList' => $this->dataList,
+            'permissions' => $this->permissions,
+        ]);
     }
 }
