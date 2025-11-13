@@ -12,7 +12,7 @@ class ParamJenis extends Component
 {
     use WithPagination;
 
-    public $title = "Jenis";
+    public $title = "Jenis Pelanggaran";
     public $filterKelompok = "jenis";
     public $search = '';
     public $perPage = 10;
