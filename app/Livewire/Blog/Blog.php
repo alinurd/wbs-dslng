@@ -56,7 +56,7 @@ class Blog extends Component
 
     public function mount()
     {
-        can_any(['combo.view']);
+        can_any(['blog.view']);
         $this->locale = Session::get('locale', config('app.locale'));
         App::setLocale($this->locale);
     }
@@ -163,7 +163,7 @@ class Blog extends Component
     // Bulk delete
     public function deleteBulk()
     {
-        can_any(['combo.delete']);
+        can_any(['blog.delete']);
         
         if (empty($this->selectedItems)) {
             session()->flash('error', 'Tidak ada data yang dipilih untuk dihapus.');
@@ -184,7 +184,7 @@ class Blog extends Component
     // Export functionality
     public function export($type)
     {
-        can_any(['combo.view']);
+        can_any(['blog.view']);
         
         $query = Combo::query();
 
@@ -257,7 +257,7 @@ class Blog extends Component
     // Create
     public function create()
     {
-        can_any(['combo.create']);
+        can_any(['blog.create']);
         $this->resetForm();
         $this->showModal = true;
         $this->updateMode = false;
@@ -267,7 +267,7 @@ class Blog extends Component
     // Edit
     public function edit($id)
     {
-        can_any(['combo.edit']);
+        can_any(['blog.edit']);
         $combo = Combo::findOrFail($id);
 
         $this->comboId = $combo->id;
@@ -286,7 +286,7 @@ class Blog extends Component
     public function save()
     {
         if ($this->updateMode) {
-            can_any(['combo.edit']);
+            can_any(['blog.edit']);
             $this->validate();
             
             $combo = Combo::findOrFail($this->comboId);
@@ -300,7 +300,7 @@ class Blog extends Component
 
             session()->flash('message', 'Data berhasil diupdate.');
         } else {
-            can_any(['combo.create']);
+            can_any(['blog.create']);
             $this->validate();
 
             Combo::create([
@@ -322,7 +322,7 @@ class Blog extends Component
     // Delete
     public function delete($id)
     {
-        can_any(['combo.delete']);
+        can_any(['blog.delete']);
         $combo = Combo::findOrFail($id);
         $combo->delete();
 
@@ -334,7 +334,7 @@ class Blog extends Component
     // View
     public function view($id)
     {
-        can_any(['combo.view']);
+        can_any(['blog.view']);
         $combo = Combo::findOrFail($id);
         
         $this->dispatch('showDetailModal', [
