@@ -3,6 +3,7 @@
 namespace App\Livewire\Param;
 
 use App\Models\Combo;
+use App\Models\Owner;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
@@ -11,12 +12,12 @@ use Livewire\WithPagination;
 class ParamDirektorat extends Component
 {
     use WithPagination;
-    
-    public $title = "Jenis";
+
+    public $title = "Parameter Direktorat";
     public $search = '';
     public $perPage = 10;
-    public $sortField = 'created_at';
-    public $sortDirection = 'desc';
+    public $sortField = 'owner_name';
+    public $sortDirection = 'asc';
     
     // Modal states
     public $showModal = false;
@@ -27,31 +28,30 @@ class ParamDirektorat extends Component
     // Form fields
     public $comboId;
     public $kelompok = '';
-    public $data = '';
-    public $param_int = '';
-    public $param_str = '';
+    public $owner_name_1 = '';
+    public $parent_id = 0;
+    public $owner_name = ''; 
     public $is_active = true;
 
     // Bulk actions
     public $selectedItems = [];
     public $selectAll = false;
 
-    // Filter fields
-    public $filterKelompok = '';
+    // Filter fields 
     public $filterStatus = '';
 
     protected $rules = [
-        'kelompok' => 'required|string|max:255',
-        'data' => 'required|string|max:255',
-        'param_int' => 'nullable|numeric',
-        'param_str' => 'nullable|string|max:255',
+         'owner_name_1' => 'required|string|max:255',
+         'owner_name' => 'required|string|max:255',
         'is_active' => 'boolean',
     ];
 
     protected $messages = [
-        'kelompok.required' => 'Kelompok wajib diisi!',
-        'data.required' => 'Data wajib diisi!',
-        'param_int.numeric' => 'Param Int harus berupa angka!',
+       
+        'owner_name.required' => 'Data Id wajib diisi!',
+        'owner_name_1.required' => 'Data En wajib diisi!',
+        // 'parent_id.required' => 'Data En wajib diisi!',
+        'is_active.required' => 'Status wajib diisi!',
     ];
 
     public function mount()
@@ -63,32 +63,27 @@ class ParamDirektorat extends Component
 
     public function render()
     {
-        $query = Combo::query();
+        $query = Owner::with('parent');
 
-        // Search functionality
-        if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('kelompok', 'like', '%' . $this->search . '%')
-                  ->orWhere('data', 'like', '%' . $this->search . '%')
-                  ->orWhere('param_str', 'like', '%' . $this->search . '%');
-            });
-        }
+// Search
+if ($this->search) {
+    $query->where(function ($q) {
+        $q->where('owner_name_1', 'like', '%' . $this->search . '%')
+          ->orWhere('owner_name', 'like', '%' . $this->search . '%');
+    });
+}
 
-        // Filter functionality
-        if ($this->filterKelompok) {
-            $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
-        }
+// Filter Status
+if ($this->filterStatus !== '') {
+    $query->where('is_active', $this->filterStatus);
+}
 
-        if ($this->filterStatus !== '') {
-            $query->where('is_active', $this->filterStatus);
-        }
+$query->orderBy($this->sortField, $this->sortDirection);
 
-        // Sorting
-        $query->orderBy($this->sortField, $this->sortDirection);
+$combos = $query->paginate($this->perPage);
 
-        $combos = $query->paginate($this->perPage);
 
-        return view('livewire.combo.index-manual', [
+        return view('livewire.parameter.index-manual-owner', [
             'combos' => $combos,
             'title' => "Combo",
             'permissions' => module_permissions('combo')['can'] ?? []
@@ -171,7 +166,7 @@ class ParamDirektorat extends Component
         }
 
         $count = count($this->selectedItems);
-        Combo::whereIn('id', $this->selectedItems)->delete();
+        Owner::whereIn('id', $this->selectedItems)->delete();
         
         $this->selectedItems = [];
         $this->selectAll = false;
@@ -186,20 +181,19 @@ class ParamDirektorat extends Component
     {
         can_any(['combo.view']);
         
-        $query = Combo::query();
+        $query = Owner::query();
 
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('kelompok', 'like', '%' . $this->search . '%')
-                  ->orWhere('data', 'like', '%' . $this->search . '%')
-                  ->orWhere('param_str', 'like', '%' . $this->search . '%');
+                  ->orWhere('data', 'like', '%' . $this->search . '%');
             });
         }
 
         // Apply filters
-        if ($this->filterKelompok) {
-            $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
-        }
+        // if ($this->filterKelompok) {
+        //     $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
+        // }
 
         if ($this->filterStatus !== '') {
             $query->where('is_active', $this->filterStatus);
@@ -245,7 +239,7 @@ class ParamDirektorat extends Component
 
     public function resetFilter()
     {
-        $this->filterKelompok = '';
+        // $this->filterKelompok = '';
         $this->filterStatus = '';
         $this->filterMode = false;
         $this->resetPage();
@@ -268,13 +262,12 @@ class ParamDirektorat extends Component
     public function edit($id)
     {
         can_any(['combo.edit']);
-        $combo = Combo::findOrFail($id);
+        $combo = Owner::findOrFail($id);
 
-        $this->comboId = $combo->id;
-        $this->kelompok = $combo->kelompok;
-        $this->data = $combo->data;
-        $this->param_int = $combo->param_int;
-        $this->param_str = $combo->param_str;
+        $this->comboId = $combo->id; 
+        $this->owner_name_1 = $combo->owner_name_1;
+        $this->parent_id = $combo->parent_id;
+        $this->owner_name = $combo->owner_name;
         $this->is_active = $combo->is_active;
 
         $this->showModal = true;
@@ -289,12 +282,12 @@ class ParamDirektorat extends Component
             can_any(['combo.edit']);
             $this->validate();
             
-            $combo = Combo::findOrFail($this->comboId);
+            $combo = Owner::findOrFail($this->comboId);
             $combo->update([
-                'kelompok' => $this->kelompok,
-                'data' => $this->data,
-                'param_int' => $this->param_int,
-                'param_str' => $this->param_str,
+                // 'kelompok' => $this->filterKelompok,
+                'parent_id' => $this->parent_id,
+                'owner_name_1' => $this->owner_name_1,
+                'owner_name' => $this->owner_name,
                 'is_active' => $this->is_active,
             ]);
 
@@ -303,11 +296,10 @@ class ParamDirektorat extends Component
             can_any(['combo.create']);
             $this->validate();
 
-            Combo::create([
-                'kelompok' => $this->kelompok,
-                'data' => $this->data,
-                'param_int' => $this->param_int,
-                'param_str' => $this->param_str,
+            Owner::create([
+                'parent_id' => $this->parent_id,
+                'owner_name_1' => $this->owner_name_1,
+                'owner_name' => $this->owner_name,
                 'is_active' => $this->is_active,
             ]);
 
@@ -323,7 +315,7 @@ class ParamDirektorat extends Component
     public function delete($id)
     {
         can_any(['combo.delete']);
-        $combo = Combo::findOrFail($id);
+        $combo = Owner::findOrFail($id);
         $combo->delete();
 
         session()->flash('message', 'Data berhasil dihapus.');
@@ -335,16 +327,15 @@ class ParamDirektorat extends Component
     public function view($id)
     {
         can_any(['combo.view']);
-        $combo = Combo::findOrFail($id);
+        $combo = Owner::findOrFail($id);
         
         $this->dispatch('showDetailModal', [
             'title' => 'Detail Combo',
             'data' => [
                 'ID' => $combo->id,
-                'Kelompok' => $combo->kelompok,
-                'Data' => $combo->data,
-                'Param Int' => $combo->param_int ?? '-',
-                'Param Str' => $combo->param_str ?? '-',
+                'parent_id' => $combo->parent_id,
+                'Data Id' => $combo->owner_name_1,
+                'Data En' => $combo->owner_name,
                 'Status' => $combo->is_active ? 'Aktif' : 'Nonaktif',
                 'Dibuat Pada' => $combo->created_at->format('d/m/Y H:i'),
                 'Diupdate Pada' => $combo->updated_at->format('d/m/Y H:i'),
@@ -371,8 +362,7 @@ class ParamDirektorat extends Component
     private function resetForm()
     {
         $this->reset([
-            'comboId', 'kelompok', 'data', 'param_int', 
-            'param_str', 'is_active', 'updateMode'
+            'comboId', 'owner_name_1' , 'owner_name', 'is_active', 'updateMode'
         ]);
         $this->resetErrorBag();
     }
