@@ -11,9 +11,10 @@ use Livewire\WithPagination;
 class ParamNotif extends Component
 {
     use WithPagination;
-    
-    public $title = "Jenis";
-    public $search = '';    
+
+    public $title = "Notif Parameter";
+    public $filterKelompok = "notif-paran";
+    public $search = '';
     public $perPage = 10;
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
@@ -27,31 +28,30 @@ class ParamNotif extends Component
     // Form fields
     public $comboId;
     public $kelompok = '';
-    public $data = '';
-    public $param_int = '';
-    public $param_str = '';
+    public $data_id = '';
+    public $data_en = ''; 
+    public $param_int = 0; 
+    public $param_int_1 = 0; 
     public $is_active = true;
 
     // Bulk actions
     public $selectedItems = [];
     public $selectAll = false;
 
-    // Filter fields
-    public $filterKelompok = '';
+    // Filter fields 
     public $filterStatus = '';
 
     protected $rules = [
-        'kelompok' => 'required|string|max:255',
-        'data' => 'required|string|max:255',
-        'param_int' => 'nullable|numeric',
-        'param_str' => 'nullable|string|max:255',
+         'data_id' => 'required|string|max:255',
+         'data_en' => 'required|string|max:255',
         'is_active' => 'boolean',
     ];
 
     protected $messages = [
-        'kelompok.required' => 'Kelompok wajib diisi!',
-        'data.required' => 'Data wajib diisi!',
-        'param_int.numeric' => 'Param Int harus berupa angka!',
+       
+        'data_en.required' => 'Data Id wajib diisi!',
+        'data_id.required' => 'Data En wajib diisi!',
+        'is_active.required' => 'Status wajib diisi!',
     ];
 
     public function mount()
@@ -68,27 +68,27 @@ class ParamNotif extends Component
         // Search functionality
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('kelompok', 'like', '%' . $this->search . '%')
-                  ->orWhere('data', 'like', '%' . $this->search . '%')
-                  ->orWhere('param_str', 'like', '%' . $this->search . '%');
+                $q->where('data_id', 'like', '%' . $this->search . '%')
+                  ->orWhere('data_en', 'like', '%' . $this->search . '%');
             });
         }
 
         // Filter functionality
-        if ($this->filterKelompok) {
-            $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
-        }
-
-        if ($this->filterStatus !== '') {
-            $query->where('is_active', $this->filterStatus);
-        }
-
+        // if ($this->filterKelompok) {
+            // $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
+            // }
+            
+            if ($this->filterStatus !== '') {
+                $query->where('is_active', $this->filterStatus);
+            }
+            
+            $query->where('kelompok', $this->filterKelompok );
         // Sorting
         $query->orderBy($this->sortField, $this->sortDirection);
 
         $combos = $query->paginate($this->perPage);
 
-        return view('livewire.combo.index-manual', [
+        return view('livewire.parameter.index-manual-notif-param', [
             'combos' => $combos,
             'title' => "Combo",
             'permissions' => module_permissions('combo')['can'] ?? []
@@ -191,8 +191,7 @@ class ParamNotif extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('kelompok', 'like', '%' . $this->search . '%')
-                  ->orWhere('data', 'like', '%' . $this->search . '%')
-                  ->orWhere('param_str', 'like', '%' . $this->search . '%');
+                  ->orWhere('data', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -272,9 +271,10 @@ class ParamNotif extends Component
 
         $this->comboId = $combo->id;
         $this->kelompok = $combo->kelompok;
-        $this->data = $combo->data;
+        $this->data_id = $combo->data_id;
         $this->param_int = $combo->param_int;
-        $this->param_str = $combo->param_str;
+        $this->param_int_1 = $combo->param_int_1;
+        $this->data_en = $combo->data_en;
         $this->is_active = $combo->is_active;
 
         $this->showModal = true;
@@ -291,10 +291,12 @@ class ParamNotif extends Component
             
             $combo = Combo::findOrFail($this->comboId);
             $combo->update([
-                'kelompok' => $this->kelompok,
-                'data' => $this->data,
+                'kelompok' => $this->filterKelompok,
+                'data_id' => $this->data_id,
+                'data_en' => $this->data_en,
                 'param_int' => $this->param_int,
-                'param_str' => $this->param_str,
+                'param_int' => $this->param_int,
+                'param_int_1' => $this->param_int_1,
                 'is_active' => $this->is_active,
             ]);
 
@@ -304,10 +306,12 @@ class ParamNotif extends Component
             $this->validate();
 
             Combo::create([
-                'kelompok' => $this->kelompok,
-                'data' => $this->data,
+                 'kelompok' => $this->filterKelompok,
+                'data_id' => $this->data_id,
+                'data_en' => $this->data_en,
                 'param_int' => $this->param_int,
-                'param_str' => $this->param_str,
+                'param_int' => $this->param_int,
+                'param_int_1' => $this->param_int_1,
                 'is_active' => $this->is_active,
             ]);
 
@@ -342,9 +346,10 @@ class ParamNotif extends Component
             'data' => [
                 'ID' => $combo->id,
                 'Kelompok' => $combo->kelompok,
-                'Data' => $combo->data,
-                'Param Int' => $combo->param_int ?? '-',
-                'Param Str' => $combo->param_str ?? '-',
+                'Data Id' => $combo->data_id,
+                'Data En' => $combo->data_en,
+                'Batas Perubahan' => $combo->param_int,
+                'Batas Perubahan' => $combo->param_int_1,
                 'Status' => $combo->is_active ? 'Aktif' : 'Nonaktif',
                 'Dibuat Pada' => $combo->created_at->format('d/m/Y H:i'),
                 'Diupdate Pada' => $combo->updated_at->format('d/m/Y H:i'),
@@ -371,9 +376,8 @@ class ParamNotif extends Component
     private function resetForm()
     {
         $this->reset([
-            'comboId', 'kelompok', 'data', 'param_int', 
-            'param_str', 'is_active', 'updateMode'
-        ]);
+            'comboId', 'data_id' , 'data_en', 'param_int', 'param_int_1', 'is_active', 'updateMode'
+         ]);
         $this->resetErrorBag();
     }
 }

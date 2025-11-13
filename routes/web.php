@@ -18,7 +18,7 @@ use App\Livewire\News\Index as NewsIndex;
 
 use App\Livewire\Param\ParamAduan;
 use App\Livewire\Param\ParamDirektorat;
-use App\Livewire\Param\ParamEmailnotif;
+use App\Livewire\Param\ParamEmailNotif;
 use App\Livewire\Param\ParamForward;
 use App\Livewire\Param\ParamJenis;
 use App\Livewire\Param\ParamNotif;
@@ -88,7 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pertanyaan', ParamPertanyaan::class)->name('pertanyaan');
     Route::get('/forward', ParamForward::class)->name('forward');
     Route::get('/direktorat', ParamDirektorat::class)->name('direktorat');
-    Route::get('/emailnotif', ParamEmailnotif::class)->name('emailnotif');
+    Route::get('/emailnotif', ParamEmailNotif::class)->name('emailnotif');
     Route::get('/paramnotif', ParamNotif::class)->name('paramnotif');
     
     
