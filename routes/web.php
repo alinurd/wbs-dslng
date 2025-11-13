@@ -59,6 +59,8 @@ Route::middleware(['auth'])->group(function () {
  
 
     Route::get('/combo', IndexManual::class)->name('combo');
+    Route::get('/category', IndexManual::class)->name('category');
+    Route::get('/blog', IndexManual::class)->name('blog');
     // Route::get('/combo', ComboIndex::class)->name('combo');
 });
 

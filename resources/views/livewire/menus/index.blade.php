@@ -16,6 +16,7 @@
                 </tr>
             </thead>
             <tbody>
+                {{-- {{dd($menus->toarray())}} --}}
                 @foreach($menus as $menu)
                 <tr class="border-b hover:bg-gray-50">
                     <td class="py-2 px-3 border font-semibold">{{ $menu->name }}</td>
