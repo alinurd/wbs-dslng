@@ -40,11 +40,11 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 // Menu dengan route: cek permission
+                $permissionBase = str_replace('.', '-', $menu->route);
+                // dd($permissionBase);
                 if ($menu->route) {
-                    $permissionBase = str_replace('.', '-', $menu->route);
                     return $user->can($permissionBase . '.view');
                 }
-
                 // Parent menu tanpa route: tampil jika ada children yang bisa diakses
                 return $menu->children->isNotEmpty();
             };
@@ -64,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
                 })
                 // Filter parent menu sesuai akses
                 ->filter(fn($menu) => $hasMenuAccess($menu));
-
+// dd($menus);
             // Bagikan ke semua view
             $view->with([
                 'menus' => $menus,
