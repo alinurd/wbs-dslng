@@ -1,36 +1,45 @@
 <?php
 
-namespace App\Livewire\Base\Traits;
+namespace App\Livewire\Dynamic\Traits;
 
 trait WithFormBuilder
 {
-    public $schema = [];
-    public $formData = [];
-
-    public function loadSchema($config)
+    public function mergeFields($metaFields, $customFields)
     {
-        $this->schema = is_string($config) ? json_decode($config, true) : $config;
+        $metaArray = collect($metaFields)->map(fn($f) => (array) $f)->toArray();
+        return array_values(array_merge($metaArray, $customFields));
     }
 
-    public function updatedFormData($field, $value)
+    public function initFormData($fields)
     {
-        // Hook logic per field jika diperlukan
+        foreach ($fields as $f) {
+            $name = $f['field_name'] ?? null;
+            if ($name) $this->formData[$name] = $f['default'] ?? null;
+        }
     }
 
-    public function saveForm()
-    {
-        $this->validate($this->rules());
-        $this->emit('formSaved', $this->formData);
-    }
-
-    protected function rules()
+    public function generateValidationRules($fields)
     {
         $rules = [];
-        foreach ($this->schema as $field) {
-            if (!empty($field['rules'])) {
-                $rules["formData.{$field['name']}"] = $field['rules'];
+        foreach ($fields as $f) {
+            if (!empty($f['rules'])) {
+                $rules["formData.{$f['field_name']}"] = $f['rules'];
             }
         }
         return $rules;
+    }
+
+    public function inputType($type)
+    {
+        $map = [
+            'string' => 'text',
+            'number' => 'number',
+            'text' => 'text',
+            'textarea' => 'textarea',
+            'select' => 'select',
+            'file' => 'file',
+            'boolean' => 'checkbox',
+        ];
+        return $map[$type] ?? 'text';
     }
 }
