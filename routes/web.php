@@ -3,6 +3,7 @@
 use App\Http\Controllers\LanguageController;
 use App\Livewire\Auth\LoginFrom;
 use App\Livewire\Auth\RegisterForm;
+use App\Livewire\Blog\Blog;
 use App\Livewire\Combo\IndexManual as IndexManual;
 // use App\Livewire\Combo\Index as ComboIndex;
 
@@ -59,8 +60,10 @@ Route::middleware(['auth'])->group(function () {
  
 
     Route::get('/combo', IndexManual::class)->name('combo');
+    
+    
+    Route::get('/blog', Blog::class)->name('blog');
     Route::get('/category', IndexManual::class)->name('category');
-    Route::get('/blog', IndexManual::class)->name('blog');
     // Route::get('/combo', ComboIndex::class)->name('combo');
 });
 
