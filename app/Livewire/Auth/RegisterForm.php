@@ -3,12 +3,13 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
-class RegisterFrom extends Component
+class RegisterForm extends Component
 {
     public $username;
     public $security_question;
@@ -19,6 +20,7 @@ class RegisterFrom extends Component
     public $email;
     public $id_number;
     public $phone;
+    public $detail;
     public $reporter_type = 'employee';
     public $verification_code;
     public $confirmation = false;
@@ -89,25 +91,30 @@ class RegisterFrom extends Component
     }
 
     public function register()
-    {
-        $this->validate();
+{
+    $user = User::create([
+        'username' => $this->username,
+        'name' => $this->full_name, // mapping full_name
+        'email' => $this->email,
+        'password' => Hash::make($this->password),
+        'security_question' => $this->security_question,
+        'answer' => $this->answer,
+        // 'answer' => Hash::make($this->answer),
+        'no_identitas' => $this->id_number,
+        'telepon' => $this->phone,
+        'reporter_type' => $this->reporter_type === 'employee' ? 1 : 0,
+        'alamat' => $this->detail,
+        'active' => 1,
+        'status' => 0,
+        'must_change_password' => 0,
+        // 'insert_datetime' => now(),
+        // 'update_datetime' => now(),
+    ]);
+    $user->assignRole('user');
+    // Login user atau redirect
+    auth()->login($user);
 
-        // Proses registrasi
-        $user = User::create([
-            'username' => $this->username,
-            'security_question' => $this->security_question,
-            'security_answer' => Hash::make($this->answer),
-            'password' => Hash::make($this->password),
-            'full_name' => $this->full_name,
-            'email' => $this->email,
-            'id_number' => $this->id_number,
-            'phone' => $this->phone,
-            'reporter_type' => $this->reporter_type,
-        ]);
+    return redirect()->route('dashboard');
+}
 
-        // Login user atau redirect
-        auth()->login($user);
-
-        return redirect()->route('dashboard');
-    }
 }

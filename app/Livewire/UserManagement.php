@@ -42,9 +42,9 @@ class UserManagement extends Component
             'email' => $this->email,
             'password' => bcrypt('password'),
         ]);
-
-        $user->syncRoles($this->userRoles);
-        $user->syncPermissions($this->userPermissions);
+        $user->assignRole('user');
+        // $user->syncRoles($this->userRoles);
+        // $user->syncPermissions($this->userPermissions);
 
         session()->flash('message', 'User berhasil dibuat!');
         $this->resetInput();

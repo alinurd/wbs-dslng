@@ -79,8 +79,7 @@
                                     </label>
                                     <textarea wire:model="detail" id="detail" name="detail" type="detail" required
                                         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
-                            @error('detail') border-red-500 @enderror">
-</textarea>
+                            @error('detail') border-red-500 @enderror"></textarea>
                                     @error('detail')
                                         <p class="mt-1 text-sm text-red-600">{{ __($message) }}</p>
                                     @enderror
@@ -170,8 +169,8 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div> 
-                                <div class="pl-5">
+                            </div>
+                            <div class="pl-5">
                                 <label class="block text-sm font-medium text-gray-700 mb-3 required">
                                     {{ __('auth.register.type_of_reporter') }}
                                 </label>
@@ -188,11 +187,11 @@
                                         <input wire:model="reporter_type" id="non_employee" name="reporter_type"
                                             type="radio" value="non_employee"
                                             class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                            {{ __('auth.register.non_employee') }}
+                                        {{ __('auth.register.non_employee') }}
                                         </label>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
 
                         </div>
                         <div class="border-t border-gray-200 pt-8">
@@ -214,12 +213,12 @@
                                 </div>
                             </div>
                         </div>
-                        @if ($confirmation)
-                        <button type="submit"
-                            class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[rgb(0,95,160)] hover:bg-[rgb(0,110,160)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            {{ __('auth.register.submit') }}
-                        </button>
-                        @endif
+                        {{-- @if ($confirmation) --}}
+                            <button type="submit"
+                                class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[rgb(0,95,160)] hover:bg-[rgb(0,110,160)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                {{ __('auth.register.submit') }}
+                            </button>
+                        {{-- @endif --}}
 
                         <div class="text-center">
                             <p class="text-sm text-gray-600">
@@ -230,7 +229,9 @@
                                 </a>
                             </p>
                         </div>
-                </div>
+                
+                    
+                    </div>
 
                 </form>
             </div>
