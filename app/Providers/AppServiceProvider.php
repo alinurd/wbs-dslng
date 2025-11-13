@@ -25,7 +25,10 @@ class AppServiceProvider extends ServiceProvider
 
             $hasMenuAccess = function ($menu) use ($user) {
                 if (!$user) return false;
-
+                if (!$user->email_verified_at) {
+                            return false;
+                        }
+ 
                 // Menu default 2 selalu tampil untuk semua role
                 if ($menu->default == 2) {
                     return true;
