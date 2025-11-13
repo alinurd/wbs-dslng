@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
 
             $hasMenuAccess = function ($menu) use ($user) {
                 if (!$user) return false;
-                if (!$user->email_verified_at) {
+                if (!$user->email_verified_at && $user->role_id == 1) {
                             return false;
                         }
  
