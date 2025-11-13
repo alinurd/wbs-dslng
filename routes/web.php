@@ -6,13 +6,33 @@ use App\Livewire\Auth\RegisterForm;
 use App\Livewire\Blog\Blog;
 use App\Livewire\Blog\BlogForm;
 use App\Livewire\Combo\IndexManual as IndexManual;
+use App\Livewire\Menus\Form as MenuForm;
 // use App\Livewire\Combo\Index as ComboIndex;
 
-use App\Livewire\Menus\Form as MenuForm;
-
 use App\Livewire\Menus\Index as MenuIndex;
+
 use App\Livewire\News\Detail as NewsDetail;
 use App\Livewire\News\Index as NewsIndex;
+
+
+
+use App\Livewire\Param\ParamAduan;
+use App\Livewire\Param\ParamDirektorat;
+use App\Livewire\Param\ParamEmailnotif;
+use App\Livewire\Param\ParamForward;
+use App\Livewire\Param\ParamJenis;
+use App\Livewire\Param\ParamNotif;
+use App\Livewire\Param\ParamPertanyaan;
+use App\Livewire\Param\ParamStsAduan;
+
+
+
+
+
+
+
+
+
 use App\Livewire\PermissionManagement;
 use App\Livewire\Roles\Editor as RoleEditor;
 
@@ -61,6 +81,15 @@ Route::middleware(['auth'])->group(function () {
  
 
     Route::get('/combo', IndexManual::class)->name('combo');
+    Route::get('/jenis', ParamJenis::class)->name('jenis');
+    Route::get('/jenis', ParamAduan::class)->name('jenis');
+    Route::get('/aduan', ParamAduan::class)->name('aduan');
+    Route::get('/statusaduan', ParamStsAduan::class)->name('statusaduan');
+    Route::get('/pertanyaan', ParamPertanyaan::class)->name('pertanyaan');
+    Route::get('/forward', ParamForward::class)->name('forward');
+    Route::get('/direktorat', ParamDirektorat::class)->name('direktorat');
+    Route::get('/emailnotif', ParamEmailnotif::class)->name('emailnotif');
+    Route::get('/paramnotif', paramNotif::class)->name('paramnotif');
     
     
     // Route::get('/blog', Blog::class)->name('blog');
