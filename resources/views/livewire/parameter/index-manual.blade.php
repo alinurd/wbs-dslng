@@ -123,19 +123,20 @@
                         <th wire:click="sortBy('data')"
                             class="px-4 py-3 text-left text-sm font-medium text-white uppercase tracking-wider border-b border-[rgb(0,95,160)] cursor-pointer group transition-all duration-200">
                             <div class="group inline-flex items-center gap-x-2 hover:text-gray-200">
-                                Data
+                                Data Id
                                 <i
                                     class="fas {{ $this->getSortIcon('data') }} text-gray-300 group-hover:text-gray-200 transition-all duration-200"></i>
                             </div>
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-sm font-medium text-white uppercase tracking-wider border-b border-[rgb(0,95,160)]">
-                            Param Int
+                        <th wire:click="sortBy('data')"
+                            class="px-4 py-3 text-left text-sm font-medium text-white uppercase tracking-wider border-b border-[rgb(0,95,160)] cursor-pointer group transition-all duration-200">
+                            <div class="group inline-flex items-center gap-x-2 hover:text-gray-200">
+                                Data En
+                                <i
+                                    class="fas {{ $this->getSortIcon('data') }} text-gray-300 group-hover:text-gray-200 transition-all duration-200"></i>
+                            </div>
                         </th>
-                        <th
-                            class="px-4 py-3 text-left text-sm font-medium text-white uppercase tracking-wider border-b border-[rgb(0,95,160)]">
-                            Param Str
-                        </th>
+                         
                         <th wire:click="sortBy('is_active')"
                             class="px-4 py-3 text-center text-sm font-medium text-white uppercase tracking-wider border-b border-[rgb(0,95,160)] cursor-pointer group transition-all duration-200">
                             <div class="group inline-flex items-center gap-x-2 hover:text-gray-200">
@@ -173,14 +174,13 @@
                                 {{ $combo->kelompok }}
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 border-b border-gray-100">
-                                {{ $combo->data }}
+                                {{ $combo->data_id }}
                             </td>
+                             
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 border-b border-gray-100">
-                                {{ $combo->param_int ?? '-' }}
+                                {{ $combo->data_en }}
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 border-b border-gray-100">
-                                {{ $combo->param_str ?? '-' }}
-                            </td>
+                             
                             <td class="px-4 py-3 whitespace-nowrap text-center text-sm border-b border-gray-100">
                                 <span
                                     class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $combo->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} transition-all duration-200">
@@ -303,7 +303,7 @@
                                  
 
                                 <div class="mb-3">
-                                    <label class="form-label font-medium text-gray-700">Data <span
+                                    <label class="form-label font-medium text-gray-700">Data Id <span
                                             class="text-red-500">*</span></label>
                                     <input type="text" wire:model="data_en"
                                         class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error('data_en') border-red-500 @enderror"
@@ -314,7 +314,7 @@
                                 </div>
                                  
                                 <div class="mb-3">
-                                    <label class="form-label font-medium text-gray-700">Data <span
+                                    <label class="form-label font-medium text-gray-700">Data En<span
                                             class="text-red-500">*</span></label>
                                     <input type="text" wire:model="data_id"
                                         class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error('data_id') border-red-500 @enderror"

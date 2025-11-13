@@ -82,14 +82,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/combo', IndexManual::class)->name('combo');
     Route::get('/jenis', ParamJenis::class)->name('jenis');
-    Route::get('/jenis', ParamAduan::class)->name('jenis');
+    // Route::get('/jenis', ParamAduan::class)->name('jenis');
     Route::get('/aduan', ParamAduan::class)->name('aduan');
     Route::get('/statusaduan', ParamStsAduan::class)->name('statusaduan');
     Route::get('/pertanyaan', ParamPertanyaan::class)->name('pertanyaan');
     Route::get('/forward', ParamForward::class)->name('forward');
     Route::get('/direktorat', ParamDirektorat::class)->name('direktorat');
     Route::get('/emailnotif', ParamEmailnotif::class)->name('emailnotif');
-    Route::get('/paramnotif', paramNotif::class)->name('paramnotif');
+    Route::get('/paramnotif', ParamNotif::class)->name('paramnotif');
     
     
     // Route::get('/blog', Blog::class)->name('blog');

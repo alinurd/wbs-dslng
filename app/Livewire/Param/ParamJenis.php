@@ -13,6 +13,7 @@ class ParamJenis extends Component
     use WithPagination;
 
     public $title = "Jenis";
+    public $filterKelompok = "jenis";
     public $search = '';
     public $perPage = 10;
     public $sortField = 'created_at';
@@ -27,31 +28,28 @@ class ParamJenis extends Component
     // Form fields
     public $comboId;
     public $kelompok = '';
-    public $data = '';
-    public $param_int = '';
-    public $param_str = '';
+    public $data_id = '';
+    public $data_en = ''; 
     public $is_active = true;
 
     // Bulk actions
     public $selectedItems = [];
     public $selectAll = false;
 
-    // Filter fields
-    public $filterKelompok = '';
+    // Filter fields 
     public $filterStatus = '';
 
     protected $rules = [
-        'kelompok' => 'required|string|max:255',
-        'data' => 'required|string|max:255',
-        'param_int' => 'nullable|numeric',
-        'param_str' => 'nullable|string|max:255',
+         'data_id' => 'required|string|max:255',
+         'data_en' => 'required|string|max:255',
         'is_active' => 'boolean',
     ];
 
     protected $messages = [
-        'kelompok.required' => 'Kelompok wajib diisi!',
-        'data.required' => 'Data wajib diisi!',
-        'param_int.numeric' => 'Param Int harus berupa angka!',
+       
+        'data_en.required' => 'Data Id wajib diisi!',
+        'data_id.required' => 'Data En wajib diisi!',
+        'is_active.required' => 'Status wajib diisi!',
     ];
 
     public function mount()
@@ -68,27 +66,27 @@ class ParamJenis extends Component
         // Search functionality
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('kelompok', 'like', '%' . $this->search . '%')
-                  ->orWhere('data', 'like', '%' . $this->search . '%')
-                  ->orWhere('param_str', 'like', '%' . $this->search . '%');
+                $q->where('data_id', 'like', '%' . $this->search . '%')
+                  ->orWhere('data_en', 'like', '%' . $this->search . '%');
             });
         }
 
         // Filter functionality
-        if ($this->filterKelompok) {
-            $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
-        }
-
-        if ($this->filterStatus !== '') {
-            $query->where('is_active', $this->filterStatus);
-        }
-
+        // if ($this->filterKelompok) {
+            // $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
+            // }
+            
+            if ($this->filterStatus !== '') {
+                $query->where('is_active', $this->filterStatus);
+            }
+            
+            $query->where('kelompok', 'jenis' );
         // Sorting
         $query->orderBy($this->sortField, $this->sortDirection);
 
         $combos = $query->paginate($this->perPage);
 
-        return view('livewire.combo.index-manual', [
+        return view('livewire.parameter.index-manual', [
             'combos' => $combos,
             'title' => "Combo",
             'permissions' => module_permissions('combo')['can'] ?? []
@@ -191,8 +189,7 @@ class ParamJenis extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('kelompok', 'like', '%' . $this->search . '%')
-                  ->orWhere('data', 'like', '%' . $this->search . '%')
-                  ->orWhere('param_str', 'like', '%' . $this->search . '%');
+                  ->orWhere('data', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -272,9 +269,8 @@ class ParamJenis extends Component
 
         $this->comboId = $combo->id;
         $this->kelompok = $combo->kelompok;
-        $this->data = $combo->data;
-        $this->param_int = $combo->param_int;
-        $this->param_str = $combo->param_str;
+        $this->data_id = $combo->data_id;
+        $this->data_en = $combo->data_en;
         $this->is_active = $combo->is_active;
 
         $this->showModal = true;
@@ -291,10 +287,9 @@ class ParamJenis extends Component
             
             $combo = Combo::findOrFail($this->comboId);
             $combo->update([
-                'kelompok' => $this->kelompok,
-                'data' => $this->data,
-                'param_int' => $this->param_int,
-                'param_str' => $this->param_str,
+                'kelompok' => $this->filterKelompok,
+                'data_id' => $this->data_id,
+                'data_en' => $this->data_en,
                 'is_active' => $this->is_active,
             ]);
 
@@ -304,10 +299,9 @@ class ParamJenis extends Component
             $this->validate();
 
             Combo::create([
-                'kelompok' => $this->kelompok,
-                'data' => $this->data,
-                'param_int' => $this->param_int,
-                'param_str' => $this->param_str,
+                 'kelompok' => $this->filterKelompok,
+                'data_id' => $this->data_id,
+                'data_en' => $this->data_en,
                 'is_active' => $this->is_active,
             ]);
 
@@ -342,9 +336,8 @@ class ParamJenis extends Component
             'data' => [
                 'ID' => $combo->id,
                 'Kelompok' => $combo->kelompok,
-                'Data' => $combo->data,
-                'Param Int' => $combo->param_int ?? '-',
-                'Param Str' => $combo->param_str ?? '-',
+                'Data Id' => $combo->data_id,
+                'Data En' => $combo->data_en,
                 'Status' => $combo->is_active ? 'Aktif' : 'Nonaktif',
                 'Dibuat Pada' => $combo->created_at->format('d/m/Y H:i'),
                 'Diupdate Pada' => $combo->updated_at->format('d/m/Y H:i'),
@@ -371,8 +364,7 @@ class ParamJenis extends Component
     private function resetForm()
     {
         $this->reset([
-            'comboId', 'kelompok', 'data', 'param_int', 
-            'param_str', 'is_active', 'updateMode'
+            'comboId', 'data_id' , 'data_en', 'is_active', 'updateMode'
         ]);
         $this->resetErrorBag();
     }
