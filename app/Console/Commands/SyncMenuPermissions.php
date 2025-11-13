@@ -13,7 +13,7 @@ class SyncMenuPermissions extends Command
 
     public function handle(): void
     {
-        $actions = ['view', 'create', 'edit', 'delete', 'manage'];
+        $actions = ['view', 'create', 'edit', 'delete', 'index'];
 
         $menus = Menu::all();
 
