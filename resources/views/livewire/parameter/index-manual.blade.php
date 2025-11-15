@@ -1,11 +1,8 @@
 <div>
     <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
     <div class="container-fluid py-4">
-
-        <!-- Header Section -->
         <div class="w-full">
-            <div class="mb-4 flex flex-col sm:flex-row items-center gap-3">
-                <!-- Action Buttons -->
+            <div class="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                 @include('livewire.components.action-bar', [
                     'permissions' => $permissions,
                     'selectedItems' => $selectedItems,
@@ -14,9 +11,7 @@
                     'onExportPdf' => "export('pdf')",
                     'onDeleteBulk' => 'deleteBulk',
                 ])
-
-                <!-- Search & Filter -->
-                <div class="flex items-center gap-2 sm:flex-1">
+                <div class="flex items-center gap-2 justify-end sm:flex-1">
                     @include('livewire.components.search-filter', [
                         'perPage' => $perPage,
                         'search' => $search,
@@ -47,79 +42,77 @@
                 'onDelete' => 'delete',
                 'onSelectItem' => 'selectedItems',
                 'firstItem' => $_records->firstItem(),
-            ]) 
+            ])
         </div>
 
         <!-- Form Modal -->
-    @include('livewire.components.form', [
-    'showModal' => $showModal,
-    'updateMode' => $updateMode,
-    'form' => $form,
-    'onClose' => 'closeModal',
-    'onSave' => 'save',
-    'title' => $title,
-    'size' => 'xl',
-    'cols' => 1,
-    'fields' => [
-        [
-            'type' => 'text',
-            'model' => 'form.data_id',
-            'label' => 'Data Indonesia',
-            'required' => true,
-            'placeholder' => 'Masukan Data....',
-            'error' => 'form.data_id',
-        ],
-        [
-            'type' => 'text',
-            'label' => 'Data English', 
-            'model' => 'form.data_en',
-            'error' => 'form.data_en',
-            'required' => true,
-            'placeholder' => 'Masukkan nama dalam bahasa Inggris',
-        ],
-        [
-            'type' => 'switch-single',
-            'label' => 'Status Aktif',
-            'model' => 'form.is_active',
-            'error' => 'form.is_active',
-            'on_label' => 'AKTIF',
-            'off_label' => 'NONAKTIF'
-        ],
-    ]
-])
-
-<!-- Include Filter Modal -->
-@include('livewire.components.form-filtering', [
-    'showFilterModal' => $showFilterModal,
-    'filters' => [
-        [
-            'type' => 'text',
-            'label' => 'Filter Data ID',
-            'model' => 'filters.data_id', 
-            'placeholder' => 'Cari data ID...',
-        ],
-        [
-            'type' => 'text',
-            'label' => 'Filter Data EN',
-            'model' => 'filters.data_en', 
-            'placeholder' => 'Cari data EN...',
-        ],
-        [
-            'type' => 'select',
-            'label' => 'Filter Status',
-            'model' => 'filters.filterStatus',
-            'options' => [
-                '1' => 'Aktif',
-                '0' => 'Nonaktif',
+        @include('livewire.components.form', [
+            'showModal' => $showModal,
+            'updateMode' => $updateMode,
+            'form' => $form,
+            'onClose' => 'closeModal',
+            'onSave' => 'save',
+            'title' => $title,
+            'size' => 'xl',
+            'cols' => 1,
+            'fields' => [
+                [
+                    'type' => 'text',
+                    'model' => 'form.data_id',
+                    'label' => 'Data Indonesia',
+                    'required' => true,
+                    'placeholder' => 'Masukan Data....',
+                    'error' => 'form.data_id',
+                ],
+                [
+                    'type' => 'text',
+                    'label' => 'Data English',
+                    'model' => 'form.data_en',
+                    'error' => 'form.data_en',
+                    'required' => true,
+                    'placeholder' => 'Masukkan nama dalam bahasa Inggris',
+                ],
+                [
+                    'type' => 'switch-single',
+                    'label' => 'Status Aktif',
+                    'model' => 'form.is_active',
+                    'error' => 'form.is_active',
+                    'on_label' => 'AKTIF',
+                    'off_label' => 'NONAKTIF',
+                ],
             ],
-            'placeholder' => 'Semua Status',
-        ],
-    ],
-    'onClose' => 'closeFilterModal',
-    'onReset' => 'resetFilter',
-    'onApply' => 'applyFilter',
-])
+        ])
 
-
+        <!-- Include Filter Modal -->
+        @include('livewire.components.form-filtering', [
+            'showFilterModal' => $showFilterModal,
+            'filters' => [
+                [
+                    'type' => 'text',
+                    'label' => 'Filter Data ID',
+                    'model' => 'filters.data_id',
+                    'placeholder' => 'Cari data ID...',
+                ],
+                [
+                    'type' => 'text',
+                    'label' => 'Filter Data EN',
+                    'model' => 'filters.data_en',
+                    'placeholder' => 'Cari data EN...',
+                ],
+                [
+                    'type' => 'select',
+                    'label' => 'Filter Status',
+                    'model' => 'filters.filterStatus',
+                    'options' => [
+                        '1' => 'Aktif',
+                        '0' => 'Nonaktif',
+                    ],
+                    'placeholder' => 'Semua Status',
+                ],
+            ],
+            'onClose' => 'closeFilterModal',
+            'onReset' => 'resetFilter',
+            'onApply' => 'applyFilter',
+        ])
     </div>
 </div>
