@@ -77,25 +77,128 @@ class ParamDirektorat extends Root
         return $query;
     }
 
+    /**
+ * Get trilevel hierarchy for a specific owner
+ */
+public function getHierarchy($ownerId)
+{
+    $owner = Owner::with(['parent', 'children.children'])->findOrFail($ownerId);
     
-    public function view($id)
-    {
-        can_any([strtolower($this->modul).'.view']);
-        
-        $record = $this->model::with('parent')->findOrFail($id);
+    $hierarchy = $owner->getHierarchyForDisplay();
+    
+    return $hierarchy;
+}
 
-        $this->detailData = [
-             'Parent' => $record->parent->owner_name,
-             'Indonesia' => $record->owner_name_1,
-            'English' => $record->owner_name,
-            'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
-            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
-            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
-        ];
-        
-        $this->detailTitle = "Detail " . $this->title;
-        $this->showDetailModal = true;
+/**
+ * Get all children for a specific parent
+ */
+public function getChildrenByParent($parentId)
+{
+    if ($parentId == 0) {
+        // Get root level owners (no parent)
+        $children = Owner::where('parent_id', 0)
+                        ->where('is_active', 1)
+                        ->get();
+    } else {
+        // Get children of specific parent
+        $children = Owner::where('parent_id', $parentId)
+                        ->where('is_active', 1)
+                        ->with('children') // Include grandchildren if needed
+                        ->get();
     }
+    
+    return $children;
+}
+
+/**
+ * View detail with hierarchy
+ */
+public function view($id)
+{
+    can_any([strtolower($this->modul).'.view']);
+    
+    $record = Owner::with(['parent', 'children'])->findOrFail($id);
+    
+    // Pastikan data hierarchy dalam format yang benar
+    $hierarchyData = [];
+    
+    if ($record->parent) {
+        $hierarchyData['parent'] = [$record->parent->owner_name];
+        
+        if ($record->parent->parent) {
+            $hierarchyData['grandparent'] = [$record->parent->parent->owner_name];
+        }
+    }
+    
+    $hierarchyData['current'] = [$record->owner_name];
+    
+    if ($record->children->isNotEmpty()) {
+        $hierarchyData['children'] = $record->children->pluck('owner_name')->toArray();
+    }
+    
+    $this->detailData = [
+        'Struktur Hirarki' => $hierarchyData,
+        'Nama Indonesia' => $record->owner_name,
+        'Nama English' => $record->owner_name_1,
+        'Kode Owner' => $record->owner_code ?? '-',
+        'Level Number' => $record->level_no ?? '-',
+        'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
+        'Status Lapor' => $record->sts_lapor ? 'Aktif' : 'Nonaktif',
+        'Status Lapor Kerja' => $record->sts_lapor_kerja ? 'Aktif' : 'Nonaktif',
+        'Jumlah Children' => $record->children->count(),
+        'Daftar Children' => $record->children->pluck('owner_name')->toArray(),
+        'Deskripsi' => $record->description ?? '-',
+        'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
+        'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+    ];
+    
+    $this->detailTitle = "Detail " . $this->title;
+    $this->showDetailModal = true;
+}
+
+
+/**
+ * Get tree structure for dropdown/select
+ */
+public function getTreeForSelect()
+{
+    $owners = Owner::where('is_active', 1)
+                  ->with('children')
+                  ->where('parent_id', 0)
+                  ->get();
+    
+    $tree = [];
+    foreach ($owners as $owner) {
+        $tree = array_merge($tree, $this->buildTree($owner));
+    }
+    
+    return $tree;
+}
+
+private function buildTree($owner, $level = 0)
+{
+    $prefix = str_repeat('-- ', $level);
+    $tree = [
+        $owner->id => $prefix . $owner->owner_name
+    ];
+    
+    foreach ($owner->children as $child) {
+        $tree = array_merge($tree, $this->buildTree($child, $level + 1));
+    }
+    
+    return $tree;
+}
+
+/**
+ * Check if owner has children
+ */
+public function hasChildren($ownerId)
+{
+    return Owner::where('parent_id', $ownerId)
+               ->where('is_active', 1)
+               ->exists();
+}
+
 
     // METHOD UNTUK TUTUP DETAIL MODAL
     public function closeDetailModal()
