@@ -182,6 +182,43 @@
                         'cerai' => 'Cerai',
                     ],
                 ],
+                // SWITCH MULTI OPTION
+        [
+            'type' => 'switch',
+            'label' => 'Status Pernikahan',
+            'model' => 'form.status_nikah',
+            'error' => 'status_nikah',
+            'helper' => 'Pilih status pernikahan Anda',
+            'options' => [
+                'belum' => 'Belum Menikah',
+                'menikah' => 'Sudah Menikah', 
+                'cerai' => 'Cerai'
+            ],
+        ],
+
+        // SWITCH SINGLE (ON/OFF)
+        [
+            'type' => 'switch-single',
+            'label' => 'Status Aktif',
+            'model' => 'form.is_active',
+            'error' => 'is_active',
+            'helper' => 'Aktifkan atau nonaktifkan data ini',
+            'on_label' => 'Aktif',
+            'off_label' => 'Nonaktif'
+        ],
+
+        // SWITCH DENGAN OPTION BOOLEAN
+        [
+            'type' => 'switch',
+            'label' => 'Status User',
+            'model' => 'form.status_user',
+            'error' => 'status_user',
+            'helper' => 'Tentukan status user',
+            'options' => [
+                1 => 'Aktif',
+                0 => 'Tidak Aktif'
+            ],
+        ],
         
                 // DATE
                 [

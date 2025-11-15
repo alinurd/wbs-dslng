@@ -16,47 +16,33 @@ public $views = "parameter.index-manual";
     public $sortDirection = 'desc';
     public $model = Combo::class;
     public $kelompok = 'aduan';
-    public $permissions = 'combo';
+    public $modul = 'combo';
 
     public $form = [
         'kelompok' => 'aduan',
-        'data' => '',
-        'param_int' =>0,
-        'param_str' => '',
-        'is_active' => true,
+        'data_id' => '',
+        'data_en' => '',
+        'is_active' => 1,
     ];
 
     public $filters = [
-        'kelompok' => '',
-        'status' => '',
+        'kelompok' => 'aduan',
+        // 'is_active' => 1,
     ];
 
     public function rules()
     {
         return [
             'form.kelompok' => 'required|string|max:255',
-            'form.data' => 'required|string|max:255',
-            'form.param_int' => 'nullable|numeric',
-            'form.param_str' => 'nullable|string|max:255',
+            'form.data_id' => 'required|string|max:255',
+            'form.data_en' => 'required|string|max:255',
             'form.is_active' => 'boolean',
         ];
     }
 
-    public function filterDeafult()
-    {
-        return [
-            [
-                'f'=>'kelompok',
-                'v'=>$this->kelompok,
-            ],
-            [
-                'f'=>'is_active',
-                'v'=>1,
-            ]
-            ];
-    }
+   
     public function columns()
     {
-        return ['kelompok', 'data', 'param_str'];
+        return ['kelompok', 'data_id', 'data_en'];
     }
 }

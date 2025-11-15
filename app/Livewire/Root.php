@@ -13,7 +13,7 @@ abstract class Root extends Component
 
     // ================= PROPERTIES ==================
     public $title = 'Title';
-    public $permissions = 'combo';
+    public $modul = 'combo';
     public $views = 'index';
     public $model;
     
@@ -46,7 +46,7 @@ abstract class Root extends Component
         $this->title = $this->title ?: class_basename($this->model);
 
         // Hak akses
-        can_any([strtolower($this->permissions).'.view']);
+        can_any([strtolower($this->modul).'.view']);
 
         // Locale
         $this->locale = Session::get('locale', config('app.locale'));
@@ -59,18 +59,18 @@ abstract class Root extends Component
     {
         $query = ($this->model)::query();
 
-        if (method_exists($this, 'filterDeafult')) {
-            $filterDeafult = $this->filterDeafult();
-            if (is_array($filterDeafult) && count($filterDeafult)) {
-                $query->where(function ($q) use ($filterDeafult) {
-                    foreach ($filterDeafult as $col) {
-                        if (!empty($col['f'])) {
-                            $q->Where($col['f'], $col['v'] );
-                        }
-                    }
-                });
-            }
-        }
+        // if (method_exists($this, 'filterDeafult')) {
+        //     $filterDeafult = $this->filterDeafult();
+        //     if (is_array($filterDeafult) && count($filterDeafult)) {
+        //         $query->where(function ($q) use ($filterDeafult) {
+        //             foreach ($filterDeafult as $col) {
+        //                 if (!empty($col['f'])) {
+        //                     $q->Where($col['f'], $col['v'] );
+        //                 }
+        //             }
+        //         });
+        //     }
+        // }
         
         if ($this->search && method_exists($this, 'columns')) {
 
@@ -105,10 +105,11 @@ abstract class Root extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
+            // \dd(module_permissions(strtolower($this->modul))['can'] ?? []);
         return view($this->viewPath(), [
             '_records'    => $items,
             'title'       => $this->title,
-            'permissions' => module_permissions(strtolower($this->permissions))['can'] ?? []
+            'permissions' => module_permissions(strtolower($this->modul))['can'] ?? []
         ]);
     }
 
@@ -123,7 +124,7 @@ abstract class Root extends Component
 
     public function create()
     {
-        can_any([strtolower($this->permissions).'.create']);
+        can_any([strtolower($this->modul).'.create']);
         $this->resetForm();
         $this->updateMode = false;
         $this->showModal = true;
@@ -134,7 +135,7 @@ abstract class Root extends Component
 
     public function edit($id)
     {
-        can_any([strtolower($this->permissions).'.edit']);
+        can_any([strtolower($this->modul).'.edit']);
 
         $record = ($this->model)::findOrFail($id);
 
@@ -166,7 +167,7 @@ abstract class Root extends Component
             ->toArray();
         if ($this->updateMode) {
 
-            can_any([strtolower($this->permissions).'.edit']);
+            can_any([strtolower($this->modul).'.edit']);
 
             $record = $modelClass::findOrFail($this->form['id']);
             $record->update($payload);
@@ -175,7 +176,7 @@ abstract class Root extends Component
 
         } else {
 
-            can_any([strtolower($this->permissions).'.create']);
+            can_any([strtolower($this->modul).'.create']);
 
             $modelClass::create($payload);
 
@@ -190,7 +191,7 @@ abstract class Root extends Component
 
     public function delete($id)
     {
-        can_any([strtolower($this->permissions).'.delete']);
+        can_any([strtolower($this->modul).'.delete']);
 
         ($this->model)::findOrFail($id)->delete();
 
@@ -203,7 +204,7 @@ abstract class Root extends Component
     // =================== BULK DELETE ===================
     public function deleteBulk()
     {
-        can_any([strtolower($this->permissions).'.delete']);
+        can_any([strtolower($this->modul).'.delete']);
 
         if (count($this->selectedItems)) {
             ($this->model)::whereIn('id', $this->selectedItems)->delete();
@@ -250,7 +251,7 @@ abstract class Root extends Component
     // ================= VIEW MODAL ======================
     public function view($id)
     {
-        can_any([strtolower($this->permissions).'.view']);
+        can_any([strtolower($this->modul).'.view']);
 
         $record = ($this->model)::findOrFail($id);
 

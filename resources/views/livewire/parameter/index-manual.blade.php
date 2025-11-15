@@ -37,9 +37,8 @@
                 'permissions' => $permissions,
                 'columns' => [
                     'kelompok' => 'Kelompok',
-                    'data' => 'Data',
-                    'param_int' => 'Param Int',
-                    'param_str' => 'Param Str',
+                    'data_id' => 'Data Id',
+                    'data_en' => 'Data En',
                     'is_active' => 'Status',
                     'created_at' => 'Dibuat Pada',
                 ],
@@ -92,178 +91,42 @@
             'form' => $form,
             'onClose' => 'closeModal',
             'onSave' => 'save',
-            'size' => 'md',
+            'size' => 'xl',
+            'cols' => 1,
             'title' => 'Combo',
             'fields' => [
                 // TEXT
                 [
                     'type' => 'text',
-                    'label' => 'Nama Lengkap',
-                    'model' => 'form.nama',
-                    'error' => 'nama',
+                    'label' => 'Data Indonesia',
+                    'model' => 'form.data_id',
+                    'error' => 'data_id',
                     'required' => true,
-                    'placeholder' => 'Masukkan nama lengkap',
-                    'helper' => 'Nama lengkap sesuai KTP',
+                    'placeholder' => 'Masukan Data....',
+                    'helper' => 'Data dalam bahasa indonesia',
                 ],
-        
-                // NUMBER
                 [
-                    'type' => 'number',
-                    'label' => 'Umur',
-                    'model' => 'form.umur',
-                    'error' => 'umur',
-                    'min' => 0,
-                    'max' => 100,
-                    'placeholder' => 'Masukkan umur',
-                ],
-        
-                // EMAIL
-                [
-                    'type' => 'email',
-                    'label' => 'Email',
-                    'model' => 'form.email',
-                    'error' => 'email',
+                    'type' => 'text',
+                    'label' => 'Data English',
+                    'model' => 'form.data_en',
+                    'error' => 'data_id',
                     'required' => true,
-                    'placeholder' => 'email@contoh.com',
+                    'placeholder' => 'Masukan Data....',
+                    'helper' => 'Data dalam bahasa English',
                 ],
-        
-                // PASSWORD
-                [
-                    'type' => 'password',
-                    'label' => 'Password',
-                    'model' => 'form.password',
-                    'error' => 'password',
-                    'placeholder' => 'Masukkan password',
-                ],
-        
-                // SELECT
-                [
-                    'type' => 'select',
-                    'label' => 'Jenis Kelamin',
-                    'model' => 'form.jenis_kelamin',
-                    'error' => 'jenis_kelamin',
-                    'options' => [
-                        'L' => 'Laki-laki',
-                        'P' => 'Perempuan',
-                    ],
-                    'placeholder' => 'Pilih jenis kelamin',
-                ],
-        
-                // TEXTAREA
-                [
-                    'type' => 'textarea',
-                    'label' => 'Alamat',
-                    'model' => 'form.alamat',
-                    'error' => 'alamat',
-                    'rows' => 4,
-                    'placeholder' => 'Masukkan alamat lengkap',
-                    'colspan' => 2,
-                ],
-        
-                // CHECKBOX
-                [
-                    'type' => 'checkbox',
-                    'label' => 'Status Aktif',
-                    'model' => 'form.is_active',
-                    'checkbox_label' => 'Aktifkan user',
-                ],
-        
-                // RADIO
-                [
-                    'type' => 'radio',
-                    'label' => 'Status Pernikahan',
-                    'model' => 'form.status_nikah',
-                    'error' => 'status_nikah',
-                    'options' => [
-                        'belum' => 'Belum Menikah',
-                        'menikah' => 'Sudah Menikah',
-                        'cerai' => 'Cerai',
-                    ],
-                ],
-        
-                // DATE
-                [
-                    'type' => 'date',
-                    'label' => 'Tanggal Lahir',
-                    'model' => 'form.tanggal_lahir',
-                    'error' => 'tanggal_lahir',
-                ],
-        
-                // TIME
-                [
-                    'type' => 'time',
-                    'label' => 'Waktu Meeting',
-                    'model' => 'form.waktu_meeting',
-                    'error' => 'waktu_meeting',
-                ],
-        
-                // DATETIME
-                [
-                    'type' => 'datetime',
-                    'label' => 'Tanggal & Waktu',
-                    'model' => 'form.tanggal_waktu',
-                    'error' => 'tanggal_waktu',
-                ],
-        
-                // FILE
-                [
-                    'type' => 'file',
-                    'label' => 'Upload Foto',
-                    'model' => 'form.foto',
-                    'error' => 'foto',
-                    'accept' => 'image/*',
-                ],
-        
-                // COLOR
-                [
-                    'type' => 'color',
-                    'label' => 'Warna Favorit',
-                    'model' => 'form.warna',
-                    'error' => 'warna',
-                ],
-        
-                // RANGE
-                [
-                    'type' => 'range',
-                    'label' => 'Tingkat Kepuasan',
-                    'model' => 'form.kepuasan',
-                    'error' => 'kepuasan',
-                    'min' => 0,
-                    'max' => 10,
-                ],
-        
-                // URL
-                [
-                    'type' => 'url',
-                    'label' => 'Website',
-                    'model' => 'form.website',
-                    'error' => 'website',
-                    'placeholder' => 'https://example.com',
-                ],
-        
-                // TEL
-                [
-                    'type' => 'tel',
-                    'label' => 'Nomor Telepon',
-                    'model' => 'form.telepon',
-                    'error' => 'telepon',
-                    'placeholder' => '08123456789',
-                ],
-        
-                // READONLY
-                [
-                    'type' => 'readonly',
-                    'label' => 'ID User',
-                    'value' => 'USR-001',
-                ],
-        
-                // CUSTOM HTML
-                [
-                    'type' => 'custom',
-                    'label' => 'Informasi Tambahan',
-                    'html' =>
-                        '<div class="bg-blue-50 p-3 rounded-lg"><p class="text-blue-700">Ini adalah informasi custom</p></div>',
-                ],
+               
+
+        // SWITCH SINGLE (ON/OFF)
+        [
+            'type' => 'switch-single',
+            'label' => 'Status Aktif',
+            'model' => 'form.is_active',
+            'error' => 'is_active',
+            'helper' => 'Aktifkan atau nonaktifkan data ini',
+            'on_label' => 'Aktif',
+            'off_label' => 'Nonaktif'
+        ],
+
             ],
         ])
 

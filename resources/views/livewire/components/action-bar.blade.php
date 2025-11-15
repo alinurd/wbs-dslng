@@ -7,7 +7,7 @@
     'onExportPdf' => '',
     'onDeleteBulk' => ''
 ])
-
+{{-- {{dd($permissions)}} --}}
 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
     @if ($permissions['create'] ?? false)
         <button wire:click="{{ $onCreate }}"
