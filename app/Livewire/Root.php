@@ -13,9 +13,10 @@ abstract class Root extends Component
 
     // ================= PROPERTIES ==================
     public $title = 'Title';
+    public $permissions = 'combo';
     public $views = 'index';
-    public $model;               // wajib di-set oleh child
-
+    public $model;
+    
     public $search = '';
     public $perPage = 10;
     public $sortField = 'created_at';
@@ -45,7 +46,7 @@ abstract class Root extends Component
         $this->title = $this->title ?: class_basename($this->model);
 
         // Hak akses
-        can_any([strtolower($this->title).'.view']);
+        can_any([strtolower($this->permissions).'.view']);
 
         // Locale
         $this->locale = Session::get('locale', config('app.locale'));
@@ -58,7 +59,19 @@ abstract class Root extends Component
     {
         $query = ($this->model)::query();
 
-        // pencarian jika child memiliki columns()
+        if (method_exists($this, 'filterDeafult')) {
+            $filterDeafult = $this->filterDeafult();
+            if (is_array($filterDeafult) && count($filterDeafult)) {
+                $query->where(function ($q) use ($filterDeafult) {
+                    foreach ($filterDeafult as $col) {
+                        if (!empty($col['f'])) {
+                            $q->Where($col['f'], $col['v'] );
+                        }
+                    }
+                });
+            }
+        }
+        
         if ($this->search && method_exists($this, 'columns')) {
 
             $columns = $this->columns();
@@ -95,7 +108,7 @@ abstract class Root extends Component
         return view($this->viewPath(), [
             '_records'    => $items,
             'title'       => $this->title,
-            'permissions' => module_permissions(strtolower($this->title))['can'] ?? []
+            'permissions' => module_permissions(strtolower($this->permissions))['can'] ?? []
         ]);
     }
 
@@ -110,7 +123,7 @@ abstract class Root extends Component
 
     public function create()
     {
-        can_any([strtolower($this->title).'.create']);
+        can_any([strtolower($this->permissions).'.create']);
         $this->resetForm();
         $this->updateMode = false;
         $this->showModal = true;
@@ -121,7 +134,7 @@ abstract class Root extends Component
 
     public function edit($id)
     {
-        can_any([strtolower($this->title).'.edit']);
+        can_any([strtolower($this->permissions).'.edit']);
 
         $record = ($this->model)::findOrFail($id);
 
@@ -153,7 +166,7 @@ abstract class Root extends Component
             ->toArray();
         if ($this->updateMode) {
 
-            can_any([strtolower($this->title).'.edit']);
+            can_any([strtolower($this->permissions).'.edit']);
 
             $record = $modelClass::findOrFail($this->form['id']);
             $record->update($payload);
@@ -162,7 +175,7 @@ abstract class Root extends Component
 
         } else {
 
-            can_any([strtolower($this->title).'.create']);
+            can_any([strtolower($this->permissions).'.create']);
 
             $modelClass::create($payload);
 
@@ -177,7 +190,7 @@ abstract class Root extends Component
 
     public function delete($id)
     {
-        can_any([strtolower($this->title).'.delete']);
+        can_any([strtolower($this->permissions).'.delete']);
 
         ($this->model)::findOrFail($id)->delete();
 
@@ -190,7 +203,7 @@ abstract class Root extends Component
     // =================== BULK DELETE ===================
     public function deleteBulk()
     {
-        can_any([strtolower($this->title).'.delete']);
+        can_any([strtolower($this->permissions).'.delete']);
 
         if (count($this->selectedItems)) {
             ($this->model)::whereIn('id', $this->selectedItems)->delete();
@@ -237,7 +250,7 @@ abstract class Root extends Component
     // ================= VIEW MODAL ======================
     public function view($id)
     {
-        can_any([strtolower($this->title).'.view']);
+        can_any([strtolower($this->permissions).'.view']);
 
         $record = ($this->model)::findOrFail($id);
 
