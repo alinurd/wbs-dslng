@@ -119,4 +119,5 @@
             @endforelse
         </tbody>
     </table>
+     @include('livewire.components.pagination', ['records' => $records])
 </div>
