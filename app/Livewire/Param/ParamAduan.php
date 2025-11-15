@@ -17,12 +17,12 @@ public $views = "parameter.index-manual";
     public $model = Combo::class;
     public $kelompok = 'aduan';
     public $modul = 'combo';
-
+public $is_active = false;
     public $form = [
         'kelompok' => 'aduan',
-        'data_id' => '',
-        'data_en' => '',
-        'is_active' => 1,
+        'data_id' => null,
+        'data_en' => null,
+        'is_active' => false,
     ];
 
     public $filters = [

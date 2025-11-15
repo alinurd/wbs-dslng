@@ -114,18 +114,16 @@
                     'placeholder' => 'Masukan Data....',
                     'helper' => 'Data dalam bahasa English',
                 ],
-               
+               [
+    'type' => 'switch-single',
+    'label' => 'Status Aktif',
+    'model' => 'form.is_active',
+    'error' => 'is_active',
+    'helper' => 'Aktifkan atau nonaktifkan data ini',
+    'on_label' => 'Aktif',
+    'off_label' => 'Nonaktif'
+],
 
-        // SWITCH SINGLE (ON/OFF)
-        [
-            'type' => 'switch-single',
-            'label' => 'Status Aktif',
-            'model' => 'form.is_active',
-            'error' => 'is_active',
-            'helper' => 'Aktifkan atau nonaktifkan data ini',
-            'on_label' => 'Aktif',
-            'off_label' => 'Nonaktif'
-        ],
 
             ],
         ])

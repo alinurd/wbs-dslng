@@ -44,6 +44,10 @@
                                 @php
                                     $colSpan = $field['colspan'] ?? 1;
                                     $fieldClass = $colSpan == 2 ? 'md:col-span-2' : '';
+                                    
+                                    // Get field value from form array
+                                    $fieldName = str_replace('form.', '', $field['model']);
+                                    $fieldValue = $form[$fieldName] ?? null;
                                 @endphp
                                 
                                 <div class="mb-3 {{ $fieldClass }}">
@@ -62,7 +66,7 @@
                                                     <i class="fas fa-question-circle text-sm"></i>
                                                 </button>
                                                 <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-10">
-                                                    <div class="bg-gray-800 text-white text-xs rounded py-2 px-3 whitespace-nowrap shadow-lg">
+                                                    <div class="bg-gray-800 text-white text-xs rounded py-2 px-3 whitespace-nowrap shadow-lg max-w-xs">
                                                         {{ $field['helper'] }}
                                                         <div class="absolute top-full right-2 -mt-1 border-4 border-transparent border-t-gray-800"></div>
                                                     </div>
@@ -71,9 +75,9 @@
                                         @endif
                                     </div>
                                     
-                                    <!-- SWITCH TOGGLE -->
+                                    <!-- SWITCH TOGGLE MULTI OPTIONS -->
                                     @if($field['type'] === 'switch')
-                                        <div class="flex items-center space-x-3">
+                                        <div class="flex items-center space-x-6">
                                             @foreach($field['options'] ?? [] as $value => $label)
                                                 <label class="flex items-center cursor-pointer">
                                                     <div class="relative">
@@ -83,11 +87,13 @@
                                                                class="sr-only"
                                                                {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
                                                         <div class="block bg-gray-300 w-12 h-6 rounded-full transition-all duration-300 
-                                                            {{ $field['model'] && $form[Str::after($field['model'], 'form.')] == $value ? 'bg-[rgb(0,111,188)]' : '' }}"></div>
-                                                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all duration-300 
-                                                            {{ $field['model'] && $form[Str::after($field['model'], 'form.')] == $value ? 'transform translate-x-6' : '' }}"></div>
+                                                            {{ $fieldValue == $value ? 'bg-[rgb(0,111,188)]' : 'bg-gray-300' }}"></div>
+                                                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all duration-300 shadow-sm
+                                                            {{ $fieldValue == $value ? 'transform translate-x-6' : '' }}"></div>
                                                     </div>
-                                                    <div class="ml-3 text-sm font-medium text-gray-700">{{ $label }}</div>
+                                                    <div class="ml-3 text-sm font-medium text-gray-700 {{ $fieldValue == $value ? 'text-[rgb(0,111,188)] font-semibold' : '' }}">
+                                                        {{ $label }}
+                                                    </div>
                                                 </label>
                                             @endforeach
                                         </div>
@@ -96,26 +102,38 @@
                                         @enderror
 
                                     <!-- SWITCH TOGGLE SINGLE (ON/OFF) -->
-                                    @elseif($field['type'] === 'switch-single')
-                                        <label class="flex items-center cursor-pointer">
-                                            <div class="relative">
-                                                <input type="checkbox" 
-                                                       wire:model.defer="{{ $field['model'] }}"
-                                                       class="sr-only"
-                                                       {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
-                                                <div class="block bg-gray-300 w-12 h-6 rounded-full transition-all duration-300 
-                                                    {{ $form[Str::after($field['model'], 'form.')] ? 'bg-[rgb(0,111,188)]' : '' }}"></div>
-                                                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all duration-300 
-                                                    {{ $form[Str::after($field['model'], 'form.')] ? 'transform translate-x-6' : '' }}"></div>
-                                            </div>
-                                            <div class="ml-3 text-sm font-medium text-gray-700">
-                                                {{ $form[Str::after($field['model'], 'form.')] ? ($field['on_label'] ?? 'Aktif') : ($field['off_label'] ?? 'Nonaktif') }}
-                                            </div>
-                                        </label>
-                                        @error($field['error'])
-                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
-                                        @enderror
+                                    
+                                    <!-- SWITCH TOGGLE SINGLE (ON/OFF) - CUSTOM LABEL INSIDE -->
+@elseif($field['type'] === 'switch-single')
+    <label class="flex items-center cursor-pointer" wire:key="switch-{{ $fieldName }}">
+        <div class="relative">
+            <input type="checkbox" 
+                   wire:model="{{ $field['model'] }}"
+                   class="sr-only"
+                   {{ $field['disabled'] ?? false ? 'disabled' : '' }}
+                   wire:change="$refresh">
+            <div class="block w-20 h-6 rounded-full transition-all duration-300 relative overflow-hidden
+                {{ $fieldValue ? 'bg-[rgb(0,111,188)]' : 'bg-gray-400' }}">
+                <!-- ON Label -->
+                <div class="absolute inset-0 flex items-center justify-start px-3 transition-all duration-200
+                    {{ $fieldValue ? 'opacity-100' : 'opacity-0' }}">
+                    <span class="text-xs font-semibold text-white">{{ $field['on_label'] ?? 'ON' }}</span>
+                </div>
+                <!-- OFF Label -->
+                <div class="absolute inset-0 flex items-center justify-end px-3 transition-all duration-200
+                    {{ $fieldValue ? 'opacity-0' : 'opacity-100' }}">
+                    <span class="text-xs font-semibold text-white">{{ $field['off_label'] ?? 'OFF' }}</span>
+                </div>
+            </div>
+            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all duration-300 shadow-sm
+                {{ $fieldValue ? 'transform translate-x-16' : '' }}"></div>
+        </div>
+    </label>
+    @error($field['error'])
+        <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+    @enderror
 
+    
                                     <!-- TEXT INPUT -->
                                     @elseif($field['type'] === 'text')
                                         <input type="text" 
@@ -127,8 +145,52 @@
                                             <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
                                         @enderror
 
-                                    <!-- ... (type input lainnya tetap sama) ... -->
+                                    <!-- NUMBER INPUT -->
+                                    @elseif($field['type'] === 'number')
+                                        <input type="number" 
+                                               wire:model.defer="{{ $field['model'] }}"
+                                               class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error($field['error']) border-red-500 @enderror"
+                                               placeholder="{{ $field['placeholder'] ?? '' }}"
+                                               min="{{ $field['min'] ?? '' }}"
+                                               max="{{ $field['max'] ?? '' }}"
+                                               step="{{ $field['step'] ?? '1' }}"
+                                               {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                        @error($field['error'])
+                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        @enderror
+
+                                    <!-- SELECT DROPDOWN -->
+                                    @elseif($field['type'] === 'select')
+                                        <select wire:model.defer="{{ $field['model'] }}"
+                                                class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error($field['error']) border-red-500 @enderror"
+                                                {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                            <option value="">{{ $field['placeholder'] ?? 'Pilih...' }}</option>
+                                            @foreach($field['options'] ?? [] as $value => $label)
+                                                <option value="{{ $value }}" {{ $fieldValue == $value ? 'selected' : '' }}>
+                                                    {{ $label }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error($field['error'])
+                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        @enderror
+
+                                    <!-- TEXTAREA -->
+                                    @elseif($field['type'] === 'textarea')
+                                        <textarea wire:model.defer="{{ $field['model'] }}"
+                                                  rows="{{ $field['rows'] ?? 3 }}"
+                                                  class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error($field['error']) border-red-500 @enderror"
+                                                  placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                  {{ $field['disabled'] ?? false ? 'disabled' : '' }}></textarea>
+                                        @error($field['error'])
+                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        @enderror
+
+                                    @endif
                                     
+                                    <!-- HELPER TEXT BOTTOM -->
+                                    @if($field['helper_bottom'] ?? false)
+                                        <p class="text-xs text-gray-500 mt-1">{{ $field['helper_bottom'] }}</p>
                                     @endif
                                 </div>
                             @endforeach
@@ -152,16 +214,30 @@
 @endif
 
 <style>
-    .switch-toggle {
-        transition: all 0.3s ease-in-out;
+    /* Switch Toggle Styles */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
-    
+
     /* Animation untuk switch */
     .dot {
         transition: all 0.3s ease-in-out;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     
+    /* Hover effects untuk switch */
+    label:hover .block {
+        transform: scale(1.05);
+    }
+
     /* Helper tooltip animation */
     .group:hover .group-hover\:block {
         animation: fadeInUp 0.2s ease-out;
@@ -176,5 +252,10 @@
             opacity: 1;
             transform: translateY(0);
         }
+    }
+
+    /* Active state untuk switch yang dipilih */
+    input:checked + .block {
+        background-color: rgb(0, 111, 188) !important;
     }
 </style>
