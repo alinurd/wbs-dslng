@@ -119,10 +119,5 @@
             @endforelse
         </tbody>
     </table>
-    <!-- Pagination -->
-@if($records->hasPages())
-<div class="px-4 py-3 bg-gray-50 border-t border-gray-200">
-    {{ $records->links() }}
-</div>
-@endif 
+     @include('livewire.components.pagination', ['records' => $records])
 </div>

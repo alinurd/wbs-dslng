@@ -10,11 +10,12 @@
 
 <div class="flex items-center gap-2">
     <div class="flex-1 relative">
-        <div class="w-full sm:w-auto">
+        <div class="w-full ">
             <div class="flex items-center">
-                <span class="text-gray-700 me-2 text-sm">Show:</span>
+                <span class="text-gray-700 me-2 text-sm">Show :</span>
                 <select wire:model.live="{{ $onPerPageChange }}"
-                    class="rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 text-sm">
+                    class="rounded-lg border border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 text-xs 
+                    ">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="25">25</option>
@@ -22,7 +23,7 @@
                     <option value="100">100</option>
                     <option value="10000">all</option>
                 </select>
-                <span class="text-gray-700 ms-4 text-sm">entries</span>
+                <span class="text-gray-700 ms-2 text-sm">entries</span>
             </div>
         </div>
     </div>

@@ -161,3 +161,68 @@
     input, select, textarea {
         padding: 12px;
     }
+
+
+
+
+    /* Custom Pagination Styles */
+.custom-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+}
+
+.custom-pagination .pagination-info {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.custom-pagination .pagination-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.custom-pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: white;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.custom-pagination .page-link:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+.custom-pagination .page-link.active {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    color: white;
+}
+
+.custom-pagination .page-link.disabled {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.custom-pagination .page-link svg {
+    width: 1rem;
+    height: 1rem;
+}

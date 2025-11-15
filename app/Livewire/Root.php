@@ -19,6 +19,7 @@ abstract class Root extends Component
     
     public $search = '';
     public $perPage = 10;
+    public $page = 1;
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
 
@@ -312,15 +313,24 @@ abstract class Root extends Component
 
 
     // =================== PAGINATION =====================
+        public function gotoPage($page)
+    {
+        $this->setPage($page);
+    }
+
     public function previousPage()
     {
         $this->setPage(max($this->page - 1, 1));
     }
 
-
     public function nextPage()
     {
-        $this->setPage($this->page + 1);
+        $this->setPage($this->page + 1); // PERBAIKAN: $this->page + 1
+    }
+
+    public function resetPage()
+    {
+        $this->setPage(1);
     }
 
 
