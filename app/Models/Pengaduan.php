@@ -53,4 +53,19 @@ class Pengaduan extends Model
     {
         return $this->belongsTo(Owner::class, 'direktorat');
     }
+
+    // PERBAIKAN: Gunakan App\Models\Comment
+    public function comments()
+    {
+        return $this->hasMany(\App\Models\Comment::class, 'pengaduan_id');
+    }
+
+    // Method untuk menambah komentar
+    public function addComment($message, $userId = null)
+    {
+        return $this->comments()->create([
+            'user_id' => $userId ?? auth()->id(),
+            'message' => $message,
+        ]);
+    }
 }

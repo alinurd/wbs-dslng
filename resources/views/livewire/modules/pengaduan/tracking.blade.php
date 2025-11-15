@@ -2,7 +2,6 @@
     <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
     <div class="container-fluid py-4">
         <div class="container mx-auto">
-            {{-- {{dd($jenisPengaduanList)}} --}}
 
             @include('livewire.components.table-wrapper', [
                 'records' => $_records,
@@ -37,42 +36,11 @@
                 'onEdit' => 'edit',
                 'onDelete' => 'delete',
                 'onSelectItem' => 'selectedItems',
+                'title' => 'selectedItems',
             ])
         </div>
 
         <!-- Form Modal -->
-        @include('livewire.components.form', [
-            'showModal' => $showModal,
-            'updateMode' => $updateMode,
-            'form' => $form,
-            'onClose' => 'closeModal',
-            'onSave' => 'save',
-            'title' => $title,
-            'size' => 'xl',
-            'cols' => 1,
-            'fields' => [
-                [
-                    'type' => 'email',
-                    'model' => 'form.data',
-                    'label' => 'Email',
-                    'required' => true,
-                    'placeholder' => 'Masukan Data....',
-                    'error' => 'form.data',
-                    'messages' => [
-                        'required' => 'Email wajib diisi',
-                    ]
-                ],
-               
-                [
-                    'type' => 'switch-single',
-                    'label' => 'Status Aktif',
-                    'model' => 'form.is_active',
-                    'error' => 'form.is_active',
-                    'on_label' => 'AKTIF',
-                    'off_label' => 'NONAKTIF',
-                ],
-            ],
-        ])
 
         <!-- Filter Modal -->
         @include('livewire.components.form-filtering', [
@@ -118,6 +86,13 @@
         <!-- Detail Modal -->
         @include('livewire.components.detail-modal', [
             'show' => $showDetailModal,
+            'title' => $detailTitle,
+            'data' => $detailData,
+            'onClose' => 'closeDetailModal',
+        ]) 
+
+        @include('livewire.components.comment', [
+            'show' => $showComment,
             'title' => $detailTitle,
             'data' => $detailData,
             'onClose' => 'closeDetailModal',

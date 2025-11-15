@@ -22,11 +22,12 @@
     'onResetFilter' => '',
     'onSort' => '',
     'onView' => '',
+    'onComment' => '',
     'onEdit' => '',
     'onDelete' => '',
     'onSelectItem' => '',
 ])
-
+            
 <div class="w-full space-y-4">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg shadow-sm border">
@@ -35,7 +36,7 @@
             @include('livewire.components.action-bar', [
                 'permissions' => $permissions,
                 'selectedItems' => $selectedItems,
-                'onCreate' => $onCreate,
+                'onCreate' =>false,
                 'onExportExcel' => $onExportExcel,
                 'onExportPdf' => $onExportPdf,
                 'onDeleteBulk' => $onDeleteBulk,
@@ -98,6 +99,7 @@
             'columns' => $columns,
             'onSort' => $onSort,
             'onView' => $onView,
+            'onComment' => $onComment,
             'onEdit' => $onEdit,
             'onDelete' => $onDelete,
             'onSelectItem' => $onSelectItem,

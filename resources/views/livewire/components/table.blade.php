@@ -15,6 +15,9 @@
     'emptyMessage' => 'Tidak ada data ditemukan'
 ])
 
+@php
+    if($modul == 'p_tracking') {  $permissions['delete'] = false; $permissions['edit'] = false; $permissions['comment'] = true;}
+@endphp
 <div class="overflow-x-auto border border-gray-200 rounded-lg bg-white shadow-sm transition-all duration-300">
   @if(session()->has('success') || session()->has('error'))
 <div class="fixed top-4 right-4 animate-fade-in z-50">
@@ -104,6 +107,15 @@
                                     <i class="fas fa-trash w-3 h-3"></i>
                                 </button>
                             @endif
+{{-- {{dd($onView)}} --}}
+                            @if ($permissions['comment'] ?? false)
+                                <button wire:click="comment({{ $record->id }})"
+                                    class="inline-flex items-center px-2 py-1 bg-teal-400 text-white rounded hover:bg-teal-600 transition-all duration-200 transform hover:scale-110 text-xs"
+                                    title="Pesan">
+                                    <i class="fas fa-comments w-3 h-3"></i>
+                                </button>
+                            @endif
+
                         </div>
                     </td>
                 </tr>

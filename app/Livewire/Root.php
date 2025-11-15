@@ -4,13 +4,14 @@ namespace App\Livewire;
 
 use App\Models\Audit as AuditLog;
 use App\Models\Combo;
+use App\Models\Comment as CommentModel;
 use App\Models\Owner;
 use App\Models\Pengaduan;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
-use Livewire\WithPagination;
 
+use Livewire\WithPagination;
 
 
 abstract class Root extends Component
@@ -33,6 +34,7 @@ abstract class Root extends Component
     public $showFilterModal = false;
     public $updateMode = false;
     public $showDetailModal = false;
+    public $showComment = false;
     public $detailTitle = '-';
     public $filterMode = false;
 
@@ -52,6 +54,7 @@ abstract class Root extends Component
     public $direktoratList = []; // child dapat override dengan property
     public $tahunPengaduanList = []; // child dapat override dengan property
 
+    public $newMessage = '';
 
 
     // ================== MOUNT =====================
@@ -332,11 +335,33 @@ public function deleteBulk()
             'data'  => $record->toArray()
         ]);
     }
+    public function comment($id)
+    {
+        // can_any([strtolower($this->modul).'.view']);
+        $record = ($this->model)::findOrFail($id);
+
+        $this->dispatch('showComment', [
+            'title' => "Comment " . $this->title,
+            'data'  => $record->toArray()
+        ]);
+    }
 
 
+     public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->showComment = false;
+        $this->detailData = [];
+        $this->detailTitle = '';
+    }
+    
     // =================== SUPPORT =======================
     public function closeModal()
     {
+        $this->showDetailModal = false;
+        $this->detailData = [];
+        $this->detailTitle = '';
+        
         $this->showModal = false;
         $this->resetForm();
         $this->dispatch('modalClosed');
@@ -550,5 +575,45 @@ public function loadDropdownData()
             ->get();
     }
 
+
+
+     public function loadMessages()
+    {
+        if (!$this->trackingId) return;
+
+        $chatMessages = CommentModel::where('pengaduan_id', $this->trackingId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $this->messages = $chatMessages->map(function ($message) {
+            return [
+                'id' => $message->id,
+                'message' => $message->message,
+                'sender' => $message->user->name ?? 'System',
+                'is_own' => $message->user_id === auth()->id(),
+                'time' => $message->created_at->format('H:i'),
+                'date' => $message->created_at->format('d M Y'),
+            ];
+        })->toArray();
+    }
+
+    public function sendMessage()
+    {
+        $this->validate([
+            'newMessage' => 'required|string|max:1000',
+        ]);
+
+        if (!$this->trackingId) return;
+
+        CommentModel::create([
+            'pengaduan_id' => $this->trackingId,
+            'user_id' => auth()->id(),
+            'message' => $this->newMessage,
+        ]);
+
+        $this->newMessage = '';
+        $this->loadMessages(); // Reload messages
+    }
+    
 
 }
