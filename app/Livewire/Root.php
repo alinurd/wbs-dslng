@@ -2,10 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Models\Log as AuditLog;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use Livewire\WithPagination;
+
+
 
 abstract class Root extends Component
 {
@@ -50,8 +53,7 @@ abstract class Root extends Component
 
         // Title otomatis jika tidak didefinisikan
         $this->title = $this->title ?: class_basename($this->model);
-        $this->userInfo = $this->getCurrentUserInfo();
-        // Hak akses
+         // Hak akses
         can_any([strtolower($this->modul).'.view']);
 
         // Locale
@@ -158,69 +160,114 @@ abstract class Root extends Component
         $this->dispatch('modalOpened');
     }
 
+// Di App\Livewire\Root class, perbaiki method save()
+public function save()
+{
+    // Validasi - prioritaskan method rules(), lalu property $rules
+    $validationRules = [];
+    
+    if (method_exists($this, 'rules')) {
+        $validationRules = $this->rules();
+    } elseif (!empty($this->rules)) {
+        $validationRules = $this->rules;
+    }
 
-    public function save()
-    {
-        // Validasi - prioritaskan method rules(), lalu property $rules
-        $validationRules = [];
+    if (!empty($validationRules)) {
+        $this->validate($validationRules);
+    }
+
+    $modelClass = $this->model;
+    $action = 'unknown';
+    $record = null;
+
+    // Payload hanya akan mengambil field yang ada di formDefault
+    $payload = collect($this->form)
+        ->only(array_keys($this->formDefault))
+        ->toArray();
+
+    // Call saving hook untuk modifikasi payload - FIXED
+    if (method_exists($this, 'saving')) {
+        $payload = $this->saving($payload);
+    }
+
+    if ($this->updateMode) {
+        can_any([strtolower($this->modul).'.edit']);
+        $record = $modelClass::findOrFail($this->form['id']);
         
-        if (method_exists($this, 'rules')) {
-            $validationRules = $this->rules();
-        } elseif (!empty($this->rules)) {
-            $validationRules = $this->rules;
-        }
-
-        if (!empty($validationRules)) {
-            $this->validate($validationRules);
-        }
-
-        $modelClass = $this->model;
-
-        // Payload hanya akan mengambil field yang ada di formDefault
-        $payload = collect($this->form)
-            ->only(array_keys($this->formDefault))
-            ->toArray();
-
-        if ($this->updateMode) {
-            can_any([strtolower($this->modul).'.edit']);
-            $record = $modelClass::findOrFail($this->form['id']);
-            $record->update($payload);
-            session()->flash('message', 'Data berhasil diperbarui.');
-        } else {
-            can_any([strtolower($this->modul).'.create']);
-            $modelClass::create($payload);
-            session()->flash('message', 'Data berhasil ditambahkan.');
-        }
-
-        $this->closeModal();
-        $this->resetPage();
-        $this->dispatch('dataSaved');
+        // Simpan data lama untuk audit trail
+        $oldData = $record->getOriginal();
+        
+        $record->update($payload);
+        $action = 'update';
+        
+        // Log audit trail
+        $this->logAudit($action, $record, [
+            'new_data' => $payload,
+            'old_data' => $oldData
+        ]);
+        
+    } else {
+        $action = 'create';
+        can_any([strtolower($this->modul).'.create']);
+        $record = $modelClass::create($payload);
+        
+        // Log audit trail
+        $this->logAudit($action, $record, $payload);
     }
 
-
-    public function delete($id)
-    {
-        can_any([strtolower($this->modul).'.delete']);
-        ($this->model)::findOrFail($id)->delete();
-        session()->flash('message', 'Data berhasil dihapus!');
-        $this->resetPage();
-        $this->dispatch('dataDeleted');
+    // Call saved hook - FIXED
+    if (method_exists($this, 'saved')) {
+        $this->saved($record, $action);
     }
 
+    $this->closeModal();
+    $this->resetPage();
+    $this->dispatch('dataSaved');
+}
 
-    // =================== BULK DELETE ===================
-    public function deleteBulk()
-    {
-        can_any([strtolower($this->modul).'.delete']);
 
-        if (count($this->selectedItems)) {
-            ($this->model)::whereIn('id', $this->selectedItems)->delete();
+
+ public function delete($id)
+{
+    can_any([strtolower($this->modul).'.delete']);
+    
+    $record = ($this->model)::findOrFail($id);
+    
+    // Simpan data lengkap record sebelum dihapus
+    $oldData = $record->toArray();
+    
+    // Log audit trail SEBELUM menghapus dengan data lengkap
+    $this->logAudit('delete', $record, ['deleted_data' => $oldData]);
+    
+    $record->delete();
+    
+    session()->flash('message', 'Data berhasil dihapus!');
+    $this->resetPage();
+    $this->dispatch('dataDeleted');
+}
+
+public function deleteBulk()
+{
+    can_any([strtolower($this->modul).'.delete']);
+
+    if (count($this->selectedItems)) {
+        // Ambil data sebelum dihapus untuk audit trail
+        $records = ($this->model)::whereIn('id', $this->selectedItems)->get();
+        
+        // Log audit trail untuk setiap record dengan data lengkap
+        foreach ($records as $record) {
+            $oldData = $record->toArray();
+            $this->logAudit('delete', $record, ['deleted_data' => $oldData]);
         }
-
-        $this->selectedItems = [];
-        session()->flash('message', 'Beberapa data berhasil dihapus!');
-        $this->dispatch('bulkDeleteCompleted');
+        
+        // Hapus records
+        ($this->model)::whereIn('id', $this->selectedItems)->delete();
     }
+
+    $this->selectedItems = [];
+    session()->flash('message', 'Beberapa data berhasil dihapus!');
+    $this->dispatch('bulkDeleteCompleted');
+}
 
 
     // ====================== FILTER ========================
@@ -352,4 +399,64 @@ abstract class Root extends Component
 
         $this->dispatch('exportCompleted', ['type' => $type]);
     }
+
+     
+    public function logAudit($action, $record, $data = [], $table_name = null)
+{
+    try {
+        $user = auth()->user();
+        
+        // Jika table_name tidak diberikan, gunakan nama model
+        if (empty($table_name)) {
+            if ($record) {
+                $table_name = $record->getTable();
+            } else {
+                // Untuk kasus delete, kita bisa dapatkan table_name dari model class
+                $table_name = strtolower(class_basename($this->model)) . 's'; // contoh: 'combos'
+            }
+        }
+
+        // Handle record_id dan old_values berdasarkan action
+        $record_id = null;
+        $old_values = null;
+        
+        if ($record) {
+            $record_id = $record->id;
+            
+            // Untuk update, ambil original data
+            if ($action === 'update') {
+                $old_values = $record->getOriginal();
+            }
+            // Untuk delete, data sudah ada di $data['deleted_data']
+            elseif ($action === 'delete' && isset($data['deleted_data'])) {
+                $old_values = $data['deleted_data'];
+            }
+        }
+
+        // Untuk create, new_values adalah data yang dibuat
+        // Untuk update, new_values adalah payload
+        // Untuk delete, new_values adalah null (karena data dihapus)
+        $new_values = null;
+        if ($action === 'create' || $action === 'update') {
+            $new_values = $data;
+        }
+
+        AuditLog::create([
+            'user_id' => $user ? $user->id : null,
+            'action' => $action,
+            'table_name' => $table_name,
+            'record_id' => $record_id,
+            'old_values' => $old_values ? json_encode($old_values) : null,
+            'new_values' => $new_values ? json_encode($new_values) : null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'created_at' => now()
+        ]);
+
+    } catch (\Exception $e) {
+        // Log error tetapi jangan hentikan proses
+        \Log::error('Audit log failed: ' . $e->getMessage());
+    }
+}
+
 }

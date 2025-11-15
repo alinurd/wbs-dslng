@@ -30,8 +30,8 @@
     @endif
 
     <!-- Form -->
-    <form wire:submit.prevent="simpanPengaduan" class="p-6 space-y-6">
-        <!-- Informasi Pelapor -->
+<form wire:submit.prevent="save" class="p-6 space-y-6">
+            <!-- Informasi Pelapor -->
         <div class="bg-gray-50 border border-gray-200 rounded-lg p-5">
             <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                 <i class="fas fa-user-circle text-blue-500 mr-2"></i>
