@@ -25,12 +25,15 @@ abstract class Root extends Component
     public $showModal = false;
     public $showFilterModal = false;
     public $updateMode = false;
+    public $showDetailModal = false;
+    public $detailTitle = '-';
     public $filterMode = false;
 
     public $form = [];
     public $formDefault = [];
     public $filters = [];
     public $selectedItems = [];
+    public $detailData = [];
     public $selectAll = false;
 
     public $rules = []; // child dapat override dengan property

@@ -54,7 +54,33 @@ class ParamAduan extends Root
     }
 
    
+    public function view($id)
+    {
+        can_any([strtolower($this->modul).'.view']);
+        
+        $record = $this->model::findOrFail($id);
 
+        $this->detailData = [
+            'Kelompok' => $record->kelompok,
+            'Data Indonesia' => $record->data_id,
+            'Data English' => $record->data_en,
+            'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
+            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
+            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+        ];
+        
+        $this->detailTitle = "Detail " . $this->title;
+        $this->showDetailModal = true;
+    }
+
+    // METHOD UNTUK TUTUP DETAIL MODAL
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->detailData = [];
+        $this->detailTitle = '';
+    }
+    
     // public function saving($payload)
     // {
     //     // Custom logic sebelum menyimpan data

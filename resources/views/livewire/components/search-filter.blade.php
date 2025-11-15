@@ -22,7 +22,7 @@
                     <option value="100">100</option>
                     <option value="10000">all</option>
                 </select>
-                <span class="text-gray-700 ms-2 text-sm">entries</span>
+                <span class="text-gray-700 ms-4 text-sm">entries</span>
             </div>
         </div>
     </div>
