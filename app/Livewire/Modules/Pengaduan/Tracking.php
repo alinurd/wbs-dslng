@@ -108,7 +108,7 @@ class Tracking extends Root
     $this->detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
     $this->showComment = true;
     $this->trackingId = $record->id;
-    $this->loadMessages();
+    // $this->loadMessages();
 }
 
 // Send message
