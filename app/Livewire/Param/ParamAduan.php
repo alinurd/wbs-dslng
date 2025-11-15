@@ -8,7 +8,7 @@ use App\Models\Combo;
 class ParamAduan extends Root
 {
     public $title = "Saluran Aduan";
-    public $views = "parameter.index-manual";
+    public $views = "parameter.index";
     public $model = Combo::class;
     public $modul = 'combo';
     public $kel = 'combo';

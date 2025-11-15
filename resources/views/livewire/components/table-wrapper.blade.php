@@ -88,7 +88,6 @@
         </div>
     </div>
     @endif
-
     <!-- Table Section -->
     @if($records && $records->count() > 0)
     <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
@@ -109,20 +108,14 @@
     <!-- Empty State -->
     <div class="text-center py-12 bg-white rounded-lg border">
         <i class="fas fa-inbox text-gray-400 text-4xl mb-4"></i>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data</h3>
-        <p class="text-gray-500 mb-4">
+         <p class="text-gray-500 mb-4">
             @if($filterMode)
                 Tidak ada data yang ditemukan untuk filter saat ini.
             @else
                 Belum ada data yang ditambahkan.
             @endif
         </p>
-        @if($onCreate)
-        <button wire:click="{{ $onCreate }}" 
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <i class="fas fa-plus mr-2"></i>Tambah Data Pertama
-        </button>
-        @endif
+       
     </div>
     @endif
 </div>

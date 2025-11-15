@@ -106,7 +106,7 @@
                         '1' => 'Aktif',
                         '0' => 'Nonaktif',
                     ],
-                    'placeholder' => 'Semua Status',
+                    'placeholder' => 'Semua Status', 
                 ],
             ],
             'onClose' => 'closeFilterModal',
