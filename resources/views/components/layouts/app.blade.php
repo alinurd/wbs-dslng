@@ -23,7 +23,12 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
 
+     
+
 <div class="flex min-h-screen">
+   
+
+
     {{-- SIDEBAR --}}
     <aside id="sidebar"
            class="sidebar sidebar-gradient w-72 text-white shadow-2xl flex flex-col transition-all duration-300">
@@ -150,6 +155,43 @@
         </main>
     </div>
 </div>
+
+<div x-data="notificationHandler()" 
+         x-show="show" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform translate-y-2"
+         class="fixed top-4 right-4 z-50 max-w-sm w-full"
+         style="display: none;"
+         @notify.window="showNotification($event.detail)">
+        
+        <div x-bind:class="{
+            'bg-green-50 border-green-200 text-green-700': type === 'success',
+            'bg-red-50 border-red-200 text-red-700': type === 'error',
+            'bg-blue-50 border-blue-200 text-blue-700': type === 'info',
+            'bg-yellow-50 border-yellow-200 text-yellow-700': type === 'warning'
+        }" 
+             class="p-4 border rounded-lg shadow-lg">
+            <div class="flex items-start">
+                <i x-bind:class="{
+                    'fas fa-check-circle text-green-500': type === 'success',
+                    'fas fa-exclamation-triangle text-red-500': type === 'error',
+                    'fas fa-info-circle text-blue-500': type === 'info',
+                    'fas fa-exclamation-circle text-yellow-500': type === 'warning'
+                }" class="mt-0.5 mr-3"></i>
+                <div class="flex-1">
+                    <p x-text="message" class="text-sm"></p>
+                </div>
+                <button @click="show = false" class="ml-4 text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
 @livewireScripts
 <script>
      window.AppConfig = {
@@ -161,6 +203,79 @@
 </script>
     <script src="{{ asset('assets/js/admin.js') }}"></script>
 
+    <script>
+    function notificationHandler() {
+        return {
+            show: false,
+            type: '',
+            message: '',
+            timer: null,
+            
+            showNotification(detail) {
+                console.log('Detail received:', detail); // Debug log
+                
+                // Handle both object and array formats
+                let notificationData;
+                if (Array.isArray(detail)) {
+                    // Jika detail adalah array, ambil element pertama
+                    notificationData = detail[0];
+                } else {
+                    // Jika detail adalah object langsung
+                    notificationData = detail;
+                }
+                
+                console.log('Processed data:', notificationData); // Debug log
+                
+                this.type = notificationData.type;
+                this.message = notificationData.message;
+                this.show = true;
+                
+                // Clear existing timer
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                }
+                
+                // Auto hide after 5 seconds
+                this.timer = setTimeout(() => {
+                    this.show = false;
+                }, 5000);
+            }
+        }
+    }
+
+    // Handle session flash messages
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for existing flash messages in session
+        @if (session()->has('success'))
+            Livewire.dispatch('notify', {
+                type: 'success',
+                message: '{{ session('success') }}'
+            });
+        @endif
+
+        @if (session()->has('error'))
+            Livewire.dispatch('notify', {
+                type: 'error', 
+                message: '{{ session('error') }}'
+            });
+        @endif
+
+        @if (session()->has('warning'))
+            Livewire.dispatch('notify', {
+                type: 'warning',
+                message: '{{ session('warning') }}'
+            });
+        @endif
+
+        @if (session()->has('info'))
+            Livewire.dispatch('notify', {
+                type: 'info',
+                message: '{{ session('info') }}'
+            });
+        @endif
+    });
+</script>
+    
 </body>
 </html>
 

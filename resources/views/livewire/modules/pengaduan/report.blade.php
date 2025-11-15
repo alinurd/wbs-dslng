@@ -1,6 +1,6 @@
 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 rounded-t-lg">
+    <div class="bg-gradient-to-r from-[#003B73] to-[#0077C8] px-6 py-4 rounded-t-lg">
         <h2 class="text-xl font-bold text-white flex items-center">
             <i class="fas fa-exclamation-circle mr-3"></i>
             Form Pengaduan
@@ -9,25 +9,7 @@
             Silakan isi form berikut untuk mengajukan pengaduan
         </p>
     </div>
-
-    <!-- Flash Message -->
-    @if (session()->has('success'))
-        <div class="mx-6 mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <div class="flex items-center">
-                <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                <span class="text-green-700">{{ session('success') }}</span>
-            </div>
-        </div>
-    @endif
-
-    @if (session()->has('error'))
-        <div class="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div class="flex items-center">
-                <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
-                <span class="text-red-700">{{ session('error') }}</span>
-            </div>
-        </div>
-    @endif
+     
 
     <!-- Form -->
 <form wire:submit.prevent="save" class="p-6 space-y-6">
@@ -151,11 +133,11 @@
                 </div>
 
                 <!-- Uraian -->
-                <div class="col-span-2">
+                <div >
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Uraian <span class="text-red-500">*</span>
                     </label>
-                    <textarea wire:model="uraian" rows="5" placeholder="Jelaskan detail pengaduan Anda..."
+                    <textarea wire:model="uraian" rows="3" placeholder="Jelaskan detail pengaduan Anda..."
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('uraian') border-red-500 @enderror"></textarea>
                     @error('uraian')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -166,7 +148,7 @@
                 </div>
 
                 <!-- Alamat Tempat Kejadian -->
-                <div class="col-span-2">
+                <div >
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Alamat Tempat Kejadian <span class="text-red-500">*</span>
                     </label>
@@ -350,13 +332,14 @@
                 class="px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
                 <i class="fas fa-redo mr-2"></i>Reset Form
             </button>
-
+            @if ($confirmation) 
             <div class="flex gap-3">
                 <button type="submit"
                     class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center">
                     <i class="fas fa-paper-plane mr-2"></i>Kirim Pengaduan
                 </button>
             </div>
+            @endif
         </div>
     </form>
 </div>

@@ -42,7 +42,7 @@ class Report extends Root
             'waktu_kejadian' => 'required|date',
             'nama_terlapor' => 'required|min:3|max:100',
             'email_pelapor' => 'required|email',
-            'telepon_pelapor' => 'required|min:10|max:15',
+            'telepon_pelapor' => 'numeric|required|min:12|max:16',
             'jenis_pengaduan_id' => 'required|exists:combos,id',
             'saluran_aduan_id' => 'required|exists:combos,id',
             'direktorat' => 'required|exists:owners,id',
@@ -61,6 +61,7 @@ class Report extends Root
             'nama_terlapor.required' => 'Nama terlapor harus diisi.',
             'email_pelapor.required' => 'Email pelapor harus diisi.',
             'telepon_pelapor.required' => 'Telepon pelapor harus diisi.',
+            'telepon_pelapor.numeric' => 'Telepon pelapor harus diisi dengan angka.',
             'jenis_pengaduan_id.required' => 'Jenis pengaduan harus dipilih.',
             'saluran_aduan_id.required' => 'Saluran aduan harus dipilih.',
             'direktorat.required' => 'Direktorat harus dipilih.',
@@ -170,16 +171,19 @@ class Report extends Root
     /**
      * Override saved method untuk custom message
      */
-    protected function saved($record, $action)
-    {
-        if ($action === 'create') {
-            session()->flash('message', 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan);
-        } else {
-            session()->flash('message', 'Pengaduan berhasil diperbarui.');
-        }
+    public function saved($record, $action)
+{
+    $message = $action === 'create' 
+        ? 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan
+        : 'Pengaduan berhasil diperbarui.';
 
-        $this->resetLampiran();
-    }
+$this->dispatch('notify', [
+    'type' => 'success',
+    'message' => 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan
+]);
+
+    $this->resetLampiran();
+}
 
     // Handle lampiran
     public function updatedLampiran($value)
@@ -256,4 +260,22 @@ class Report extends Root
             'permissions' => module_permissions(strtolower($this->modul))['can'] ?? []
         ]);
     }
+
+    protected function getAuditMessage($action, $record, $data)
+{
+    // Custom message untuk model Pengaduan
+    switch ($action) {
+        case 'create':
+            return 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan;
+            
+        case 'update':
+            return 'Pengaduan berhasil diperbarui.';
+            
+        case 'delete':
+            return 'Pengaduan berhasil dihapus.';
+            
+        default:
+            return parent::getAuditMessage($action, $record, $data);
+    }
+}
 }

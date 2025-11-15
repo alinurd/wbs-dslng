@@ -224,10 +224,19 @@ public function save()
     $this->resetPage();
     $this->dispatch('dataSaved');
 }
+protected function saved($record, $action)
+{
+    // NOTIFIKASI SUDAH DIHANDLE OLEH logAudit
+    // Hanya reset form/lampiran jika perlu
+    if (method_exists($this, 'resetLampiran')) {
+        $this->resetLampiran();
+    }
+}
 
 
 
- public function delete($id)
+
+public function delete($id)
 {
     can_any([strtolower($this->modul).'.delete']);
     
@@ -241,11 +250,10 @@ public function save()
     
     $record->delete();
     
-    session()->flash('message', 'Data berhasil dihapus!');
+    // NOTIFIKASI SUDAH DIHANDLE OLEH logAudit
     $this->resetPage();
     $this->dispatch('dataDeleted');
 }
-
 public function deleteBulk()
 {
     can_any([strtolower($this->modul).'.delete']);
@@ -262,13 +270,14 @@ public function deleteBulk()
         
         // Hapus records
         ($this->model)::whereIn('id', $this->selectedItems)->delete();
+        
+        // Notifikasi untuk bulk delete
+        $this->notify('success', $this->getAuditMessage('bulk_delete', null, []));
     }
 
     $this->selectedItems = [];
-    session()->flash('message', 'Beberapa data berhasil dihapus!');
     $this->dispatch('bulkDeleteCompleted');
 }
-
 
     // ====================== FILTER ========================
     public function openFilter()
@@ -282,7 +291,7 @@ public function deleteBulk()
         $this->filterMode = true;
         $this->showFilterModal = false;
         $this->resetPage();
-        session()->flash('message', 'Filter diterapkan.');
+            $this->notify('success', 'Filter diterapkan.');
     }
 
 
@@ -294,8 +303,8 @@ public function deleteBulk()
 
         $this->filterMode = false;
         $this->showFilterModal = false;
-        $this->resetPage();
-        session()->flash('message', 'Filter direset.');
+        
+    $this->notify('success', 'Filter direset.');
     }
 
 
@@ -383,25 +392,32 @@ public function deleteBulk()
 
 
     // =================== EXPORT =========================
-    public function export($type = 'excel')
-    {
-        can_any([strtolower($this->modul).'.export']);
+   public function export($type = 'excel')
+{
+    // can_any([strtolower($this->modul).'.export']);
 
-        $data = $this->query()->get();
+    $data = $this->query()->get();
 
-        if ($type === 'excel') {
-            // Logic export Excel
-            session()->flash('message', 'Data berhasil diexport ke Excel.');
-        } elseif ($type === 'pdf') {
-            // Logic export PDF
-            session()->flash('message', 'Data berhasil diexport ke PDF.');
-        }
-
-        $this->dispatch('exportCompleted', ['type' => $type]);
+    if ($type === 'excel') {
+        $this->notify('success', 'Data berhasil diexport ke Excel.');
+    } elseif ($type === 'pdf') {
+        $this->notify('success', 'Data berhasil diexport ke PDF.');
     }
 
+    $this->dispatch('exportCompleted', ['type' => $type]);
+}
+
      
-    public function logAudit($action, $record, $data = [], $table_name = null)
+    public function notify($type, $message)
+{
+    $this->dispatch('notify', [
+        'type' => $type,
+        'message' => $message
+    ]);
+}
+
+
+public function logAudit($action, $record, $data = [], $table_name = null)
 {
     try {
         $user = auth()->user();
@@ -441,6 +457,7 @@ public function deleteBulk()
             $new_values = $data;
         }
 
+        // Create audit log
         AuditLog::create([
             'user_id' => $user ? $user->id : null,
             'action' => $action,
@@ -453,10 +470,44 @@ public function deleteBulk()
             'created_at' => now()
         ]);
 
+        // NOTIFIKASI OTOMATIS BERDASARKAN ACTION
+        $message = $this->getAuditMessage($action, $record, $data);
+        $this->notify('success', $message);
+
     } catch (\Exception $e) {
         // Log error tetapi jangan hentikan proses
         \Log::error('Audit log failed: ' . $e->getMessage());
+        $this->notify('error', 'Terjadi kesalahan saat menyimpan audit trail.');
     }
 }
+
+/**
+ * Generate message berdasarkan action
+ */
+protected function getAuditMessage($action, $record, $data)
+{
+    $modelName = class_basename($this->model);
+    
+    switch ($action) {
+        case 'create':
+            if (isset($record->code_pengaduan)) {
+                return 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan;
+            }
+            return 'Data  berhasil ditambahkan.';
+            
+        case 'update':
+            return 'Data  berhasil diperbarui.';
+            
+        case 'delete':
+            return 'Data  berhasil dihapus.';
+            
+        case 'bulk_delete':
+            return 'Beberapa data  berhasil dihapus.';
+            
+        default:
+            return 'Aksi ' . $action . ' berhasil dilakukan.';
+    }
+}
+
 
 }
