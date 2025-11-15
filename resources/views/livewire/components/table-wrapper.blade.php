@@ -63,29 +63,27 @@
             <div class="flex items-center gap-2 flex-wrap">
                 <i class="fas fa-filter text-blue-600"></i>
                 <span class="text-sm font-medium text-blue-800">Filter aktif:</span>
-                
                 @if($filters['data_id'] ?? '')
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     Data ID: {{ $filters['data_id'] }}
                 </span>
                 @endif
-                
                 @if($filters['data_en'] ?? '')
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     Data EN: {{ $filters['data_en'] }}
                 </span>
                 @endif
-                
                 @if(($filters['is_active'] ?? '') !== '')
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     Status: {{ $filters['is_active'] ? 'Aktif' : 'Nonaktif' }}
                 </span>
                 @endif
-                
-                <button wire:click="{{ $onResetFilter }}" 
-                        class="text-xs text-blue-600 hover:text-blue-800 underline ml-2">
-                    Hapus semua filter
-                </button>
+                <button wire:click="{{ $onResetFilter }}"
+                class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:z-10 focus:ring-1 focus:ring-gray-400 focus:text-gray-800 transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
+                <i class="fas fa-refresh mr-1.5 text-xs"></i>
+                <span class="whitespace-nowrap">Reset</span>
+            </button>
+            
             </div>
         </div>
     </div>

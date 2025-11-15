@@ -43,13 +43,5 @@
             <i class="fas fa-filter mr-1.5 text-xs"></i>
             <span class="whitespace-nowrap">Filter</span>
         </button>
-{{-- {{dd($filterMode)}} --}}
-        @if ($filterMode)
-            <button wire:click="{{ $onResetFilter }}"
-                class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:z-10 focus:ring-1 focus:ring-gray-400 focus:text-gray-800 transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
-                <i class="fas fa-refresh mr-1.5 text-xs"></i>
-                <span class="whitespace-nowrap">Reset</span>
-            </button>
-        @endif
     </div>
 </div>
