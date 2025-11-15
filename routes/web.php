@@ -10,7 +10,7 @@ use App\Livewire\Menus\Form as MenuForm;
 // use App\Livewire\Combo\Index as ComboIndex;
 
 use App\Livewire\Menus\Index as MenuIndex;
-
+use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 use App\Livewire\News\Detail as NewsDetail;
 use App\Livewire\News\Index as NewsIndex;
 
@@ -94,14 +94,19 @@ Route::middleware(['auth'])->group(function () {
     
     // Route::get('/blog', Blog::class)->name('blog');
     Route::get('/category', IndexManual::class)->name('category');
-
-
+    
+    
     
     Route::get('/blog', Blog::class)->name('blog.index');
     Route::get('/blog/create', BlogForm::class)->name('blog.create');
     Route::get('/blog/{id}/edit', BlogForm::class)->name('blog.edit');
-
     
+    //pengaduan
+    Route::prefix('/pengaduan')->group(function () {
+               Route::get('/report', PengaduanIndex::class)->name('report');
+
+        });
+
     // Route::get('/combo', ComboIndex::class)->name('combo');
 });
 
