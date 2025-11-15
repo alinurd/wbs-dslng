@@ -82,3 +82,82 @@
                 width: 100%;
             }
         }
+
+    /* Switch Toggle Styles */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* Animation untuk switch */
+    .dot {
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Hover effects untuk switch */
+    label:hover .block {
+        transform: scale(1.05);
+    }
+
+    /* Helper tooltip animation */
+    .group:hover .group-hover\:block {
+        animation: fadeInUp 0.2s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Shake animation untuk error */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .animate-shake {
+        animation: shake 0.5s ease-in-out;
+    }
+
+    /* Styling untuk error messages */
+    .text-red-600 {
+        color: #dc2626;
+    }
+    
+    .border-red-500 {
+        border-color: #ef4444;
+    }
+    
+    .focus\:border-red-500:focus {
+        border-color: #ef4444;
+    }
+    
+    .focus\:ring-red-500:focus {
+        --tw-ring-color: rgb(239 68 68 / 0.2);
+    }
+
+    /* Improved styling untuk input fields */
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 111, 188, 0.1);
+    }
+
+    /* Better padding untuk input */
+    input, select, textarea {
+        padding: 12px;
+    }

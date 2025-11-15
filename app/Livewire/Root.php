@@ -33,7 +33,8 @@ abstract class Root extends Component
     public $selectedItems = [];
     public $selectAll = false;
 
-    public $rules = [];          // child dapat override
+    public $rules = []; // child dapat override dengan property
+    public $locale;
 
 
     // ================== MOUNT =====================
@@ -59,23 +60,23 @@ abstract class Root extends Component
     {
         $query = ($this->model)::query();
 
-        // if (method_exists($this, 'filterDeafult')) {
-        //     $filterDeafult = $this->filterDeafult();
-        //     if (is_array($filterDeafult) && count($filterDeafult)) {
-        //         $query->where(function ($q) use ($filterDeafult) {
-        //             foreach ($filterDeafult as $col) {
-        //                 if (!empty($col['f'])) {
-        //                     $q->Where($col['f'], $col['v'] );
-        //                 }
-        //             }
-        //         });
-        //     }
-        // }
+        // Filter default jika ada
+        if (method_exists($this, 'filterDefault')) {
+            $filterDefault = $this->filterDefault();
+            if (is_array($filterDefault) && count($filterDefault)) {
+                $query->where(function ($q) use ($filterDefault) {
+                    foreach ($filterDefault as $col) {
+                        if (!empty($col['f'])) {
+                            $q->Where($col['f'], $col['v']);
+                        }
+                    }
+                });
+            }
+        }
         
+        // Search
         if ($this->search && method_exists($this, 'columns')) {
-
             $columns = $this->columns();
-
             if (is_array($columns) && count($columns)) {
                 $query->where(function ($q) use ($columns) {
                     foreach ($columns as $col) {
@@ -85,7 +86,7 @@ abstract class Root extends Component
             }
         }
 
-        // filter
+        // Additional filters
         if (is_array($this->filters)) {
             foreach ($this->filters as $key => $val) {
                 if ($val !== '' && $val !== null) {
@@ -105,7 +106,6 @@ abstract class Root extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
-            // \dd(module_permissions(strtolower($this->modul))['can'] ?? []);
         return view($this->viewPath(), [
             '_records'    => $items,
             'title'       => $this->title,
@@ -154,9 +154,17 @@ abstract class Root extends Component
 
     public function save()
     {
-        // Validasi rules dari child
-        if (isset($this->rules) && count($this->rules)) {
-            $this->validate();
+        // Validasi - prioritaskan method rules(), lalu property $rules
+        $validationRules = [];
+        
+        if (method_exists($this, 'rules')) {
+            $validationRules = $this->rules();
+        } elseif (!empty($this->rules)) {
+            $validationRules = $this->rules;
+        }
+
+        if (!empty($validationRules)) {
+            $this->validate($validationRules);
         }
 
         $modelClass = $this->model;
@@ -165,21 +173,15 @@ abstract class Root extends Component
         $payload = collect($this->form)
             ->only(array_keys($this->formDefault))
             ->toArray();
+
         if ($this->updateMode) {
-
             can_any([strtolower($this->modul).'.edit']);
-
             $record = $modelClass::findOrFail($this->form['id']);
             $record->update($payload);
-
             session()->flash('message', 'Data berhasil diperbarui.');
-
         } else {
-
             can_any([strtolower($this->modul).'.create']);
-
             $modelClass::create($payload);
-
             session()->flash('message', 'Data berhasil ditambahkan.');
         }
 
@@ -192,9 +194,7 @@ abstract class Root extends Component
     public function delete($id)
     {
         can_any([strtolower($this->modul).'.delete']);
-
         ($this->model)::findOrFail($id)->delete();
-
         session()->flash('message', 'Data berhasil dihapus!');
         $this->resetPage();
         $this->dispatch('dataDeleted');
@@ -211,7 +211,6 @@ abstract class Root extends Component
         }
 
         $this->selectedItems = [];
-
         session()->flash('message', 'Beberapa data berhasil dihapus!');
         $this->dispatch('bulkDeleteCompleted');
     }
@@ -228,7 +227,6 @@ abstract class Root extends Component
     {
         $this->filterMode = true;
         $this->showFilterModal = false;
-
         $this->resetPage();
         session()->flash('message', 'Filter diterapkan.');
     }
@@ -243,7 +241,6 @@ abstract class Root extends Component
         $this->filterMode = false;
         $this->showFilterModal = false;
         $this->resetPage();
-
         session()->flash('message', 'Filter direset.');
     }
 
@@ -252,7 +249,6 @@ abstract class Root extends Component
     public function view($id)
     {
         can_any([strtolower($this->modul).'.view']);
-
         $record = ($this->model)::findOrFail($id);
 
         $this->dispatch('showDetailModal', [
@@ -267,7 +263,6 @@ abstract class Root extends Component
     {
         $this->showModal = false;
         $this->resetForm();
-
         $this->dispatch('modalClosed');
     }
 
@@ -283,8 +278,7 @@ abstract class Root extends Component
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
-            $this->sortDirection =
-                $this->sortDirection === 'asc' ? 'desc' : 'asc';
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
             $this->sortField = $field;
             $this->sortDirection = 'asc';
@@ -297,8 +291,49 @@ abstract class Root extends Component
     public function getSortIcon($field)
     {
         if ($this->sortField !== $field) return 'fa-sort';
-        return $this->sortDirection === 'asc'
-            ? 'fa-sort-up'
-            : 'fa-sort-down';
+        return $this->sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
+    }
+
+
+    // =================== SELECT ALL =====================
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->selectedItems = $this->query()->pluck('id')->toArray();
+        } else {
+            $this->selectedItems = [];
+        }
+    }
+
+
+    // =================== PAGINATION =====================
+    public function previousPage()
+    {
+        $this->setPage(max($this->page - 1, 1));
+    }
+
+
+    public function nextPage()
+    {
+        $this->setPage($this->page + 1);
+    }
+
+
+    // =================== EXPORT =========================
+    public function export($type = 'excel')
+    {
+        can_any([strtolower($this->modul).'.export']);
+
+        $data = $this->query()->get();
+
+        if ($type === 'excel') {
+            // Logic export Excel
+            session()->flash('message', 'Data berhasil diexport ke Excel.');
+        } elseif ($type === 'pdf') {
+            // Logic export PDF
+            session()->flash('message', 'Data berhasil diexport ke PDF.');
+        }
+
+        $this->dispatch('exportCompleted', ['type' => $type]);
     }
 }

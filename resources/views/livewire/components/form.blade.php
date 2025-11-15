@@ -8,6 +8,7 @@
     'size' => 'md',
     'cols' => 2,
     'fields' => [],
+    'customMessages' => [], // Tambah prop untuk custom messages
 ])
 
 @if ($showModal)
@@ -39,6 +40,21 @@
 
                 <form wire:submit="{{ $onSave }}">
                     <div class="modal-body p-6">
+                        <!-- Tampilkan error general jika ada -->
+                        @if ($errors->any())
+                            <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg animate-shake">
+                                <div class="flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                                    <span class="text-red-700 font-medium">Terdapat kesalahan dalam pengisian form:</span>
+                                </div>
+                                <ul class="mt-2 list-disc list-inside text-sm text-red-600">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <div class="grid grid-cols-1 md:grid-cols-{{ $cols }} gap-4">
                             @foreach($fields as $field)
                                 @php
@@ -47,7 +63,15 @@
                                     
                                     // Get field value from form array
                                     $fieldName = str_replace('form.', '', $field['model']);
-                                    $fieldValue = $form[$fieldName] ?? null;
+                                    $fieldValue = $form[$field['model']] ?? null;
+                                    
+                                    // Get error field name
+                                    $errorField = $field['model'];
+                                    $hasError = $errors->has($errorField);
+                                    
+                                    // Get custom message for this field
+                                    $customMessage = $customMessages[$errorField] ?? null;
+                                    $fieldMessages = $field['messages'] ?? []; // Custom messages di field level
                                 @endphp
                                 
                                 <div class="mb-3 {{ $fieldClass }}">
@@ -82,7 +106,7 @@
                                                 <label class="flex items-center cursor-pointer">
                                                     <div class="relative">
                                                         <input type="radio" 
-                                                               wire:model.defer="{{ $field['model'] }}"
+                                                               wire:model="{{ $field['model'] }}"
                                                                value="{{ $value }}"
                                                                class="sr-only"
                                                                {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
@@ -97,100 +121,149 @@
                                                 </label>
                                             @endforeach
                                         </div>
-                                        @error($field['error'])
-                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        <!-- ERROR MESSAGE DI BAWAH SWITCH -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
                                         @enderror
 
-                                    <!-- SWITCH TOGGLE SINGLE (ON/OFF) -->
-                                    
-                                    <!-- SWITCH TOGGLE SINGLE (ON/OFF) - CUSTOM LABEL INSIDE -->
-@elseif($field['type'] === 'switch-single')
-    <label class="flex items-center cursor-pointer" wire:key="switch-{{ $fieldName }}">
-        <div class="relative">
-            <input type="checkbox" 
-                   wire:model="{{ $field['model'] }}"
-                   class="sr-only"
-                   {{ $field['disabled'] ?? false ? 'disabled' : '' }}
-                   wire:change="$refresh">
-            <div class="block w-20 h-6 rounded-full transition-all duration-300 relative overflow-hidden
-                {{ $fieldValue ? 'bg-[rgb(0,111,188)]' : 'bg-gray-400' }}">
-                <!-- ON Label -->
-                <div class="absolute inset-0 flex items-center justify-start px-3 transition-all duration-200
-                    {{ $fieldValue ? 'opacity-100' : 'opacity-0' }}">
-                    <span class="text-xs font-semibold text-white">{{ $field['on_label'] ?? 'ON' }}</span>
-                </div>
-                <!-- OFF Label -->
-                <div class="absolute inset-0 flex items-center justify-end px-3 transition-all duration-200
-                    {{ $fieldValue ? 'opacity-0' : 'opacity-100' }}">
-                    <span class="text-xs font-semibold text-white">{{ $field['off_label'] ?? 'OFF' }}</span>
-                </div>
-            </div>
-            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all duration-300 shadow-sm
-                {{ $fieldValue ? 'transform translate-x-16' : '' }}"></div>
-        </div>
-    </label>
-    @error($field['error'])
-        <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
-    @enderror
-
-    
                                     <!-- TEXT INPUT -->
                                     @elseif($field['type'] === 'text')
-                                        <input type="text" 
-                                               wire:model.defer="{{ $field['model'] }}"
-                                               class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error($field['error']) border-red-500 @enderror"
-                                               placeholder="{{ $field['placeholder'] ?? '' }}"
-                                               {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
-                                        @error($field['error'])
-                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        <div class="relative">
+                                            <input type="text" 
+                                                   wire:model="{{ $field['model'] }}"
+                                                   class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                                                   placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                   {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                        </div>
+                                        <!-- ERROR MESSAGE DI BAWAH INPUT TEXT -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
+                                        @enderror
+
+                                    <!-- EMAIL INPUT -->
+                                    @elseif($field['type'] === 'email')
+                                        <div class="relative">
+                                            <input type="email" 
+                                                   wire:model="{{ $field['model'] }}"
+                                                   class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                                                   placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                   {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                        </div>
+                                        <!-- ERROR MESSAGE DI BAWAH INPUT EMAIL -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
+                                        @enderror
+
+                                    <!-- PASSWORD INPUT -->
+                                    @elseif($field['type'] === 'password')
+                                        <div class="relative">
+                                            <input type="password" 
+                                                   wire:model="{{ $field['model'] }}"
+                                                   class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                                                   placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                   {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                        </div>
+                                        <!-- ERROR MESSAGE DI BAWAH INPUT PASSWORD -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
                                         @enderror
 
                                     <!-- NUMBER INPUT -->
                                     @elseif($field['type'] === 'number')
-                                        <input type="number" 
-                                               wire:model.defer="{{ $field['model'] }}"
-                                               class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error($field['error']) border-red-500 @enderror"
-                                               placeholder="{{ $field['placeholder'] ?? '' }}"
-                                               min="{{ $field['min'] ?? '' }}"
-                                               max="{{ $field['max'] ?? '' }}"
-                                               step="{{ $field['step'] ?? '1' }}"
-                                               {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
-                                        @error($field['error'])
-                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        <div class="relative">
+                                            <input type="number" 
+                                                   wire:model="{{ $field['model'] }}"
+                                                   class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                                                   placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                   min="{{ $field['min'] ?? '' }}"
+                                                   max="{{ $field['max'] ?? '' }}"
+                                                   step="{{ $field['step'] ?? '1' }}"
+                                                   {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                        </div>
+                                        <!-- ERROR MESSAGE DI BAWAH INPUT NUMBER -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
                                         @enderror
 
                                     <!-- SELECT DROPDOWN -->
                                     @elseif($field['type'] === 'select')
-                                        <select wire:model.defer="{{ $field['model'] }}"
-                                                class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error($field['error']) border-red-500 @enderror"
-                                                {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
-                                            <option value="">{{ $field['placeholder'] ?? 'Pilih...' }}</option>
-                                            @foreach($field['options'] ?? [] as $value => $label)
-                                                <option value="{{ $value }}" {{ $fieldValue == $value ? 'selected' : '' }}>
-                                                    {{ $label }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error($field['error'])
-                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        <div class="relative">
+                                            <select wire:model="{{ $field['model'] }}"
+                                                    class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                                                    {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                                <option value="">{{ $field['placeholder'] ?? 'Pilih...' }}</option>
+                                                @foreach($field['options'] ?? [] as $value => $label)
+                                                    <option value="{{ $value }}" {{ $fieldValue == $value ? 'selected' : '' }}>
+                                                        {{ $label }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <!-- ERROR MESSAGE DI BAWAH SELECT -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
                                         @enderror
 
                                     <!-- TEXTAREA -->
                                     @elseif($field['type'] === 'textarea')
-                                        <textarea wire:model.defer="{{ $field['model'] }}"
-                                                  rows="{{ $field['rows'] ?? 3 }}"
-                                                  class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error($field['error']) border-red-500 @enderror"
-                                                  placeholder="{{ $field['placeholder'] ?? '' }}"
-                                                  {{ $field['disabled'] ?? false ? 'disabled' : '' }}></textarea>
-                                        @error($field['error'])
-                                            <div class="text-red-600 text-sm mt-1 animate-shake">{{ $message }}</div>
+                                        <div class="relative">
+                                            <textarea wire:model="{{ $field['model'] }}"
+                                                      rows="{{ $field['rows'] ?? 3 }}"
+                                                      class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                                                      placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                      {{ $field['disabled'] ?? false ? 'disabled' : '' }}></textarea>
+                                        </div>
+                                        <!-- ERROR MESSAGE DI BAWAH TEXTAREA -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
+                                        @enderror
+
+                                    <!-- CHECKBOX -->
+                                    @elseif($field['type'] === 'checkbox')
+                                        <div class="flex items-center">
+                                            <input type="checkbox" 
+                                                   wire:model="{{ $field['model'] }}"
+                                                   class="h-5 w-5 rounded border-gray-300 text-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] transition-all duration-300 {{ $hasError ? 'border-red-500' : 'border-gray-300' }}"
+                                                   id="{{ $fieldName }}"
+                                                   {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                                            <label class="form-check-label font-medium text-gray-700 ms-3" for="{{ $fieldName }}">
+                                                {{ $field['checkbox_label'] ?? $field['label'] }}
+                                            </label>
+                                        </div>
+                                        <!-- ERROR MESSAGE DI BAWAH CHECKBOX -->
+                                        @error($errorField)
+                                            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                                {{ $customMessage ?: ($fieldMessages[$message] ?? $message) }}
+                                            </div>
                                         @enderror
 
                                     @endif
                                     
                                     <!-- HELPER TEXT BOTTOM -->
                                     @if($field['helper_bottom'] ?? false)
-                                        <p class="text-xs text-gray-500 mt-1">{{ $field['helper_bottom'] }}</p>
+                                        <p class="text-xs text-gray-500 mt-1 {{ $hasError ? 'mt-3' : '' }}">{{ $field['helper_bottom'] }}</p>
                                     @endif
                                 </div>
                             @endforeach
@@ -212,50 +285,3 @@
         </div>
     </div>
 @endif
-
-<style>
-    /* Switch Toggle Styles */
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-    }
-
-    /* Animation untuk switch */
-    .dot {
-        transition: all 0.3s ease-in-out;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
-    /* Hover effects untuk switch */
-    label:hover .block {
-        transform: scale(1.05);
-    }
-
-    /* Helper tooltip animation */
-    .group:hover .group-hover\:block {
-        animation: fadeInUp 0.2s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(5px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Active state untuk switch yang dipilih */
-    input:checked + .block {
-        background-color: rgb(0, 111, 188) !important;
-    }
-</style>

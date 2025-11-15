@@ -55,10 +55,42 @@
         </div>
 
         <!-- Form Modal -->
-
-
-        <!-- Filter Modal -->
-        @include('livewire.components.form-filtering', [
+    @include('livewire.components.form', [
+    'showModal' => $showModal,
+    'updateMode' => $updateMode,
+    'form' => $form,
+    'onClose' => 'closeModal',
+    'onSave' => 'save',
+    'title' => $title,
+    'cols' => 1,
+    'fields' => [
+        [
+            'type' => 'text',
+            'model' => 'form.data_id',
+            'label' => 'Data Indonesia',
+            'required' => true,
+            'placeholder' => 'Masukan Data....',
+            'error' => 'form.data_id',
+        ],
+        [
+            'type' => 'text',
+            'label' => 'Data English', 
+            'model' => 'form.data_en',
+            'error' => 'form.data_en',
+            'required' => true,
+            'placeholder' => 'Masukkan nama dalam bahasa Inggris',
+        ],
+        [
+            'type' => 'switch-single',
+            'label' => 'Status Aktif',
+            'model' => 'form.is_active',
+            'error' => 'form.is_active',
+            'on_label' => 'AKTIF',
+            'off_label' => 'NONAKTIF'
+        ],
+    ]
+])
+@include('livewire.components.form-filtering', [
             'showFilterModal' => $showFilterModal,
             'filters' => [
                 [
@@ -67,6 +99,7 @@
                     'model' => 'filterKelompok',
                     'placeholder' => 'Cari kelompok...',
                 ],
+                
                 [
                     'type' => 'select',
                     'label' => 'Filter Status',
@@ -82,52 +115,6 @@
             'onReset' => 'resetFilter',
             'onApply' => 'applyFilter',
         ])
-
-
-
-        @include('livewire.components.form', [
-            'showModal' => $showModal,
-            'updateMode' => $updateMode,
-            'form' => $form,
-            'onClose' => 'closeModal',
-            'onSave' => 'save',
-            'size' => 'xl',
-            'cols' => 1,
-            'title' => 'Combo',
-            'fields' => [
-                // TEXT
-                [
-                    'type' => 'text',
-                    'label' => 'Data Indonesia',
-                    'model' => 'form.data_id',
-                    'error' => 'data_id',
-                    'required' => true,
-                    'placeholder' => 'Masukan Data....',
-                    'helper' => 'Data dalam bahasa indonesia',
-                ],
-                [
-                    'type' => 'text',
-                    'label' => 'Data English',
-                    'model' => 'form.data_en',
-                    'error' => 'data_id',
-                    'required' => true,
-                    'placeholder' => 'Masukan Data....',
-                    'helper' => 'Data dalam bahasa English',
-                ],
-               [
-    'type' => 'switch-single',
-    'label' => 'Status Aktif',
-    'model' => 'form.is_active',
-    'error' => 'is_active',
-    'helper' => 'Aktifkan atau nonaktifkan data ini',
-    'on_label' => 'Aktif',
-    'off_label' => 'Nonaktif'
-],
-
-
-            ],
-        ])
-
 
     </div>
 </div>
