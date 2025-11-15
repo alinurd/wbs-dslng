@@ -31,6 +31,7 @@ abstract class Root extends Component
     public $filterMode = false;
 
     public $form = [];
+    public $userInfo = [];
     public $formDefault = [];
     public $filters = [];
     public $selectedItems = [];
@@ -49,7 +50,7 @@ abstract class Root extends Component
 
         // Title otomatis jika tidak didefinisikan
         $this->title = $this->title ?: class_basename($this->model);
-
+        $this->userInfo = $this->getCurrentUserInfo();
         // Hak akses
         can_any([strtolower($this->modul).'.view']);
 

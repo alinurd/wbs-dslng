@@ -112,4 +112,16 @@ class PermissionHelper
         
         return self::any($permissions, false);
     }
+
+    /**
+     * Shortcut for common CRUD permissions
+     */
+    public static function getUsers($id=null)
+    {
+        $user=auth()->user();
+        if(!$id){
+            auth()->user($id);
+        }
+        return $user;
+    }
 }
