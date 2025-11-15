@@ -159,7 +159,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($combos as $index => $combo)
+                    @forelse($_records as $index => $combo)
                         <tr class="hover:bg-blue-50 transition-all duration-200 animate-fade-in">
                             <td class="px-4 py-3 whitespace-nowrap text-center border-b border-gray-100">
                                 <input wire:model.live="selectedItems" type="checkbox" value="{{ $combo->id }}"
@@ -167,7 +167,7 @@
                             </td>
                             <td
                                 class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-center border-b border-gray-100">
-                                {{ $combos->firstItem() + $index }}
+                                {{ $_records->firstItem() + $index }}
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 border-b border-gray-100">
                                 {{ $combo->kelompok }}
@@ -243,13 +243,13 @@
 
             <!-- Pagination Text -->
             <div class="text-sm text-gray-700">
-                Showing {{ $combos->firstItem() }} to {{ $combos->lastItem() }} of {{ $combos->total() }} results
+                Showing {{ $_records->firstItem() }} to {{ $_records->lastItem() }} of {{ $_records->total() }} results
             </div>
 
             <!-- Pagination Buttons -->
             <div class="flex space-x-2">
                 <!-- Previous Button -->
-                @if ($combos->onFirstPage())
+                @if ($_records->onFirstPage())
                     <span
                         class="px-4 py-2 text-sm text-gray-400 bg-gray-100 border border-gray-300 rounded cursor-not-allowed transition-all duration-300">
 
@@ -264,7 +264,7 @@
                 @endif
 
                 <!-- Next Button -->
-                @if ($combos->hasMorePages())
+                @if ($_records->hasMorePages())
                     <button wire:click="nextPage"
                         class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:z-10 focus:ring-1 focus:ring-[rgb(0,111,188)] focus:text-[rgb(0,111,188)] transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
                         <span class="whitespace-nowrap">Next</span>
@@ -303,7 +303,7 @@
                                 <div class="mb-3">
                                     <label class="form-label font-medium text-gray-700">Kelompok <span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" wire:model="kelompok"
+                                    <input type="text" wire:model.defer="form.kelompok"
                                         class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error('kelompok') border-red-500 @enderror"
                                         placeholder="Masukkan kelompok">
                                     @error('kelompok')
@@ -314,7 +314,7 @@
                                 <div class="mb-3">
                                     <label class="form-label font-medium text-gray-700">Data <span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" wire:model="data"
+                                    <input type="text" wire:model.defer="form.data"
                                         class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error('data') border-red-500 @enderror"
                                         placeholder="Masukkan data">
                                     @error('data')
@@ -324,7 +324,7 @@
 
                                 <div class="mb-3">
                                     <label class="form-label font-medium text-gray-700">Param Int</label>
-                                    <input type="number" wire:model="param_int"
+                                    <input type="number" wire:model.defer="form.param_int"
                                         class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error('param_int') border-red-500 @enderror"
                                         placeholder="Masukkan param int">
                                     @error('param_int')
@@ -334,7 +334,7 @@
 
                                 <div class="mb-3">
                                     <label class="form-label font-medium text-gray-700">Param Str</label>
-                                    <input type="text" wire:model="param_str"
+                                    <input type="text" wire:model.defer="form.param_str"
                                         class="w-full rounded-lg border p-2 border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 @error('param_str') border-red-500 @enderror"
                                         placeholder="Masukkan param string">
                                     @error('param_str')
@@ -345,7 +345,7 @@
 
                             <div class="mb-3 mt-4">
                                 <div class="flex items-center">
-                                    <input type="checkbox" wire:model="is_active"
+                                    <input type="checkbox" wire:model.defer="form.is_active"
                                         class="h-5 w-5 rounded border-gray-300 text-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] transition-all duration-300"
                                         id="is_active">
                                     <label class="form-check-label font-medium text-gray-700 ms-3" for="is_active">

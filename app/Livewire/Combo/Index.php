@@ -41,6 +41,7 @@ class Index extends Component
 
     public function mount()
     {
+        
         can_any(['combo.view']);
         $this->locale = Session::get('locale', config('app.locale'));
         App::setLocale($this->locale);
@@ -63,6 +64,7 @@ class Index extends Component
 
     public function render()
     {
+        dd($this->permissions());
         $query = Combo::query();
 
         if ($this->search) {
