@@ -2,375 +2,114 @@
 
 namespace App\Livewire\Param;
 
+use App\Livewire\Root;
 use App\Models\Combo;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Session;
-use Livewire\Component;
-use Livewire\WithPagination;
 
-class ParamStsAduan extends Component
+class ParamStsAduan extends Root
 {
-    use WithPagination;
-
-    public $title = "Saluran Aduan";
-    public $filterKelompok = "sts-aduan";
-    public $search = '';
-    public $perPage = 10;
-    public $sortField = 'created_at';
-    public $sortDirection = 'desc';
+    public $title = "Status Aduan";
+    public $views = "parameter.sts-aduan";
+    public $model = Combo::class;
+    public $modul = 'combo';
+    public $kel = 'combo';
     
-    // Modal states
-    public $showModal = false;
-    public $showFilterModal = false;
-    public $updateMode = false;
-    public $filterMode = false;
-    
-    // Form fields
-    public $comboId;
-    public $kelompok = '';
-    public $data_id = '';
-    public $data_en = ''; 
-    public $param_int = ''; 
-    public $is_active = true;
+    // Form configuration
+    public $form = [
+        'kelompok' => 'sts-aduan',
+        'data_id' => null,
+        'data_en' => null,
+        'is_active' => true,
+        'param_int' => 0,
+    ];
 
-    // Bulk actions
-    public $selectedItems = [];
-    public $selectAll = false;
+    public $filters = [
+        'kelompok' => 'sts-aduan',
+        'data_id' => '',
+        'is_active' => '',
+        'param_int' => 0,
+    ];
 
-    // Filter fields 
-    public $filterStatus = '';
-
-    protected $rules = [
-         'data_id' => 'required|string|max:255',
-         'data_en' => 'required|string|max:255',
-        'is_active' => 'boolean',
+    public $rules = [
+        'form.kelompok' => 'required|string|max:255',
+        'form.data_id' => 'required|string|max:255',
+        'form.data_en' => 'required|string|max:255',
+        'form.param_int' => 'numeric|required',
     ];
 
     protected $messages = [
-       
-        'data_en.required' => 'Data Id wajib diisi!',
-        'data_id.required' => 'Data En wajib diisi!',
-        'is_active.required' => 'Status wajib diisi!',
+        'form.data_id.required' => 'Data Indonesia wajib diisi',
+        'form.data_en.required' => 'Data English wajib diisi',
+        'form.param_int.required' => 'Batas perubahan wajib diisi',
+        'form.param_int.numeric' => 'Batas perubahan harus berinlai angka',
     ];
-
-    public function mount()
+ 
+    public function columns()
     {
-        can_any(['combo.view']);
-        $this->locale = Session::get('locale', config('app.locale'));
-        App::setLocale($this->locale);
+        return ['kelompok', 'data_id', 'data_en','param_int'];
+    }
+ 
+    public function filterDefault()
+    {
+        return [
+            ['f' => 'kelompok', 'v' => 'sts-aduan'],
+            // ['f' => 'is_active', 'v' => 1],
+        ];
     }
 
-    public function render()
-    {
-        $query = Combo::query();
-
-        // Search functionality
-        if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('data_id', 'like', '%' . $this->search . '%')
-                  ->orWhere('data_en', 'like', '%' . $this->search . '%');
-            });
-        }
-
-        // Filter functionality
-        // if ($this->filterKelompok) {
-            // $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
-            // }
-            
-            if ($this->filterStatus !== '') {
-                $query->where('is_active', $this->filterStatus);
-            }
-            
-            $query->where('kelompok', $this->filterKelompok );
-        // Sorting
-        $query->orderBy($this->sortField, $this->sortDirection);
-
-        $combos = $query->paginate($this->perPage);
-
-        return view('livewire.parameter.index-manual-sts-aduan', [
-            'combos' => $combos,
-            'title' => "Combo",
-            'permissions' => module_permissions('combo')['can'] ?? []
-        ]);
-    }
-
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
-        
-        // Animation trigger
-        $this->dispatch('tableSorted');
-    }
-
-    /**
-     * Get sort icon untuk field tertentu
-     */
-    public function getSortIcon($field)
-    {
-        if ($this->sortField !== $field) {
-            return 'fa-sort';
-        }
-
-        return $this->sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
-    }
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-        $this->dispatch('searchUpdated');
-    }
-
-    public function updatingPerPage()
-    {
-        $this->resetPage();
-        $this->dispatch('perPageUpdated');
-    }
-
-    // Bulk selection
-    public function updatedSelectAll($value)
-    {
-        if ($value) {
-            $this->selectedItems = $this->combos->pluck('id')->toArray();
-        } else {
-            $this->selectedItems = [];
-        }
-        $this->dispatch('selectionUpdated');
-    }
-
-    public function updatedSelectedItems()
-    {
-        $this->selectAll = false;
-        $this->dispatch('selectionUpdated');
-    }
-
-    // Toggle selection
-    public function toggleSelect($id)
-    {
-        if (in_array($id, $this->selectedItems)) {
-            $this->selectedItems = array_diff($this->selectedItems, [$id]);
-        } else {
-            $this->selectedItems[] = $id;
-        }
-        $this->dispatch('selectionUpdated');
-    }
-
-    // Bulk delete
-    public function deleteBulk()
-    {
-        can_any(['combo.delete']);
-        
-        if (empty($this->selectedItems)) {
-            session()->flash('error', 'Tidak ada data yang dipilih untuk dihapus.');
-            return;
-        }
-
-        $count = count($this->selectedItems);
-        Combo::whereIn('id', $this->selectedItems)->delete();
-        
-        $this->selectedItems = [];
-        $this->selectAll = false;
-        
-        session()->flash('message', $count . ' data berhasil dihapus.');
-        $this->resetPage();
-        $this->dispatch('bulkDeleteCompleted');
-    }
-
-    // Export functionality
-    public function export($type)
-    {
-        can_any(['combo.view']);
-        
-        $query = Combo::query();
-
-        if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('kelompok', 'like', '%' . $this->search . '%')
-                  ->orWhere('data', 'like', '%' . $this->search . '%');
-            });
-        }
-
-        // Apply filters
-        if ($this->filterKelompok) {
-            $query->where('kelompok', 'like', '%' . $this->filterKelompok . '%');
-        }
-
-        if ($this->filterStatus !== '') {
-            $query->where('is_active', $this->filterStatus);
-        }
-
-        $data = $query->get();
-
-        if ($type === 'excel') {
-            return $this->exportExcel($data);
-        } else {
-            return $this->exportPdf($data);
-        }
-    }
-
-    private function exportExcel($data)
-    {
-        // Implement Excel export logic here
-        session()->flash('message', 'Export Excel berhasil dilakukan.');
-        $this->dispatch('exportCompleted');
-    }
-
-    private function exportPdf($data)
-    {
-        // Implement PDF export logic here
-        session()->flash('message', 'Export PDF berhasil dilakukan.');
-        $this->dispatch('exportCompleted');
-    }
-
-    // Filter methods
-    public function openFilter()
-    {
-        $this->showFilterModal = true;
-    }
-
-    public function applyFilter()
-    {
-        $this->resetPage();
-        $this->showFilterModal = false;
-        $this->filterMode = true;
-        session()->flash('message', 'Filter berhasil diterapkan.');
-        $this->dispatch('filterApplied');
-    }
-
-    public function resetFilter()
-    {
-        $this->filterKelompok = '';
-        $this->filterStatus = '';
-        $this->filterMode = false;
-        $this->resetPage();
-        $this->showFilterModal = false;
-        session()->flash('message', 'Filter berhasil direset.');
-        $this->dispatch('filterReset');
-    }
-
-    // Create
-    public function create()
-    {
-        can_any(['combo.create']);
-        $this->resetForm();
-        $this->showModal = true;
-        $this->updateMode = false;
-        $this->dispatch('modalOpened');
-    }
-
-    // Edit
-    public function edit($id)
-    {
-        can_any(['combo.edit']);
-        $combo = Combo::findOrFail($id);
-
-        $this->comboId = $combo->id;
-        $this->kelompok = $combo->kelompok;
-        $this->data_id = $combo->data_id;
-        $this->param_int = $combo->param_int;
-        $this->data_en = $combo->data_en;
-        $this->is_active = $combo->is_active;
-
-        $this->showModal = true;
-        $this->updateMode = true;
-        $this->dispatch('modalOpened');
-    }
-
-    // Save (Create/Update)
-    public function save()
-    {
-        if ($this->updateMode) {
-            can_any(['combo.edit']);
-            $this->validate();
-            
-            $combo = Combo::findOrFail($this->comboId);
-            $combo->update([
-                'kelompok' => $this->filterKelompok,
-                'data_id' => $this->data_id,
-                'data_en' => $this->data_en,
-                'param_int' => $this->param_int,
-                'is_active' => $this->is_active,
-            ]);
-
-            session()->flash('message', 'Data berhasil diupdate.');
-        } else {
-            can_any(['combo.create']);
-            $this->validate();
-
-            Combo::create([
-                 'kelompok' => $this->filterKelompok,
-                'data_id' => $this->data_id,
-                'data_en' => $this->data_en,
-                'param_int' => $this->param_int,
-                'is_active' => $this->is_active,
-            ]);
-
-            session()->flash('message', 'Data berhasil ditambahkan.');
-        }
-
-        $this->closeModal();
-        $this->resetPage();
-        $this->dispatch('dataSaved');
-    }
-
-    // Delete
-    public function delete($id)
-    {
-        can_any(['combo.delete']);
-        $combo = Combo::findOrFail($id);
-        $combo->delete();
-
-        session()->flash('message', 'Data berhasil dihapus.');
-        $this->resetPage();
-        $this->dispatch('dataDeleted');
-    }
-
-    // View
+   
     public function view($id)
     {
-        can_any(['combo.view']);
-        $combo = Combo::findOrFail($id);
+        can_any([strtolower($this->modul).'.view']);
         
-        $this->dispatch('showDetailModal', [
-            'title' => 'Detail Combo',
-            'data' => [
-                'ID' => $combo->id,
-                'Kelompok' => $combo->kelompok,
-                'Data Id' => $combo->data_id,
-                'Data En' => $combo->data_en,
-                'Batas Perubahan' => $combo->param_int,
-                'Status' => $combo->is_active ? 'Aktif' : 'Nonaktif',
-                'Dibuat Pada' => $combo->created_at->format('d/m/Y H:i'),
-                'Diupdate Pada' => $combo->updated_at->format('d/m/Y H:i'),
-            ]
-        ]);
+        $record = $this->model::findOrFail($id);
+
+        $this->detailData = [
+            'Kelompok' => $record->kelompok,
+            'Data Indonesia' => $record->data_id,
+            'Data English' => $record->data_en,
+            'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
+            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
+            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+        ];
+        
+        $this->detailTitle = "Detail " . $this->title;
+        $this->showDetailModal = true;
     }
 
-    // Close modal
-    public function closeModal()
+    // METHOD UNTUK TUTUP DETAIL MODAL
+    public function closeDetailModal()
     {
-        $this->showModal = false;
-        $this->resetForm();
-        $this->dispatch('modalClosed');
+        $this->showDetailModal = false;
+        $this->detailData = [];
+        $this->detailTitle = '';
     }
-
-    // Close filter modal
-    public function closeFilterModal()
-    {
-        $this->showFilterModal = false;
-        $this->dispatch('filterModalClosed');
-    }
-
-    // Reset form
-    private function resetForm()
-    {
-        $this->reset([
-            'comboId', 'data_id' , 'data_en', 'param_int','is_active', 'updateMode'
-        ]);
-        $this->resetErrorBag();
-    }
+    
+    // public function saving($payload)
+    // {
+    //     // Custom logic sebelum menyimpan data
+    //     return $payload;
+    // }
+ 
+    // public function save()
+    // {
+    //     $this->validate($this->rules);
+        
+    //     $payload = collect($this->form)
+    //         ->only(array_keys($this->formDefault))
+    //         ->toArray();
+            
+    //     $payload = $this->saving($payload);
+        
+    //     if ($this->updateMode) {
+    //         $record = $this->model::findOrFail($this->form['id']);
+    //         $record->update($payload);
+    //         session()->flash('message', 'Data berhasil diperbarui.');
+    //     } else {
+    //         $this->model::create($payload);
+    //         session()->flash('message', 'Data berhasil ditambahkan.');
+    //     }
+        
+    //     $this->closeModal();
+    //     $this->resetPage();
+    // }
 }

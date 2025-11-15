@@ -7,8 +7,7 @@
                 'records' => $_records,
                 'columns' => [
                     // 'kelompok' => 'Kelompok',
-                    'data_id' => 'Data Indonesia',
-                    'data_en' => 'Data English',
+                    'data' => 'Data Email',
                     'is_active' => 'Status',
                     'created_at' => 'Dibuat Pada',
                 ],
@@ -50,27 +49,17 @@
             'cols' => 1,
             'fields' => [
                 [
-                    'type' => 'text',
-                    'model' => 'form.data_id',
-                    'label' => 'Data Indonesia',
+                    'type' => 'email',
+                    'model' => 'form.data',
+                    'label' => 'Email',
                     'required' => true,
                     'placeholder' => 'Masukan Data....',
-                    'error' => 'form.data_id',
+                    'error' => 'form.data',
                     'messages' => [
-                        'required' => 'Data Indonesia wajib diisi',
+                        'required' => 'Email wajib diisi',
                     ]
                 ],
-                [
-                    'type' => 'text',
-                    'label' => 'Data English',
-                    'model' => 'form.data_en',
-                    'error' => 'form.data_en',
-                    'required' => true,
-                    'placeholder' => 'Masukkan nama dalam bahasa Inggris',
-                    'messages' => [
-                        'required' => 'Data English wajib diisi',
-                    ]
-                ],
+               
                 [
                     'type' => 'switch-single',
                     'label' => 'Status Aktif',
@@ -87,17 +76,12 @@
             'showFilterModal' => $showFilterModal,
             'filters' => [
                 [
-                    'type' => 'text',
-                    'label' => 'Filter Data ID',
-                    'model' => 'filters.data_id',
+                    'type' => 'email',
+                    'label' => 'Filter Email',
+                    'model' => 'filters.data',
                     'placeholder' => 'Cari data ID...',
                 ],
-                [
-                    'type' => 'text',
-                    'label' => 'Filter Data EN',
-                    'model' => 'filters.data_en', 
-                    'placeholder' => 'Cari data EN...',
-                ],
+                
                 [
                     'type' => 'select',
                     'label' => 'Filter Status',

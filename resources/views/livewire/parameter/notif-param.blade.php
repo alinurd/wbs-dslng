@@ -2,12 +2,14 @@
     <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
     <div class="container-fluid py-4">
         <div class="container mx-auto">
-
+{{-- {{dd($_records)}} --}}
             @include('livewire.components.table-wrapper', [
                 'records' => $_records,
                 'columns' => [
                     // 'kelompok' => 'Kelompok',
                     'data_id' => 'Data Indonesia',
+                    // 'param_int' => 'Jam',
+                    // 'param_int_1' => 'Hari',
                     'data_en' => 'Data English',
                     'is_active' => 'Status',
                     'created_at' => 'Dibuat Pada',
@@ -70,6 +72,22 @@
                     'messages' => [
                         'required' => 'Data English wajib diisi',
                     ]
+                ],
+                [
+                    'type' => 'number',
+                    'label' => 'Jam...',
+                    'model' => 'form.param_int',
+                    'error' => 'form.param_int',
+                    'required' => true,
+                    'placeholder' => 'Masukkan  jumlah jam...',
+                ],
+                [
+                    'type' => 'number',
+                    'label' => 'Hari',
+                    'model' => 'form.param_int_1',
+                    'error' => 'form.param_int_1',
+                    'required' => true,
+                    'placeholder' => 'Masukkan jumlah hari',
                 ],
                 [
                     'type' => 'switch-single',

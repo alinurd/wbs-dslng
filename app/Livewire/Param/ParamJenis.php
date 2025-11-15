@@ -7,7 +7,7 @@ use App\Models\Combo;
 
 class ParamJenis extends Root
 {
-    public $title = "Saluran jenis";
+    public $title = "Jenis Pelanggaran";
     public $views = "parameter.index";
     public $model = Combo::class;
     public $modul = 'combo';

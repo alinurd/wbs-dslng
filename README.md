@@ -1,64 +1,171 @@
-php artisan make:livewire combo/index
-php artisan make:livewire combo/form
+'fields' => [
+    // ==================== TEXT INPUT ====================
+    [
+        'type' => 'text',
+        'model' => 'form.nama_lengkap',
+        'label' => 'Nama Lengkap',
+        'required' => true,
+        'placeholder' => 'Masukkan nama lengkap...',
+        'error' => 'form.nama_lengkap',
+        'colspan' => 2, // Opsional: melebar 2 kolom
+        'helper' => 'Masukkan nama lengkap sesuai KTP',
+        'helper_bottom' => 'Maksimal 100 karakter',
+        'messages' => [
+            'required' => 'Nama lengkap wajib diisi',
+            'max' => 'Nama tidak boleh lebih dari 100 karakter',
+        ]
+    ],
 
+    // ==================== EMAIL INPUT ====================
+    [
+        'type' => 'email',
+        'model' => 'form.email',
+        'label' => 'Alamat Email',
+        'required' => true,
+        'placeholder' => 'contoh@email.com',
+        'error' => 'form.email',
+        'helper' => 'Email akan digunakan untuk verifikasi',
+        'messages' => [
+            'required' => 'Email wajib diisi',
+            'email' => 'Format email tidak valid',
+        ]
+    ],
 
+    // ==================== PASSWORD INPUT ====================
+    [
+        'type' => 'password',
+        'model' => 'form.password',
+        'label' => 'Password',
+        'required' => true,
+        'placeholder' => 'Masukkan password minimal 8 karakter',
+        'error' => 'form.password',
+        'helper' => 'Password harus mengandung huruf dan angka',
+        'messages' => [
+            'required' => 'Password wajib diisi',
+            'min' => 'Password minimal 8 karakter',
+        ]
+    ],
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+    // ==================== NUMBER INPUT ====================
+    [
+        'type' => 'number',
+        'model' => 'form.umur',
+        'label' => 'Umur',
+        'required' => true,
+        'placeholder' => 'Masukkan umur',
+        'error' => 'form.umur',
+        'helper' => 'Hanya angka yang diperbolehkan',
+        'messages' => [
+            'required' => 'Umur wajib diisi',
+            'numeric' => 'Umur harus berupa angka',
+            'min' => 'Umur minimal 17 tahun',
+        ]
+    ],
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+    // ==================== MONEY INPUT ====================
+    [
+        'type' => 'money',
+        'model' => 'form.gaji',
+        'label' => 'Gaji Bulanan',
+        'required' => true,
+        'placeholder' => 'Rp 0',
+        'error' => 'form.gaji',
+        'helper' => 'Masukkan jumlah gaji tanpa titik',
+        'messages' => [
+            'required' => 'Gaji wajib diisi',
+            'numeric' => 'Gaji harus berupa angka',
+        ]
+    ],
 
-## About Laravel
+    // ==================== TEXTAREA ====================
+    [
+        'type' => 'textarea',
+        'model' => 'form.alamat',
+        'label' => 'Alamat Lengkap',
+        'required' => true,
+        'placeholder' => 'Masukkan alamat lengkap...',
+        'error' => 'form.alamat',
+        'rows' => 4,
+        'colspan' => 2, // Textarea biasanya lebar 2 kolom
+        'helper' => 'Sertakan kecamatan, kota, dan kode pos',
+        'messages' => [
+            'required' => 'Alamat wajib diisi',
+        ]
+    ],
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+    // ==================== SELECT DROPDOWN ====================
+    [
+        'type' => 'select',
+        'model' => 'form.jabatan',
+        'label' => 'Jabatan',
+        'required' => true,
+        'placeholder' => 'Pilih jabatan...',
+        'error' => 'form.jabatan',
+        'options' => [
+            'manager' => 'Manager',
+            'supervisor' => 'Supervisor',
+            'staff' => 'Staff',
+            'admin' => 'Administrator',
+        ],
+        'helper' => 'Pilih sesuai dengan posisi di perusahaan',
+        'messages' => [
+            'required' => 'Jabatan wajib dipilih',
+        ]
+    ],
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+    // ==================== CHECKBOX ====================
+    [
+        'type' => 'checkbox',
+        'model' => 'form.setuju_syarat',
+        'label' => 'Persetujuan',
+        'checkbox_label' => 'Saya menyetujui syarat dan ketentuan',
+        'required' => true,
+        'error' => 'form.setuju_syarat',
+        'helper' => 'Centang untuk melanjutkan',
+        'messages' => [
+            'required' => 'Anda harus menyetujui syarat dan ketentuan',
+        ]
+    ],
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    // ==================== RADIO GROUP ====================
+    [
+        'type' => 'radio',
+        'model' => 'form.jenis_kelamin',
+        'label' => 'Jenis Kelamin',
+        'required' => true,
+        'error' => 'form.jenis_kelamin',
+        'options' => [
+            'L' => 'Laki-laki',
+            'P' => 'Perempuan',
+        ],
+        'helper' => 'Pilih jenis kelamin',
+        'messages' => [
+            'required' => 'Jenis kelamin wajib dipilih',
+        ]
+    ],
 
-## Learning Laravel
+    // ==================== DATE INPUT ====================
+    [
+        'type' => 'date',
+        'model' => 'form.tanggal_lahir',
+        'label' => 'Tanggal Lahir',
+        'required' => true,
+        'error' => 'form.tanggal_lahir',
+        'helper' => 'Format: DD/MM/YYYY',
+        'messages' => [
+            'required' => 'Tanggal lahir wajib diisi',
+            'date' => 'Format tanggal tidak valid',
+        ]
+    ],
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    // ==================== SWITCH SINGLE ====================
+    [
+        'type' => 'switch-single',
+        'model' => 'form.status_aktif',
+        'label' => 'Status Aktif',
+        'error' => 'form.status_aktif',
+        'on_label' => 'AKTIF',
+        'off_label' => 'NONAKTIF',
+        'helper' => 'Aktifkan atau nonaktifkan pengguna',
+    ],
+],

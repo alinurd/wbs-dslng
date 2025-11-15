@@ -72,6 +72,14 @@
                     ]
                 ],
                 [
+                    'type' => 'number',
+                    'label' => 'Batas Perubahan',
+                    'model' => 'form.param_int',
+                    'error' => 'form.param_int',
+                    'required' => true,
+                    'placeholder' => 'Masukkan Batas Perubahan',
+                ],
+                [
                     'type' => 'switch-single',
                     'label' => 'Status Aktif',
                     'model' => 'form.is_active',
