@@ -10,7 +10,12 @@ use App\Livewire\Menus\Form as MenuForm;
 // use App\Livewire\Combo\Index as ComboIndex;
 
 use App\Livewire\Menus\Index as MenuIndex;
+
+
 use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
+use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
+
+
 use App\Livewire\News\Detail as NewsDetail;
 use App\Livewire\News\Index as NewsIndex;
 
@@ -103,7 +108,8 @@ Route::middleware(['auth'])->group(function () {
     
     //pengaduan
     Route::prefix('/pengaduan')->group(function () {
-               Route::get('/report', PengaduanIndex::class)->name('report');
+               Route::get('/p_report', PengaduanIndex::class)->name('p_report');
+               Route::get('/p_tracking', TrackingIndex::class)->name('p_tracking');
 
         });
 

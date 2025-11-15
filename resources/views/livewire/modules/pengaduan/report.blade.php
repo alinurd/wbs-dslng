@@ -10,7 +10,6 @@
         </p>
     </div>
      
-
     <!-- Form -->
 <form wire:submit.prevent="save" class="p-6 space-y-6">
             <!-- Informasi Pelapor -->

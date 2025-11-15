@@ -3,6 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Audit as AuditLog;
+use App\Models\Combo;
+use App\Models\Owner;
+use App\Models\Pengaduan;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
@@ -43,6 +46,12 @@ abstract class Root extends Component
 
     public $rules = []; // child dapat override dengan property
     public $locale;
+    
+    public $jenisPengaduanList = []; // child dapat override dengan property
+    public $saluranList = []; // child dapat override dengan property
+    public $direktoratList = []; // child dapat override dengan property
+    public $tahunPengaduanList = []; // child dapat override dengan property
+
 
 
     // ================== MOUNT =====================
@@ -284,6 +293,10 @@ public function deleteBulk()
     {
         $this->showFilterModal = true;
     }
+    public function closeFilterModal()
+    {
+        $this->showFilterModal = false;
+    }
 
 
     public function applyFilter()
@@ -508,6 +521,34 @@ protected function getAuditMessage($action, $record, $data)
             return 'Aksi ' . $action . ' berhasil dilakukan.';
     }
 }
+
+public function loadDropdownData()
+    {
+        $this->jenisPengaduanList = Combo::where('kelompok', 'jenis')
+            ->select('data_id', 'data_en', 'data', 'id')
+            ->where('is_active', true)
+            ->orderBy('data_id')
+            ->get();
+        
+    $this->tahunPengaduanList = Pengaduan::
+    selectRaw('YEAR(tanggal_pengaduan) as tahun')
+    ->whereNotNull('tanggal_pengaduan')
+    ->groupBy('tahun')
+    ->orderBy('tahun', 'desc')
+    ->pluck('tahun', 'tahun') // Konversi ke array [tahun => tahun]
+    ->toArray();
+
+        $this->saluranList = Combo::where('kelompok', 'aduan')
+         ->select('id','data_id', 'data_en', 'data')
+            ->where('is_active', true)
+            ->orderBy('data_id')
+            ->get();
+
+        $this->direktoratList = Owner::where('is_active', 1)
+         ->select('id','owner_name', 'owner_name_1', 'parent_id')
+            ->orderBy('owner_name')
+            ->get();
+    }
 
 
 }

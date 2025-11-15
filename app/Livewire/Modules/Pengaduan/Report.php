@@ -2,9 +2,7 @@
 
 namespace App\Livewire\Modules\Pengaduan;
 
-use App\Livewire\Root;
-use App\Models\Combo;
-use App\Models\Owner;
+use App\Livewire\Root; 
 use App\Models\Pengaduan;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
@@ -13,7 +11,7 @@ class Report extends Root
 {
     use WithFileUploads;
 
-    public $modul = 'report'; // Ubah ke 'pengaduan'
+    public $modul = 'p_report'; // Ubah ke 'pengaduan'
     public $model = Pengaduan::class;
     public $views = 'modules.pengaduan.report';
     
@@ -98,22 +96,7 @@ class Report extends Root
         $this->autoFillUserData();
     }
 
-    protected function loadDropdownData()
-    {
-        $this->jenisPengaduanList = Combo::where('kelompok', 'jenis')
-            ->where('is_active', true)
-            ->orderBy('data_id')
-            ->get();
-
-        $this->saluranList = Combo::where('kelompok', 'aduan')
-            ->where('is_active', true)
-            ->orderBy('data_id')
-            ->get();
-
-        $this->direktoratList = Owner::where('is_active', 1)
-            ->orderBy('owner_name')
-            ->get();
-    }
+    
 
     protected function autoFillUserData()
     {
@@ -278,4 +261,5 @@ $this->dispatch('notify', [
             return parent::getAuditMessage($action, $record, $data);
     }
 }
+
 }
