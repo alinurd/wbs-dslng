@@ -76,7 +76,9 @@ abstract class Root extends Component
         
         // Search
         if ($this->search && method_exists($this, 'columns')) {
+            
             $columns = $this->columns();
+            dd($columns);
             if (is_array($columns) && count($columns)) {
                 $query->where(function ($q) use ($columns) {
                     foreach ($columns as $col) {
@@ -88,6 +90,7 @@ abstract class Root extends Component
 
         // Additional filters
         if (is_array($this->filters)) {
+            // dd($this->filters);
             foreach ($this->filters as $key => $val) {
                 if ($val !== '' && $val !== null) {
                     $query->where($key, 'like', "%$val%");

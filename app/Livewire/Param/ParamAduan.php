@@ -23,6 +23,7 @@ class ParamAduan extends Root
     // Filters
     public $filters = [
         'kelompok' => 'aduan',
+        'data_id' => '',
     ];
  
     public $rules = [

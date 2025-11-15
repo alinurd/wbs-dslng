@@ -97,7 +97,13 @@
                 [
                     'type' => 'text',
                     'label' => 'Filter Kelompok',
-                    'model' => 'filterKelompok',
+                    'model' => 'kelompok',
+                    'placeholder' => 'Cari kelompok...',
+                ],
+                [
+                    'type' => 'text',
+                    'label' => 'Filter Data ID',
+                    'model' => 'data_id',
                     'placeholder' => 'Cari kelompok...',
                 ],
 
