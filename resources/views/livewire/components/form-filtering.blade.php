@@ -5,7 +5,9 @@
     'onClose' => '',
     'onReset' => '',
     'onApply' => '',
-    'title' => 'Filter Data'
+    'title' => 'Filter Data',
+    'size' => 'md',
+    'cols' => 2,
 ])
 
 @if ($showFilterModal)

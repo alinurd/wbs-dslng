@@ -62,6 +62,7 @@
     'onClose' => 'closeModal',
     'onSave' => 'save',
     'title' => $title,
+    'size' => 'xl',
     'cols' => 1,
     'fields' => [
         [
@@ -99,7 +100,7 @@
                     'model' => 'filterKelompok',
                     'placeholder' => 'Cari kelompok...',
                 ],
-                
+
                 [
                     'type' => 'select',
                     'label' => 'Filter Status',
