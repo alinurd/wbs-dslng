@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Log as AuditLog;
+use App\Models\Audit as AuditLog;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
