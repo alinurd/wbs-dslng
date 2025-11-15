@@ -26,12 +26,12 @@ class Tracking extends Root
         return ['code_pengaduan', 'perihal', 'tanggal_pengaduan', 'status'];
     }
 
-    public function filterDefault()
-    {
-        return [
-            ['f' => 'user_id', 'v' => auth()->id()],
-        ];
-    }
+    // public function filterDefault()
+    // {
+    //     return [
+    //         ['f' => 'user_id', 'v' => auth()->id()],
+    //     ];
+    // }
 
     public function mount()
     {
@@ -43,6 +43,18 @@ class Tracking extends Root
     {
         $q = ($this->model)::query();
         
+          if ($this->search && method_exists($this, 'columns')) {
+            
+            $columns = $this->columns();
+            if (is_array($columns) && count($columns)) {
+                $q->where(function ($p) use ($columns) {
+                    foreach ($columns as $col) {
+                        $p->orWhere($col, 'like', "%{$this->search}%");
+                    }
+                });
+            }
+        }
+
         if (is_array($this->filters)) {
             foreach ($this->filters as $key => $val) {
                 if ($key == 'tahun' && !empty($val)) {
@@ -52,7 +64,7 @@ class Tracking extends Root
                     $q->where('jenis_pengaduan_id', $val); // Hapus bracket array
                 }
             }
-            $q->where('user_id', auth()->id());
+            // $q->where('user_id', auth()->id());
         }
 
         return $q;
