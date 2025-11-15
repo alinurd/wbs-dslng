@@ -54,7 +54,7 @@
                             </div>
                         @endif
 
-                        <<div class="grid grid-cols-1 md:grid-cols-{{ $cols }} gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-{{ $cols }} gap-4">
     @foreach($fields as $field)
         @php
             $colSpan = $field['colspan'] ?? 1;
