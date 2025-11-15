@@ -78,7 +78,6 @@ abstract class Root extends Component
         if ($this->search && method_exists($this, 'columns')) {
             
             $columns = $this->columns();
-            dd($columns);
             if (is_array($columns) && count($columns)) {
                 $query->where(function ($q) use ($columns) {
                     foreach ($columns as $col) {

@@ -1,4 +1,3 @@
-<!-- Di file index.blade.php Anda -->
 <div>
     <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
     <div class="container-fluid py-4">
@@ -48,10 +47,7 @@
                 'onDelete' => 'delete',
                 'onSelectItem' => 'selectedItems',
                 'firstItem' => $_records->firstItem(),
-            ])
-
-            <!-- Pagination -->
-            <!-- ... your pagination code -->
+            ]) 
         </div>
 
         <!-- Form Modal -->
@@ -91,37 +87,39 @@
         ],
     ]
 ])
-@include('livewire.components.form-filtering', [
-            'showFilterModal' => $showFilterModal,
-            'filters' => [
-                [
-                    'type' => 'text',
-                    'label' => 'Filter Kelompok',
-                    'model' => 'kelompok',
-                    'placeholder' => 'Cari kelompok...',
-                ],
-                [
-                    'type' => 'text',
-                    'label' => 'Filter Data ID',
-                    'model' => 'data_id',
-                    'placeholder' => 'Cari kelompok...',
-                ],
 
-                [
-                    'type' => 'select',
-                    'label' => 'Filter Status',
-                    'model' => 'filterStatus',
-                    'options' => [
-                        '1' => 'Aktif',
-                        '0' => 'Nonaktif',
-                    ],
-                    'placeholder' => 'Semua Status',
-                ],
+<!-- Include Filter Modal -->
+@include('livewire.components.form-filtering', [
+    'showFilterModal' => $showFilterModal,
+    'filters' => [
+        [
+            'type' => 'text',
+            'label' => 'Filter Data ID',
+            'model' => 'filters.data_id', 
+            'placeholder' => 'Cari data ID...',
+        ],
+        [
+            'type' => 'text',
+            'label' => 'Filter Data EN',
+            'model' => 'filters.data_en', 
+            'placeholder' => 'Cari data EN...',
+        ],
+        [
+            'type' => 'select',
+            'label' => 'Filter Status',
+            'model' => 'filters.filterStatus',
+            'options' => [
+                '1' => 'Aktif',
+                '0' => 'Nonaktif',
             ],
-            'onClose' => 'closeFilterModal',
-            'onReset' => 'resetFilter',
-            'onApply' => 'applyFilter',
-        ])
+            'placeholder' => 'Semua Status',
+        ],
+    ],
+    'onClose' => 'closeFilterModal',
+    'onReset' => 'resetFilter',
+    'onApply' => 'applyFilter',
+])
+
 
     </div>
 </div>
