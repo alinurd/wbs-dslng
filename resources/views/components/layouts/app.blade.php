@@ -276,6 +276,37 @@
     });
 </script>
     
+{{-- Di layout utama atau component view --}}
+@if(env('CHAT_REALTIME', false))
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.dispatch('initialize-echo');
+    });
+
+    // Atau menggunakan Alpine.js
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('chat', () => ({
+            init() {
+                if (@json(env('CHAT_REALTIME', false))) {
+                    this.initializeEcho();
+                }
+            },
+            
+            initializeEcho() {
+                // Initialize Pusher
+                window.Echo = new Echo({
+                    broadcaster: 'pusher',
+                    key: @json(env('PUSHER_APP_KEY')),
+                    cluster: @json(env('PUSHER_APP_CLUSTER')),
+                    encrypted: true
+                });
+            }
+        }));
+    });
+</script>
+@endif
+
 </body>
 </html>
 
