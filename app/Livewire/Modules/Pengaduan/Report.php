@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Modules\Pengaduan;
 
+use App\Helpers\FileHelper;
 use App\Livewire\Root; 
 use App\Models\Pengaduan;
 use Illuminate\Support\Str;
@@ -47,7 +48,9 @@ class Report extends Root
             'perihal' => 'required|min:5|max:200',
             'uraian' => 'required|min:10|max:1000',
             'alamat_kejadian' => 'required|min:10|max:500',
-            'lampiran.*' => 'max:102400|mimes:zip,rar,doc,docx,xls,xlsx,ppt,pptx,pdf,jpg,jpeg,png,avi,mp4,3gp,mp3',
+            
+            'lampiran.*' => 'max:' . (FileHelper::getMaxPengaduanSize() * 1024) . '|mimes:' . implode(',', FileHelper::getAllowedPengaduanExtensions()),
+            
             'confirmation' => 'required|accepted'
         ];
     }
@@ -111,18 +114,15 @@ class Report extends Root
     protected function saving($payload)
     {
         // Upload lampiran
-        $lampiranPaths = [];
+       $lampiranPaths = [];
         if ($this->lampiran && count($this->lampiran) > 0) {
-            foreach ($this->lampiran as $file) {
-                $path = $file->store('pengaduan/lampiran', 'public');
-                $lampiranPaths[] = [
-                    'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
-                    'size' => $file->getSize(),
-                    'uploaded_at' => now()->toDateTimeString()
-                ];
-            }
+            $lampiranPaths = FileHelper::uploadMultiple(
+                $this->lampiran, 
+                'pengaduan/lampiran', 
+                'public'
+            );
         }
+
 
         // Generate code pengaduan
         $codePengaduan = 'ADU-' . date('Ymd') . '-' . Str::random(6);
@@ -168,28 +168,7 @@ $this->dispatch('notify', [
     $this->resetLampiran();
 }
 
-    // Handle lampiran
-    public function updatedLampiran($value)
-    {
-        foreach ($this->lampiran as $index => $file) {
-            $extension = strtolower($file->getClientOriginalExtension());
-            $allowedTypes = ['zip', 'rar', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'jpg', 'jpeg', 'png', 'avi', 'mp4', '3gp', 'mp3'];
-            
-            if (!in_array($extension, $allowedTypes)) {
-                session()->flash('error', 'File ' . $file->getClientOriginalName() . ' tidak diizinkan. Format yang didukung: ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.');
-                $this->removeLampiran($index);
-                continue;
-            }
-            
-            if ($file->getSize() > 100 * 1024 * 1024) {
-                session()->flash('error', 'File ' . $file->getClientOriginalName() . ' terlalu besar. Maksimal 100MB.');
-                $this->removeLampiran($index);
-                continue;
-            }
-        }
-        
-        $this->resetErrorBag('lampiran.*');
-    }
+  
 
     public function removeLampiran($index)
     {
@@ -262,4 +241,53 @@ $this->dispatch('notify', [
     }
 }
 
+
+/**
+     * Get file icon untuk display di view
+     */
+    public function getFileIcon($filename)
+    {
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        return FileHelper::getFileIcon($extension);
+    }
+
+    /**
+     * Format file size untuk display
+     */
+    public function formatFileSize($bytes)
+    {
+        return FileHelper::formatSize($bytes);
+    }
+
+
+    public function removeLampiranByName($filename)
+    {
+        foreach ($this->lampiran as $index => $file) {
+            if ($file->getClientOriginalName() === $filename) {
+                $this->removeLampiran($index);
+                break;
+            }
+        }
+    }
+
+       public function updatedLampiran($value)
+    {
+        $validation = FileHelper::validateMultipleFiles(
+            $this->lampiran,
+            FileHelper::getAllowedPengaduanExtensions(),
+            FileHelper::getMaxPengaduanSize()
+        );
+
+        if (!$validation['is_valid']) {
+            foreach ($validation['errors'] as $filename => $errors) {
+                foreach ($errors as $error) {
+                    session()->flash('error', $error);
+                }
+                // Remove invalid files
+                $this->removeLampiranByName($filename);
+            }
+        }
+        
+        $this->resetErrorBag('lampiran.*');
+    }
 }

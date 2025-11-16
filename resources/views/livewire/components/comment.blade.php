@@ -51,6 +51,107 @@
                                 @endif
                             @endforeach
                         </div>
+
+                        <!-- Section File Upload -->
+                        <div class="mt-8">
+                            <h6 class="font-semibold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-paperclip mr-2 text-blue-500"></i>
+                                Lampiran File
+                            </h6>
+                            
+                            <!-- Upload Form -->
+                            <div class="mb-4">
+                                <form wire:submit.prevent="uploadFile" class="space-y-3">
+                                    <div>
+                                        <input type="file" 
+                                               wire:model="fileUpload"
+                                               class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                               accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx">
+                                        @error('fileUpload')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    
+                                    <div class="flex space-x-2">
+                                        <input type="text" 
+                                               wire:model="fileDescription"
+                                               placeholder="Deskripsi file (opsional)"
+                                               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        
+                                        <button type="submit"
+                                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                {{ !$fileUpload ? 'disabled' : '' }}>
+                                            <i class="fas fa-upload"></i>
+                                            <span>Upload</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Uploaded Files List -->
+                            <div class="mt-4">
+                                <h7 class="font-semibold text-gray-600 mb-3 text-sm">File Terlampir</h7>
+                                
+                                @if(isset($uploadedFiles) && count($uploadedFiles) > 0)
+                                    <div class="space-y-2 max-h-40 overflow-y-auto">
+                                        @foreach($uploadedFiles as $file)
+                                            <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                                    <!-- File Icon -->
+                                                    <div class="flex-shrink-0">
+                                                        @if(str_contains($file['type'], 'image'))
+                                                            <i class="fas fa-image text-blue-500"></i>
+                                                        @elseif(str_contains($file['type'], 'pdf'))
+                                                            <i class="fas fa-file-pdf text-red-500"></i>
+                                                        @elseif(str_contains($file['type'], 'word') || str_contains($file['type'], 'document'))
+                                                            <i class="fas fa-file-word text-blue-600"></i>
+                                                        @elseif(str_contains($file['type'], 'excel') || str_contains($file['type'], 'spreadsheet'))
+                                                            <i class="fas fa-file-excel text-green-500"></i>
+                                                        @else
+                                                            <i class="fas fa-file text-gray-500"></i>
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    <!-- File Info -->
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            {{ $file['name'] }}
+                                                        </p>
+                                                        @if($file['description'])
+                                                            <p class="text-xs text-gray-500 truncate">
+                                                                {{ $file['description'] }}
+                                                            </p>
+                                                        @endif
+                                                        <p class="text-xs text-gray-400">
+                                                            {{ $file['size'] }} • {{ $file['uploaded_at'] }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Actions -->
+                                                <div class="flex items-center space-x-2 flex-shrink-0">
+                                                    <button wire:click="downloadFile('{{ $file['id'] }}')"
+                                                            class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                                                            title="Download">
+                                                        <i class="fas fa-download text-sm"></i>
+                                                    </button>
+                                                    <button wire:click="deleteFile('{{ $file['id'] }}')"
+                                                            class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                                                            title="Hapus">
+                                                        <i class="fas fa-trash text-sm"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-center py-4 text-gray-500">
+                                        <i class="fas fa-folder-open text-2xl mb-2 opacity-30"></i>
+                                        <p class="text-sm">Belum ada file yang diupload</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -88,7 +189,23 @@
                                                 </p>
                                             @endif
                                             
+                                            <!-- Message Content -->
                                             <p class="text-sm">{{ $message['message'] }}</p>
+                                            
+                                            <!-- File Attachment in Message -->
+                                            @if(isset($message['file']) && $message['file'])
+                                                <div class="mt-2 p-2 bg-white/20 rounded border border-white/30">
+                                                    <div class="flex items-center space-x-2">
+                                                        <i class="fas fa-paperclip text-xs"></i>
+                                                        <span class="text-xs truncate flex-1">{{ $message['file']['name'] }}</span>
+                                                        <button wire:click="downloadMessageFile('{{ $message['file']['id'] }}')"
+                                                                class="text-xs hover:underline">
+                                                            Download
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            
                                             <p class="text-xs mt-1 opacity-70 {{ $message['is_own'] ? 'text-blue-100' : 'text-gray-500' }}">
                                                 {{ $message['time'] }}
                                             </p>
@@ -119,23 +236,58 @@
 
                     <!-- Form Input Message -->
                     <div class="border-t border-gray-200 p-4 bg-white">
-                        <form wire:submit.prevent="sendMessage" class="flex space-x-3">
-                            <div class="flex-1">
-                                <input type="text" 
-                                       wire:model="newMessage"
-                                       placeholder="Ketik pesan Anda..."
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                                       {{ !$trackingId ? 'disabled' : '' }}>
+                        <form wire:submit.prevent="sendMessage" class="space-y-3">
+                            <!-- File Attachment for Message -->
+                            @if($attachFile)
+                                <div class="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-paperclip text-blue-500"></i>
+                                        <div>
+                                            <p class="text-sm font-medium text-blue-800">{{ $attachFile->getClientOriginalName() }}</p>
+                                            <p class="text-xs text-blue-600">File akan dilampirkan ke pesan</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" 
+                                            wire:click="$set('attachFile', null)"
+                                            class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            @endif
+
+                            <div class="flex space-x-3">
+                                <!-- File Attachment Button -->
+                                <label class="flex items-center justify-center w-12 h-12 border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 transition-all duration-200 cursor-pointer">
+                                    <i class="fas fa-paperclip"></i>
+                                    <input type="file" 
+                                           wire:model="attachFile"
+                                           class="hidden"
+                                           accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx">
+                                </label>
+
+                                <!-- Message Input -->
+                                <div class="flex-1">
+                                    <input type="text" 
+                                           wire:model="newMessage"
+                                           placeholder="Ketik pesan Anda..."
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                                           {{ !$trackingId ? 'disabled' : '' }}>
+                                </div>
+                                
+                                <!-- Send Button -->
+                                <button type="submit"
+                                        class="flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        {{ !$trackingId || (!$newMessage && !$attachFile) ? 'disabled' : '' }}>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
                             </div>
-                            <button type="submit"
-                                    class="flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    {{ !$trackingId || !$newMessage ? 'disabled' : '' }}>
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
                         </form>
                         
-                        <!-- Error Message -->
+                        <!-- Error Messages -->
                         @error('newMessage')
+                            <p class="text-red-500 text-xs mt-2 px-2">{{ $message }}</p>
+                        @enderror
+                        @error('attachFile')
                             <p class="text-red-500 text-xs mt-2 px-2">{{ $message }}</p>
                         @enderror
                     </div>
