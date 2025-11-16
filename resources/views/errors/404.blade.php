@@ -12,8 +12,9 @@
   
     <center>
         <h1 class="mt-2 text-2xl font-medium text-gray-900">
-         <strong>ERR 403</strong>
-    </h1> 
+         <strong>ERR 404</strong>
+    </h1>
+ 
     <h5 class="mt-2 text-2xl font-medium text-red-500">
         tidak diizinkan untk akses halaman ini</strong>
     </h5> 

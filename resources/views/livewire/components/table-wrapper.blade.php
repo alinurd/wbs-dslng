@@ -36,7 +36,7 @@
             @include('livewire.components.action-bar', [
                 'permissions' => $permissions,
                 'selectedItems' => $selectedItems,
-                'onCreate' =>false,
+                'onCreate' =>$onCreate,
                 'onExportExcel' => $onExportExcel,
                 'onExportPdf' => $onExportPdf,
                 'onDeleteBulk' => $onDeleteBulk,

@@ -10,7 +10,7 @@ class ParamPertanyaan extends Root
     public $title = "Pertanyaan";
     public $views = "parameter.index";
     public $model = Combo::class;
-    public $modul = 'combo';
+    public $modul = 'pertanyaan';
     public $kel = 'combo';
     
     // Form configuration
