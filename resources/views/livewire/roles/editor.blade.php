@@ -15,9 +15,9 @@
                 </thead>
                 <tbody>
                     @php
-                        // Kelompokkan permission berdasarkan prefix module
+                        
                         $grouped = $permissions->groupBy(function($item) {
-                            return explode('.', $item->name)[0]; // contoh: dashboard.create -> dashboard
+                            return explode('.', $item->name)[0];
                         });
                     @endphp
 
