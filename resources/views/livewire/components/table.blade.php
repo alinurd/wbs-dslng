@@ -15,6 +15,7 @@
     'emptyMessage' => 'Tidak ada data ditemukan'
 ])
 
+{{-- {{dd($modul)}} --}}
 @php
     if($modul == 'p_tracking') {  $permissions['delete'] = false; $permissions['edit'] = false; $permissions['comment'] = true;}
 @endphp
@@ -83,12 +84,20 @@
                     
                     <td class="px-4 py-3 whitespace-nowrap text-center border-b border-gray-100">
                         <div class="flex justify-center gap-1">
+                            @if($modul == 'roles')
+                            <a href="{{ route('roles.permissions', $record->id) }}"
+                                class="inline-flex items-center px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all duration-200 transform hover:scale-110 text-xs">
+                                <i class="fas fa-key mr-1.5 text-xs"></i>
+                                <span class="whitespace-nowrap">Set Akses</span>
+                            </a>
+                            @else
                             @if ($permissions['view'] ?? false)
                                 <button wire:click="{{ $onView }}({{ $record->id }})"
                                     class="inline-flex items-center px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all duration-200 transform hover:scale-110 text-xs"
                                     title="View">
                                     <i class="fas fa-eye w-3 h-3"></i>
                                 </button>
+                            @endif
                             @endif
 
                             @if ($permissions['edit'] ?? false)
