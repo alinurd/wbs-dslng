@@ -1,0 +1,30 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
+  
+    <center>
+        <h1 class="mt-2 text-2xl font-medium text-gray-900">
+         <strong>ERR 404</strong>
+    </h1>
+
+    @if(!$user->email_verified_at)
+    <h5 class="mt-2 text-2xl font-medium text-red-500">
+        tidak diizinkan untk akses halaman ini</strong>
+    </h5>
+    @endif
+    </center>
+</div>
+ 
+
+            </div>
+        </div>
+    </div>
+</x-app-layout>
