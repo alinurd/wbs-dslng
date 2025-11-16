@@ -269,4 +269,17 @@ class FileHelper
     {
         return 100; // 100MB
     }
+
+
+    public static function getSafeFileInfo(array $fileData): array
+{
+    return [
+        'name' => $fileData['name'] ?? $fileData['original_name'] ?? 'Unknown File',
+        'size' => $fileData['size'] ?? 0,
+        'formatted_size' => self::formatSize($fileData['size'] ?? 0),
+        'type' => $fileData['type'] ?? $fileData['mime_type'] ?? 'unknown',
+        'extension' => pathinfo($fileData['name'] ?? $fileData['original_name'] ?? '', PATHINFO_EXTENSION),
+        'icon' => self::getFileIcon(pathinfo($fileData['name'] ?? $fileData['original_name'] ?? '', PATHINFO_EXTENSION)),
+    ];
+}
 }

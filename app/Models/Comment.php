@@ -12,12 +12,14 @@ class Comment extends Model
     protected $fillable = [
         'pengaduan_id',
         'user_id',
-        'message'
+        'message',
+        'file_data'
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'file_data' => 'array',
     ];
 
     // Relationship dengan Pengaduan
