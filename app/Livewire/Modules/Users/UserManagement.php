@@ -243,7 +243,7 @@ class UserManagement extends Root
                 'is_active' => !$user->is_active
             ]);
             
-            $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+            $status = $user->is_active ?1 : 0;
             $this->dispatch('show-toast', type: 'success', message: "User berhasil $status");
             
             // Refresh data
