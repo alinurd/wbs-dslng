@@ -4,7 +4,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Spatie\Permission\Models\Permission;
 
-class PermissionManagement extends Component
+class PermissionManagement_old extends Component
 {
     public $permissions, $name, $permissionId;
     public $updateMode = false;

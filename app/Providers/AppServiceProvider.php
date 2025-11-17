@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 // Menu dengan route: cek permission
-                $permissionBase = str_replace('.', '-', $menu->route);
+                $permissionBase = str_replace('.', '-', $menu->slug);
                 // dd($permissionBase);
                 if ($menu->route) {
                     return $user->can($permissionBase . '.view');

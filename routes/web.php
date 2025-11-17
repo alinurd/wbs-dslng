@@ -15,11 +15,12 @@ use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
 
 
+use App\Livewire\Modules\PermissionManagement;
 use App\Livewire\News\Detail as NewsDetail;
+
+
+
 use App\Livewire\News\Index as NewsIndex;
-
-
-
 use App\Livewire\Param\ParamAduan;
 use App\Livewire\Param\ParamDirektorat;
 use App\Livewire\Param\ParamEmailNotif;
@@ -27,17 +28,16 @@ use App\Livewire\Param\ParamForward;
 use App\Livewire\Param\ParamJenis;
 use App\Livewire\Param\ParamNotif;
 use App\Livewire\Param\ParamPertanyaan;
+
+
+
+
+
+
+
+
+
 use App\Livewire\Param\ParamStsAduan;
-
-
-
-
-
-
-
-
-
-use App\Livewire\PermissionManagement;
 use App\Livewire\Roles\Editor as RoleEditor;
 
 
@@ -70,8 +70,11 @@ Route::middleware([
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/users', UserManagement::class)->name('users');
-     Route::get('/permissions', PermissionManagement::class)->name('permissions');
-
+ 
+    Route::get('/permissions', PermissionManagement::class)->name('permissions.index');
+    Route::get('/permissions/create', PermissionManagement::class)->name('permissions.create');
+    Route::get('/permissions/{id}/edit', PermissionManagement::class)->name('permissions.edit');
+ 
     Route::get('/roles', RoleIndex::class)->name('roles.index');
     Route::get('/roles/create', RoleForm::class)->name('roles.create');
     Route::get('/roles/{id}/edit', RoleForm::class)->name('roles.edit');
