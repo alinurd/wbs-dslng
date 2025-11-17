@@ -14,7 +14,8 @@ class Compleien extends Root
     public $model = Pengaduan::class;
     public $views = 'modules.complien';
     public $title = "Complien";
-    
+    public $catatan = '';
+public $file_upload;
     // Properties untuk detail (dari HasChat sudah include chat properties)
     public $detailData = [];
     public $detailTitle = '';
@@ -23,6 +24,44 @@ class Compleien extends Root
     public $fileUpload = null;
     public $fileDescription = '';
     public $uploadedFiles = [];
+
+   
+public function removeFile()
+{
+    $this->reset('file_upload');
+}
+
+public function submitCatatan()
+{
+    $this->validate();
+
+    try {
+        // Simpan catatan
+        $catatanData = [
+            'catatan' => $this->catatan,
+            'user_id' => auth()->id(),
+            'created_at' => now(),
+        ];
+
+        // Simpan file jika ada
+        if ($this->file_upload) {
+            $filename = $this->file_upload->store('pengaduan-lampiran', 'public');
+            $catatanData['file_path'] = $filename;
+            $catatanData['file_name'] = $this->file_upload->getClientOriginalName();
+        }
+
+        // Simpan ke database atau lakukan processing
+        // YourModel::create($catatanData);
+
+        session()->flash('message', 'Catatan berhasil disimpan!');
+        
+        // Reset form
+        $this->reset(['catatan', 'file_upload']);
+        
+    } catch (\Exception $e) {
+        session()->flash('error', 'Gagal menyimpan catatan: ' . $e->getMessage());
+    }
+}
 
     public function columns()
     {
