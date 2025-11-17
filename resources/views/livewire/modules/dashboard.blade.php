@@ -220,10 +220,10 @@
                     <div class="px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center justify-between">
                             <h2 class="text-lg font-semibold text-gray-900">Pengaduan Terbaru</h2>
-                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1">
+                            <a href="{{ route('p_tracking') }}"  class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1">
                                 <span>Lihat Semua</span>
                                 <i class="fas fa-chevron-right text-xs"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <div class="p-6">
