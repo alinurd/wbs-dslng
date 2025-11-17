@@ -3,12 +3,20 @@
 namespace App\Providers;
 
 use App\Models\Menu;
+use App\Services\MenuService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public function register()
+    {
+        $this->app->singleton(MenuService::class, function ($app) {
+            return new MenuService();
+        });
+    }
+    
     public function boot()
     {
         // Blade directive untuk cek menu access
