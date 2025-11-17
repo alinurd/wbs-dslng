@@ -17,7 +17,7 @@
 
 {{-- {{dd($modul)}} --}}
 @php
-    if($modul == 'p_tracking') {  $permissions['delete'] = false; $permissions['edit'] = false; $permissions['comment'] = true;}
+    if($modul == 'p_tracking' || $modul == 'complien') {  $permissions['delete'] = false; $permissions['edit'] = false; $permissions['comment'] = true;}
 @endphp
 <div class="overflow-x-auto border border-gray-200 rounded-lg bg-white shadow-sm transition-all duration-300">
   @if(session()->has('success') || session()->has('error'))

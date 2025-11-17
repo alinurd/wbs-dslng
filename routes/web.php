@@ -10,8 +10,7 @@ use App\Livewire\Menus\Form as MenuForm;
 // use App\Livewire\Combo\Index as ComboIndex;
 
 use App\Livewire\Menus\Index as MenuIndex;
-
-
+use App\Livewire\Modules\Compleien;
 use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
 
@@ -112,7 +111,8 @@ Route::middleware(['auth'])->group(function () {
                Route::get('/p_tracking', TrackingIndex::class)->name('p_tracking');
 
         });
-
+        
+               Route::get('/complien', Compleien::class)->name('complien');
     // Route::get('/combo', ComboIndex::class)->name('combo');
 });
 
