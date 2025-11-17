@@ -11,10 +11,13 @@ use App\Livewire\Menus\Form as MenuForm;
 
 use App\Livewire\Menus\Index as MenuIndex;
 use App\Livewire\Modules\Compleien;
+use App\Livewire\Modules\DashboardIndex;
+use App\Livewire\Modules\LogApprovalIndex;
+use App\Livewire\Modules\Pengaduan\LogApprovalIndex as PengaduanLogApprovalIndex;
 use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
+
+
 use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
-
-
 use App\Livewire\Modules\users\PermissionManagement;
 use App\Livewire\Modules\users\UserManagement;
 use App\Livewire\News\Detail as NewsDetail;
@@ -48,6 +51,7 @@ use App\Livewire\Roles\Index as RoleIndex;
 use App\Livewire\TestRegister;
 
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/tes/register', TestRegister::class)->name('register.ts');
 Route::get('/auth/register', RegisterForm::class)->name('register.form');
@@ -62,9 +66,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+        Route::get('/dashboard', DashboardIndex::class)->name('dashboard');
+
 });
 
 
@@ -116,6 +119,7 @@ Route::middleware(['auth'])->group(function (): void {
     Route::prefix('/pengaduan')->group(function () {
                Route::get('/p_report', PengaduanIndex::class)->name('p_report');
                Route::get('/p_tracking', TrackingIndex::class)->name('p_tracking');
+                Route::get('/log-complien/{id}', PengaduanLogApprovalIndex::class)->name('log_detail');
 
         });
         
