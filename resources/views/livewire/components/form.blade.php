@@ -276,6 +276,108 @@
                     </div>
                 @enderror
 
+
+
+                <!-- CHECKBOX MULTIPLE -->
+@elseif($field['type'] === 'checkbox-multiple')
+    <div class="space-y-3" wire:key="checkbox-multiple-{{ $fieldName }}">
+        <!-- Header dengan select all/deselect all -->
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-700">
+                {{ $field['label'] }}
+                @if($field['required'] ?? false)
+                    <span class="text-red-500">*</span>
+                @endif
+            </span>
+            
+            @if(count($field['options'] ?? []) > 0)
+                <div class="flex space-x-2">
+                    <button type="button" 
+                            wire:click="$set('{{ $field['model'] }}', [])"
+                            class="text-xs text-red-600 hover:text-red-800 font-medium px-2 py-1 border border-red-200 rounded hover:bg-red-50 transition-colors">
+                        <i class="fas fa-times mr-1"></i>Hapus Semua
+                    </button>
+                    <button type="button" 
+                            wire:click="$set('{{ $field['model'] }}', {{ json_encode(array_keys($field['options'])) }})"
+                            class="text-xs text-green-600 hover:text-green-800 font-medium px-2 py-1 border border-green-200 rounded hover:bg-green-50 transition-colors">
+                        <i class="fas fa-check mr-1"></i>Pilih Semua
+                    </button>
+                </div>
+            @endif
+        </div>
+
+        <!-- Checkbox Container -->
+        <div class="max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-gray-50">
+            @if(count($field['options'] ?? []) > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach($field['options'] as $value => $label)
+                        @php
+                            $isChecked = in_array($value, $fieldValue ?? []);
+                            $checkboxId = "{$fieldName}_{$value}";
+                        @endphp
+                        
+                        <label class="flex items-start space-x-3 p-2 rounded-lg hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-gray-200 {{ $isChecked ? 'bg-blue-50 border-blue-200' : '' }}"
+                               wire:key="checkbox-{{ $fieldName }}-{{ $value }}">
+                            
+                            <!-- Checkbox Input -->
+                            <div class="flex items-center h-5 mt-0.5">
+                                <input type="checkbox"
+                                       wire:model="{{ $field['model'] }}"
+                                       value="{{ $value }}"
+                                       id="{{ $checkboxId }}"
+                                       class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-all duration-200 {{ $hasError ? 'border-red-500' : '' }}"
+                                       {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                            </div>
+                            
+                            <!-- Label and Description -->
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-medium text-gray-700 block">{{ $label }}</span>
+                                @if(isset($field['descriptions'][$value]))
+                                    <p class="text-xs text-gray-500 mt-1">{{ $field['descriptions'][$value] }}</p>
+                                @endif
+                            </div>
+                            
+                            <!-- Check Icon -->
+                            @if($isChecked)
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-green-500 text-sm"></i>
+                                </div>
+                            @endif
+                        </label>
+                    @endforeach
+                </div>
+                
+                <!-- Selected Count -->
+                <div class="mt-3 pt-3 border-t border-gray-200">
+                    <p class="text-xs text-gray-600">
+                        <i class="fas fa-check-circle text-green-500 mr-1"></i>
+                        Terpilih: <span class="font-semibold">{{ count($fieldValue ?? []) }}</span> dari {{ count($field['options']) }}
+                    </p>
+                </div>
+            @else
+                <!-- Empty State -->
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox text-gray-300 text-2xl mb-2"></i>
+                    <p class="text-sm text-gray-500">Tidak ada opsi yang tersedia</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- ERROR MESSAGE DI BAWAH CHECKBOX MULTIPLE -->
+        @error($errorField)
+            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                {{ $fieldMessages[$message] ?? $message }}
+            </div>
+        @enderror
+
+        <!-- HELPER TEXT BOTTOM -->
+        @if($field['helper_bottom'] ?? false)
+            <p class="text-xs text-gray-500 mt-1">{{ $field['helper_bottom'] }}</p>
+        @endif
+    </div>
+    
+
             <!-- RADIO GROUP -->
             @elseif($field['type'] === 'radio')
                 <div class="space-y-2">

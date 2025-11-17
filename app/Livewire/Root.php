@@ -10,6 +10,7 @@ use App\Models\Owner;
 use App\Models\Pengaduan;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use Laravel\Jetstream\Role;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -53,6 +54,7 @@ abstract class Root extends Component
     public $locale;
     
     public $jenisPengaduanList = []; // child dapat override dengan property
+    public $RolesList = []; // child dapat override dengan property
     public $saluranList = []; // child dapat override dengan property
     public $direktoratList = []; // child dapat override dengan property
     public $tahunPengaduanList = []; // child dapat override dengan property
@@ -128,16 +130,48 @@ abstract class Root extends Component
         return $query;
     }
 
+    public function loadRecords()
+    {
+        try {
+            // Build query menggunakan method query() yang sudah ada
+            $query = $this->query();
+            
+            // Apply sorting
+            $query->orderBy($this->sortField, $this->sortDirection);
+            
+            // Get paginated results
+            $this->_records = $query->paginate($this->perPage);
+            
+            // Apply custom formatting jika method formatRecords ada
+            if (method_exists($this, 'formatRecords')) {
+                $this->formatRecords();
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('Error loading records in Root: ' . $e->getMessage());
+            // Fallback ke empty pagination
+            $this->_records = $this->model::query()->paginate($this->perPage);
+        }
+    }
+
+    protected function formatRecords()
+    {
+        // Default implementation - child classes can override
+        if ($this->_records && method_exists($this, 'formatData')) {
+            $formattedCollection = $this->formatData($this->_records->getCollection());
+            $this->_records->setCollection($formattedCollection);
+        }
+    }
+
 
     // ===================== RENDER ======================
     public function render()
     {
-        $items = $this->query()
-            ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate($this->perPage);
+        $this->loadRecords();
 
         return view($this->viewPath(), [
-            '_records'    => $items,
+                        '_records'    => $this->_records,
+
             'title'       => $this->title,
             'permissions' => module_permissions(strtolower($this->modul))['can'] ?? []
         ]);
@@ -241,6 +275,8 @@ public function save()
         $this->saved($record, $action);
     }
 
+    $this->loadRecords();
+
     $this->closeModal();
     $this->resetPage();
     $this->dispatch('dataSaved');
@@ -273,6 +309,7 @@ public function delete($id)
     
     // NOTIFIKASI SUDAH DIHANDLE OLEH logAudit
     $this->resetPage();
+    $this->loadRecords();
     $this->dispatch('dataDeleted');
 }
 public function deleteBulk()
@@ -297,6 +334,8 @@ public function deleteBulk()
     }
 
     $this->selectedItems = [];
+    
+    $this->loadRecords();
     $this->dispatch('bulkDeleteCompleted');
 }
 
@@ -585,7 +624,7 @@ public function loadDropdownData()
             ->select('data_id', 'data_en', 'data', 'id')
             ->where('is_active', true)
             ->orderBy('data_id')
-            ->get();
+            ->get(); 
         
     $this->tahunPengaduanList = Pengaduan::
     selectRaw('YEAR(tanggal_pengaduan) as tahun')

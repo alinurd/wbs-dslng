@@ -7,12 +7,28 @@
                 'records' => $_records,
                 'columns' => [
                     'name' => 'Name', 
-                    'email' => 'Email', 
-                    'role' => 'Role', 
-                    'status' => 'Status', 
+                    'email' => 'Email',
+                    'roles' => 'Roles',
+                    'is_active' => 'Status', 
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
+                'extraActions' => [
+                    [
+                        'label' => 'Reset Password',
+                        'method' => 'resetPassword',
+                        'icon' => 'fas fa-key',
+                        'permission' => 'users.edit',
+                        'class' => 'text-orange-600 hover:text-orange-900'
+                    ],
+                    [
+                        'label' => 'Toggle Status',
+                        'method' => 'toggleStatus',
+                        'icon' => 'fas fa-power-off',
+                        'permission' => 'users.edit',
+                        'class' => 'text-purple-600 hover:text-purple-900'
+                    ]
+                ],
             
                 // State
                 'perPage' => $perPage,
@@ -53,39 +69,55 @@
                     'model' => 'form.name',
                     'label' => 'Name',
                     'required' => true,
-                    'placeholder' => 'Masukan Data....',
+                    'placeholder' => 'Masukan nama user...',
                     'error' => 'form.name',
                     'messages' => [
                         'required' => 'Name wajib diisi',
                     ]
                 ],
                 [
-                    'type' => 'text',
+                    'type' => 'email',
                     'model' => 'form.email',
-                    'label' => 'email',
+                    'label' => 'Email',
                     'required' => true,
-                    'placeholder' => 'Masukan Data....',
+                    'placeholder' => 'Masukan email...',
                     'error' => 'form.email',
                     'messages' => [
-                        'required' => 'email wajib diisi',
+                        'required' => 'Email wajib diisi',
                     ]
                 ],
                 [
                     'type' => 'password',
                     'model' => 'form.password',
-                    'label' => 'password',
-                    'required' => true,
-                    'placeholder' => 'Masukan Data....',
+                    'label' => 'Password',
+                    'required' => !$updateMode, // Required hanya untuk create
+                    'placeholder' => $updateMode ? 'Kosongkan jika tidak ingin mengubah password' : 'Masukan password...',
                     'error' => 'form.password',
                     'messages' => [
-                        'required' => 'password wajib diisi',
+                        'required' => 'Password wajib diisi',
+                    ],
+                    'helper_bottom' => $updateMode ? 'Biarkan kosong jika tidak ingin mengubah password' : 'Password minimal 8 karakter'
+                ],
+                [
+                    'type' => 'checkbox-multiple',
+                    'label' => 'Roles',
+                    'model' => 'selectedRoles',
+                    'error' => 'selectedRoles',
+                    'options' => collect($RolesList)->mapWithKeys(function ($role) {
+                        return [
+                            $role->id => $role->name
+                        ];
+                    })->toArray(),
+                    'required' => true,
+                    'messages' => [
+                        'required' => 'Pilih minimal satu role',
                     ]
                 ],
                 [
                     'type' => 'switch-single',
                     'label' => 'Status Aktif',
-                    'model' => 'form.status',
-                    'error' => 'form.status',
+                    'model' => 'form.is_active',
+                    'error' => 'form.is_active',
                     'on_label' => 'AKTIF',
                     'off_label' => 'NONAKTIF',
                 ],
@@ -98,9 +130,20 @@
             'filters' => [
                 [
                     'type' => 'text',
-                    'label' => 'Filter Name Role',
-                    'model' => 'filters.name',
-                    'placeholder' => 'Cari Name Role...',
+                    'label' => 'Cari User',
+                    'model' => 'filters.search',
+                    'placeholder' => 'Cari nama atau email...',
+                ],
+                [
+                    'type' => 'select',
+                    'label' => 'Filter Role',
+                    'model' => 'filters.role_id',
+                    'options' => collect($RolesList)->mapWithKeys(function ($role) {
+                        return [
+                            $role->id => $role->name
+                        ];
+                    })->toArray(),
+                    'placeholder' => 'Semua Roles', 
                 ],
                 [
                     'type' => 'select',

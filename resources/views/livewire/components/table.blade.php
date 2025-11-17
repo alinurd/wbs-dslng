@@ -13,6 +13,7 @@
     'onSelectItem' => '',
     'firstItem' => 0,
     'emptyMessage' => 'Tidak ada data ditemukan',
+    'extraActions' => []
 ])
 
 {{-- {{dd($modul)}} --}}
@@ -159,6 +160,26 @@
                         </button> 
                         @endif
 
+                        @if(count($extraActions) > 0)
+                                                <div class="border-t border-gray-100 my-1"></div>
+                                                @foreach($extraActions as $action)
+                                                    @php
+                                                        $hasPermission = !isset($action['permission']) || 
+                                                                        ($action['permission'] && ($permissions[$action['permission']] ?? true));
+                                                    @endphp
+                                                    @if($hasPermission)
+                                                        <button wire:click="{{ $action['method'] }}({{ $record->id }})" 
+                                                                @click="open = false"
+                                                                class="flex items-center w-full px-4 py-2 text-sm {{ $action['class'] ?? 'text-gray-700 hover:bg-gray-100' }} transition-all duration-150 group"
+                                                                role="menuitem">
+                                                            <i class="{{ $action['icon'] ?? 'fas fa-cog' }} w-4 h-4 mr-3"></i>
+                                                            <span>{{ $action['label'] }}</span>
+                                                        </button>
+                                                    @endif
+                                                @endforeach
+                                            @endif
+
+                                            
                         <!-- Comment & Notes Section -->
                         @if ($permissions['comment'] ?? false)
                         <div class="border-t border-gray-100 my-1"></div>
