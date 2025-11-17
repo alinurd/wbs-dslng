@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Livewire\Modules\Users;
+
+use App\Livewire\Root;
+use App\Models\User;
+use Spatie\Permission\Models\Permission;
+
+class UserManagement extends Root
+{
+    public $title = "User Management";   
+    public $views = "modules.users.user";
+
+    public $model = User::class;
+    public $modul = 'users';
+    public $kel = 'combo';
+    
+    // Form configuration
+    public $form = [
+        'name' => '', 
+    ];
+
+    
+
+    public $rules = [
+        'form.name' => 'required|string|max:255', 
+    ];
+
+    protected $messages = [
+        'form.name.required' => 'Permission Name wajib diisi', 
+    ];
+ 
+    public function columns()
+    {
+        return ['name', ];
+    }
+ 
+     
+
+   
+    public function view($id)
+    {
+        can_any([strtolower($this->modul).'.view']);
+        
+        $record = $this->model::findOrFail($id);
+
+        $this->detailData = [
+            'Name' => $record->name,
+            'guard_name' => $record->guard_name, 
+            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
+            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+        ];
+        
+        $this->detailTitle = "Detail " . $this->title;
+        $this->showDetailModal = true;
+    }
+
+    // METHOD UNTUK TUTUP DETAIL MODAL
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->detailData = [];
+        $this->detailTitle = '';
+    }
+     
+}

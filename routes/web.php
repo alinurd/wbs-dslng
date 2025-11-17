@@ -15,7 +15,8 @@ use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
 
 
-use App\Livewire\Modules\PermissionManagement;
+use App\Livewire\Modules\users\PermissionManagement;
+use App\Livewire\Modules\users\UserManagement;
 use App\Livewire\News\Detail as NewsDetail;
 
 
@@ -42,10 +43,9 @@ use App\Livewire\Roles\Editor as RoleEditor;
 
 
 use App\Livewire\Roles\Form as RoleForm;
+ use App\Livewire\WbsLanding\Index as LandingIndex;
 use App\Livewire\Roles\Index as RoleIndex;
 use App\Livewire\TestRegister;
-use App\Livewire\UserManagement;
-use App\Livewire\WbsLanding\Index as LandingIndex;
 
 use Illuminate\Support\Facades\Route;
 
@@ -68,8 +68,12 @@ Route::middleware([
 });
 
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/users', UserManagement::class)->name('users');
+Route::middleware(['auth'])->group(function (): void {
+    // Route::get('/users', UserManagementRoot::class)->name('users');
+ 
+    Route::get('/users', UserManagement::class)->name('users.index');
+    Route::get('/users/create', UserManagement::class)->name('users.create');
+    Route::get('/users/{id}/edit', UserManagement::class)->name('users.edit');
  
     Route::get('/permissions', PermissionManagement::class)->name('permissions.index');
     Route::get('/permissions/create', PermissionManagement::class)->name('permissions.create');

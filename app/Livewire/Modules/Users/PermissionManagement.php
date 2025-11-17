@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Modules;
+namespace App\Livewire\Modules\Users;
 
 use App\Livewire\Root;
 use App\Models\Combo;
@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Permission;
 class PermissionManagement extends Root
 {
     public $title = "Permiision";   
-    public $views = "modules.permission";
+    public $views = "modules.users.permission";
 
     public $model = Permission::class;
     public $modul = 'permissions';
