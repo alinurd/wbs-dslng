@@ -16,10 +16,16 @@ class Editor extends Component
     // Search functionality
     public $search = '';
 
+    // Untuk expanded modules
+    public $expandedModules = [];
+
     public function mount($id)
     {
         $this->role = Role::findOrFail($id);
         $this->loadPermissions();
+        
+        // Expand semua module secara default
+        $this->expandedModules = $this->getAllModuleNames();
     }
 
     public function loadPermissions()
@@ -35,18 +41,44 @@ class Editor extends Component
     public function groupPermissions()
     {
         $grouped = $this->permissions->groupBy(function($permission) {
-            return explode('.', $permission->name)[0];
+            $parts = explode('.', $permission->name);
+            return $parts[0]; // Module name
         });
 
-        // Convert Eloquent Collection ke array biasa untuk menghindari serialization issues
         $this->groupedPermissions = collect($grouped->toArray())->map(function($permissions, $module) {
+            // Group permissions by parent (module.submodule.action)
+            $subModules = [];
+            
+            foreach ($permissions as $permission) {
+                $parts = explode('.', $permission['name']);
+                
+                if (count($parts) >= 2) {
+                    $subModule = $parts[0]; // Parent module
+                    $action = end($parts); // Last part as action
+                    
+                    if (!isset($subModules[$subModule])) {
+                        $subModules[$subModule] = [
+                            'name' => $subModule,
+                            'display_name' => ucfirst(str_replace('-', ' ', $subModule)),
+                            'permissions' => []
+                        ];
+                    }
+                    
+                    $subModules[$subModule]['permissions'][] = [
+                        'name' => $permission['name'],
+                        'action' => $action,
+                        'display_action' => ucfirst($action)
+                    ];
+                }
+            }
+
             return [
                 'module' => $module,
-                'permissions' => $permissions,
+                'display_name' => ucfirst(str_replace('-', ' ', $module)),
+                'sub_modules' => array_values($subModules),
                 'permission_names' => collect($permissions)->pluck('name')->toArray()
             ];
         })->sortBy(function($group) {
-            // Custom sorting untuk mengatur urutan module
             $order = [
                 'dashboard' => -1,
                 'pengaduan' => 0,
@@ -57,6 +89,25 @@ class Editor extends Component
             ];
             return $order[$group['module']] ?? 999;
         })->values()->toArray();
+    }
+
+    public function getAllModuleNames()
+    {
+        return collect($this->groupedPermissions)->pluck('module')->toArray();
+    }
+
+    public function toggleModuleExpansion($module)
+    {
+        if (in_array($module, $this->expandedModules)) {
+            $this->expandedModules = array_diff($this->expandedModules, [$module]);
+        } else {
+            $this->expandedModules[] = $module;
+        }
+    }
+
+    public function isModuleExpanded($module)
+    {
+        return in_array($module, $this->expandedModules);
     }
 
     public function togglePermission($permissionName)
@@ -72,10 +123,7 @@ class Editor extends Component
                 }
             });
 
-            // Reload permissions untuk mendapatkan data terbaru
             $this->loadPermissions();
-            
-            // Dispatch event untuk refresh menu atau komponen lain
             $this->dispatch('permissionUpdated');
             
         } catch (\Exception $e) {
@@ -92,7 +140,6 @@ class Editor extends Component
                 });
 
                 if ($action === 'select-all') {
-                    // Select all permissions in module
                     foreach ($modulePermissions as $permission) {
                         if (!in_array($permission->name, $this->selectedPermissions)) {
                             $this->role->givePermissionTo($permission->name);
@@ -100,7 +147,6 @@ class Editor extends Component
                         }
                     }
                 } elseif ($action === 'deselect-all') {
-                    // Deselect all permissions in module
                     foreach ($modulePermissions as $permission) {
                         if (in_array($permission->name, $this->selectedPermissions)) {
                             $this->role->revokePermissionTo($permission->name);
@@ -110,13 +156,44 @@ class Editor extends Component
                 }
             });
 
-            // Reload permissions untuk mendapatkan data terbaru
             $this->loadPermissions();
-            
             $this->dispatch('permissionUpdated');
             
         } catch (\Exception $e) {
             $this->dispatch('error', message: 'Failed to update module permissions: ' . $e->getMessage());
+        }
+    }
+
+    public function toggleSubModule($subModuleName, $action = null)
+    {
+        try {
+            DB::transaction(function() use ($subModuleName, $action) {
+                $subModulePermissions = $this->permissions->filter(function($permission) use ($subModuleName) {
+                    return str_starts_with($permission->name, $subModuleName . '.');
+                });
+
+                if ($action === 'select-all') {
+                    foreach ($subModulePermissions as $permission) {
+                        if (!in_array($permission->name, $this->selectedPermissions)) {
+                            $this->role->givePermissionTo($permission->name);
+                            $this->selectedPermissions[] = $permission->name;
+                        }
+                    }
+                } elseif ($action === 'deselect-all') {
+                    foreach ($subModulePermissions as $permission) {
+                        if (in_array($permission->name, $this->selectedPermissions)) {
+                            $this->role->revokePermissionTo($permission->name);
+                            $this->selectedPermissions = array_diff($this->selectedPermissions, [$permission->name]);
+                        }
+                    }
+                }
+            });
+
+            $this->loadPermissions();
+            $this->dispatch('permissionUpdated');
+            
+        } catch (\Exception $e) {
+            $this->dispatch('error', message: 'Failed to update sub-module permissions: ' . $e->getMessage());
         }
     }
 
@@ -127,8 +204,6 @@ class Editor extends Component
 
     public function render()
     {
-        return view('livewire.roles.editor', [
-            'groupedPermissionsData' => $this->groupedPermissions
-        ]);
+        return view('livewire.roles.editor');
     }
 }
