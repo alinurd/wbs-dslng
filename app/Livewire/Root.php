@@ -36,6 +36,8 @@ abstract class Root extends Component
     public $updateMode = false;
     public $showDetailModal = false;
     public $showComment = false;
+    public $ShowNote = false;
+    public $showuUdateStatus = false;
     public $detailTitle = '-';
     public $filterMode = false;
 
@@ -352,12 +354,35 @@ public function deleteBulk()
             'data'  => $record->toArray()
         ]);
     }
+    
+   public function updateStatus($id, $status)
+    {
+        // can_any([strtolower($this->modul).'.view']);
+        $record = ($this->model)::findOrFail($id);
+
+        $this->dispatch('showuUdateStatus', [
+            'title' => "Update Status " . $this->title,
+            'data'  => $record->toArray(),
+        ]);
+    }
+    public function addNote($id)
+    {
+        // can_any([strtolower($this->modul).'.view']);
+        $record = ($this->model)::findOrFail($id);
+
+        $this->dispatch('ShowNote', [
+            'title' => "Note " . $this->title,
+            'data'  => $record->toArray()
+        ]);
+    }
 
 
      public function closeDetailModal()
     {
         $this->showDetailModal = false;
         $this->showComment = false;
+        $this->showuUdateStatus = false;
+        $this->ShowNote = false;
         $this->detailData = [];
         $this->detailTitle = '';
     }

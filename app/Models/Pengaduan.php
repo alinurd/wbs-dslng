@@ -42,6 +42,11 @@ class Pengaduan extends Model
         return $this->belongsTo(Combo::class, 'jenis_pengaduan_id');
     }
 
+    public function pelapor()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     // Relasi dengan combo untuk saluran aduan
     public function saluranAduan()
     {

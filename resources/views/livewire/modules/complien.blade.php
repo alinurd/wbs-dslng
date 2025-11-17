@@ -11,8 +11,8 @@
                     'perihal' => 'Perihal',
                     'jenis_pengaduan_id' => 'Jenis Pelanggaran',
                     'tanggal_pengaduan' => 'Tanggal Aduan',
-                    'status' => 'Status',
-                    'x' => 'Progress Status',
+                    'complien_progress' => 'Progress Status',
+                    'aprv_cco' => 'Persetujuan CCO',
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -98,5 +98,19 @@
             'data' => $detailData,
             'onClose' => 'closeDetailModal',
         ])
+
+        @include('livewire.components.note', [
+            'show' => $ShowNote,
+            'title' => $detailTitle,
+            'data' => $detailData,
+            'onClose' => 'closeDetailModal',
+        ])
+        @include('livewire.components.update-status', [
+            'show' => $showuUdateStatus,
+            'title' => $detailTitle,
+            'data' => $detailData,
+            'onClose' => 'closeDetailModal',
+        ])
+
     </div>
 </div>
