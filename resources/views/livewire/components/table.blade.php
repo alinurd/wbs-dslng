@@ -13,7 +13,7 @@
     'onSelectItem' => '',
     'firstItem' => 0,
     'emptyMessage' => 'Tidak ada data ditemukan',
-    'extraActions' => []
+    'extraActions' => [],
 ])
 
 {{-- {{dd($modul)}} --}}
@@ -106,136 +106,149 @@
                         </td>
                     @endforeach
 
-                   <td class="px-4 py-3 whitespace-nowrap text-center border-b border-gray-100">
-    <div class="flex justify-center gap-1">
-        @if ($modul == 'roles')
-            <a href="{{ route('roles.permissions', $record->id) }}"
-                class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 text-xs font-medium">
-                <i class="fas fa-key mr-1.5 text-xs"></i>
-                <span class="whitespace-nowrap">Set Akses</span>
-            </a>
-        @else
-            <!-- Main Actions Dropdown -->
-            <div class="relative inline-block text-left" x-data="{ open: false }">
-                <button type="button" @click="open = !open"
-                    class="inline-flex items-center px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-                    id="main-actions-{{ $record->id }}" aria-haspopup="true" :aria-expanded="open">
-                    Options
-                    <i class="fas fa-chevron-down w-3 h-3 ml-2 transition-transform duration-200"
-                        :class="{ 'rotate-180': open }"></i>
-                </button>
+                    <td class="px-4 py-3 whitespace-nowrap text-center border-b border-gray-100">
+                        <div class="flex justify-center gap-1">
+                            @if ($modul == 'roles')
+                                <a href="{{ route('roles.permissions', $record->id) }}"
+                                    class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 text-xs font-medium">
+                                    <i class="fas fa-key mr-1.5 text-xs"></i>
+                                    <span class="whitespace-nowrap">Set Akses</span>
+                                </a>
+                            @else
+                                <!-- Main Actions Dropdown -->
+                                <div class="relative inline-block text-left" x-data="{ open: false }">
+                                    <button type="button" @click="open = !open"
+                                        class="inline-flex items-center px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                                        id="main-actions-{{ $record->id }}" aria-haspopup="true"
+                                        :aria-expanded="open">
+                                        Options
+                                        <i class="fas fa-chevron-down w-3 h-3 ml-2 transition-transform duration-200"
+                                            :class="{ 'rotate-180': open }"></i>
+                                    </button>
 
-                <!-- Dropdown menu -->
-                <div x-show="open" 
-                    x-transition:enter="transition ease-out duration-100"
-                    x-transition:enter-start="transform opacity-0 scale-95"
-                    x-transition:enter-end="transform opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="transform opacity-100 scale-100"
-                    x-transition:leave-end="transform opacity-0 scale-95"
-                    @click.away="open = false"
-                    class="origin-top-right absolute right-0 mt-1 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20"
-                    role="menu" aria-orientation="vertical"
-                    aria-labelledby="main-actions-{{ $record->id }}" x-cloak>
-                    <div class="py-1" role="none">
-                        
-                        <!-- View Action -->
-                        @if ($permissions['view'] ?? false)
-                        <button wire:click="{{ $onView }}({{ $record->id }})" @click="open = false"
-                            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
-                            role="menuitem">
-                            <i class="fas fa-eye w-4 h-4 text-gray-400 mr-3 group-hover:text-blue-500"></i>
-                            <span>View</span>
-                        </button>
-                        @endif
+                                    <!-- Dropdown menu -->
+                                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-95" @click.away="open = false"
+                                        class="origin-top-right absolute right-0 mt-1 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20"
+                                        role="menu" aria-orientation="vertical"
+                                        aria-labelledby="main-actions-{{ $record->id }}" x-cloak>
+                                        <div class="py-1" role="none">
 
-                        <!-- Edit & Duplicate Section -->
-                        @if ($permissions['edit'] ?? false)
-                        <div class="border-t border-gray-100 my-1"></div>
-                        <button wire:click="{{ $onEdit }}({{ $record->id }})" @click="open = false"
-                            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
-                            role="menuitem">
-                            <i class="fas fa-edit w-4 h-4 text-gray-400 mr-3 group-hover:text-green-500"></i>
-                            <span>Edit</span>
-                        </button> 
-                        @endif
+                                            <!-- View Action -->
+                                            @if ($permissions['view'] ?? false)
+                                                <button wire:click="{{ $onView }}({{ $record->id }})"
+                                                    @click="open = false"
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
+                                                    role="menuitem">
+                                                    <i
+                                                        class="fas fa-eye w-4 h-4 text-gray-400 mr-3 group-hover:text-blue-500"></i>
+                                                    <span>View</span>
+                                                </button>
+                                            @endif
 
-                        @if(count($extraActions) > 0)
+                                            <!-- Edit & Duplicate Section -->
+                                            @if ($permissions['edit'] ?? false)
                                                 <div class="border-t border-gray-100 my-1"></div>
-                                                @foreach($extraActions as $action)
+                                                <button wire:click="{{ $onEdit }}({{ $record->id }})"
+                                                    @click="open = false"
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
+                                                    role="menuitem">
+                                                    <i
+                                                        class="fas fa-edit w-4 h-4 text-gray-400 mr-3 group-hover:text-green-500"></i>
+                                                    <span>Edit</span>
+                                                </button>
+                                            @endif
+
+                                            @if (count($extraActions) > 0)
+                                                <div class="border-t border-gray-100 my-1"></div>
+                                                @foreach ($extraActions as $action)
                                                     @php
-                                                        $hasPermission = !isset($action['permission']) || 
-                                                                        ($action['permission'] && ($permissions[$action['permission']] ?? true));
+                                                        $hasPermission =
+                                                            !isset($action['permission']) ||
+                                                            ($action['permission'] &&
+                                                                ($permissions[$action['permission']] ?? true));
                                                     @endphp
-                                                    @if($hasPermission)
-                                                        <button wire:click="{{ $action['method'] }}({{ $record->id }})" 
-                                                                @click="open = false"
-                                                                class="flex items-center w-full px-4 py-2 text-sm {{ $action['class'] ?? 'text-gray-700 hover:bg-gray-100' }} transition-all duration-150 group"
-                                                                role="menuitem">
-                                                            <i class="{{ $action['icon'] ?? 'fas fa-cog' }} w-4 h-4 mr-3"></i>
+                                                    @if ($hasPermission)
+                                                        <button
+                                                            wire:click="{{ $action['method'] }}({{ $record->id }})"
+                                                            @click="open = false"
+                                                            class="flex items-center w-full px-4 py-2 text-sm {{ $action['class'] ?? 'text-gray-700 hover:bg-gray-100' }} transition-all duration-150 group"
+                                                            role="menuitem">
+                                                            <i
+                                                                class="{{ $action['icon'] ?? 'fas fa-cog' }} w-4 h-4 mr-3"></i>
                                                             <span>{{ $action['label'] }}</span>
                                                         </button>
                                                     @endif
                                                 @endforeach
                                             @endif
 
-                                            
-                        <!-- Comment & Notes Section -->
-                        @if ($permissions['comment'] ?? false)
-                        <div class="border-t border-gray-100 my-1"></div>
-                        <button wire:click="comment({{ $record->id }})" @click="open = false"
-                            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
-                            role="menuitem">
-                            <i class="fas fa-comments w-4 h-4 text-gray-400 mr-3 group-hover:text-teal-500"></i>
-                            <span>Pesan</span>
-                        </button>
-                        @endif
 
-                        @if ($permissions['act_complien'] ?? false)
-                        <button wire:click="addNote({{ $record->id }})" @click="open = false"
-                            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
-                            role="menuitem">
-                            <i class="fas fa-sticky-note w-4 h-4 text-gray-400 mr-3 group-hover:text-stone-500"></i>
-                            <span>Catatan</span>
-                        </button>
-                        @endif
+                                            <!-- Comment & Notes Section -->
+                                            @if ($permissions['comment'] ?? false)
+                                                <div class="border-t border-gray-100 my-1"></div>
+                                                <button wire:click="comment({{ $record->id }})" @click="open = false"
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
+                                                    role="menuitem">
+                                                    <i
+                                                        class="fas fa-comments w-4 h-4 text-gray-400 mr-3 group-hover:text-teal-500"></i>
+                                                    <span>Pesan</span>
+                                                </button>
+                                            @endif
 
-                        <!-- Status Actions Section -->
-                        @if ($permissions['act_complien'] ?? false)
-                        <div class="border-t border-gray-100 my-1"></div>
-                        <button wire:click="updateStatus({{ $record->id }}, '1')" @click="open = false"
-                            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
-                            role="menuitem">
-                            <i class="fas fa-check w-4 h-4 text-gray-400 mr-3 group-hover:text-lime-500"></i>
-                            <span>Lengkap [Ex]</span>
-                        </button>
-                        <button wire:click="updateStatus({{ $record->id }}, '0')" @click="open = false"
-                            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
-                            role="menuitem">
-                            <i class="fas fa-times w-4 h-4 text-gray-400 mr-3 group-hover:text-red-500"></i>
-                            <span>Tidak Lengkap [Ex]</span>
-                        </button>
-                        @endif
+                                            @if ($permissions['act_complien'] ?? false)
+                                                <button wire:click="addNote({{ $record->id }})" @click="open = false"
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
+                                                    role="menuitem">
+                                                    <i
+                                                        class="fas fa-sticky-note w-4 h-4 text-gray-400 mr-3 group-hover:text-stone-500"></i>
+                                                    <span>Catatan</span>
+                                                </button>
+                                            @endif
 
-                        <!-- Delete Action -->
-                        @if ($permissions['delete'] ?? false)
-                        <div class="border-t border-gray-100 my-1"></div>
-                        <button wire:click="{{ $onDelete }}({{ $record->id }})" 
-                            wire:confirm="Apakah Anda yakin menghapus data ini?"
-                            @click="open = false"
-                            class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all duration-150 group"
-                            role="menuitem">
-                            <i class="fas fa-trash w-4 h-4 text-red-400 mr-3"></i>
-                            <span>Delete</span>
-                        </button>
-                        @endif
+                                            <!-- Status Actions Section -->
+                                            @if ($permissions['act_complien'] ?? false)
+                                                <div class="border-t border-gray-100 my-1"></div>
+                                                <button wire:click="updateStatus({{ $record->id }}, '1')"
+                                                    @click="open = false"
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
+                                                    role="menuitem">
+                                                    <i
+                                                        class="fas fa-check w-4 h-4 text-gray-400 mr-3 group-hover:text-lime-500"></i>
+                                                    <span>Lengkap [Ex]</span>
+                                                </button>
+                                                <button wire:click="updateStatus({{ $record->id }}, '0')"
+                                                    @click="open = false"
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
+                                                    role="menuitem">
+                                                    <i
+                                                        class="fas fa-times w-4 h-4 text-gray-400 mr-3 group-hover:text-red-500"></i>
+                                                    <span>Tidak Lengkap [Ex]</span>
+                                                </button>
+                                            @endif
 
-                    </div>
-                </div>
-            </div>
-        @endif
-    </div>
-</td>
+                                            <!-- Delete Action -->
+                                            @if ($permissions['delete'] ?? false)
+                                                <div class="border-t border-gray-100 my-1"></div>
+                                                <button wire:click="{{ $onDelete }}({{ $record->id }})"
+                                                    wire:confirm="Apakah Anda yakin menghapus data ini?"
+                                                    @click="open = false"
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all duration-150 group"
+                                                    role="menuitem">
+                                                    <i class="fas fa-trash w-4 h-4 text-red-400 mr-3"></i>
+                                                    <span>Delete</span>
+                                                </button>
+                                            @endif
+
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </td>
                 </tr>
             @empty
                 <tr>
