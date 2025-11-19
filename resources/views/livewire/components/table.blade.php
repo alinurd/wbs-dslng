@@ -216,17 +216,10 @@
                                             class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
                                             role="menuitem">
                                             <i
-                                                class="fas fa-check w-4 h-4 text-gray-400 mr-3 group-hover:text-lime-500"></i>
-                                            <span>Lengkap [Ex]</span>
+                                                class="fas fa-bookmark w-4 h-4 text-gray-400 mr-3 group-hover:text-lime-500"></i>
+                                            <span>Update Status</span>
                                         </button>
-                                        <button wire:click="updateStatus({{ $record->id }}, '0')"
-                                            @click="open = false"
-                                            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
-                                            role="menuitem">
-                                            <i
-                                                class="fas fa-times w-4 h-4 text-gray-400 mr-3 group-hover:text-red-500"></i>
-                                            <span>Tidak Lengkap [Ex]</span>
-                                        </button>
+                                        
                                     @endif
 
                                     <!-- Delete Action -->

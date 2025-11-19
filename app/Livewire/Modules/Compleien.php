@@ -254,12 +254,7 @@ class Compleien extends Root
         })->toArray();
     }
 
-    protected function calculateProgress($pengaduan)
-    {
-        $logCount = LogApproval::where('pengaduan_id', $pengaduan->id)->count();
-        $totalSteps = 5;
-        return min(100, (($logCount + 1) / $totalSteps) * 100);
-    }
+   
 
     // Method untuk mendapatkan status badge
     public function getStatusBadge($statusId)

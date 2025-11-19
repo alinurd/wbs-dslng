@@ -46,16 +46,29 @@ class Tracking extends Root
     {
         $q = ($this->model)::query();
 
+        
         if ($this->search && method_exists($this, 'columns')) {
-            $columns = $this->columns();
-            if (is_array($columns) && count($columns)) {
-                $q->where(function ($p) use ($columns) {
-                    foreach ($columns as $col) {
+        $columns = $this->columns();
+        if (is_array($columns) && count($columns)) {
+            $q->where(function ($p) use ($columns) {
+                foreach ($columns as $col) {
+                    if ($col === 'user_id') {
+                        $p->orWhereHas('pelapor', function ($q) {
+                            $q->where('name', 'like', "%{$this->search}%")
+                              ->orWhere('username', 'like', "%{$this->search}%");
+                        });
+                    } elseif ($col === 'jenis_pengaduan_id') {
+                        $p->orWhereHas('jenisPengaduan', function ($q) {
+                            $q->where('name', 'like', "%{$this->search}%");
+                        });
+                    } else {
                         $p->orWhere($col, 'like', "%{$this->search}%");
                     }
-                });
-            }
+                }
+            });
         }
+    }
+    
         if (method_exists($this, 'filterDefault')) {
             $filterDefault = $this->filterDefault();
             if (is_array($filterDefault) && count($filterDefault)) {
@@ -68,16 +81,22 @@ class Tracking extends Root
                 });
             }
         }
-        if (is_array($this->filters)) {
-            foreach ($this->filters as $key => $val) {
-                if ($key == 'tahun' && !empty($val)) {
-                    $q->whereRaw('YEAR(tanggal_pengaduan) = ?', [$val]);
-                }
-                if ($key == 'jenis_pengaduan_id' && !empty($val)) {
-                    $q->where('jenis_pengaduan_id', $val);
-                }
+
+    if (is_array($this->filters)) {
+        foreach ($this->filters as $key => $val) {
+            if ($key == 'tahun' && !empty($val)) {
+                $q->whereYear('tanggal_pengaduan', $val);
+            }
+            if ($key == 'jenis_pengaduan_id' && !empty($val)) {
+                $q->where('jenis_pengaduan_id', $val);
+            }
+            if ($key == 'status' && !empty($val)) {
+                $q->where('status', $val);
             }
         }
+    }
+
+     
 
         return $q;
     }

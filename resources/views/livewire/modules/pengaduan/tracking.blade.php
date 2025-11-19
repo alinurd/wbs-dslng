@@ -3,19 +3,47 @@
     <div class="container-fluid py-4">
         <div class="container mx-auto">
 
+            @php
+    // Process records untuk menambahkan kolom custom
+    $processedRecords = $_records->map(function ($record) {
+        return (object) array_merge(
+            $record->toArray(),
+            [
+                // Override kolom relationship dengan data yang sudah diformat
+                'user_id' => $this->getNamaUser($record),
+                'jenis_pengaduan_id' => $this->getJenisPelanggaran($record),
+                'tanggal_pengaduan' => $record->tanggal_pengaduan ? $record->tanggal_pengaduan->format('d/m/Y H:i') : '-',
+                // Tambahkan kolom custom sebagai property
+                'complien_progress_html' => $this->getComplienProgress($record),
+                'aprv_cco_html' => $this->getAprvCco($record),
+            ]
+        );
+    });
+
+    // Buat paginator baru dengan data yang sudah diproses
+    $finalRecords = new \Illuminate\Pagination\LengthAwarePaginator(
+        $processedRecords,
+        $_records->total(),
+        $_records->perPage(),
+        $_records->currentPage(),
+        ['path' => request()->url(), 'pageName' => 'page']
+    );
+@endphp
+
             @include('livewire.components.table-wrapper', [
-                'records' => $_records,
-                'columns' => [
-                    'code_pengaduan' => 'Kode Tracking',
-                    'user_id' => 'Username/Nama',
-                    'perihal' => 'Perihal',
-                    'jenis_pengaduan_id' => 'Jenis Pelanggaran',
-                    'tanggal_pengaduan' => 'Tanggal Aduan',
-                    'status' => 'Status',
-                ],
+                'records' => $finalRecords, // Gunakan $finalRecords yang sudah diproses
+    'columns' => [
+        'code_pengaduan' => 'Kode Tracking',
+        'user_id' => 'Username/Nama',
+        'perihal' => 'Perihal',
+        'jenis_pengaduan_id' => 'Jenis Pelanggaran',
+        'tanggal_pengaduan' => 'Tanggal Aduan',
+        'complien_progress' => 'Progress Status',
+        'aprv_cco' => 'Persetujuan CCO',
+    ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
-            
+ 
                 // State
                 'perPage' => $perPage,
                 'search' => $search,
