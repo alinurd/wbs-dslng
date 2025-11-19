@@ -25,15 +25,11 @@
                                 @php
                                     $lastLog = end($pengaduan['log_approval']);
                                     $warna = $lastLog['warna'];
-                                @endphp
-                                <span class="px-2 py-0.5 bg-{{ $warna }}-100 text-{{ $warna }}-800 text-xs font-medium rounded-full">
-                                    {{ $pengaduan['status_akhir'] }}
-                                </span>
+                                @endphp 
                             </div>
                         </div>
                         <div class="text-right ml-3">
-                            <div class="text-lg font-bold text-blue-600">{{ $pengaduan['progress'] }}%</div>
-                            <div class="text-xs text-gray-500">Progress</div>
+                            lihat Detail Pengaduan 
                         </div>
                     </div>
                 </div>

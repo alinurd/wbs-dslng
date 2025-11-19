@@ -25,7 +25,7 @@
                                         {{ $title }}
                                     </h5>
                                     <p class="text-white/80 text-sm">
-                                        Jika Aduan {{ $data['status_ex'] }} Berikan Catatan
+                                        Silahkan Berikan Catatan Anda
                                     </p>
                                 </div>
                             </div>
@@ -66,9 +66,9 @@
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div
-                                            class="flex items-center space-x-2 px-3 py-1.5 bg-yellow-50 rounded-lg border border-yellow-200">
-                                            <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                                            <span class="text-sm font-medium text-yellow-700">Menunggu Review</span>
+                                            class="flex items-center space-x-2 px-3 py-1.5 bg-{{$data['status_ex']['color']}}-50 rounded-lg border border-{{$data['status_ex']['color']}}-200">
+                                            <div class="w-2 h-2 bg-{{$data['status_ex']['color']}}-500 rounded-full animate-pulse"></div>
+                                            <span class="text-sm font-medium text-{{$data['status_ex']['color']}}-700">{{ $data['status_ex']['name'] }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +149,7 @@
                                         @enderror
                                     </div>
 
-                                    <!-- Info Tambahan -->
+                                
                                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                                         <div class="flex">
                                             <div class="flex-shrink-0">
@@ -175,14 +175,16 @@
                     <!-- Footer -->
                               <!-- Button Lengkap -->
                             {{-- {{dd($data['user']['user'])}} --}}
-                             <div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end">
-     @foreach ($data['user']['sts'] as $p )
+                             <div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end space-x-3">
+              @foreach ($data['user']['sts'] as $p )
+              @if($p['param_int'] !==$data['status_id'])
                             <button type="submit" 
                                     wire:click="setAction({{$p['param_int']}}, {{$data['id']}})"
-                                    class="px-4 py-2 bg-{{$p->param_str}}-500 hover:bg-{{$p->param_str}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm">
+                                    class="px-6 py-2 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm ">
                                 <i class="fas fa-check-circle me-1"></i>
-                                <span>{{$p->data_id}}</span>
+                                <span>{{$p['data_en'].' -'.$p['param_int'] .'-'. $data['status_id']}}</span>
                             </button>
+                @endif
                             @endforeach
 
                 <button type="button" wire:click="{{ $onClose }}"

@@ -171,10 +171,10 @@ class Compleien extends Root
         $this->pengaduan_id = $id;
 
         // Get available status options dari combos
-        $statusOptions = Combo::where('kelompok', 'sts-aduan')
-            ->where('is_active', 1)
-            ->orderBy('param_int')
-            ->get();
+        // $statusOptions = Combo::where('kelompok', 'sts-aduan')
+        //     ->where('is_active', 1)
+        //     ->orderBy('param_int')
+        //     ->get();
 
         $logHistory = $this->getLogHistory($id);
         $currentStatusInfo = Combo::where('kelompok', 'sts-aduan')
@@ -188,11 +188,15 @@ class Compleien extends Root
             'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status Saat Ini' => $currentStatusInfo->data_id ?? 'Menunggu Review',
-            'status_ex' => $currentStatusInfo->data_id ?? 'Menunggu Review',
-            'user' => [
-                'sts' => $statusOptions,
-                'user' => $this->userInfo,
+            'status_ex' => [
+                'name'=>$currentStatusInfo->data_id ?? 'Menunggu Review',
+                'color'=>$currentStatusInfo->param_str ?? 'yellow',
             ],
+            'status_id' => $record->status,
+            // 'user' => [
+                // 'sts' => $statusOptions,
+                'user' => $this->userInfo,
+            // ],
             'log' => [
                 [
                     'id' => $record->code_pengaduan,
@@ -236,7 +240,7 @@ class Compleien extends Root
         return $logs->map(function ($log, $index) {
             return [
                 'pengaduan_id' => $log->pengaduan_id,
-                'role' => $log->user->role ?? 'Reviewer',
+                'role' => $log->user->getRoleNames()->implode(', ') ?? 'Reviewer',
                 'step' => $index + 1,
                 'nama' => $log->user->name ?? 'System',
                 'status' => $log->status,
@@ -282,7 +286,9 @@ class Compleien extends Root
     public function getComplienProgress($record)
     {
         $progress = $this->calculateProgress($record);
-        return "progress";
+        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500'>
+                 <i class='fas fa-check' ></i>
+            </span>" ;
     }
 
     public function getAprvCco($record)
@@ -356,6 +362,9 @@ class Compleien extends Root
         switch($this->userInfo['role']['id']){
             case 2:
                 $stsGet=[0,6,10];
+                break;
+            case 4:
+                $stsGet=[6,7,9,11];
                 break;
 
                 default:
