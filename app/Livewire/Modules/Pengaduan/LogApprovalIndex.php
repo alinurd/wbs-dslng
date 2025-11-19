@@ -32,7 +32,9 @@ class LogApprovalIndex extends Root
 
     public function mount()
     {
-        parent::mount();
+        // can_any(['p_tracking.view', 'complien.view', ]);
+
+        // parent::mount();
         $this->loadDropdownData();
     }
 
