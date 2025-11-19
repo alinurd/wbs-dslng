@@ -93,8 +93,9 @@ class Compleien extends Root
             if ($pengaduan) {
                 // Get status info dari combos
                 $statusInfo = Combo::where('kelompok', 'sts-aduan')
-                    ->where('param_int', $this->submission_action)
-                    ->first();
+                ->where('param_int', $this->submission_action)
+                ->first();
+                // dd($this->statusInfo);
 
                 if ($statusInfo) {
                     $updateData = [
@@ -293,10 +294,9 @@ class Compleien extends Root
 
     public function getAprvCco($record)
     {
-        $statusId = $record->status;
-
-        $sts=$this->getStatusBadge($statusId);
-        if($record->sts_final==0){
+ 
+        $sts=$this->getStatusBadge($record->status);
+        if($record->sts_final==0 && $record->status !==3){
             $sts.=$this->getStatusBadge(12);
            
         }
@@ -371,6 +371,12 @@ class Compleien extends Root
                 break;
             case 4:
                 $stsGet=[6,7,9,11];
+                break;
+            case 5:
+                $stsGet=[7,1,9];
+                break; 
+            case 7:
+                $stsGet=[1,3,8];
                 break;
 
                 default:
