@@ -305,6 +305,7 @@
                 Livewire.dispatch('notify', {
                     type: 'error',
                     message: '{{ session('error') }}'
+                    console.log(errMessage)
                 });
             @endif
 

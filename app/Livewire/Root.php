@@ -517,11 +517,13 @@ public function deleteBulk()
 }
 
      
-    public function notify($type, $message)
+    public function notify($type, $message, $errMessage='')
 {
+    \dd($errMessage);
     $this->dispatch('notify', [
         'type' => $type,
-        'message' => $message
+        'message' => $message,
+        'errMessage' => $errMessage
     ]);
 }
 
@@ -612,6 +614,12 @@ protected function getAuditMessage($action, $record, $data)
             
         case 'bulk_delete':
             return 'Beberapa data  berhasil dihapus.';
+
+        case 'error':
+            return 'Terjadi kesalahan';
+
+        case 'updateStatus':
+            return 'Terjadi kesalahan';
             
         default:
             return 'Aksi ' . $action . ' berhasil dilakukan.';
