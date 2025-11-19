@@ -80,7 +80,7 @@
                                 <div class="flex items-start justify-between mb-2">
                                     <div class="flex-1 min-w-0">
                                         <h3 class="text-sm font-semibold text-gray-900">{{ $log['role'] }}</h3>
-                                        <p class="text-xs text-gray-600 truncate">{{ $log['nama'] }}</p>
+                                        {{-- <p class="text-xs text-gray-600 truncate">{{ $log['nama'] }}</p> --}}
                                     </div>
                                     <div class="text-right ml-2 flex-shrink-0">
                                         <span class="px-2 py-0.5 bg-{{ $log['warna'] }}-100 text-{{ $log['warna'] }}-800 text-xs font-medium rounded-full">

@@ -533,7 +533,7 @@ public function deleteBulk()
      
     public function notify($type, $message, $errMessage='')
 {
-    \dd($errMessage);
+    // \dd($errMessage);
     $this->dispatch('notify', [
         'type' => $type,
         'message' => $message,
@@ -632,8 +632,10 @@ protected function getAuditMessage($action, $record, $data)
         case 'error':
             return 'Terjadi kesalahan';
 
-        case 'updateStatus':
-            return 'Terjadi kesalahan';
+        case 'upStsSuccess':
+            return 'Berhasil update status';
+        case 'upStsErr':
+            return 'gagal update status';
             
         default:
             return 'Aksi ' . $action . ' berhasil dilakukan.';

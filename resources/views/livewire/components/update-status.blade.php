@@ -37,7 +37,7 @@
                     </div>
 
                     <!-- Body -->
-                    <div class="modal-body p-0 max-h-[80vh] overflow-hidden flex">
+                    <div class="modal-body p-0 max-h-[75vh] overflow-hidden flex">
                         <!-- Sidebar Informasi Pengaduan -->
                         <div class="w-1/3 border-r border-gray-200 bg-gray-50 flex flex-col">
                             <div class="p-6 flex-1 flex flex-col">
@@ -79,7 +79,7 @@
                                 <div class="space-y-6">
                                     <!-- Hidden input untuk action -->
                                     <input type="hidden" name="submission_action" wire:model="submission_action">
-                                    <input type="hidden" name="pengaduan_id" value="7-DTRPOG">
+                                    <input type="hidden" name="pengaduan_id" wire:model="pengaduan_id" value="pengaduan_id">
 
                                     <!-- Textarea untuk Catatan -->
                                     <div>
@@ -133,8 +133,8 @@
                                                     class="mt-1 flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
                                                     <div class="flex items-center">
                                                         <i class="fas fa-file mr-2 text-gray-400"></i>
-                                                        <span
-                                                            class="text-sm text-gray-600">{{ $file_upload->getClientOriginalName() }}</span>
+                                                        {{-- <span
+                                                            class="text-sm text-gray-600">{{ $file_upload->getClientOriginalName() }}</span> --}}
                                                     </div>
                                                     <button type="button" wire:click="removeFile"
                                                         class="text-red-500 hover:text-red-700">
@@ -173,28 +173,26 @@
                     </div>
 
                     <!-- Footer -->
-                    <div class="modal-footer border-t border-gray-200 px-6 py-4 bg-white rounded-b-lg">
-                        <div class="flex items-center space-x-3">
-                            <!-- Button Lengkap -->
+                              <!-- Button Lengkap -->
                             {{-- {{dd($data['user']['user'])}} --}}
-                            @foreach ($data['user']['sts'] as $p )
+                             <div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end">
+     @foreach ($data['user']['sts'] as $p )
                             <button type="submit" 
-                                    wire:click="setAction({{$p['param_int']}})"
-                                    class="px-5 py-2.5 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium flex items-center space-x-2 shadow-sm">
+                                    wire:click="setAction({{$p['param_int']}}, {{$data['id']}})"
+                                    class="px-4 py-2 bg-{{$p->param_str}}-500 hover:bg-{{$p->param_str}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm">
                                 <i class="fas fa-check-circle me-1"></i>
-                                <span>{{$p['data_id']}}</span>
+                                <span>{{$p->data_id}}</span>
                             </button>
                             @endforeach
 
-                            <!-- Button Tutup -->
-                            <button type="button" 
-                                    wire:click="{{ $onClose }}"
-                                    class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium flex items-center space-x-2">
-                                <i class="fas fa-times me-1"></i>
-                                <span>Tutup</span>
-                            </button>
-                        </div>
-                    </div>
+                <button type="button" wire:click="{{ $onClose }}"
+                    class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
+                    <i class="fas fa-times me-2"></i>Tutup
+                </button>
+            </div>   
+
+
+                    
                 </form>
             </div>
         </div>
