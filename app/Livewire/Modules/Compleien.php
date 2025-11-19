@@ -282,14 +282,7 @@ class Compleien extends Root
     public function getComplienProgress($record)
     {
         $progress = $this->calculateProgress($record);
-        return "
-            <div class='flex items-center space-x-2'>
-                <div class='w-16 bg-gray-200 rounded-full h-2'>
-                    <div class='bg-blue-600 h-2 rounded-full transition-all duration-500' style='width: {$progress}%'></div>
-                </div>
-                <span class='text-xs font-medium text-gray-700'>{$progress}%</span>
-            </div>
-        ";
+        return "progress";
     }
 
     public function getAprvCco($record)
@@ -324,7 +317,7 @@ class Compleien extends Root
     public function query()
     {
         $q = ($this->model)::with(['jenisPengaduan', 'pelapor', 'user']);
-        
+        // dd();
         if ($this->search && method_exists($this, 'columns')) {
             $columns = $this->columns();
             if (is_array($columns) && count($columns)) {
@@ -360,7 +353,18 @@ class Compleien extends Root
                 }
             }
         }
+        switch($this->userInfo['role']['id']){
+            case 2:
+                $stsGet=[0,6,10];
+                break;
 
+                default:
+                $stsGet=[];
+        }
+
+        $q->whereIn('status', $stsGet);
+         
+                
         return $q;
     }
 

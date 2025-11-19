@@ -144,7 +144,7 @@ class Report extends Root
         // Tambahkan field khusus pengaduan ke payload
         $payload['code_pengaduan'] = $codePengaduan;
         $payload['lampiran'] = !empty($lampiranPaths) ? json_encode($lampiranPaths) : null;
-        $payload['status'] = 1; // Status pending
+        $payload['status'] = 0; // Status pending
         $payload['user_id'] = auth()->id();
         $payload['tanggal_pengaduan'] = now();
 
