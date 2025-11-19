@@ -326,68 +326,78 @@ class Compleien extends Root
         return ['code_pengaduan', 'perihal', 'tanggal_pengaduan', 'status'];
     }
 
-    public function query()
-    {
-        $q = ($this->model)::with(['jenisPengaduan', 'pelapor', 'user']);
-        // dd();
-        if ($this->search && method_exists($this, 'columns')) {
-            $columns = $this->columns();
-            if (is_array($columns) && count($columns)) {
-                $q->where(function ($p) use ($columns) {
-                    foreach ($columns as $col) {
-                        if ($col === 'user_id') {
-                            $p->orWhereHas('pelapor', function ($q) {
-                                $q->where('name', 'like', "%{$this->search}%")
-                                  ->orWhere('username', 'like', "%{$this->search}%");
-                            });
-                        } elseif ($col === 'jenis_pengaduan_id') {
-                            $p->orWhereHas('jenisPengaduan', function ($q) {
-                                $q->where('name', 'like', "%{$this->search}%");
-                            });
-                        } else {
-                            $p->orWhere($col, 'like', "%{$this->search}%");
-                        }
+  public function query()
+{
+    $q = ($this->model)::with(['jenisPengaduan', 'pelapor']); // Hapus 'user' karena tidak ada relationship
+    
+    if ($this->search && method_exists($this, 'columns')) {
+        $columns = $this->columns();
+        if (is_array($columns) && count($columns)) {
+            $q->where(function ($p) use ($columns) {
+                foreach ($columns as $col) {
+                    if ($col === 'user_id') {
+                        $p->orWhereHas('pelapor', function ($q) {
+                            $q->where('name', 'like', "%{$this->search}%")
+                              ->orWhere('username', 'like', "%{$this->search}%");
+                        });
+                    } elseif ($col === 'jenis_pengaduan_id') {
+                        $p->orWhereHas('jenisPengaduan', function ($q) {
+                            $q->where('name', 'like', "%{$this->search}%");
+                        });
+                    } else {
+                        $p->orWhere($col, 'like', "%{$this->search}%");
                     }
-                });
-            }
-        }
-
-        if (is_array($this->filters)) {
-            foreach ($this->filters as $key => $val) {
-                if ($key == 'tahun' && !empty($val)) {
-                    $q->whereYear('tanggal_pengaduan', $val);
                 }
-                if ($key == 'jenis_pengaduan_id' && !empty($val)) {
-                    $q->where('jenis_pengaduan_id', $val);
-                }
-                if ($key == 'status' && !empty($val)) {
-                    $q->where('status', $val);
-                }
-            }
+            });
         }
-        switch($this->userInfo['role']['id']){
-            case 2:
-                $stsGet=[0,6,10];
-                break;
-            case 4:
-                $stsGet=[6,7,9,11];
-                break;
-            case 5:
-                $stsGet=[7,1,9];
-                break; 
-            case 7:
-                $stsGet=[1,3,8];
-                break;
-
-                default:
-                $stsGet=[];
-        }
-
-        $q->whereIn('status', $stsGet);
-         
-                
-        return $q;
     }
+
+    if (is_array($this->filters)) {
+        foreach ($this->filters as $key => $val) {
+            if ($key == 'tahun' && !empty($val)) {
+                $q->whereYear('tanggal_pengaduan', $val);
+            }
+            if ($key == 'jenis_pengaduan_id' && !empty($val)) {
+                $q->where('jenis_pengaduan_id', $val);
+            }
+            if ($key == 'status' && !empty($val)) {
+                $q->where('status', $val);
+            }
+        }
+    }
+
+    // Filter berdasarkan role user
+    $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+    
+    switch($roleId){
+        case 2: // WBS External
+            $stsGet = [0, 6, 10];
+            break;
+        case 4: // WBS Internal  
+            $stsGet = [6, 7, 9, 11];
+            break;
+        case 5: // WBS CC
+            $stsGet = [7, 1, 9];
+            break; 
+        case 7: // WBS CCO
+            $stsGet = [1, 3, 8];
+            break;
+        default:
+            $stsGet = [-1]; // Tidak tampil apa-apa
+    }
+
+    $q->whereIn('status', $stsGet);
+    
+    // Final debug
+    $finalResults = $q->get();
+    // \Log::info('FINAL QUERY RESULTS for Role ' . $roleId . ':', [
+    //     'total_records' => $finalResults->count(),
+    //     'statuses_found' => $finalResults->pluck('status')->unique()->values()->toArray(),
+    //     'allowed_statuses' => $stsGet
+    // ]);
+                
+    return $q;
+}
 
     // View dan comment method
     public function view($id)
