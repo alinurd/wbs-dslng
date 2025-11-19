@@ -26,7 +26,7 @@ class ParamStsAduan extends Root
         'kelompok' => 'sts-aduan',
         'data_id' => '',
         'is_active' => '',
-        'param_int' => 0,
+        // 'param_int' => 0,
     ];
 
     public $rules = [

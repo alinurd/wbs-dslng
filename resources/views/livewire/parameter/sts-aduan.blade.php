@@ -73,11 +73,11 @@
                 ],
                 [
                     'type' => 'number',
-                    'label' => 'Batas Perubahan',
+                    'label' => 'Param Int',
                     'model' => 'form.param_int',
                     'error' => 'form.param_int',
-                    'required' => true,
-                    'placeholder' => 'Masukkan Batas Perubahan',
+                    'disabled' => true,
+                    'placeholder' => 'Masukkan Param Int',
                 ],
                 [
                     'type' => 'switch-single',
