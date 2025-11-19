@@ -73,7 +73,6 @@ abstract class Root extends Component
     {
         // Simpan default form
         $this->formDefault = is_array($this->form) ? $this->form : [];
-
         // Title otomatis jika tidak didefinisikan
         $this->title = $this->title ?: class_basename($this->model);
          // Hak akses
@@ -84,7 +83,22 @@ abstract class Root extends Component
         App::setLocale($this->locale);
     }
 
-
+    public function userInfo(){
+        $user=\auth()->user();
+     $role = $user->roles()->first();
+     
+      
+    // if (!empty($stsArray)) {
+        $combo = Combo::select('id', 'data_id', 'data_en', 'param_int', 'param_str')->whereIn('param_int', json_decode($role->sts, true))->get()->toarray(); 
+    // }
+    
+    $this->userInfo=[
+        'role' => $role,
+        // 'sts_array' => $stsArray,
+        'sts' => $combo ?? null
+    ];
+ 
+    }
     // ================ QUERY BUILDER =================
     public function query()
     {

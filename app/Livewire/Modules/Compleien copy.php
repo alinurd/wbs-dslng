@@ -43,14 +43,6 @@ class Compleien extends Root
         $this->reset('file_upload');
     }
 
-   public function mount()
-{
-    parent::mount();
-    $this->loadDropdownData();
-    $this->userInfo();
-     
-}
-    
     public function setAction($action)
     {
         $this->submission_action = $action;
@@ -254,7 +246,11 @@ $roleIds = $user->roles()->pluck('id');
         return ['code_pengaduan', 'perihal', 'tanggal_pengaduan', 'status'];
     }
 
-   
+    public function mount()
+    {
+        parent::mount();
+        $this->loadDropdownData();
+    }
 
     public function query()
     {
@@ -331,7 +327,7 @@ $roleIds = $user->roles()->pluck('id');
         $record = $this->model::findOrFail($id);
 
         // Set pengaduan yang dipilih
-         
+        $this->selected_pengaduan_id = $id;
 
         $this->detailData = [
             'id' => $id, // Tambahkan ID untuk form
@@ -359,11 +355,53 @@ $roleIds = $user->roles()->pluck('id');
                                                         'file' => ['bukti_1.pdf', 'foto_1.jpg'],
                                                         'warna' => 'green',
                                                     ],
-                                                    
+                                                    [
+                                                        'step' => 2,
+                                                        'role' => 'WBS Eksternal',
+                                                        'nama' => 'dr. Sari Wijaya',
+                                                        'status' => 'completed',
+                                                        'status_text' => 'Approved',
+                                                        'waktu' => '18/11/2024 14:15',
+                                                        'catatan' => 'Dokumen sudah lengkap dan memenuhi syarat',
+                                                        'file' => ['review_wbs_eksternal.pdf'],
+                                                        'warna' => 'green',
+                                                    ],
+                                                    [
+                                                        'step' => 3,
+                                                        'role' => 'WBS internal',
+                                                        'nama' => 'dr. santoso',
+                                                        'status' => 'completed',
+                                                        'status_text' => 'Approved',
+                                                        'waktu' => '18/11/2024 14:15',
+                                                        'catatan' => 'Dokumen sudah lengkap dan memenuhi syarat',
+                                                        'file' => ['review_wbs_internal.pdf'],
+                                                        'warna' => 'green',
+                                                    ],
+                                                    [
+                                                        'step' => 4,
+                                                        'role' => 'WBS Forward',
+                                                        'nama' => 'Tim Investigasi',
+                                                        'status' => 'in_progress',
+                                                        'status_text' => 'Dalam Proses',
+                                                        'waktu' => '20/11/2024 11:20',
+                                                        'catatan' => 'Sedang dilakukan investigasi lebih lanjut',
+                                                        'file' => [],
+                                                        'warna' => 'yellow',
+                                                    ],
+                                                    [
+                                                        'step' => 5,
+                                                        'role' => 'CCO',
+                                                        'nama' => '-',
+                                                        'status' => 'pending',
+                                                        'status_text' => 'Menunggu',
+                                                        'waktu' => '-',
+                                                        'catatan' => 'Menunggu hasil investigasi dari WBS Forward',
+                                                        'file' => [],
+                                                        'warna' => 'gray',
+                                                    ],
                                                 ],
                                             ]
-                                            ],
-            'user'=>$this->userInfo,
+            ]
         ];
         
         $this->detailTitle = "Update Status " . $this->title;

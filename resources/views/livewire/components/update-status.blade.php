@@ -4,9 +4,9 @@
     'data' => [],
     'onClose' => '',
 ])
-
 @if ($show)
-    <div class="fixed inset-0 z-50 overflow-y-auto animate-fade-in" style="background-color: rgba(0,0,0,0.5)">
+{{-- {{dd($data['user']['sts'])}} --}}
+    <div class="fixed inset-0 z-50  animate-fade-in" style="background-color: rgba(0,0,0,0.5)">
         <div class="flex min-h-full items-center justify-center p-4">
             <div
                 class="modal-content bg-white rounded-lg shadow-xl w-full transform transition-all duration-300 scale-95 animate-scale-in">
@@ -49,71 +49,7 @@
                                 <!-- Komponen log dengan height yang sesuai -->
                                 <div class="flex-1">
                                     @include('livewire.components.log', [
-                                        'data' => [
-                                            [
-                                                'id' => '7-DTRPOG',
-                                                'judul_pengaduan' => 'Pelanggaran Etika - Penyalahgunaan Wewenang',
-                                                'status_akhir' => 'Menunggu Approval CCO',
-                                                'progress' => 70,
-                                                'log_approval' => [
-                                                    [
-                                                        'step' => 1,
-                                                        'role' => 'Pelapor',
-                                                        'nama' => 'Ahmad Santoso',
-                                                        'status' => 'completed',
-                                                        'status_text' => 'Disubmit',
-                                                        'waktu' => '17/11/2024 10:30',
-                                                        'catatan' => 'Laporan awal telah disampaikan dengan lengkap',
-                                                        'file' => ['bukti_1.pdf', 'foto_1.jpg'],
-                                                        'warna' => 'green',
-                                                    ],
-                                                    [
-                                                        'step' => 2,
-                                                        'role' => 'WBS Eksternal',
-                                                        'nama' => 'dr. Sari Wijaya',
-                                                        'status' => 'completed',
-                                                        'status_text' => 'Approved',
-                                                        'waktu' => '18/11/2024 14:15',
-                                                        'catatan' => 'Dokumen sudah lengkap dan memenuhi syarat',
-                                                        'file' => ['review_wbs_eksternal.pdf'],
-                                                        'warna' => 'green',
-                                                    ],
-                                                    [
-                                                        'step' => 3,
-                                                        'role' => 'WBS internal',
-                                                        'nama' => 'dr. santoso',
-                                                        'status' => 'completed',
-                                                        'status_text' => 'Approved',
-                                                        'waktu' => '18/11/2024 14:15',
-                                                        'catatan' => 'Dokumen sudah lengkap dan memenuhi syarat',
-                                                        'file' => ['review_wbs_internal.pdf'],
-                                                        'warna' => 'green',
-                                                    ],
-                                                    [
-                                                        'step' => 4,
-                                                        'role' => 'WBS Forward',
-                                                        'nama' => 'Tim Investigasi',
-                                                        'status' => 'in_progress',
-                                                        'status_text' => 'Dalam Proses',
-                                                        'waktu' => '20/11/2024 11:20',
-                                                        'catatan' => 'Sedang dilakukan investigasi lebih lanjut',
-                                                        'file' => [],
-                                                        'warna' => 'yellow',
-                                                    ],
-                                                    [
-                                                        'step' => 5,
-                                                        'role' => 'CCO',
-                                                        'nama' => '-',
-                                                        'status' => 'pending',
-                                                        'status_text' => 'Menunggu',
-                                                        'waktu' => '-',
-                                                        'catatan' => 'Menunggu hasil investigasi dari WBS Forward',
-                                                        'file' => [],
-                                                        'warna' => 'gray',
-                                                    ],
-                                                ],
-                                            ],
-                                        ],
+                                        'data' => $data['log'],
                                     ])
                                 </div>
                             </div>
@@ -240,20 +176,15 @@
                     <div class="modal-footer border-t border-gray-200 px-6 py-4 bg-white rounded-b-lg">
                         <div class="flex items-center space-x-3">
                             <!-- Button Lengkap -->
+                            {{-- {{dd($data['user']['user'])}} --}}
+                            @foreach ($data['user']['sts'] as $p )
                             <button type="submit" 
-                                    wire:click="setAction('approve')"
-                                    class="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium flex items-center space-x-2 shadow-sm">
+                                    wire:click="setAction({{$p['param_int']}})"
+                                    class="px-5 py-2.5 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium flex items-center space-x-2 shadow-sm">
                                 <i class="fas fa-check-circle me-1"></i>
-                                <span>Lengkap [EX]</span>
+                                <span>{{$p['data_id']}}</span>
                             </button>
-
-                            <!-- Button Tidak Lengkap -->
-                            <button type="submit" 
-                                    wire:click="setAction('reject')"
-                                    class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium flex items-center space-x-2 shadow-sm">
-                                <i class="fas fa-times-circle me-1"></i>
-                                <span>Tidak Lengkap [EX]</span>
-                            </button>
+                            @endforeach
 
                             <!-- Button Tutup -->
                             <button type="button" 
@@ -269,35 +200,3 @@
         </div>
     </div>
 @endif
-
-<style>
-    .animate-fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .animate-scale-in {
-        animation: scaleIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    @keyframes scaleIn {
-        from {
-            transform: scale(0.95);
-            opacity: 0;
-        }
-
-        to {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-</style>
