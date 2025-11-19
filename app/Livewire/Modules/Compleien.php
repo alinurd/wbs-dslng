@@ -294,7 +294,13 @@ class Compleien extends Root
     public function getAprvCco($record)
     {
         $statusId = $record->status;
-        return $this->getStatusBadge($statusId);
+
+        $sts=$this->getStatusBadge($statusId);
+        if($record->sts_final==0){
+            $sts.=$this->getStatusBadge(12);
+           
+        }
+        return $sts;
     }
 
     public function getNamaUser($record)
