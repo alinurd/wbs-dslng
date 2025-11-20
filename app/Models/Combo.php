@@ -18,4 +18,17 @@ class Combo extends Model
         'param_str_1',
         'is_active',
     ];
+    
+   
+    // Di model Combo.php
+public function pertanyaan()
+{
+    return $this->belongsTo(Combo::class, 'param_int');
+}
+
+public function jawaban()
+{
+    return $this->hasMany(Combo::class, 'param_int');
+}
+
 }

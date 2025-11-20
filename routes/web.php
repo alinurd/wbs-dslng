@@ -12,6 +12,7 @@ use App\Livewire\Menus\Form as MenuForm;
 use App\Livewire\Menus\Index as MenuIndex;
 use App\Livewire\Modules\Compleien;
 use App\Livewire\Modules\DashboardIndex; 
+use App\Livewire\Modules\FAQ;
 use App\Livewire\Modules\Pengaduan\LogApprovalIndex;
 use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 
@@ -125,7 +126,7 @@ Route::middleware(['auth'])->group(function (): void {
         });
         
                Route::get('/complien', Compleien::class)->name('complien');
-Route::get('/faq', DashboardIndex::class)->name('faq');
+Route::get('/faq', FAQ::class)->name('faq');
     
 });
 

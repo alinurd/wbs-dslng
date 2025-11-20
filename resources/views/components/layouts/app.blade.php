@@ -353,6 +353,21 @@
                     }
                 }));
             });
+
+            function toggleAnswer(index) {
+  const answer = document.querySelectorAll('.faq-answer')[index];
+  const icon = document.querySelectorAll('.faq-icon')[index];
+  
+  if (answer.classList.contains('hidden')) {
+    answer.classList.remove('hidden');
+    icon.textContent = '−';
+    icon.style.transform = 'rotate(180deg)';
+  } else {
+    answer.classList.add('hidden');
+    icon.textContent = '+';
+    icon.style.transform = 'rotate(0deg)';
+  }
+}
         </script>
     @endif
 

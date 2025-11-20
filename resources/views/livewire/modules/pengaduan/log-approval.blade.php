@@ -1,19 +1,7 @@
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Log Approval Pengaduan</h1>
-                    <p class="text-gray-600 mt-2">Tracking progress dan status approval pengaduan</p>
-                </div>
-                <a href="{{route('dashboard')}}"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Kembali</span>
-                </a>
-            </div>
-        </div>
+<div class="log-detail">
+    @include('livewire.components.head-card',['title'=>'Log Approval Pengaduan', 'dsc'=>'Tracking progress dan status approval pengaduan'])
+    <div class="faq-container">
+        
 
         @if($code_pengaduan && !empty($detailPengaduan))
         <!-- Card Pengaduan -->

@@ -898,4 +898,28 @@ public function getForwardOptions()
 
         return $r->data_id ??$r->data_en;
     }
+
+   
+    public function getDataFAQ()
+{
+    // Ambil pertanyaan dengan jawaban menggunakan relationship
+    $q = Combo::where('kelompok', 'pertanyaan')
+        ->where('is_active', 1)
+        ->where('param_int', 1)
+        ->with(['jawaban' => function($query) {
+            $query->where('is_active', 1)
+                  ->orderBy('created_at');
+        }])
+        ->orderBy('created_at')
+        ->get();
+
+    return $q->map(function($pertanyaan) {
+        return [
+            'pertanyaan' => $pertanyaan,
+            'jawaban' => $pertanyaan->jawaban
+        ];
+    })->toArray();
+
+}
+
 }
