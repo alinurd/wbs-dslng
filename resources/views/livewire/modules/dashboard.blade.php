@@ -39,27 +39,11 @@
                         <i class="fas fa-file-alt text-blue-600 text-xl"></i>
                     </div>
                 </div>
-                <div class="mt-4 flex items-center text-sm text-green-600">
+                <div class="mt-4 flex items-center text-sm text-blue-600">
                     <i class="fas fa-arrow-up mr-1"></i>
-                    <span>+12% dari bulan lalu</span>
+                    <span>pengaduan anda</span>
                 </div>
             </div>
-
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-    <div class="flex items-center justify-between">
-        <div>
-            <p class="text-sm font-medium text-gray-600">Menunggu Review</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['menunggu'] }}</p>
-        </div>
-        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-clock text-purple-600 text-xl"></i>
-        </div>
-    </div>
-    <div class="mt-4 flex items-center text-sm text-yellow-600">
-        <i class="fas fa-clock mr-1"></i>
-        <span>Menunggu review awal</span>
-    </div>
-</div>
 
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div class="flex items-center justify-between">
@@ -73,9 +57,26 @@
                 </div>
                 <div class="mt-4 flex items-center text-sm text-green-600">
                     <i class="fas fa-chart-line mr-1"></i>
-                    <span>58% terselesaikan</span>
+                    <span>{{$stats['selesai_persentase']??''}} terselesaikan</span>
                 </div>
             </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-gray-600">Proses Review</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['dalam_proses'] }}</p>
+        </div>
+        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-sync-alt text-purple-600 text-xl"></i>
+        </div>
+    </div>
+    <div class="mt-4 flex items-center text-sm text-purple-600">
+        <i class="fas fa-clock mr-1"></i>
+        <span>Peninjauan</span>
+    </div>
+</div>
+
 
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div class="flex items-center justify-between">
@@ -83,13 +84,13 @@
                         <p class="text-sm font-medium text-gray-600">Menggu Review</p>
                         <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['menunggu'] }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-star text-purple-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-sm text-yellow-600">
-                    <i class="fas fa-star mr-1"></i>
-                    <span>Dari 5.0 rating</span>
+                    <i class="fas fa-clock mr-1"></i>
+                    <span>menunggu antrian</span>
                 </div>
             </div>
         </div>

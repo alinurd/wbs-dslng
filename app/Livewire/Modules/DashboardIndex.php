@@ -58,7 +58,7 @@ class DashboardIndex extends Root
 
         $totalPengaduan = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)->count();
         $dalamProses = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->where('status', 1)
+            ->where('status','!=', 0)
             ->where('sts_final', 0)
             ->count();
         $selesai = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
@@ -75,6 +75,7 @@ class DashboardIndex extends Root
             'selesai' => $selesai,
             'menunggu' => $menunggu
         ];
+        // \dd($this->stats);
     }
 
     protected function loadPengaduanTerbaru()
