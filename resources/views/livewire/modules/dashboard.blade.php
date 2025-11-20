@@ -178,8 +178,7 @@
                                     <span class="px-3 py-1 bg-{{ $pengaduan['status_color'] }}-100 text-{{ $pengaduan['status_color'] }}-800 text-xs font-medium rounded-full">
                                         {{ $pengaduan['status'] }}
                                     </span>
-                                    <a href="{{ route('log_detail', $pengaduan['code_pengaduan']) }}" 
-           class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 transition-colors duration-200">
+<a href="{{ url('/log-complien/' . $pengaduan['code_pengaduan']) }}"                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-chevron-right"></i>
         </a>
                                 </div>

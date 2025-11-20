@@ -247,25 +247,7 @@ class DashboardIndex extends Root
         }
     }
 
-    public function progressDashboard($status, $sts_final)
-    {
-        if ($sts_final == 1) {
-            return 100;
-        }
-
-        switch ($status) {
-            case 0: return 10;   // Menunggu
-            case 1: return 30;   // Dalam Proses
-            case 2: return 50;   // Diteruskan
-            case 3: return 100;  // Ditolak (final)
-            case 4: return 20;   // Diterima
-            case 5: return 40;   // Diproses
-            case 6: return 60;   // Ditindaklanjuti
-            case 7: return 100;  // Ditutup (final)
-            case 8: return 25;   // Perlu Klarifikasi
-            default: return 0;
-        }
-    }
+ 
 
     protected function getTimeAgo($datetime)
     {

@@ -11,9 +11,8 @@ use App\Livewire\Menus\Form as MenuForm;
 
 use App\Livewire\Menus\Index as MenuIndex;
 use App\Livewire\Modules\Compleien;
-use App\Livewire\Modules\DashboardIndex;
-use App\Livewire\Modules\LogApprovalIndex;
-use App\Livewire\Modules\Pengaduan\LogApprovalIndex as PengaduanLogApprovalIndex;
+use App\Livewire\Modules\DashboardIndex; 
+use App\Livewire\Modules\Pengaduan\LogApprovalIndex;
 use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 
 
@@ -28,6 +27,7 @@ use App\Livewire\News\Index as NewsIndex;
 use App\Livewire\Param\ParamAduan;
 use App\Livewire\Param\ParamDirektorat;
 use App\Livewire\Param\ParamEmailNotif;
+use App\Livewire\Param\ParamFAQ;
 use App\Livewire\Param\ParamForward;
 use App\Livewire\Param\ParamJenis;
 use App\Livewire\Param\ParamNotif;
@@ -121,8 +121,7 @@ Route::middleware(['auth'])->group(function (): void {
     Route::prefix('/pengaduan')->group(function () {
                Route::get('/p_report', PengaduanIndex::class)->name('p_report');
                Route::get('/p_tracking', TrackingIndex::class)->name('p_tracking');
-                Route::get('/log-complien/{code_pengaduan}', PengaduanLogApprovalIndex::class)->name('log_detail');
-
+    Route::get('/log-complien/{code_pengaduan}', LogApprovalIndex::class)->name('log_detail');
         });
         
                Route::get('/complien', Compleien::class)->name('complien');

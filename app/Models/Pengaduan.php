@@ -59,11 +59,15 @@ class Pengaduan extends Model
     {
         return $this->belongsTo(Owner::class, 'direktorat');
     }
+    public function logApprovals()
+    {
+        return $this->hasMany(LogApproval::class, 'pengaduan_id');
+    }
 
     // PERBAIKAN: Gunakan App\Models\Comment
     public function comments()
     {
-        return $this->hasMany(\App\Models\Comment::class, 'pengaduan_id');
+        return $this->hasMany(Comment::class, 'pengaduan_id');
     }
 
     // Method untuk menambah komentar
