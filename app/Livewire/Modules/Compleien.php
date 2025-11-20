@@ -35,6 +35,13 @@ class Compleien extends Root
     public $fileDescription = '';
     public $uploadedFiles = [];
 
+    // Properties untuk forward
+    public $showForwardDropdown = false;
+    public $forwardDestination = '';
+    public $forwardPengaduanId = '';
+
+    protected $listeners = ['openDetailModal' => 'openModal'];
+
     public $rules = [
         'catatan' => 'required|min:10',
         'file_upload' => 'nullable|file|max:10240', // 10MB max
@@ -60,6 +67,12 @@ class Compleien extends Root
             $this->pengaduan_id = $id;
         }
     }
+
+    // Method untuk forward
+ 
+
+     
+  
 
     public function submitForm()
     {
@@ -93,14 +106,13 @@ class Compleien extends Root
             if ($pengaduan) {
                 // Get status info dari combos
                 $statusInfo = Combo::where('kelompok', 'sts-aduan')
-                ->where('param_int', $this->submission_action)
-                ->first();
-                // dd($this->statusInfo);
+                    ->where('param_int', $this->submission_action)
+                    ->first();
 
                 if ($statusInfo) {
                     $updateData = [
-                        'status' => $this->submission_action, // Simpan param_int sebagai status
-                        'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0, // Disetujui, Lengkap [Ex], Lengkap [In]
+                        'status' => $this->submission_action,
+                        'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
                         'updated_at' => now(),
                     ];
 
@@ -119,11 +131,13 @@ class Compleien extends Root
             $this->notify('success', 'Status pengaduan berhasil diupdate!');
             $this->showuUdateStatus = false;
 
+            // Reset semua form dan forward dropdown
             $this->resetForm();
+            $this->hideForwardDropdown();
+
         } catch (\Exception $e) {
             $this->notify('error', 'Gagal update status: ' . $e->getMessage());
         }
-
     }
 
     protected function createLogApproval($pengaduan, $statusInfo, $filePath = null, $fileName = null)
@@ -164,23 +178,25 @@ class Compleien extends Root
         $this->reset(['catatan', 'file_upload', 'submission_action', 'selected_pengaduan_id', 'pengaduan_id']);
     }
 
-    // Method updateStatus yang sesuai dengan parent class
     public function updateStatus($id, $status = null)
     {
         $record = $this->model::findOrFail($id);
         $this->selected_pengaduan_id = $id;
         $this->pengaduan_id = $id;
 
-        // Get available status options dari combos
-        // $statusOptions = Combo::where('kelompok', 'sts-aduan')
-        //     ->where('is_active', 1)
-        //     ->orderBy('param_int')
-        //     ->get();
+        // Reset forward dropdown ketika membuka modal baru
+        $this->hideForwardDropdown();
 
         $logHistory = $this->getLogHistory($id);
         $currentStatusInfo = Combo::where('kelompok', 'sts-aduan')
             ->where('param_int', $record->status)
             ->first();
+
+        // Get available status options untuk user saat ini
+        $statusOptions = Combo::where('kelompok', 'sts-aduan')
+            ->where('is_active', 1)
+            ->orderBy('param_int')
+            ->get();
 
         $this->detailData = [
             'id' => $id,
@@ -190,14 +206,11 @@ class Compleien extends Root
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status Saat Ini' => $currentStatusInfo->data_id ?? 'Menunggu Review',
             'status_ex' => [
-                'name'=>$currentStatusInfo->data_id ?? 'Menunggu Review',
-                'color'=>$currentStatusInfo->param_str ?? 'yellow',
+                'name' => $currentStatusInfo->data_id ?? 'Menunggu Review',
+                'color' => $currentStatusInfo->param_str ?? 'yellow',
             ],
             'status_id' => $record->status,
-            // 'user' => [
-                // 'sts' => $statusOptions,
-                'user' => $this->userInfo,
-            // ],
+            'user' => $this->userInfo,
             'log' => [
                 [
                     'id' => $record->code_pengaduan,
@@ -254,7 +267,6 @@ class Compleien extends Root
         })->toArray();
     }
 
-   
 
     // Method untuk mendapatkan status badge
     public function getStatusBadge($statusId)
@@ -289,11 +301,9 @@ class Compleien extends Root
 
     public function getAprvCco($record)
     {
- 
-        $sts=$this->getStatusBadge($record->status);
-        if($record->sts_final==0 && $record->status !==3){
-            $sts.=$this->getStatusBadge(12);
-           
+        $sts = $this->getStatusBadge($record->status);
+        if($record->sts_final == 0 && $record->status !== 3){
+            $sts .= $this->getStatusBadge(12);
         }
         return $sts;
     }
@@ -303,16 +313,13 @@ class Compleien extends Root
         return $record->pelapor->name ?? $record->user->name ?? 'N/A';
     }
 
-    public function getJenisPelanggaran($record)
-    {
-        return $record->jenisPengaduan->name ?? 'Tidak diketahui';
-    }
 
     // Method untuk close modal
     public function closeModal()
     {
         $this->showuUdateStatus = false;
         $this->resetForm();
+        $this->hideForwardDropdown();
     }
 
     // Columns dan query method
@@ -321,80 +328,71 @@ class Compleien extends Root
         return ['code_pengaduan', 'perihal', 'tanggal_pengaduan', 'status'];
     }
 
-  public function query()
-{
-    $q = ($this->model)::with(['jenisPengaduan', 'pelapor']); // Hapus 'user' karena tidak ada relationship
-    
-    if ($this->search && method_exists($this, 'columns')) {
-        $columns = $this->columns();
-        if (is_array($columns) && count($columns)) {
-            $q->where(function ($p) use ($columns) {
-                foreach ($columns as $col) {
-                    if ($col === 'user_id') {
-                        $p->orWhereHas('pelapor', function ($q) {
-                            $q->where('name', 'like', "%{$this->search}%")
-                              ->orWhere('username', 'like', "%{$this->search}%");
-                        });
-                    } elseif ($col === 'jenis_pengaduan_id') {
-                        $p->orWhereHas('jenisPengaduan', function ($q) {
-                            $q->where('name', 'like', "%{$this->search}%");
-                        });
-                    } else {
-                        $p->orWhere($col, 'like', "%{$this->search}%");
+    public function query()
+    {
+        $q = ($this->model)::with(['jenisPengaduan', 'pelapor']);
+        
+        if ($this->search && method_exists($this, 'columns')) {
+            $columns = $this->columns();
+            if (is_array($columns) && count($columns)) {
+                $q->where(function ($p) use ($columns) {
+                    foreach ($columns as $col) {
+                        if ($col === 'user_id') {
+                            $p->orWhereHas('pelapor', function ($q) {
+                                $q->where('name', 'like', "%{$this->search}%")
+                                  ->orWhere('username', 'like', "%{$this->search}%");
+                            });
+                        } elseif ($col === 'jenis_pengaduan_id') {
+                            $p->orWhereHas('jenisPengaduan', function ($q) {
+                                $q->where('name', 'like', "%{$this->search}%");
+                            });
+                        } else {
+                            $p->orWhere($col, 'like', "%{$this->search}%");
+                        }
                     }
+                });
+            }
+        }
+
+        if (is_array($this->filters)) {
+            foreach ($this->filters as $key => $val) {
+                if ($key == 'tahun' && !empty($val)) {
+                    $q->whereYear('tanggal_pengaduan', $val);
                 }
-            });
-        }
-    }
-
-    if (is_array($this->filters)) {
-        foreach ($this->filters as $key => $val) {
-            if ($key == 'tahun' && !empty($val)) {
-                $q->whereYear('tanggal_pengaduan', $val);
-            }
-            if ($key == 'jenis_pengaduan_id' && !empty($val)) {
-                $q->where('jenis_pengaduan_id', $val);
-            }
-            if ($key == 'status' && !empty($val)) {
-                $q->where('status', $val);
+                if ($key == 'jenis_pengaduan_id' && !empty($val)) {
+                    $q->where('jenis_pengaduan_id', $val);
+                }
+                if ($key == 'status' && !empty($val)) {
+                    $q->where('status', $val);
+                }
             }
         }
-    }
 
-    // Filter berdasarkan role user
-    $roleId = (int)($this->userInfo['role']['id'] ?? 0);
-    
-    switch($roleId){
-        case 2: // WBS External
-            $stsGet = [0, 6, 10];
-            break;
-        case 4: // WBS Internal  
-            $stsGet = [6, 7, 9, 11];
-            break;
-        case 5: // WBS CC
-            $stsGet = [7, 1, 9];
-            break; 
-        case 7: // WBS CCO
-            $stsGet = [1, 3, 8];
-            break;
-        default:
-            $stsGet = [-1]; // Tidak tampil apa-apa
-    }
+        // Filter berdasarkan role user
+        $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+        
+        switch($roleId){
+            case 2: // WBS External
+                $stsGet = [0, 6, 10];
+                break;
+            case 4: // WBS Internal  
+                $stsGet = [6, 7, 9, 11];
+                break;
+            case 5: // WBS CC
+                $stsGet = [7, 1, 9];
+                break; 
+            case 7: // WBS CCO
+                $stsGet = [1, 3, 8];
+                break;
+            default:
+                $stsGet = [-1];
+        }
 
-    $q->whereIn('status', $stsGet);
-    
-    // Final debug
-    $finalResults = $q->get();
-    // \Log::info('FINAL QUERY RESULTS for Role ' . $roleId . ':', [
-    //     'total_records' => $finalResults->count(),
-    //     'statuses_found' => $finalResults->pluck('status')->unique()->values()->toArray(),
-    //     'allowed_statuses' => $stsGet
-    // ]);
+        $q->whereIn('status', $stsGet);
                 
-    return $q;
-}
+        return $q;
+    }
 
-    // View dan comment method
     public function view($id)
     {
         can_any([strtolower($this->modul).'.view']);
@@ -443,4 +441,61 @@ class Compleien extends Root
         $this->openChat($id, $detailData, $detailTitle);
         $this->loadUploadedFiles();
     }
+
+
+
+    // DI CLASS COMPLEIEN - PASTIKAN METHOD INI ADA
+public function x($pengaduanId)
+{
+            $this->notify('error', 'showForwardDropdown');
+
+    $this->showForwardDropdown = true;
+    $this->forwardPengaduanId = $pengaduanId;
+    $this->selected_pengaduan_id = $pengaduanId;
+    $this->pengaduan_id = $pengaduanId;
+}
+
+public function hideForwardDropdown()
+{
+    $this->showForwardDropdown = false;
+    $this->forwardDestination = '';
+    $this->forwardPengaduanId = '';
+}
+
+public function setActionWithForward($action, $id = null)
+{
+    // Validasi jika forward destination belum dipilih
+    if ($action == 5 && empty($this->forwardDestination)) {
+        $this->notify('error', 'Silakan pilih tujuan forward terlebih dahulu!');
+        return;
+    }
+
+    $this->submission_action = $action;
+    if ($id) {
+        $this->selected_pengaduan_id = $id;
+        $this->pengaduan_id = $id;
+    }
+    
+    // Jika action adalah forward (5), tambahkan catatan otomatis
+    if ($action == 5 && !empty($this->forwardDestination)) {
+        $destinationText = $this->getDestinationText($this->forwardDestination);
+        $existingCatatan = $this->catatan ?? '';
+        $this->catatan = "Dialihkan ke: " . $destinationText . "\n\n" . $existingCatatan;
+    }
+
+    // Submit form
+    $this->submitForm();
+}
+
+protected function getDestinationText($destination)
+{
+    $destinations = [
+        'community' => 'Community',
+        'personal' => 'Personal', 
+        'internal_team' => 'Internal Team',
+        'external_team' => 'External Team'
+    ];
+    
+    return $destinations[$destination] ?? $destination;
+}
 }

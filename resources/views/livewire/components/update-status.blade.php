@@ -175,23 +175,71 @@
                     <!-- Footer -->
                               <!-- Button Lengkap -->
                             {{-- {{dd($data['user']['user'])}} --}}
-                             <div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end space-x-3">
-              @foreach ($data['user']['sts'] as $p )
-              @if($p['param_int'] !==$data['status_id'])
-                            <button type="submit" 
-                                    wire:click="setAction({{$p['param_int']}}, {{$data['id']}})"
-                                    class="px-6 py-2 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm ">
-                                <i class="fas fa-check-circle me-1"></i>
-                                <span>{{$p['data_en'].' -'.$p['param_int'] .'-'. $data['status_id']}}</span>
-                            </button>
-                @endif
-                            @endforeach
+                          <!-- Footer -->
+<!-- Footer -->
+<div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end space-x-3 flex-wrap gap-2 relative">
+    @foreach ($data['user']['sts'] as $p)
+        @if($p['param_int'] !== $data['status_id'])
+            @if($p['param_int'] == 5) {{-- Forward --}}
+                <!-- Button untuk membuka dropdown forward -->
+                <div class="relative">
+                    <button type="button" 
+                            wire:click="x({{$data['id']}})"
+                            class="px-6 py-2 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                        <i class="fas fa-share me-1"></i>
+                        <span>{{$p['data_en']}} FORWARD</span>
+                    </button>
 
-                <button type="button" wire:click="{{ $onClose }}"
-                    class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
-                    <i class="fas fa-times me-2"></i>Tutup
+                    <!-- Dropdown untuk pilihan forward -->
+                    @if($showForwardDropdown)
+                    <div class="absolute bottom-full left-0 mb-2 p-4 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-64">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Pilih Tujuan Forward:
+                        </label>
+                        <select wire:model="forwardDestination" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                            <option value="">-- Pilih Tujuan --</option>
+                            <option value="community">Community</option>
+                            <option value="personal">Personal</option>
+                            <option value="internal_team">Internal Team</option>
+                            <option value="external_team">External Team</option>
+                        </select>
+                        
+                        <div class="mt-3 flex space-x-2">
+                            <button type="button" 
+                                    wire:click="setActionWithForward({{$p['param_int']}}, {{$data['id']}})"
+                                    class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium flex-1 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                    {{ empty($forwardDestination) ? 'disabled' : '' }}>
+                                <i class="fas fa-paper-plane me-1"></i>
+                                Submit
+                            </button>
+                            <button type="button" 
+                                    wire:click="hideForwardDropdown"
+                                    class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+
+            @else
+                <!-- Button untuk status lainnya -->
+                <button type="submit" 
+                        wire:click="setAction({{$p['param_int']}}, {{$data['id']}})"
+                        class="px-6 py-2 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                    <i class="fas fa-check-circle me-1"></i>
+                    <span>{{$p['data_en']}}</span>
                 </button>
-            </div>   
+            @endif
+        @endif
+    @endforeach
+
+    <button type="button" wire:click="closeModal"
+        class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
+        <i class="fas fa-times me-2"></i>Tutup
+    </button>
+</div>
 
 
                     
