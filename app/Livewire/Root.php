@@ -94,6 +94,7 @@ abstract class Root extends Component
     // }
     
     $this->userInfo=[
+        'user'=>$user,
         'role' => $role,
         // 'sts_array' => $stsArray,
         'sts' => $combo ?? null

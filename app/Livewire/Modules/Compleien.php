@@ -125,7 +125,7 @@ class Compleien extends Root
             if ($statusInfo) {
               $updateData = [
     'status' => $this->submission_action,
-    'fwd_to' => ($this->submission_action == 5) ? $this->forwardDestination : null,
+    'fwd_to' => ($this->submission_action == 5) ? $this->forwardDestination : 0,
     'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
     'updated_at' => now(),
 ];
@@ -399,20 +399,23 @@ class Compleien extends Root
         }
 
         // Filter berdasarkan role user
-        $roleId = (int)($this->userInfo['role']['id'] ?? 0);
-        
+        $roleId = (int)($this->userInfo['role']['id'] ?? 0); 
         switch($roleId){
             case 2: // WBS External
                 $stsGet = [0, 6, 10];
                 break;
             case 4: // WBS Internal  
-                $stsGet = [6, 7, 9, 11];
+                $stsGet = [6, 7, 9, 11, 2];
                 break;
             case 5: // WBS CC
                 $stsGet = [7, 1, 9];
                 break; 
             case 7: // WBS CCO
                 $stsGet = [1, 3, 8];
+                break;
+            case 6: // WBS CCO
+                $stsGet = [5,2];
+                $q->where('fwd_to', $this->userInfo['user']['fwd_id']);
                 break;
             default:
                 $stsGet = [-1];
