@@ -26,6 +26,7 @@ class Pengaduan extends Model
         'lampiran',
         'status',
         'user_id',
+        'fwd_to',
         'ditutup_pada'
     ];
 

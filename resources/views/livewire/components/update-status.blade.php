@@ -200,7 +200,7 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                 <option value="">-- Pilih Tujuan --</option>
                 @foreach($this->getForwardOptions() as $option)
-                    <option value="{{ $option->data_en }}">{{ $option->data_id }}</option>
+                    <option value="{{ $option->id }}">{{ $option->data_id }}</option>
                 @endforeach
             </select>
                         
