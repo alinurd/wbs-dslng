@@ -7,51 +7,60 @@ use App\Models\Combo;
 
 class ParamFAQ extends Root
 {
-    public $title = "FAQ";
-    public $views = "parameter.index";
+    public $title = "Status Aduan";
+    public $views = "parameter.faq";
     public $model = Combo::class;
     public $modul = 'combo';
     public $kel = 'combo';
-    
+    public $faqDropdown = [];
     // Form configuration
     public $form = [
-        'kelompok' => 'faq',
-        'data_id' => null,
-        'data_en' => null,
-        'param_in' => null,
+        'kelompok' => 'p_faq',
+        'data_id' => '',
+        'data_en' => '',
         'is_active' => true,
+        'param_int' => '',
     ];
 
-    // Filters - SESUAI DENGAN STRUKTUR ROOT
     public $filters = [
-        'kelompok' => 'faq',
+        'kelompok' => 'p_faq',
         'data_id' => '',
         'is_active' => '',
+        // 'param_int' => 0,
     ];
 
     public $rules = [
         'form.kelompok' => 'required|string|max:255',
         'form.data_id' => 'required|string|max:255',
         'form.data_en' => 'required|string|max:255',
-        'form.param_in' => 'required',
-        'form.is_active' => 'boolean',
+        'form.param_int' => 'required',
     ];
 
     protected $messages = [
         'form.data_id.required' => 'Data Indonesia wajib diisi',
         'form.data_en.required' => 'Data English wajib diisi',
-        'form.data_en.param_in' => 'Pertanyaan wajib diisi',
+        'form.param_int.required' => 'Pertanyaan wajib diisi', 
     ];
+    public function mount()
+    {
+         $this->faqDropdown = $this->model::where('kelompok', 'pertanyaan')
+            ->select('data_id', 'data_en', 'data', 'id')
+            ->where('is_active', true)
+            ->where('param_int', true)
+            ->orderBy('data_id')
+            ->get();
+             parent::mount();
+    }
  
     public function columns()
     {
-        return ['kelompok', 'data_id', 'data_en'];
+        return ['kelompok', 'data_id', 'data_en','param_int'];
     }
  
     public function filterDefault()
     {
         return [
-            ['f' => 'kelompok', 'v' => 'faq'],
+            ['f' => 'kelompok', 'v' => 'p_faq'],
             // ['f' => 'is_active', 'v' => 1],
         ];
     }
@@ -65,9 +74,8 @@ class ParamFAQ extends Root
 
         $this->detailData = [
             'Kelompok' => $record->kelompok,
-            'Data Indonesia' => $record->data_id,
+            'Pertanyaan' => $this->getComboById($record->param_int),
             'Data English' => $record->data_en,
-            'Pertanyaan' => $record->param_in,
             'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
             'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
             'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
@@ -76,6 +84,7 @@ class ParamFAQ extends Root
         $this->detailTitle = "Detail " . $this->title;
         $this->showDetailModal = true;
     }
+      
 
     // METHOD UNTUK TUTUP DETAIL MODAL
     public function closeDetailModal()

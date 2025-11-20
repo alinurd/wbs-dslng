@@ -15,7 +15,7 @@ class ParamStsAduan extends Root
     
     // Form configuration
     public $form = [
-        'kelompok' => 'sts-aduan',
+        'kelompok' => 'p_faq',
         'data_id' => null,
         'data_en' => null,
         'is_active' => true,
@@ -23,7 +23,7 @@ class ParamStsAduan extends Root
     ];
 
     public $filters = [
-        'kelompok' => 'sts-aduan',
+        'kelompok' => 'p_faq',
         'data_id' => '',
         'is_active' => '',
         // 'param_int' => 0,
@@ -51,7 +51,7 @@ class ParamStsAduan extends Root
     public function filterDefault()
     {
         return [
-            ['f' => 'kelompok', 'v' => 'sts-aduan'],
+            ['f' => 'kelompok', 'v' => 'p_faq'],
             // ['f' => 'is_active', 'v' => 1],
         ];
     }

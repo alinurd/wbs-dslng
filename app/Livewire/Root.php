@@ -892,5 +892,10 @@ public function getForwardOptions()
             default: return 0;
         }
     }
-    
+    public function getComboById($i)
+    {
+                $r = $this->model::findOrFail($i);
+
+        return $r->data_id ??$r->data_en;
+    }
 }

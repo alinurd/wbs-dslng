@@ -3,13 +3,37 @@
     <div class="container-fluid py-4">
         <div class="container mx-auto">
 
+            
+@php 
+    $processedRecords = $_records->map(function ($r) {
+        return (object) array_merge(
+            $r->toArray(),
+            [ 
+                'param_int' => $this->getComboById($r->param_int),
+                 
+            ]
+        );
+    });
+ 
+    $finalRecords = new \Illuminate\Pagination\LengthAwarePaginator(
+        $processedRecords,
+        $_records->total(),
+        $_records->perPage(),
+        $_records->currentPage(),
+        ['path' => request()->url(), 'pageName' => 'page']
+    );
+@endphp
+
+
             @include('livewire.components.table-wrapper', [
-                'records' => $_records,
+                'records' => $finalRecords,
                 'columns' => [
                     // 'kelompok' => 'Kelompok',
                     'data_id' => 'Data Indonesia',
                     'data_en' => 'Data English',
+                    'param_int' => 'Pertanyaan',
                     'is_active' => 'Status',
+                    'created_at' => 'Dibuat Pada',
                     'created_at' => 'Dibuat Pada',
                 ],
                 'selectedItems' => $selectedItems,
@@ -50,15 +74,25 @@
             'cols' => 1,
             'fields' => [
                 [
-                    'type' => 'text',
+                    'type' => 'select',
+                    'label' => 'Pertanyaan',
+                    'model' => 'form.param_int',
+                    'required' => true,
+                     'options' => collect($faqDropdown)->mapWithKeys(function ($p) {
+                                 return [
+                                     $p->id => $p->data ?? $p->data_id ?? $p->data_en ?? 'No Data'
+                                    ];
+                                })->toArray(), 
+                ],
+
+                [
+                    'type' => 'textarea',
                     'model' => 'form.data_id',
                     'label' => 'Data Indonesia',
                     'required' => true,
                     'placeholder' => 'Masukan Data....',
                     'error' => 'form.data_id',
-                    'messages' => [
-                        'required' => 'Data Indonesia wajib diisi',
-                    ]
+                    'helper_bottom'=>'berikan penjelasan/jawab dalam bahasa indonesia'
                 ],
                 [
                     'type' => 'textarea',
@@ -67,18 +101,10 @@
                     'error' => 'form.data_en',
                     'required' => true,
                     'placeholder' => 'Masukkan nama dalam bahasa Inggris',
-                    'messages' => [
-                        'required' => 'Data English wajib diisi',
-                    ]
+                    'helper_bottom'=>'berikan penjelasan/jawab dalam bahasa ingriss'
+
                 ],
-                [
-                    'type' => 'number',
-                    'label' => 'Param Int',
-                    'model' => 'form.param_int',
-                    'error' => 'form.param_int',
-                    'disabled' => true,
-                    'placeholder' => 'Masukkan Param Int',
-                ],
+                 
                 [
                     'type' => 'switch-single',
                     'label' => 'Status Aktif',
