@@ -98,6 +98,7 @@ Route::middleware(['auth'])->group(function (): void {
     Route::get('/combo', IndexManual::class)->name('combo');
     Route::get('/jenis', ParamJenis::class)->name('jenis');
     // Route::get('/jenis', ParamAduan::class)->name('jenis');
+    Route::get('/p_faq', ParamFAQ::class)->name('p_faq');
     Route::get('/aduan', ParamAduan::class)->name('aduan');
     Route::get('/statusaduan', ParamStsAduan::class)->name('statusaduan');
     Route::get('/pertanyaan', ParamPertanyaan::class)->name('pertanyaan');

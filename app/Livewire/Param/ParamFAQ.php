@@ -5,42 +5,42 @@ namespace App\Livewire\Param;
 use App\Livewire\Root;
 use App\Models\Combo;
 
-class ParamPertanyaan extends Root
+class ParamFAQ extends Root
 {
-    public $title = "Pertanyaan";
-    public $views = "parameter.pertanyaan";
+    public $title = "FAQ";
+    public $views = "parameter.index";
     public $model = Combo::class;
-    public $modul = 'pertanyaan';
+    public $modul = 'combo';
     public $kel = 'combo';
     
     // Form configuration
     public $form = [
-        'kelompok' => 'pertanyaan',
+        'kelompok' => 'faq',
         'data_id' => null,
         'data_en' => null,
+        'param_in' => null,
         'is_active' => true,
-        'param_it' => true,
     ];
 
     // Filters - SESUAI DENGAN STRUKTUR ROOT
     public $filters = [
-        'kelompok' => 'pertanyaan',
+        'kelompok' => 'faq',
         'data_id' => '',
         'is_active' => '',
-        'param_it' => '',
     ];
 
     public $rules = [
         'form.kelompok' => 'required|string|max:255',
         'form.data_id' => 'required|string|max:255',
         'form.data_en' => 'required|string|max:255',
+        'form.param_in' => 'required',
         'form.is_active' => 'boolean',
-        'form.param_it' => 'boolean',
     ];
 
     protected $messages = [
         'form.data_id.required' => 'Data Indonesia wajib diisi',
         'form.data_en.required' => 'Data English wajib diisi',
+        'form.data_en.param_in' => 'Pertanyaan wajib diisi',
     ];
  
     public function columns()
@@ -51,7 +51,7 @@ class ParamPertanyaan extends Root
     public function filterDefault()
     {
         return [
-            ['f' => 'kelompok', 'v' => 'pertanyaan'],
+            ['f' => 'kelompok', 'v' => 'faq'],
             // ['f' => 'is_active', 'v' => 1],
         ];
     }
@@ -67,6 +67,7 @@ class ParamPertanyaan extends Root
             'Kelompok' => $record->kelompok,
             'Data Indonesia' => $record->data_id,
             'Data English' => $record->data_en,
+            'Pertanyaan' => $record->param_in,
             'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
             'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
             'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
