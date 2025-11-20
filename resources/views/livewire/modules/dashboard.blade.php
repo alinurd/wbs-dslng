@@ -137,12 +137,12 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900">FAQ</h3>
-                                <p class="text-sm text-gray-500">Pantau status laporan</p>
+                                <p class="text-sm text-gray-500">Jawaban cepat untuk pertanyaan umum</p>
                             </div>
                         </div>
                         <a href="{{route('faq')}}" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
-                            <i class="fas fa-truck"></i>
-                            <span>Lacak Status</span>
+                            <i class="fas fa-search"></i>
+                            <span>Jelajahi FAQ</span>
                         </a>
                     </div>
                 </div>
