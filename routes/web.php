@@ -67,6 +67,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
         Route::get('/dashboard', DashboardIndex::class)->name('dashboard');
+        
 
 });
 
@@ -124,8 +125,7 @@ Route::middleware(['auth'])->group(function (): void {
         });
         
                Route::get('/complien', Compleien::class)->name('complien');
-    // Route::get('/combo', ComboIndex::class)->name('combo');
-
+Route::get('/faq', DashboardIndex::class)->name('faq');
     
 });
 

@@ -1,88 +1,8 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100"> 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        @php
-        // Sample data untuk dashboard
-        $stats = [
-            'total_pengaduan' => 24,
-            'dalam_proses' => 8,
-            'selesai' => 14,
-            'rating' => 4.8
-        ];
-
-        $pengaduan_terbaru = [
-            [
-                'id' => '7-DTRPOG',
-                'no' => 4,
-                'judul' => 'Laporan 1',
-                'progress' => 70,
-                'tanggal' => '17/11/2025 02:16',
-                'status' => 'Dalam Proses',
-                'status_color' => 'yellow'
-            ],
-            [
-                'id' => '6-gbgQRT',
-                'no' => 1,
-                'judul' => 'vgygyygyygyygyy',
-                'progress' => 70,
-                'tanggal' => '16/11/2025 00:14',
-                'status' => 'Dalam Proses',
-                'status_color' => 'yellow'
-            ],
-            [
-                'id' => '5-urlAzy',
-                'no' => 5,
-                'judul' => 'gsvcdghv',
-                'progress' => 70,
-                'tanggal' => '15/11/2025 23:16',
-                'status' => 'Selesai',
-                'status_color' => 'green'
-            ],
-            [
-                'id' => '5-Jj322Y',
-                'no' => 1,
-                'judul' => 'rrere@gmail.con',
-                'progress' => 70,
-                'tanggal' => '15/11/2025 20:13',
-                'status' => 'Ditolak',
-                'status_color' => 'red'
-            ]
-        ];
-
-        $log_approval = [
-            [
-                'id' => '7-DTRPOG',
-                'judul' => 'Approval CCO #001',
-                'waktu' => '2 jam lalu',
-                'deskripsi' => 'Pengaduan telah disetujui untuk proses investigasi lebih lanjut',
-                'komentar' => '3 komentar',
-                'file' => true
-            ],
-            [
-                'id' => '6-gbgQRT',
-                'judul' => 'Approval CCO #002',
-                'waktu' => '5 jam lalu',
-                'deskripsi' => 'Dokumen pendukung telah diverifikasi dan approved',
-                'komentar' => '1 komentar',
-                'file' => true
-            ],
-            [
-                'id' => '5-urlAzy',
-                'judul' => 'Approval CCO #003',
-                'waktu' => '1 hari lalu',
-                'deskripsi' => 'Proses approval tahap pertama selesai',
-                'komentar' => '0 komentar',
-                'file' => false
-            ]
-        ];
-
-        $progress_bulanan = [
-            ['label' => 'Pengaduan Baru', 'jumlah' => 12, 'persentase' => 70, 'color' => 'blue'],
-            ['label' => 'Dalam Investigasi', 'jumlah' => 8, 'persentase' => 50, 'color' => 'yellow'],
-            ['label' => 'Selesai', 'jumlah' => 4, 'persentase' => 25, 'color' => 'green']
-        ];
-        @endphp
+        {{-- {{dd($data)}} --}}
+      
 
         <!-- Welcome Banner -->  
         <div class="bg-gradient-to-r from-[#0077C8] to-[#003B73] rounded-2xl p-8 text-white mb-8 shadow-lg">
@@ -160,8 +80,8 @@
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Rating Responsif</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['rating'] }}</p>
+                        <p class="text-sm font-medium text-gray-600">Menggu Review</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['menunggu'] }}</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                         <i class="fas fa-star text-purple-600 text-xl"></i>
@@ -205,10 +125,25 @@
                                 <p class="text-sm text-gray-500">Pantau status laporan</p>
                             </div>
                         </div>
-                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
+                        <a  href="{{route('p_tracking')}}" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
                             <i class="fas fa-truck"></i>
                             <span>Lacak Status</span>
-                        </button>
+                        </a>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-question text-cyan-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">FAQ</h3>
+                                <p class="text-sm text-gray-500">Pantau status laporan</p>
+                            </div>
+                        </div>
+                        <a href="{{route('faq')}}" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-truck"></i>
+                            <span>Lacak Status</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -235,7 +170,7 @@
                                         <i class="fas fa-exclamation-triangle text-blue-600"></i>
                                     </div>
                                     <div>
-                                        <p class="font-medium text-gray-900">{{ $pengaduan['judul'] }} - {{ $pengaduan['id'] }}</p>
+                                        <p class="font-medium text-gray-900">{{ $pengaduan['judul'] }} - {{ $pengaduan['code_pengaduan'] }}</p>
                                         <p class="text-sm text-gray-500">Dilaporkan {{ $pengaduan['tanggal'] }}</p>
                                     </div>
                                 </div>
@@ -243,7 +178,7 @@
                                     <span class="px-3 py-1 bg-{{ $pengaduan['status_color'] }}-100 text-{{ $pengaduan['status_color'] }}-800 text-xs font-medium rounded-full">
                                         {{ $pengaduan['status'] }}
                                     </span>
-                                    <a href="{{ route('log_detail', $pengaduan['id']) }}" 
+                                    <a href="{{ route('log_detail', $pengaduan['code_pengaduan']) }}" 
            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-chevron-right"></i>
         </a>
@@ -275,7 +210,7 @@
                                     <div class="flex items-center space-x-3">
                                         <button class="text-blue-600 hover:text-blue-700 text-sm flex items-center space-x-1">
                                             <i class="fas fa-comment text-xs"></i>
-                                            <span>{{ $log['komentar'] }}</span>
+                                            <span>{{ $log['status'] }}</span>
                                         </button>
                                         @if($log['file'])
                                         <button class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
