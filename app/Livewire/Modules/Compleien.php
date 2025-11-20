@@ -74,71 +74,101 @@ class Compleien extends Root
      
   
 
-    public function submitForm()
-    {
-        try {
-            // Validasi form
-            $this->validate();
+  public function submitForm()
+{
+    try {
+        // Debug: cek data masuk
+        \Log::info('submitForm called', [
+            'submission_action' => $this->submission_action,
+            'selected_pengaduan_id' => $this->selected_pengaduan_id,
+            'has_catatan' => !empty($this->catatan),
+            'has_file' => !empty($this->file_upload)
+        ]);
 
-            // Validasi action dan pengaduan_id
-            if (empty($this->submission_action)) {
-                $this->notify('error', 'Silakan pilih action terlebih dahulu!');
-                return;
-            }
+        // Validasi form
+        $this->validate();
 
-            if (empty($this->selected_pengaduan_id)) {
-                $this->notify('error', 'Tidak ada pengaduan yang dipilih!');
-                return;
-            }
-
-            // Handle file upload
-            $filePath = null;
-            $fileName = null;
-            
-            if ($this->file_upload) {
-                $filePath = $this->file_upload->store('pengaduan-approvals', 'public');
-                $fileName = $this->file_upload->getClientOriginalName();
-            }
-
-            // Update pengaduan
-            $pengaduan = Pengaduan::find($this->selected_pengaduan_id);
-            
-            if ($pengaduan) {
-                // Get status info dari combos
-                $statusInfo = Combo::where('kelompok', 'sts-aduan')
-                    ->where('param_int', $this->submission_action)
-                    ->first();
-
-                if ($statusInfo) {
-                    $updateData = [
-                        'status' => $this->submission_action,
-                        'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
-                        'updated_at' => now(),
-                    ];
-
-                    // Add catatan if provided
-                    if (!empty($this->catatan)) {
-                        $updateData['catatan'] = $this->catatan;
-                    }
-
-                    $pengaduan->update($updateData);
-
-                    // Create log approval
-                    $this->createLogApproval($pengaduan, $statusInfo, $filePath, $fileName);
-                }
-            }
-
-            $this->notify('success', 'Status pengaduan berhasil diupdate!');
-            $this->showuUdateStatus = false;
-
-            // Reset semua form dan forward dropdown
-            $this->resetForm();
-            $this->hideForwardDropdown();
-
-        } catch (\Exception $e) {
-            $this->notify('error', 'Gagal update status: ' . $e->getMessage());
+        // Validasi action dan pengaduan_id
+        if (empty($this->submission_action)) {
+            $this->notify('error', 'Silakan pilih action terlebih dahulu!');
+            return;
         }
+
+        if (empty($this->selected_pengaduan_id)) {
+            $this->notify('error', 'Tidak ada pengaduan yang dipilih!');
+            return;
+        }
+
+        // Handle file upload
+        $filePath = null;
+        $fileName = null;
+        
+        if ($this->file_upload) {
+            $filePath = $this->file_upload->store('pengaduan-approvals', 'public');
+            $fileName = $this->file_upload->getClientOriginalName();
+        }
+
+        // Update pengaduan
+        $pengaduan = Pengaduan::find($this->selected_pengaduan_id);
+        
+        if ($pengaduan) {
+            // Get status info dari combos
+            $statusInfo = Combo::where('kelompok', 'sts-aduan')
+                ->where('param_int', $this->submission_action)
+                ->first();
+
+            \Log::info('Status info found', [
+                'statusInfo' => $statusInfo,
+                'submission_action' => $this->submission_action
+            ]);
+
+            if ($statusInfo) {
+              $updateData = [
+    'status' => $this->submission_action,
+    'fwd_to' => ($this->submission_action == 5) ? $this->forwardDestination : null,
+    'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
+    'updated_at' => now(),
+];
+
+                // Add catatan if provided
+                if (!empty($this->catatan)) {
+                    $updateData['catatan'] = $this->catatan;
+                }
+
+                \Log::info('Updating pengaduan', [
+                    'pengaduan_id' => $pengaduan->id,
+                    'updateData' => $updateData
+                ]);
+
+                $pengaduan->update($updateData);
+
+                // Create log approval
+                $this->createLogApproval($pengaduan, $statusInfo, $filePath, $fileName);
+                
+                \Log::info('Pengaduan updated successfully');
+            } else {
+                \Log::error('Status info not found for action: ' . $this->submission_action);
+                $this->notify('error', 'Status tidak valid: ' . $this->submission_action);
+                return;
+            }
+        } else {
+            \Log::error('Pengaduan not found: ' . $this->selected_pengaduan_id);
+            $this->notify('error', 'Pengaduan tidak ditemukan!');
+            return;
+        }
+
+        $this->notify('success', 'Status pengaduan berhasil diupdate!');
+        $this->showuUdateStatus = false;
+
+        // Reset semua form dan forward dropdown
+        $this->resetForm();
+        $this->hideForwardDropdown();
+
+    } catch (\Exception $e) {
+        \Log::error('Error in submitForm: ' . $e->getMessage());
+        $this->notify('error', 'Gagal update status: ' . $e->getMessage());
     }
+}
 
     protected function createLogApproval($pengaduan, $statusInfo, $filePath = null, $fileName = null)
     {
@@ -445,10 +475,10 @@ class Compleien extends Root
 
 
     // DI CLASS COMPLEIEN - PASTIKAN METHOD INI ADA
-public function x($pengaduanId)
+public function ShowFWD($pengaduanId)
 {
-            $this->notify('error', 'showForwardDropdown');
-
+            // $this->notify('error', 'ShowFWD');
+// $forwardDestination=true;    
     $this->showForwardDropdown = true;
     $this->forwardPengaduanId = $pengaduanId;
     $this->selected_pengaduan_id = $pengaduanId;
@@ -463,14 +493,24 @@ public function hideForwardDropdown()
 }
 
 public function setActionWithForward($action, $id = null)
-{
+// DI CLASS COMPLEIEN - PERBAIKI METHOD setActionWithForward
+ {
+    // Debug: cek apakah method dipanggil
+    \Log::info('setActionWithForward called', [
+        'action' => $action,
+        'id' => $id,
+        'forwardDestination' => $this->forwardDestination
+    ]);
+
     // Validasi jika forward destination belum dipilih
     if ($action == 5 && empty($this->forwardDestination)) {
         $this->notify('error', 'Silakan pilih tujuan forward terlebih dahulu!');
         return;
     }
 
+    // Set properties dengan benar
     $this->submission_action = $action;
+    
     if ($id) {
         $this->selected_pengaduan_id = $id;
         $this->pengaduan_id = $id;
@@ -483,19 +523,42 @@ public function setActionWithForward($action, $id = null)
         $this->catatan = "Dialihkan ke: " . $destinationText . "\n\n" . $existingCatatan;
     }
 
-    // Submit form
+    // Debug: cek data sebelum submit
+    \Log::info('Before submitForm', [
+        'submission_action' => $this->submission_action,
+        'selected_pengaduan_id' => $this->selected_pengaduan_id,
+        'forwardDestination' => $this->forwardDestination
+    ]);
+
+    // Submit form - PASTIKAN ini dieksekusi
     $this->submitForm();
+    
+    // Reset dropdown setelah submit
+    $this->hideForwardDropdown();
 }
 
+// DI CLASS COMPLEIEN - PERBAIKI METHOD getDestinationText
 protected function getDestinationText($destination)
 {
-    $destinations = [
-        'community' => 'Community',
-        'personal' => 'Personal', 
-        'internal_team' => 'Internal Team',
-        'external_team' => 'External Team'
-    ];
+    // Ambil data dari combos untuk dropdown forward
+    $forwardOptions = Combo::where('kelompok', 'wbs-forward')
+        ->where('is_active', true)
+        ->orderBy('data_id')
+        ->get();
     
-    return $destinations[$destination] ?? $destination;
+    // Cari teks berdasarkan value
+    $option = $forwardOptions->firstWhere('data_en', $destination);
+    
+    return $option ? $option->data_id : $destination;
 }
+
+// Method untuk mendapatkan dropdown options (jika perlu di view)
+public function getForwardOptions()
+{
+    return Combo::where('kelompok', 'wbs-forward')
+        ->where('is_active', true)
+        ->orderBy('data_id')
+        ->get();
+}
+
 }

@@ -184,11 +184,11 @@
                 <!-- Button untuk membuka dropdown forward -->
                 <div class="relative">
                     <button type="button" 
-                            wire:click="x({{$data['id']}})"
-                            class="px-6 py-2 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
-                        <i class="fas fa-share me-1"></i>
-                        <span>{{$p['data_en']}} FORWARD</span>
-                    </button>
+                wire:click="ShowFWD({{$data['id']}})"
+                class="px-6 py-2 bg-{{$p['param_str']}}-500 hover:bg-{{$p['param_str']}}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+            <i class="fas fa-share me-1"></i>
+            <span>{{$p['data_en']}} FORWARD</span>
+        </button>
 
                     <!-- Dropdown untuk pilihan forward -->
                     @if($showForwardDropdown)
@@ -196,29 +196,28 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Pilih Tujuan Forward:
                         </label>
-                        <select wire:model="forwardDestination" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                            <option value="">-- Pilih Tujuan --</option>
-                            <option value="community">Community</option>
-                            <option value="personal">Personal</option>
-                            <option value="internal_team">Internal Team</option>
-                            <option value="external_team">External Team</option>
-                        </select>
+                       <select wire:model="forwardDestination" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                <option value="">-- Pilih Tujuan --</option>
+                @foreach($this->getForwardOptions() as $option)
+                    <option value="{{ $option->data_en }}">{{ $option->data_id }}</option>
+                @endforeach
+            </select>
                         
                         <div class="mt-3 flex space-x-2">
-                            <button type="button" 
-                                    wire:click="setActionWithForward({{$p['param_int']}}, {{$data['id']}})"
-                                    class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium flex-1 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                    {{ empty($forwardDestination) ? 'disabled' : '' }}>
-                                <i class="fas fa-paper-plane me-1"></i>
-                                Submit
-                            </button>
-                            <button type="button" 
-                                    wire:click="hideForwardDropdown"
-                                    class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                <button type="button" 
+                        wire:click="setActionWithForward({{$p['param_int']}}, {{$data['id']}})"
+                        class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium flex-1 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        {{ empty($showForwardDropdown) ? 'disabled' : '' }}>
+                    <i class="fas fa-paper-plane me-1"></i>
+                    Submit Forward
+                </button>
+                <button type="button" 
+                        wire:click="hideForwardDropdown"
+                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
                     </div>
                     @endif
                 </div>
