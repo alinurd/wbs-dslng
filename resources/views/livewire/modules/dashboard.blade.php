@@ -46,20 +46,20 @@
             </div>
 
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Dalam Proses</p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['dalam_proses'] }}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-sync-alt text-yellow-600 text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm text-blue-600">
-                    <i class="fas fa-clock mr-1"></i>
-                    <span>Menunggu tindak lanjut</span>
-                </div>
-            </div>
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-gray-600">Menunggu Review</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['menunggu'] }}</p>
+        </div>
+        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-clock text-purple-600 text-xl"></i>
+        </div>
+    </div>
+    <div class="mt-4 flex items-center text-sm text-yellow-600">
+        <i class="fas fa-clock mr-1"></i>
+        <span>Menunggu review awal</span>
+    </div>
+</div>
 
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div class="flex items-center justify-between">
@@ -208,17 +208,16 @@
                                     </div>
                                     <p class="text-sm text-gray-600 mb-2">{{ $log['deskripsi'] }}</p>
                                     <div class="flex items-center space-x-3">
-                                        <button class="text-blue-600 hover:text-blue-700 text-sm flex items-center space-x-1">
-                                            <i class="fas fa-comment text-xs"></i>
-                                            <span>{{ $log['status'] }}</span>
-                                        </button>
-                                        @if($log['file'])
-                                        <button class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
-                                            <i class="fas fa-download text-xs"></i>
-                                            <span>Download File</span>
-                                        </button>
-                                        @endif
-                                    </div>
+    <span class="px-2 py-1 bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 text-xs font-medium rounded-full">
+        {{ $log['status'] }}
+    </span>
+    @if($log['file'])
+    <button class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
+        <i class="fas fa-paperclip text-xs"></i>
+        <span>Ada File</span>
+    </button>
+    @endif
+</div>
                                 </div>
                                 @endforeach
                             </div>

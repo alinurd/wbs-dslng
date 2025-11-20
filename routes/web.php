@@ -120,7 +120,7 @@ Route::middleware(['auth'])->group(function (): void {
     Route::prefix('/pengaduan')->group(function () {
                Route::get('/p_report', PengaduanIndex::class)->name('p_report');
                Route::get('/p_tracking', TrackingIndex::class)->name('p_tracking');
-                Route::get('/log-complien/{id}', PengaduanLogApprovalIndex::class)->name('log_detail');
+                Route::get('/log-complien/{code_pengaduan}', PengaduanLogApprovalIndex::class)->name('log_detail');
 
         });
         

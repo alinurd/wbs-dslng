@@ -50,25 +50,30 @@ class DashboardIndex extends Root
         $this->loadPengaduanTerbaru();
         $this->loadLogApproval();
         $this->loadProgressBulanan();
-        $this->loadChartData();
     }
 
     protected function loadStats()
     {
         $currentYear = date('Y');
 
+        $totalPengaduan = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)->count();
+        $dalamProses = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
+            ->where('status', 1)
+            ->where('sts_final', 0)
+            ->count();
+        $selesai = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
+            ->where('sts_final', 1)
+            ->count();
+        $menunggu = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
+            ->where('status', 0)
+            ->where('sts_final', 0)
+            ->count();
+
         $this->stats = [
-            'total_pengaduan' => Pengaduan::whereYear('tanggal_pengaduan', $currentYear)->count(),
-            'dalam_proses' => Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-                ->where('status','!=', 0) // 1 = dalam proses
-                ->where('sts_final', 0) // 1 = dalam proses
-                ->count(),
-            'menunggu' => Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-                ->where('status', 0) // 1 = dalam proses
-                ->count(),
-            'selesai' => Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-                ->where('sts_final', 1) // 1 = selesai/final
-                ->count(), 
+            'total_pengaduan' => $totalPengaduan,
+            'dalam_proses' => $dalamProses,
+            'selesai' => $selesai,
+            'menunggu' => $menunggu
         ];
     }
 
@@ -80,103 +85,80 @@ class DashboardIndex extends Root
             ->get();
 
         $this->pengaduan_terbaru = $pengaduan->map(function($item, $index) {
-            // Determine status color based on status and sts_final
             $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
             
-            // Calculate progress based on status
-            $progress = $this->calculateProgressDash($item->status, $item->sts_final);
-
             return [
                 'id' => $item->id,
                 'code_pengaduan' => $item->code_pengaduan,
                 'no' => $index + 1,
                 'judul' => $item->perihal ?? 'Tidak ada judul',
-                'progress' => $progress,
-                'tanggal' => $item->tanggal_pengaduan?->format('d/m/Y H:i') ?? '-',
+                'progress' => $this->progressDashboard($item->status, $item->sts_final),
+                'tanggal' => $item->created_at?->format('d/m/Y H:i') ?? '-',
                 'status' => $statusInfo['text'],
                 'status_color' => $statusInfo['color'],
                 'jenis_pengaduan' => $item->jenisPengaduan->nama_jenis ?? '-',
-                'pelapor' => $item->pelapor->name ?? 'Unknown'
+                'pelapor' => $item->user->name ?? 'Unknown'
             ];
         })->toArray();
     }
 
-    protected function getStatusInfo($status, $sts_final)
-    {
-        if ($sts_final == 1) {
-            return ['text' => 'Selesai', 'color' => 'green'];
-        }
-
-        switch ($status) {
-            case 0:
-                return ['text' => 'Menunggu', 'color' => 'gray'];
-            case 1:
-                return ['text' => 'Dalam Proses', 'color' => 'yellow'];
-            case 2:
-                return ['text' => 'Diteruskan', 'color' => 'blue'];
-            case 3:
-                return ['text' => 'Ditolak', 'color' => 'red'];
-            default:
-                return ['text' => 'Unknown', 'color' => 'gray'];
-        }
-    }
-
-    public function calculateProgressDash($status, $sts_final)
-    {
-        if ($sts_final == 1) {
-            return 100;
-        }
-
-        switch ($status) {
-            case 0: return 10;  // Menunggu
-            case 1: return 50;  // Dalam Proses
-            case 2: return 75;  // Diteruskan
-            case 3: return 100; // Ditolak (final)
-            default: return 0;
-        }
-    }
-
     protected function loadLogApproval()
     {
-        // Use log_approval table for approval logs
-        $approvals = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
+        // Get the latest log approval for each unique pengaduan
+        $latestLogs = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
+            ->whereIn('id', function($query) {
+                $query->select(DB::raw('MAX(id)'))
+                      ->from('log_approval')
+                      ->groupBy('pengaduan_id');
+            })
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
-        $this->log_approval = $approvals->map(function($item) {
+        $this->log_approval = $latestLogs->map(function($item) {
             return [
                 'id' => $item->id,
-                'judul' => 'Approval #' . $item->pengaduan->code_pengaduan ?? $item->pengaduan_id,
+                'pengaduan_id' => $item->pengaduan_id,
+                'judul' => 'Approval #' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
                 'waktu' => $this->getTimeAgo($item->created_at),
                 'deskripsi' => $item->status_text . ' - ' . ($item->catatan ?: 'Tidak ada catatan'),
-                'status' => $item->status,
-                'file' => !empty($item->file),
-                'status_color' => $item->color ?? 'blue'
+                'komentar' => $item->catatan ? '1 komentar' : '0 komentar',
+                'file' => !empty($item->file) && $item->file != '[]',
+                'status_color' => $item->color ?? 'blue',
+                'user_name' => $item->user->name ?? 'Unknown',
+                'status' => $item->status_text
             ];
         })->toArray();
 
         // If no approval data, use recent pengaduan as fallback
         if (empty($this->log_approval)) {
-            $recentPengaduan = Pengaduan::with(['jenisPengaduan'])
-                ->orderBy('updated_at', 'desc')
-                ->limit(3)
-                ->get();
-
-            $this->log_approval = $recentPengaduan->map(function($item) {
-                $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
-                
-                return [
-                    'id' => $item->id,
-                    'judul' => 'Update ' . ($item->jenisPengaduan->nama_jenis ?? 'Pengaduan') . ' #' . $item->code_pengaduan,
-                    'waktu' => $this->getTimeAgo($item->updated_at),
-                    'deskripsi' => 'Status: ' . $statusInfo['text'],
-                    // 'komentar' => '0 komentar',
-                    'file' => !empty($item->lampiran),
-                    'status_color' => $statusInfo['color']
-                ];
-            })->toArray();
+            $this->loadRecentPengaduanAsLog();
         }
+    }
+
+    protected function loadRecentPengaduanAsLog()
+    {
+        $recentPengaduan = Pengaduan::with(['jenisPengaduan'])
+            ->orderBy('updated_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        $this->log_approval = $recentPengaduan->map(function($item) {
+            $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
+            
+            return [
+                'id' => $item->id,
+                'pengaduan_id' => $item->id,
+                'judul' => 'Update ' . ($item->jenisPengaduan->nama_jenis ?? 'Pengaduan') . ' #' . $item->code_pengaduan,
+                'waktu' => $this->getTimeAgo($item->updated_at),
+                'deskripsi' => 'Status: ' . $statusInfo['text'] . ' - ' . ($item->perihal ?? ''),
+                'komentar' => '0 komentar',
+                'file' => !empty($item->lampiran) && $item->lampiran != '[]',
+                'status_color' => $statusInfo['color'],
+                'user_name' => 'System',
+                'status' => $statusInfo['text']
+            ];
+        })->toArray();
     }
 
     protected function loadProgressBulanan()
@@ -235,40 +217,54 @@ class DashboardIndex extends Root
         }
     }
 
-    protected function loadChartData()
+    protected function getStatusInfo($status, $sts_final)
     {
-        $currentYear = date('Y');
-        
-        // Get monthly data for current year
-        $monthlyData = Pengaduan::select(
-                DB::raw('MONTH(tanggal_pengaduan) as month'),
-                DB::raw('COUNT(*) as total'),
-                DB::raw("SUM(CASE WHEN sts_final = 1 THEN 1 ELSE 0 END) as completed")
-            )
-            ->whereYear('tanggal_pengaduan', $currentYear)
-            ->groupBy(DB::raw('MONTH(tanggal_pengaduan)'))
-            ->orderBy('month')
-            ->get();
-
-        $months = [];
-        $totals = [];
-        $completed = [];
-
-        // Initialize all months with 0
-        for ($i = 1; $i <= 12; $i++) {
-            $monthName = date('M', mktime(0, 0, 0, $i, 1));
-            $months[] = $monthName;
-            
-            $monthData = $monthlyData->firstWhere('month', $i);
-            $totals[] = $monthData ? $monthData->total : 0;
-            $completed[] = $monthData ? $monthData->completed : 0;
+        if ($sts_final == 1) {
+            return ['text' => 'Selesai', 'color' => 'green'];
         }
 
-        $this->chartData = [
-            'months' => $months,
-            'totals' => $totals,
-            'completed' => $completed
-        ];
+        switch ($status) {
+            case 0:
+                return ['text' => 'Menunggu', 'color' => 'gray'];
+            case 1:
+                return ['text' => 'Dalam Proses', 'color' => 'yellow'];
+            case 2:
+                return ['text' => 'Diteruskan', 'color' => 'blue'];
+            case 3:
+                return ['text' => 'Ditolak', 'color' => 'red'];
+            case 4:
+                return ['text' => 'Diterima', 'color' => 'green'];
+            case 5:
+                return ['text' => 'Diproses', 'color' => 'yellow'];
+            case 6:
+                return ['text' => 'Ditindaklanjuti', 'color' => 'blue'];
+            case 7:
+                return ['text' => 'Ditutup', 'color' => 'green'];
+            case 8:
+                return ['text' => 'Perlu Klarifikasi', 'color' => 'orange'];
+            default:
+                return ['text' => 'Unknown', 'color' => 'gray'];
+        }
+    }
+
+    public function progressDashboard($status, $sts_final)
+    {
+        if ($sts_final == 1) {
+            return 100;
+        }
+
+        switch ($status) {
+            case 0: return 10;   // Menunggu
+            case 1: return 30;   // Dalam Proses
+            case 2: return 50;   // Diteruskan
+            case 3: return 100;  // Ditolak (final)
+            case 4: return 20;   // Diterima
+            case 5: return 40;   // Diproses
+            case 6: return 60;   // Ditindaklanjuti
+            case 7: return 100;  // Ditutup (final)
+            case 8: return 25;   // Perlu Klarifikasi
+            default: return 0;
+        }
     }
 
     protected function getTimeAgo($datetime)
@@ -287,39 +283,12 @@ class DashboardIndex extends Root
         } elseif ($diff < 86400) {
             $hours = floor($diff / 3600);
             return $hours . ' jam lalu';
-        } else {
+        } elseif ($diff < 2592000) {
             $days = floor($diff / 86400);
             return $days . ' hari lalu';
+        } else {
+            return date('d/m/Y', $time);
         }
-    }
-
-    public function query()
-    {
-        $q = ($this->model)::with(['jenisPengaduan', 'user']);
-        
-        if ($this->search && method_exists($this, 'columns')) {
-            $columns = $this->columns();
-            if (is_array($columns) && count($columns)) {
-                $q->where(function ($p) use ($columns) {
-                    foreach ($columns as $col) {
-                        $p->orWhere($col, 'like', "%{$this->search}%");
-                    }
-                });
-            }
-        }
-
-        if (is_array($this->filters)) {
-            foreach ($this->filters as $key => $val) {
-                if ($key == 'tahun' && !empty($val)) {
-                    $q->whereYear('tanggal_pengaduan', $val);
-                }
-                if ($key == 'jenis_pengaduan_id' && !empty($val)) {
-                    $q->where('jenis_pengaduan_id', $val);
-                }
-            }
-        }
-
-        return $q;
     }
 
     // Refresh dashboard data
@@ -327,21 +296,5 @@ class DashboardIndex extends Root
     {
         $this->loadDashboardData();
         $this->dispatch('show-toast', type: 'success', message: 'Dashboard data diperbarui');
-    }
-
-    // Get status distribution for chart
-    public function getStatusDistribution()
-    {
-        $currentYear = date('Y');
-        
-        return Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->mapWithKeys(function($item) {
-                $statusText = $this->getStatusInfo($item->status, 0)['text'];
-                return [$statusText => $item->count];
-            })
-            ->toArray();
     }
 }
