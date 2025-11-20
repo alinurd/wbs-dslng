@@ -39,6 +39,7 @@ class User extends Authenticatable
         'alamat',
         'active',
         'status',
+        'fwd_id',
         'must_change_password',
         'insert_datetime',
         'update_datetime',

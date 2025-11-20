@@ -99,7 +99,7 @@
                     'helper_bottom' => $updateMode ? 'Biarkan kosong jika tidak ingin mengubah password' : 'Password minimal 8 karakter'
                 ],
                 [
-                    'type' => 'checkbox-multiple',
+                    'type' => 'checkbox-roles',
                     'label' => 'Roles',
                     'model' => 'selectedRoles',
                     'error' => 'selectedRoles',

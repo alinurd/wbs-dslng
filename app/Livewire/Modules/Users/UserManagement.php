@@ -3,6 +3,7 @@
 namespace App\Livewire\Modules\Users;
 
 use App\Livewire\Root;
+use App\Models\Combo;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -15,14 +16,16 @@ class UserManagement extends Root
     public $model = User::class;
     public $modul = 'users';
     public $kel = 'combo';
+    public $forwardDestination = '';
     
-    // Properties untuk roles
+    // Properties untuk roles - UBAH KE SINGLE VALUE
     public $RolesList = [];
-    public $selectedRoles = [];
+    public $selectedRole = null; // UBAH DARI selectedRoles MENJADI selectedRole (single value)
 
     // Form configuration
     public $form = [
         'name' => '', 
+        'fwd_id' => null, 
         'email' => '', 
         'password' => '',
         'is_active' => true
@@ -30,6 +33,7 @@ class UserManagement extends Root
 
     public $formDefault = [
         'name' => '', 
+        'fwd_id' => null, 
         'email' => '', 
         'password' => '',
         'is_active' => true
@@ -41,16 +45,23 @@ class UserManagement extends Root
         'is_active' => ''
     ];
 
-    // Rules untuk validasi form
+    // Rules untuk validasi form - UBAH KE SINGLE ROLE
     public function rules()
     {
         $rules = [
             'form.name' => 'required|string|max:255', 
             'form.email' => 'required|email|max:255', 
             'form.is_active' => 'boolean',
-            'selectedRoles' => 'required|array|min:1',
-            'selectedRoles.*' => 'exists:roles,id'
+            'selectedRole' => 'required|exists:roles,id'
         ];
+
+        // Validasi conditional untuk fwd_id - required hanya jika role 6 dipilih
+        if ($this->selectedRole == 6) {
+            $rules['form.fwd_id'] = 'required|exists:combos,id';
+        } else {
+            // Jika bukan role 6, set fwd_id ke null
+            $this->form['fwd_id'] = null;
+        }
 
         // Untuk create, password wajib
         if (!$this->updateMode) {
@@ -77,8 +88,10 @@ class UserManagement extends Root
         'form.email.unique' => 'Email sudah digunakan',
         'form.password.required' => 'Password wajib diisi', 
         'form.password.min' => 'Password minimal 8 karakter',
-        'selectedRoles.required' => 'Role wajib dipilih',
-        'selectedRoles.min' => 'Pilih minimal satu role'
+        'selectedRole.required' => 'Role wajib dipilih',
+        'selectedRole.exists' => 'Role tidak valid',
+        'form.fwd_id.required' => 'Tujuan Forward wajib dipilih ketika memilih role WBS Forward',
+        'form.fwd_id.exists' => 'Tujuan Forward tidak valid'
     ];
 
     public function mount()
@@ -101,7 +114,7 @@ class UserManagement extends Root
     public function query()
     {
         return $this->model::with('roles')
-            ->select(['id', 'name', 'email', 'is_active', 'created_at', 'updated_at'])
+            ->select(['id', 'name', 'email', 'fwd_id', 'is_active', 'created_at', 'updated_at'])
             ->when($this->filters['search'], function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', '%' . $search . '%')
@@ -119,7 +132,7 @@ class UserManagement extends Root
     }
 
     
-    // Override method saving untuk handle password
+    // Override method saving untuk handle password dan fwd_id
     public function saving($payload)
     {
         // Hash password jika diisi
@@ -130,6 +143,11 @@ class UserManagement extends Root
             unset($payload['password']);
         }
 
+        // Jika bukan role 6, set fwd_id ke null
+        if ($this->selectedRole != 6) {
+            $payload['fwd_id'] = null;
+        }
+
         return $payload;
     }
 
@@ -137,14 +155,9 @@ class UserManagement extends Root
     public function saved($record, $action)
     {
         try {
-            // Pastikan selectedRoles adalah array of integers
-            $roleIds = array_map('intval', $this->selectedRoles ?? []);
-            
-            // Validasi role IDs sebelum sync
-            $validRoleIds = Role::whereIn('id', $roleIds)->pluck('id')->toArray();
-            
-            if (!empty($validRoleIds)) {
-                $record->syncRoles($validRoleIds);
+            // Assign single role
+            if ($this->selectedRole) {
+                $record->syncRoles([$this->selectedRole]);
             }
 
         } catch (\Exception $e) {
@@ -152,21 +165,21 @@ class UserManagement extends Root
             $this->dispatch('show-toast', type: 'error', message: 'Error assigning roles: ' . $e->getMessage());
         }
 
-        // Reset selectedRoles setelah save
-        $this->selectedRoles = [];
+        // Reset selectedRole setelah save
+        $this->selectedRole = null;
     }
 
-    // Override method create untuk reset selectedRoles
+    // Override method create untuk reset selectedRole
     public function create()
     {
         can_any([strtolower($this->modul).'.create']);
-        $this->reset(['form', 'selectedRoles']);
+        $this->reset(['form', 'selectedRole']);
         $this->form = $this->formDefault;
         $this->updateMode = false;
         $this->showModal = true;
     }
 
-    // Override method edit untuk load roles
+    // Override method edit untuk load role
     public function edit($id)
     {
         can_any([strtolower($this->modul).'.edit']);
@@ -179,14 +192,13 @@ class UserManagement extends Root
             'id' => $record->id,
             'name' => $record->name,
             'email' => $record->email,
+            'fwd_id' => $record->fwd_id,
             'password' => '', // Kosongkan password saat edit
             'is_active' => $record->is_active
         ];
         
-        // Load roles user - pastikan sebagai array of integers
-        $this->selectedRoles = $record->roles->pluck('id')->map(function($id) {
-            return (int)$id;
-        })->toArray();
+        // Load single role user
+        $this->selectedRole = $record->roles->first()?->id;
         
         $this->updateMode = true;
         $this->showModal = true;
@@ -199,11 +211,14 @@ class UserManagement extends Root
         $record = $this->model::with('roles')->findOrFail($id);
         $roles = $record->getRoleNames()->implode(', ');
         
+        // Get forward destination name if exists
+        $forwardDestination = $record->fwd_id ? Combo::find($record->fwd_id)?->data_id : '-';
+        
         $this->detailData = [
             'Name' => $record->name,
             'Email' => $record->email, 
-            'Roles' => $roles ?: 'No Role', 
-            // 'Status' => $record->is_active,
+            'Roles' => $roles ?: 'No Role',
+            'Forward Destination' => $forwardDestination,
             'Email Verified' => $record->email_verified_at ? 
                 $record->email_verified_at->format('d/m/Y H:i') : 
                 'Belum diverifikasi',
@@ -243,7 +258,7 @@ class UserManagement extends Root
                 'is_active' => !$user->is_active
             ]);
             
-            $status = $user->is_active ?1 : 0;
+            $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
             $this->dispatch('show-toast', type: 'success', message: "User berhasil $status");
             
             // Refresh data
@@ -253,14 +268,15 @@ class UserManagement extends Root
         }
     }
 
-    // Override closeModal untuk reset selectedRoles
+    // Override closeModal untuk reset selectedRole
     public function closeModal()
     {
         parent::closeModal();
-        $this->selectedRoles = [];
+        $this->selectedRole = null;
+        $this->form['fwd_id'] = null;
     }
 
-      public function loadRecords()
+    public function loadRecords()
     {
         parent::loadRecords();
         
@@ -280,5 +296,37 @@ class UserManagement extends Root
                 })
             );
         }
+    }
+ 
+    public function onRoleChange($value)
+    {
+        $this->selectedRole = $value;
+         
+        // Jika ganti role dari 6 ke yang lain, reset fwd_id
+        if ($value != 6) {
+            $this->form['fwd_id'] = null;
+        }
+        
+        // Validate realtime ketika role berubah
+        $this->validateOnly('form.fwd_id');
+    }
+ 
+    public function clearRole()
+    {
+        $this->selectedRole = null;
+        $this->form['fwd_id'] = null;
+    }
+
+    public function getForwardOptions()
+    {
+         return Combo::where('kelompok', 'wbs-forward')
+        ->where('is_active', true)
+        ->orderBy('data_id')
+        ->get(); 
+    }
+
+    public function shouldShowForwardDropdown()
+    {
+        return $this->selectedRole == 6;
     }
 }

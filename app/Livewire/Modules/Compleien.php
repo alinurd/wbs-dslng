@@ -552,13 +552,6 @@ protected function getDestinationText($destination)
     return $option ? $option->data_id : $destination;
 }
 
-// Method untuk mendapatkan dropdown options (jika perlu di view)
-public function getForwardOptions()
-{
-    return Combo::where('kelompok', 'wbs-forward')
-        ->where('is_active', true)
-        ->orderBy('data_id')
-        ->get();
-}
+
 
 }

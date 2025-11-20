@@ -863,5 +863,12 @@ public function calculateProgress($pengaduan)
         $totalSteps = 5;
         return min(100, (($logCount + 1) / $totalSteps) * 100);
     }
-
+// Method untuk mendapatkan dropdown options (jika perlu di view)
+public function getForwardOptions()
+{
+    return Combo::where('kelompok', 'wbs-forward')
+        ->where('is_active', true)
+        ->orderBy('data_id')
+        ->get();
+}
 }

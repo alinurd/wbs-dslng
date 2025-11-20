@@ -400,6 +400,135 @@
                                         </div>
 
 
+                                    
+
+
+@elseif($field['type'] === 'checkbox-roles')
+    <div class="space-y-3" wire:key="role-selection-{{ $fieldName }}">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-700">
+                {{ $field['label'] }}
+                @if ($field['required'] ?? false)
+                    <span class="text-red-500">*</span>
+                @endif
+            </span>
+        </div>
+
+        <!-- Radio Button Container -->
+        <div class="max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-gray-50">
+            @if (count($field['options'] ?? []) > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @foreach ($field['options'] as $value => $label)
+                        @php
+                            $isChecked = $fieldValue == $value; // Single value comparison
+                            $radioId = "{$fieldName}_{$value}";
+                        @endphp
+
+                        <label
+                            class="flex items-start space-x-3 p-2 rounded-lg hover:bg-white transition-colors cursor-pointer border border-transparent hover:border-gray-200 {{ $isChecked ? 'bg-blue-50 border-blue-200' : '' }}"
+                            wire:key="role-{{ $fieldName }}-{{ $value }}">
+
+                            <!-- Radio Input -->
+                            <div class="flex items-center h-5 mt-0.5">
+                                <input type="radio"
+                                    wire:model.live="{{ $field['model'] }}"
+                                    wire:change="onRoleChange({{ $value }})"
+                                    value="{{ $value }}"
+                                    id="{{ $radioId }}"
+                                    name="{{ $fieldName }}"
+                                    class="h-4 w-4 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 transition-all duration-200 {{ $hasError ? 'border-red-500' : '' }}"
+                                    {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                            </div>
+
+                            <!-- Label and Description -->
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-medium text-gray-700 block">{{ $label }}</span>
+                                @if (isset($field['descriptions'][$value]))
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        {{ $field['descriptions'][$value] }}</p>
+                                @endif
+                            </div>
+
+                            <!-- Check Icon -->
+                            @if ($isChecked)
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-green-500 text-sm"></i>
+                                </div>
+                            @endif
+                        </label>
+                    @endforeach
+                </div>
+
+                <!-- FORWARD DROPDOWN - Hanya tampil jika role 6 dipilih -->
+                @if($this->shouldShowForwardDropdown())
+                    <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg transition-all duration-300" 
+                         wire:key="forward-dropdown-{{ $fieldName }}">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-forward mr-2 text-blue-500"></i>
+                            Pilih Tujuan Forward:
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <select wire:model="form.fwd_id" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 {{ $errors->has('form.fwd_id') ? 'border-red-500' : '' }}">
+                            <option value="">-- Pilih Tujuan Forward --</option>
+                            @foreach($this->getForwardOptions() as $option)
+                                <option value="{{ $option->id }}">{{ $option->data_id }}</option>
+                            @endforeach
+                        </select>
+                        
+                        <!-- Error message untuk forward dropdown -->
+                        @error('form.fwd_id')
+                            <div class="text-red-600 text-sm mt-2 flex items-center bg-red-50 p-2 rounded border border-red-200">
+                                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                        
+                        <!-- Helper text untuk forward dropdown -->
+                        @if ($field['helper_forward'] ?? false)
+                            <p class="text-xs text-gray-500 mt-2 flex items-start">
+                                <i class="fas fa-info-circle mr-1 mt-0.5 text-blue-400"></i>
+                                {{ $field['helper_forward'] }}
+                            </p>
+                        @endif
+                    </div>
+                @endif
+
+            @else
+                <!-- Empty State -->
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox text-gray-300 text-2xl mb-2"></i>
+                    <p class="text-sm text-gray-500">Tidak ada opsi role yang tersedia</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- ERROR MESSAGE -->
+        @error($errorField)
+            <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+                <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+                {{ $fieldMessages[$message] ?? $message }}
+            </div>
+        @enderror
+
+        <!-- HELPER TEXT BOTTOM -->
+        @if ($field['helper_bottom'] ?? false)
+            <p class="text-xs text-gray-500 mt-1">{{ $field['helper_bottom'] }}</p>
+        @endif
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
                                         <!-- RADIO GROUP -->
                                     @elseif($field['type'] === 'radio')
                                         <div class="space-y-2">
