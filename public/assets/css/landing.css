@@ -212,6 +212,16 @@
                 z-index: 1001;
             }
         }
-
-
         
+
+         .required::after {
+        content: " *";
+        color: #ef4444;
+        font-weight: bold;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }

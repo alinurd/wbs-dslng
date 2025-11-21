@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\Combo;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\App;
@@ -24,6 +25,7 @@ class RegisterForm extends Component
     public $reporter_type = 'employee';
     public $verification_code;
     public $confirmation = false;
+    public $question = [];
 
     protected $rules = [
         'username' => 'required|min:3|unique:users',
@@ -65,6 +67,11 @@ class RegisterForm extends Component
     {
         $this->locale = Session::get('locale', config('app.locale'));
         App::setLocale($this->locale);
+        $this->question = Combo::where('kelompok', 'pertanyaan')
+        ->where('is_active', 1)
+        ->where('param_int', null)
+        ->orderBy('created_at')
+        ->get();
     }
 
       public function changeLanguage($lang)
