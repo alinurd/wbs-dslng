@@ -10,6 +10,7 @@ use App\Livewire\Menus\Form as MenuForm;
 // use App\Livewire\Combo\Index as ComboIndex;
 
 use App\Livewire\Menus\Index as MenuIndex;
+use App\Livewire\Modules\AuditTrail;
 use App\Livewire\Modules\Compleien;
 use App\Livewire\Modules\DashboardIndex; 
 use App\Livewire\Modules\FAQ;
@@ -23,7 +24,6 @@ use App\Livewire\Modules\Users\UserManagement;
 use App\Livewire\News\Detail as NewsDetail;
 
 
-
 use App\Livewire\News\Index as NewsIndex;
 use App\Livewire\Param\ParamAduan;
 use App\Livewire\Param\ParamDirektorat;
@@ -34,17 +34,8 @@ use App\Livewire\Param\ParamJenis;
 use App\Livewire\Param\ParamNotif;
 use App\Livewire\Param\ParamPertanyaan;
 
-
-
-
-
-
-
-
-
 use App\Livewire\Param\ParamStsAduan;
 use App\Livewire\Roles\Editor as RoleEditor;
-
 
 use App\Livewire\Roles\Form as RoleForm;
  use App\Livewire\WbsLanding\Index as LandingIndex;
@@ -94,7 +85,6 @@ Route::middleware(['auth'])->group(function (): void {
     Route::get('/menus/create', MenuForm::class)->name('menus.create');
     Route::get('/menus/{id}/edit', MenuForm::class)->name('menus.edit');
 
- 
 
     Route::get('/combo', IndexManual::class)->name('combo');
     Route::get('/jenis', ParamJenis::class)->name('jenis');
@@ -107,6 +97,7 @@ Route::middleware(['auth'])->group(function (): void {
     Route::get('/direktorat', ParamDirektorat::class)->name('direktorat');
     Route::get('/emailnotif', ParamEmailNotif::class)->name('emailnotif');
     Route::get('/paramnotif', ParamNotif::class)->name('paramnotif');
+    Route::get('/audit', AuditTrail::class)->name('audit');
     
     
     // Route::get('/blog', Blog::class)->name('blog');
