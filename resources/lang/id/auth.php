@@ -70,6 +70,11 @@ return [
         ],
     ],
 
+    'password' => 'Password',
+        
+        'username' => 'Username',
+        'username_placeholder' => 'Enter username',
+        
     'logout' => 'Keluar',
     'name' => 'Nama Lengkap',
     'confirm_password' => 'Konfirmasi Kata Sandi',
