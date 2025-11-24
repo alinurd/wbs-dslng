@@ -67,7 +67,7 @@ class AppServiceProvider extends ServiceProvider
                 ->get()
                 ->map(function ($menu) use ($hasMenuAccess) {
                     // Filter children
-                    $menu->children = $menu->children->filter(fn($child) => $hasMenuAccess($child));
+                    $menu->children = $menu ->children->filter(fn($child) => $hasMenuAccess($child));
                     return $menu;
                 })
                 // Filter parent menu sesuai akses
@@ -76,7 +76,8 @@ class AppServiceProvider extends ServiceProvider
             // Bagikan ke semua view
             $view->with([
                 'menus' => $menus,
-                'user' => $user,
+               'user' => $user,
+               'userRole' => $user?$user->roles()->get()->pluck('name', 'id')->toArray():[],
                 'module_permissions' => module_permissions('dashboard'),
             ]);
         });
