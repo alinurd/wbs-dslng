@@ -18,8 +18,8 @@ use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 
 
 use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
-use App\Livewire\Modules\users\PermissionManagement;
-use App\Livewire\Modules\users\UserManagement;
+use App\Livewire\Modules\Users\PermissionManagement;
+use App\Livewire\Modules\Users\UserManagement;
 use App\Livewire\News\Detail as NewsDetail;
 
 
