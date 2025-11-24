@@ -5,7 +5,7 @@
                 {{ __('auth.register.title') }}
             </h1>
             <p class="text-gray-50 m-3 text-lg max-w-2xl mx-auto">
-                {{ __('auth.register.dsc') }}
+                {{ __('auth.register.dsc') }} locale: {{$locale}}
             </p>
         </div>
     </section>
@@ -34,7 +34,7 @@
                                 </ul>
                             </div>
                         @endif
-
+ 
                         <form wire:submit.prevent="register" class="space-y-6">
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <!-- Left Column Fields -->
@@ -116,7 +116,7 @@
                                             @error('security_question') border-red-500 @enderror">
                                             <option value="">{{ __('auth.register.choose_question') }}</option>
                                             @foreach ($question as $key => $p)
-                                                <option value="{{ $key }}">{{ $p->data_en }}</option>
+                                            <option value="{{ $key }}">{{ $p->{'data_' . $locale} }}</option>
                                             @endforeach
                                         </select>
                                     </div>
