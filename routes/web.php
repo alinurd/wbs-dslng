@@ -2,9 +2,7 @@
 
 use App\Http\Controllers\LanguageController;
 use App\Livewire\Auth\LoginFrom;
-use App\Livewire\Auth\RegisterForm;
-use App\Livewire\Blog\Blog;
-use App\Livewire\Blog\BlogForm;
+use App\Livewire\Auth\RegisterForm; 
 use App\Livewire\Combo\IndexManual as IndexManual;
 use App\Livewire\Menus\Form as MenuForm;
 // use App\Livewire\Combo\Index as ComboIndex;
@@ -14,6 +12,7 @@ use App\Livewire\Modules\AuditTrail;
 use App\Livewire\Modules\Compleien;
 use App\Livewire\Modules\DashboardIndex; 
 use App\Livewire\Modules\FAQ;
+use App\Livewire\Modules\News;
 use App\Livewire\Modules\Pengaduan\LogApprovalIndex;
 use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 
@@ -45,11 +44,11 @@ use App\Livewire\TestRegister;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-Route::get('/tes/register', TestRegister::class)->name('register.ts');
+// Route::get('/tes/register', TestRegister::class)->name('register.ts');
 Route::get('/auth/register', RegisterForm::class)->name('register.form');
 Route::get('/auth/login', LoginFrom::class)->name('login.form');
 Route::get('/', LandingIndex::class)->name('landing.index');
-Route::get('/news', NewsIndex::class)->name('new.index');
+Route::get('/news-landing', NewsIndex::class)->name('new.index');
 Route::get('/news-detail/{slug}', NewsDetail::class)->name('new-detail.index');
 Route::post('/change-language', [LanguageController::class, 'change'])->name('language.change');
 
@@ -105,9 +104,7 @@ Route::middleware(['auth'])->group(function (): void {
     
     
     
-    Route::get('/blog', Blog::class)->name('blog.index');
-    Route::get('/blog/create', BlogForm::class)->name('blog.create');
-    Route::get('/blog/{id}/edit', BlogForm::class)->name('blog.edit');
+    Route::get('/news', News::class)->name('news');
     
     //pengaduan
     Route::prefix('/pengaduan')->group(function () {
