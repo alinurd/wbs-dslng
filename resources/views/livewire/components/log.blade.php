@@ -104,7 +104,9 @@
                                         <div class="flex items-center justify-between bg-white rounded px-2 py-1 border border-gray-200">
                                             <div class="flex items-center space-x-1 min-w-0 flex-1">
                                                 <i class="fas fa-file text-gray-400 text-xs"></i>
-                                                <span class="text-xs text-gray-700 truncate">{{ $file }}</span>
+                                                <span class="text-xs text-gray-700 truncate">
+                                                    file
+                                                </span>
                                             </div>
                                             <button class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-1 ml-2 flex-shrink-0">
                                                 <i class="fas fa-download text-xs"></i>

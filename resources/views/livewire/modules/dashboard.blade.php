@@ -230,13 +230,33 @@
                                                 class="px-2 py-1 bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 text-xs font-medium rounded-full">
                                                 {{ $log['status'] }}
                                             </span>
-                                            @if ($log['file'])
-                                                <button
-                                                    class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
-                                                    <i class="fas fa-paperclip text-xs"></i>
-                                                    <span>Ada File</span>
-                                                </button>
-                                            @endif
+                                            @if(!empty($log['file']))
+    @php
+        $files = json_decode($log['file'], true);
+    @endphp
+    
+    @if(is_array($files) && count($files) > 0)
+        <div class="mt-3">
+            <p class="text-xs font-medium text-gray-500 mb-2">Lampiran:</p>
+            <div class="space-y-2">
+                @foreach($files as $fileItem)
+                    <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-file text-gray-400"></i>
+                            <span class="text-sm text-gray-700">{{ $fileItem['original_name'] }}</span>
+                        </div>
+                        <a href="{{ $fileItem['url'] }}" 
+                           target="_blank"
+                           class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
+                            <i class="fas fa-download text-xs"></i>
+                            <span>Download</span>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+@endif
                                         </div>
                                     </div>
                                 @endforeach

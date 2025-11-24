@@ -155,25 +155,26 @@
                             @endif
 
                             <!-- File Attachments -->
-                            @if(count($log['file']) > 0)
-                            <div class="border-t border-{{ $log['warna'] }}-200 pt-3">
-                                <p class="text-sm font-medium text-gray-700 mb-2">File Lampiran:</p>
-                                <div class="space-y-2">
-                                    @foreach($log['file'] as $file)
-                                    <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
-                                        <div class="flex items-center space-x-2">
-                                            <i class="fas fa-file text-gray-400"></i>
-                                            <span class="text-sm text-gray-700">{{ $file }}</span>
+                           @if(count($log['file']) > 0)
+                                <div class="border-t border-{{ $log['warna'] }}-200 pt-2 mt-2">
+                                    <p class="text-xs font-medium text-gray-700 mb-1">File Lampiran:</p>
+                                    <div class="space-y-1">
+                                        @foreach($log['file'] as $file)
+                                        <div class="flex items-center justify-between bg-white rounded px-2 py-1 border border-gray-200">
+                                            <div class="flex items-center space-x-1 min-w-0 flex-1">
+                                                <i class="fas fa-file text-gray-400 text-xs"></i>
+                                                <span class="text-xs text-gray-700 truncate">
+                                                    file
+                                                </span>
+                                            </div>
+                                            <button class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-1 ml-2 flex-shrink-0">
+                                                <i class="fas fa-download text-xs"></i>
+                                            </button>
                                         </div>
-                                        <button class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
-                                            <i class="fas fa-download text-xs"></i>
-                                            <span>Download</span>
-                                        </button>
+                                        @endforeach
                                     </div>
-                                    @endforeach
                                 </div>
-                            </div>
-                            @endif
+                                @endif
                         </div>
                     </div>
                     @endforeach

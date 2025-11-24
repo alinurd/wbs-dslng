@@ -124,7 +124,7 @@ class DashboardIndex extends Root
                 'waktu' => $this->getTimeAgo($item->created_at),
                 'deskripsi' => $item->status_text . ' - ' . ($item->catatan ?: 'Tidak ada catatan'),
                 'komentar' => $item->catatan ? '1 komentar' : '0 komentar',
-                'file' => !empty($item->file) && $item->file != '[]',
+                'file' => $item->file?? json_decode($item->file, true) ?? [],
                 'status_color' => $item->color ?? 'blue',
                 'user_name' => $item->user->name ?? 'Unknown',
                 'status' => $item->status_text

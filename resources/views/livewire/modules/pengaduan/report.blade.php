@@ -9,10 +9,10 @@
             Silakan isi form berikut untuk mengajukan pengaduan
         </p>
     </div>
-     
+
     <!-- Form -->
-<form wire:submit.prevent="save" class="p-6 space-y-6">
-            <!-- Informasi Pelapor -->
+    <form wire:submit.prevent="save" class="p-6 space-y-6">
+        <!-- Informasi Pelapor -->
         <div class="bg-gray-50 border border-gray-200 rounded-lg p-5">
             <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                 <i class="fas fa-user-circle text-blue-500 mr-2"></i>
@@ -29,7 +29,7 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('jenis_pengaduan_id') border-red-500 @enderror">
                         <option value="">Pilih Jenis Pengaduan</option>
                         @foreach ($jenisPengaduanList as $p)
-                            <option value="{{ $p->id }}">{{ $p->data ?? $p->data_id}}</option>
+                            <option value="{{ $p->id }}">{{ $p->data ?? $p->data_id }}</option>
                         @endforeach
                     </select>
                     @error('jenis_pengaduan_id')
@@ -58,7 +58,7 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('saluran_aduan_id') border-red-500 @enderror">
                         <option value="">Pilih Saluran Aduan</option>
                         @foreach ($saluranList as $p)
-                            <option value="{{ $p->id }}">{{ $p->data ?? $p->data_id}}</option>
+                            <option value="{{ $p->id }}">{{ $p->data ?? $p->data_id }}</option>
                         @endforeach
                     </select>
                     @error('saluran_aduan_id')
@@ -132,7 +132,7 @@
                 </div>
 
                 <!-- Uraian -->
-                <div >
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Uraian <span class="text-red-500">*</span>
                     </label>
@@ -147,7 +147,7 @@
                 </div>
 
                 <!-- Alamat Tempat Kejadian -->
-                <div >
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Alamat Tempat Kejadian <span class="text-red-500">*</span>
                     </label>
@@ -168,30 +168,22 @@
             </h3>
 
             <!-- File Input -->
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors duration-200 ease-in-out hover:border-blue-400 bg-white">
-                <input 
-                    type="file" 
-                    wire:model="lampiran" 
-                    multiple 
-                    id="file-input"
-                    class="hidden"
-                >
-                
+            <div
+                class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors duration-200 ease-in-out hover:border-blue-400 bg-white">
+                <input type="file" wire:model="lampiran" multiple id="file-input" class="hidden">
+
                 <div class="flex flex-col items-center justify-center space-y-4">
                     <i class="fas fa-cloud-upload-alt text-5xl text-gray-400"></i>
                     <div class="space-y-2">
                         <p class="text-lg font-medium text-gray-700">Klik untuk memilih file</p>
                         <p class="text-sm text-gray-500 max-w-2xl">
-                            Maksimal 100MB per file. Format yang didukung: 
-                            ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, 
+                            Maksimal 100MB per file. Format yang didukung:
+                            ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF,
                             JPG, JPEG, PNG, AVI, MP4, 3GP, MP3
                         </p>
                     </div>
-                    <button 
-                        type="button" 
-                        onclick="document.getElementById('file-input').click()"
-                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
-                    >
+                    <button type="button" onclick="document.getElementById('file-input').click()"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center">
                         <i class="fas fa-folder-open mr-2"></i>Pilih File
                     </button>
                 </div>
@@ -213,14 +205,17 @@
                     <h4 class="text-md font-medium text-gray-700 mb-3">File yang akan diunggah:</h4>
                     <div class="space-y-3 max-h-60 overflow-y-auto">
                         @foreach ($lampiran as $index => $file)
-                            <div class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                            <div
+                                class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
                                 <div class="flex items-center space-x-4 flex-1">
                                     <!-- File Icon -->
                                     @php
-                                        $extension = strtolower(pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION));
+                                        $extension = strtolower(
+                                            pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION),
+                                        );
                                         $icon = 'fa-file';
                                         $iconColor = 'text-blue-500';
-                                        
+
                                         if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
                                             $icon = 'fa-file-image';
                                             $iconColor = 'text-green-500';
@@ -247,10 +242,11 @@
                                             $iconColor = 'text-pink-500';
                                         }
                                     @endphp
-                                    
+
                                     <i class="fas {{ $icon }} {{ $iconColor }} text-2xl"></i>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $file->getClientOriginalName() }}</p>
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            {{ $file->getClientOriginalName() }}</p>
                                         <div class="flex items-center space-x-4 text-xs text-gray-500 mt-1">
                                             <span class="flex items-center">
                                                 <i class="fas fa-weight-hanging mr-1"></i>
@@ -263,18 +259,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button 
-                                    type="button" 
-                                    wire:click="removeLampiran({{ $index }})"
+                                <button type="button" wire:click="removeLampiran({{ $index }})"
                                     class="text-red-500 hover:text-red-700 transition-colors p-2 rounded-full hover:bg-red-100 ml-4"
-                                    title="Hapus file"
-                                >
+                                    title="Hapus file">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         @endforeach
                     </div>
-                    
+
                     <!-- Total Files Info -->
                     <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                         <div class="flex items-center justify-between text-sm">
@@ -282,7 +275,8 @@
                                 Total: {{ count($lampiran) }} file
                             </span>
                             <span class="text-blue-600">
-                                {{ round(array_sum(array_map(function($file) { return $file->getSize(); }, $lampiran)) / 1024 / 1024, 2) }} MB
+                                {{ round(array_sum(array_map(function ($file) {return $file->getSize();}, $lampiran)) /1024 /1024,2) }}
+                                MB
                             </span>
                         </div>
                     </div>
@@ -297,7 +291,8 @@
                         <p class="font-medium">CATATAN PENTING:</p>
                         <ul class="list-disc list-inside mt-1 space-y-1">
                             <li>Maksimal kapasitas file yang diperkenankan adalah 100MB per file</li>
-                            <li>Tipe file yang diizinkan: ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3</li>
+                            <li>Tipe file yang diizinkan: ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG,
+                                PNG, AVI, MP4, 3GP, MP3</li>
                             <li>Data yang Anda berikan akan terjamin kerahasiaannya</li>
                         </ul>
                     </div>
@@ -331,13 +326,13 @@
                 class="px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
                 <i class="fas fa-redo mr-2"></i>Reset Form
             </button>
-            @if ($confirmation) 
-            <div class="flex gap-3">
-                <button type="submit"
-                    class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center">
-                    <i class="fas fa-paper-plane mr-2"></i>Kirim Pengaduan
-                </button>
-            </div>
+            @if ($confirmation)
+                <div class="flex gap-3">
+                    <button type="submit"
+                        class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center">
+                        <i class="fas fa-paper-plane mr-2"></i>Kirim Pengaduan
+                    </button>
+                </div>
             @endif
         </div>
     </form>

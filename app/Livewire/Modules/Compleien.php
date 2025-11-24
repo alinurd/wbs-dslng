@@ -1,5 +1,6 @@
 <?php
 namespace App\Livewire\Modules;
+use App\Helpers\FileHelper;
 
 use App\Livewire\Root;
 use App\Models\Combo;
@@ -20,8 +21,7 @@ class Compleien extends Root
     
     // Properties untuk form
     public $catatan = '';
-    public $file_upload;
-    public $submission_action = '';
+     public $submission_action = '';
     public $selected_pengaduan_id = '';
     public $pengaduan_id = '';
 
@@ -31,9 +31,8 @@ class Compleien extends Root
     public $detailTitle = '';
 
     // Properties untuk file upload di sidebar
-    public $fileUpload = null;
     public $fileDescription = '';
-    public $uploadedFiles = [];
+    public $lampiran = [];
 
     // Properties untuk forward
     public $showForwardDropdown = false;
@@ -42,10 +41,15 @@ class Compleien extends Root
 
     protected $listeners = ['openDetailModal' => 'openModal'];
 
-    public $rules = [
+        protected function rules()
+    {
+        return [
+            
         'catatan' => 'required|min:10',
-        'file_upload' => 'nullable|file|max:10240', // 10MB max
-    ];
+            'lampiran.*' => 'max:' . (FileHelper::getMaxPengaduanSize() * 1024) . '|mimes:' . implode(',', FileHelper::getAllowedPengaduanExtensions()),
+            
+         ];
+    }
 
     public function mount()
     {
@@ -56,7 +60,7 @@ class Compleien extends Root
 
     public function removeFile()
     {
-        $this->reset('file_upload');
+        $this->reset('lampiran');
     }
     
     public function setAction($action, $id = null)
@@ -82,7 +86,7 @@ class Compleien extends Root
             'submission_action' => $this->submission_action,
             'selected_pengaduan_id' => $this->selected_pengaduan_id,
             'has_catatan' => !empty($this->catatan),
-            'has_file' => !empty($this->file_upload)
+            'has_file' => !empty($this->lampiran)
         ]);
 
         // Validasi form
@@ -98,15 +102,16 @@ class Compleien extends Root
             $this->notify('error', 'Tidak ada pengaduan yang dipilih!');
             return;
         }
-
-        // Handle file upload
-        $filePath = null;
-        $fileName = null;
-        
-        if ($this->file_upload) {
-            $filePath = $this->file_upload->store('pengaduan-approvals', 'public');
-            $fileName = $this->file_upload->getClientOriginalName();
+  
+        $filePath = [];
+        if ($this->lampiran && count($this->lampiran) > 0) {
+            $filePath = FileHelper::uploadMultiple(
+                $this->lampiran, 
+                'pengaduan/lampiran', 
+                'public'
+            );
         }
+
 
         // Update pengaduan
         $pengaduan = Pengaduan::find($this->selected_pengaduan_id);
@@ -143,7 +148,7 @@ class Compleien extends Root
                 $pengaduan->update($updateData);
 
                 // Create log approval
-                $this->createLogApproval($pengaduan, $statusInfo, $filePath, $fileName);
+                $this->createLogApproval($pengaduan, $statusInfo, $filePath);
                 
                 \Log::info('Pengaduan updated successfully');
             } else {
@@ -170,12 +175,9 @@ class Compleien extends Root
     }
 }
 
-    protected function createLogApproval($pengaduan, $statusInfo, $filePath = null, $fileName = null)
+    protected function createLogApproval($pengaduan, $statusInfo, $filePath = null)
     {
-        try {
-            $currentStep = $this->getCurrentStep($pengaduan);
-            $fileData = $fileName ? [$fileName] : [];
-
+        try { 
             $logData = [
                 'pengaduan_id' => $pengaduan->id,
                 'user_id' => auth()->id(),
@@ -183,7 +185,7 @@ class Compleien extends Root
                 'status_text' => $statusInfo->data_id,
                 'status' => $statusInfo->data_en,
                 'catatan' => $this->catatan ?? '',
-                'file' => json_encode($fileData),
+                'file' => json_encode($filePath),
                 'color' => $statusInfo->param_str ?? 'gray',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -205,7 +207,7 @@ class Compleien extends Root
 
     public function resetForm()
     {
-        $this->reset(['catatan', 'file_upload', 'submission_action', 'selected_pengaduan_id', 'pengaduan_id']);
+        $this->reset(['catatan', 'lampiran', 'submission_action', 'selected_pengaduan_id', 'pengaduan_id']);
     }
 
     public function updateStatus($id, $status = null)
@@ -254,7 +256,7 @@ class Compleien extends Root
         
         $this->detailTitle = "Update Status - " . $record->code_pengaduan;
         $this->showuUdateStatus = true;
-        $this->loadUploadedFiles();
+        $this->uploadFile();
     }
 
     protected function getLogHistory($pengaduanId)
@@ -472,7 +474,7 @@ class Compleien extends Root
         $detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
         
         $this->openChat($id, $detailData, $detailTitle);
-        $this->loadUploadedFiles();
+        $this->uploadFile();
     }
 
 

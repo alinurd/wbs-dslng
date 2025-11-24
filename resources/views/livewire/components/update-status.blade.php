@@ -96,58 +96,116 @@
                                     </div>
 
                                     <!-- Input File -->
-                                    <div>
-                                        <label for="file_upload" class="block text-sm font-medium text-gray-700 mb-2">
-                                            <i class="fas fa-paperclip mr-2 text-blue-500"></i>
-                                            Lampiran File
-                                        </label>
-                                        <div
-                                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition duration-150 ease-in-out">
-                                            <div class="space-y-1 text-center">
-                                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor"
-                                                    fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                                    <path
-                                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                <div class="flex text-sm text-gray-600">
-                                                    <label for="file_upload"
-                                                        class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                                        <span>Upload file</span>
-                                                        <input id="file_upload" name="file_upload" type="file"
-                                                            wire:model="file_upload" class="sr-only" multiple>
-                                                    </label>
-                                                    <p class="pl-1">atau drag and drop</p>
-                                                </div>
-                                                <p class="text-xs text-gray-500">
-                                                    PNG, JPG, PDF, DOCX maksimal 10MB
-                                                </p>
-                                            </div>
+                                     <div
+                class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors duration-200 ease-in-out hover:border-blue-400 bg-white">
+                <input type="file" wire:model="lampiran" multiple id="file-input" class="hidden">
+
+                <div class="flex flex-col items-center justify-center space-y-4">
+                    <i class="fas fa-cloud-upload-alt text-5xl text-gray-400"></i>
+                    <div class="space-y-2">
+                        <p class="text-lg font-medium text-gray-700">Klik untuk memilih file</p>
+                        <p class="text-sm text-gray-500 max-w-2xl">
+                            Maksimal 100MB per file. Format yang didukung:
+                            ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF,
+                            JPG, JPEG, PNG, AVI, MP4, 3GP, MP3
+                        </p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('file-input').click()"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center">
+                        <i class="fas fa-folder-open mr-2"></i>Pilih File
+                    </button>
+                </div>
+                 @error('lampiran.*')
+                <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                        <span class="text-red-700">{{ $message }}</span>
+                    </div>
+                </div>
+            @enderror
+                @if ($lampiran && count($lampiran) > 0)
+                <div class="mt-6">
+                    <h4 class="text-md font-medium text-gray-700 mb-3">File yang akan diunggah:</h4>
+                    <div class="space-y-3 max-h-60 overflow-y-auto">
+                        @foreach ($lampiran as $index => $file)
+                            <div
+                                class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                                <div class="flex items-center space-x-4 flex-1">
+                                    <!-- File Icon -->
+                                    @php
+                                        $extension = strtolower(
+                                            pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION),
+                                        );
+                                        $icon = 'fa-file';
+                                        $iconColor = 'text-blue-500';
+
+                                        if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
+                                            $icon = 'fa-file-image';
+                                            $iconColor = 'text-green-500';
+                                        } elseif (in_array($extension, ['pdf'])) {
+                                            $icon = 'fa-file-pdf';
+                                            $iconColor = 'text-red-500';
+                                        } elseif (in_array($extension, ['doc', 'docx'])) {
+                                            $icon = 'fa-file-word';
+                                            $iconColor = 'text-blue-600';
+                                        } elseif (in_array($extension, ['xls', 'xlsx'])) {
+                                            $icon = 'fa-file-excel';
+                                            $iconColor = 'text-green-600';
+                                        } elseif (in_array($extension, ['ppt', 'pptx'])) {
+                                            $icon = 'fa-file-powerpoint';
+                                            $iconColor = 'text-orange-500';
+                                        } elseif (in_array($extension, ['zip', 'rar'])) {
+                                            $icon = 'fa-file-archive';
+                                            $iconColor = 'text-yellow-500';
+                                        } elseif (in_array($extension, ['mp3', 'wav', 'aac'])) {
+                                            $icon = 'fa-file-audio';
+                                            $iconColor = 'text-purple-500';
+                                        } elseif (in_array($extension, ['mp4', 'avi', 'mov', '3gp'])) {
+                                            $icon = 'fa-file-video';
+                                            $iconColor = 'text-pink-500';
+                                        }
+                                    @endphp
+
+                                    <i class="fas {{ $icon }} {{ $iconColor }} text-2xl"></i>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            {{ $file->getClientOriginalName() }}</p>
+                                        <div class="flex items-center space-x-4 text-xs text-gray-500 mt-1">
+                                            <span class="flex items-center">
+                                                <i class="fas fa-weight-hanging mr-1"></i>
+                                                {{ round($file->getSize() / 1024, 2) }} KB
+                                            </span>
+                                            <span class="flex items-center">
+                                                <i class="fas fa-expand-alt mr-1"></i>
+                                                {{ strtoupper($extension) }}
+                                            </span>
                                         </div>
-
-                                        <!-- File Preview -->
-                                        @if ($file_upload)
-                                            <div class="mt-3">
-                                                <p class="text-sm font-medium text-gray-700">File terpilih:</p>
-                                                <div
-                                                    class="mt-1 flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                                                    <div class="flex items-center">
-                                                        <i class="fas fa-file mr-2 text-gray-400"></i>
-                                                        {{-- <span
-                                                            class="text-sm text-gray-600">{{ $file_upload->getClientOriginalName() }}</span> --}}
-                                                    </div>
-                                                    <button type="button" wire:click="removeFile"
-                                                        class="text-red-500 hover:text-red-700">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        @error('file_upload')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
                                     </div>
+                                </div>
+                                <button type="button" wire:click="removeLampiran({{ $index }})"
+                                    class="text-red-500 hover:text-red-700 transition-colors p-2 rounded-full hover:bg-red-100 ml-4"
+                                    title="Hapus file">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Total Files Info -->
+                    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-blue-700 font-medium">
+                                Total: {{ count($lampiran) }} file
+                            </span>
+                            <span class="text-blue-600">
+                                {{ round(array_sum(array_map(function ($file) {return $file->getSize();}, $lampiran)) /1024 /1024,2) }}
+                                MB
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            </div>
 
                                 
                                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">

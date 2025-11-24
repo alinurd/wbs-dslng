@@ -172,13 +172,7 @@ $this->dispatch('notify', [
 
   
 
-    public function removeLampiran($index)
-    {
-        if (isset($this->lampiran[$index])) {
-            unset($this->lampiran[$index]);
-            $this->lampiran = array_values($this->lampiran);
-        }
-    }
+  
 
     public function resetLampiran()
     {
@@ -272,24 +266,5 @@ $this->dispatch('notify', [
         }
     }
 
-       public function updatedLampiran($value)
-    {
-        $validation = FileHelper::validateMultipleFiles(
-            $this->lampiran,
-            FileHelper::getAllowedPengaduanExtensions(),
-            FileHelper::getMaxPengaduanSize()
-        );
-
-        if (!$validation['is_valid']) {
-            foreach ($validation['errors'] as $filename => $errors) {
-                foreach ($errors as $error) {
-                    session()->flash('error', $error);
-                }
-                // Remove invalid files
-                $this->removeLampiranByName($filename);
-            }
-        }
-        
-        $this->resetErrorBag('lampiran.*');
-    }
+       
 }

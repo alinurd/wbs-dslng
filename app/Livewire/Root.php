@@ -66,6 +66,7 @@ abstract class Root extends Component
     public $fileUpload = null;
     public $fileDescription = '';
     public $uploadedFiles = [];
+    public $lampiran = [];
     public $attachFile = null;
     
 
@@ -674,7 +675,13 @@ public function loadDropdownData()
 
 
 
-
+  public function removeLampiran($index)
+    {
+        if (isset($this->lampiran[$index])) {
+            unset($this->lampiran[$index]);
+            $this->lampiran = array_values($this->lampiran);
+        }
+    }
     //files
      public function uploadFile()
     {
@@ -922,4 +929,25 @@ public function getForwardOptions()
 
 }
 
+public function updatedLampiran($value)
+    {
+        $validation = FileHelper::validateMultipleFiles(
+            $this->lampiran,
+            FileHelper::getAllowedPengaduanExtensions(),
+            FileHelper::getMaxPengaduanSize()
+        );
+
+        if (!$validation['is_valid']) {
+            foreach ($validation['errors'] as $filename => $errors) {
+                foreach ($errors as $error) {
+                    session()->flash('error', $error);
+                }
+                // Remove invalid files
+                $this->removeLampiranByName($filename);
+            }
+        }
+        
+        $this->resetErrorBag('lampiran.*');
+    }
+    
 }
