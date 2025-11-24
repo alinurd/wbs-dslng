@@ -166,6 +166,8 @@ $this->dispatch('notify', [
 ]);
 
     $this->resetLampiran();
+    $this->redirectRoute('p_tracking');
+
 }
 
   
