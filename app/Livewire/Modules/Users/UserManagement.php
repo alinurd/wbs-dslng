@@ -17,6 +17,7 @@ class UserManagement extends Root
     public $modul = 'users';
     public $kel = 'combo';
     public $forwardDestination = '';
+    public $recordId = '';
     
     // Properties untuk roles - UBAH KE SINGLE VALUE
     public $RolesList = [];
@@ -162,7 +163,7 @@ class UserManagement extends Root
 
         } catch (\Exception $e) {
             \Log::error("Error syncing roles for user {$record->id}: " . $e->getMessage());
-            $this->dispatch('show-toast', type: 'error', message: 'Error assigning roles: ' . $e->getMessage());
+            // $this->dispatch('show-toast', type: 'error', message: 'Error assigning roles: ' . $e->getMessage());
         }
 
         // Reset selectedRole setelah save
