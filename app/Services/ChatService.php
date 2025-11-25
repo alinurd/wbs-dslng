@@ -3,13 +3,16 @@
 namespace App\Services;
 
 use App\Helpers\FileHelper;
+use App\Models\Audit as AuditLog;
 use App\Models\Comment;
+use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 
 class ChatService
 {
+        use Dispatchable;
     /**
      * Send message dengan atau tanpa attachment
      */
@@ -38,7 +41,24 @@ class ChatService
             'message' => $message,
             'file_data' => $fileData ? json_encode($fileData) : null,
         ]);
+        AuditLog::create([
+                        'user_id' => $userId,
+                        'action' => 'comment',
+                        'table_name' => 'Comments',
+                        'record_id' => $comment->id,
+                        'old_values' => null,
+                        'new_values' =>  json_encode($comment),
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->userAgent(),
+                        'created_at' => now()
+                    ]);
 
+            $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Pesan terkirim', 
+        ]);
+        
+            
         // Load relation untuk response
         $comment->load('user');
 
