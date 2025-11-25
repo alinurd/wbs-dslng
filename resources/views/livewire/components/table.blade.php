@@ -95,7 +95,25 @@
                     @elseif(str_contains($column, 'created_at') ||
                             str_contains($column, 'updated_at') ||
                             str_contains($column, 'tanggal_pengaduan'))
-                        {{ $record->$column ? \Carbon\Carbon::parse($record->$column)->format('d/m/Y H:i') : '-' }}
+                                @php
+                                    $value = '-';
+                                    if ($record->$column) {
+                                        try {
+                                            if ($record->$column instanceof \Carbon\Carbon) {
+                                                $value = $record->$column->format('d/m/Y H:i');
+                                            } 
+                                            else if (is_string($record->$column) && preg_match('/\d{2}\/\d{2}\/\d{4}/', $record->$column)) {
+                                                $value = $record->$column;
+                                            }
+                                            else {
+                                                $value = \Carbon\Carbon::parse($record->$column)->format('d/m/Y H:i');
+                                            }
+                                        } catch (Exception $e) {
+                                            $value = $record->$column;
+                                        }
+                                    }
+                                @endphp
+                                {{ $value }}
                     @elseif($column === 'complien_progress')
                         {!! $record->complien_progress_html ?? '<span class="text-gray-400">-</span>' !!}
                     @elseif($column === 'aprv_cco')
