@@ -72,7 +72,7 @@ class LogApprovalIndex extends Root
             'status' => $statusInfo['text'],
             'status_color' => $statusInfo['color'], 
             'progress' => $this->progressDashboard($pengaduan->status, $pengaduan->sts_final),
-            'lampiran' =>  [],
+            'lampiran' =>  $pengaduan->lampiran ?? json_decode($pengaduan->lampiran, true) ?? [],
             'created_at' => $pengaduan->created_at?->format('d/m/Y H:i'),
             'updated_at' => $pengaduan->updated_at?->format('d/m/Y H:i'),
         ];

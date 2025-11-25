@@ -42,52 +42,55 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-3">
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Jenis Pengaduan</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['perihal'] }}</p>
+                                <label class="text-sm font-medium text-gray-500">Perihal</label>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['perihal'] }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Nama Terlapor</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['nama_terlapor'] }}</p>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['nama_terlapor'] }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Saluran Aduan</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['saluran_aduan'] }}</p>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['saluran_aduan'] }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Email Pelapor</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['email_pelapor'] }}</p>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['email_pelapor'] }}</p>
                             </div>
                         </div>
                         <div class="space-y-3">
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Telepon Pelapor</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['telepon_pelapor'] }}</p>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['telepon_pelapor'] }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Waktu Kejadian</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['waktu_kejadian'] }}</p>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['waktu_kejadian'] }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Tanggal Pengaduan</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['tanggal_pengaduan'] }}</p>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['tanggal_pengaduan'] }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Alamat Kejadian</label>
-                                <p class="text-gray-900">{{ $detailPengaduan['alamat_kejadian'] }}</p>
+                                <p class="text-gray-900 text-sm">{{ $detailPengaduan['alamat_kejadian'] }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="mt-4">
                         <label class="text-sm font-medium text-gray-500">Uraian Pengaduan</label>
-                        <p class="text-gray-900 mt-1 bg-gray-50 p-3 rounded-lg">{{ $detailPengaduan['uraian'] }}</p>
+                        <p class="text-gray-900 mt-1 bg-gray-50 p-3 rounded-lg text-sm">{{ $detailPengaduan['uraian'] }}</p>
                     </div>
 
                     <!-- Lampiran -->
-                    @if (count($detailPengaduan['lampiran']) > 0)
+                      @if (!empty($detailPengaduan['lampiran']))
+                                        @php
+                                            $files = json_decode($detailPengaduan['lampiran'], true);
+                                        @endphp 
                         <div class="mt-4">
                             <label class="text-sm font-medium text-gray-500">File Lampiran</label>
                             <div class="mt-2 space-y-2">
-                                @foreach ($detailPengaduan['lampiran'] as $file)
+                                @foreach ($files as $file)
                                     <div
                                         class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
                                         <div class="flex items-center space-x-2">
@@ -95,11 +98,12 @@
                                             <span
                                                 class="text-sm text-gray-700">{{ $file['original_name'] ?? $file['filename'] }}</span>
                                         </div>
-                                        <a href="{{ $file['url'] }}" target="_blank"
-                                            class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
-                                            <i class="fas fa-download text-xs"></i>
-                                            <span>Download</span>
-                                        </a>
+                                        <button
+                                                            wire:click="downloadFile('{{ $file['path'] }}', '{{ $file['original_name'] }}')"
+                                                            class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-3 hover:underline">
+                                                            <i class="fas fa-download text-xs"></i>
+                                                            <span>Download</span>
+                                                        </button>
                                     </div>
                                 @endforeach
                             </div>
