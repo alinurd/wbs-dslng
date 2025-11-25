@@ -53,38 +53,47 @@ class DashboardIndex extends Root
         $this->loadProgressBulanan();
     }
 
-    protected function loadStats()
-    {
-        $currentYear = date('Y');
-
-        $totalPengaduan = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)->count();
-        $dalamProses = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->where('status','!=', 0)
-            ->where('sts_final', 0)
-            ->count();
-        $selesai = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->where('sts_final', 1)
-            ->count();
-        $menunggu = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->where('status', 0)
-            ->where('sts_final', 0)
-            ->count();
-
-        $this->stats = [
-            'total_pengaduan' => $totalPengaduan,
-            'dalam_proses' => $dalamProses,
-            'selesai' => $selesai,
-            'menunggu' => $menunggu
-        ];
-        // \dd($this->stats);
+   protected function loadStats()
+{
+    $currentYear = date('Y');
+     
+    $baseQuery = Pengaduan::whereYear('tanggal_pengaduan', $currentYear);
+    
+    if ($this->pelapor) {
+        $baseQuery->where('user_id', $this->userInfo['user']['id'] ?? null);
     }
+
+    $totalPengaduan = $baseQuery->count();
+    $dalamProses = (clone $baseQuery)->where('status','!=', 0)->where('sts_final', 0)->count();
+    $selesai = (clone $baseQuery)->where('sts_final', 1)->count();
+    $menunggu = (clone $baseQuery)->where('status', 0)->where('sts_final', 0)->count();
+
+    $this->stats = [
+        'total_pengaduan' => $totalPengaduan,
+        'dalam_proses' => $dalamProses,
+        'selesai' => $selesai,
+        'menunggu' => $menunggu
+    ];
+}
+
+public function getDataByUser()
+{
+    return $this->buildBaseQuery()->limit(5)->get();
+}
+
+
 
    protected function loadPengaduanTerbaru()
 {
-    $pengaduan = Pengaduan::with(['jenisPengaduan', 'pelapor', 'logApprovals'])
-        ->orderBy('created_at', 'desc')
-        ->limit(5)
-        ->get();
+   $pengaduan = Pengaduan::with(['jenisPengaduan', 'pelapor', 'logApprovals'])
+        ->orderBy('created_at', 'desc');
+
+    if ($this->pelapor) {
+        $pengaduan->where('user_id', $this->userInfo['user']['id'] ?? null);
+    }
+
+    $pengaduan = $pengaduan->limit(5)->get();
+       
     $this->pengaduan_terbaru = $pengaduan->map(function($item, $index) {
         $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
                 $counts = $this->countComentFileByPengaduan($item->id);
@@ -106,22 +115,33 @@ class DashboardIndex extends Root
         ];
     })->toArray();
 }
-
-    protected function loadLogApproval()
+protected function loadLogApproval()
 {
-    $latestLogs = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
+    $query = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
         ->whereIn('id', function($query) {
             $query->select(DB::raw('MAX(id)'))
                   ->from('log_approval')
                   ->groupBy('pengaduan_id');
-        })
-        ->orderBy('created_at', 'desc')
+        });
+
+    // Filter berdasarkan pelapor
+    if ($this->pelapor && isset($this->userInfo['user']['id'])) {
+        $query->whereHas('pengaduan', function($q) {
+            $q->where('user_id', $this->userInfo['user']['id']);
+        });
+    }
+
+    $latestLogs = $query->orderBy('created_at', 'desc')
         ->limit(5)
         ->get();
 
     $this->log_approval = $latestLogs->map(function($item) {
+        // Skip jika pengaduan tidak ada
+        if (!$item->pengaduan) {
+            return null;
+        }
+
         $catatan = $item->catatan ?: 'Tidak ada catatan';
-        
         $truncatedCatatan = strlen($catatan) > 60 
             ? substr($catatan, 0, 60) . '...' 
             : $catatan;
@@ -131,7 +151,7 @@ class DashboardIndex extends Root
         return [
             'id' => $item->id,
             'pengaduan_id' => $item->pengaduan_id,
-            'code' => '#' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
+            'code' => '#' . $item->pengaduan->code_pengaduan,
             'waktu' => $this->getTimeAgo($item->created_at),
             'catatan' => $truncatedCatatan,
             'catatan_full' => $catatan, 
@@ -140,9 +160,11 @@ class DashboardIndex extends Root
             'file' => $item->file ?? json_decode($item->file, true) ?? [],
             'status_color' => $item->color ?? 'blue',
             'user_name' => $item->user->name ?? 'Unknown',
-            'status' => $item->status_text
+            'status' => $item->status_text ?? 'Unknown'
         ];
-    })->toArray();
+    })->filter() // Hapus null values
+      ->values() // Reset array keys
+      ->toArray();
 
     if (empty($this->log_approval)) {
         $this->loadRecentPengaduanAsLog();
@@ -152,10 +174,16 @@ class DashboardIndex extends Root
 
     protected function loadRecentPengaduanAsLog()
     {
-        $recentPengaduan = Pengaduan::with(['jenisPengaduan'])
-            ->orderBy('updated_at', 'desc')
-            ->limit(3)
-            ->get();
+        $recentPengaduan = Pengaduan::with(['jenisPengaduan', 'pelapor', 'logApprovals'])
+        ->orderBy('created_at', 'desc');
+
+    if ($this->pelapor) {
+        $recentPengaduan->where('user_id', $this->userInfo['user']['id'] ?? null);
+    }
+
+    $recentPengaduan = $recentPengaduan->limit(3)->get();
+
+       
 
         $this->log_approval = $recentPengaduan->map(function($item) {
             $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);

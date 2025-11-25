@@ -69,6 +69,8 @@ abstract class Root extends Component
     public $uploadedFiles = [];
     public $lampiran = [];
     public $attachFile = null;
+    public $isAdmin = false;
+    public $pelapor = false;
 
 
     // ================== MOUNT =====================
@@ -79,6 +81,14 @@ abstract class Root extends Component
         // Title otomatis jika tidak didefinisikan
         $this->title = $this->title ?: class_basename($this->model);
         // Hak akses
+        $this->userInfo();
+        if($this->userInfo['role']['id'] === 1){
+            $this->isAdmin=true;
+        }
+        if($this->userInfo['role']['id'] === 3){
+            $this->pelapor=true;
+        }
+        $this->userInfo();
         can_any([strtolower($this->modul) . '.view']);
 
         // Locale
