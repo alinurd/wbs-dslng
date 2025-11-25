@@ -27,6 +27,7 @@ class Pengaduan extends Model
         'status',
         'user_id',
         'fwd_to',
+        'sts_fwd',
         'ditutup_pada'
     ];
 

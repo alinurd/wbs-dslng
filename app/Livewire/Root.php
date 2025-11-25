@@ -103,7 +103,7 @@ abstract class Root extends Component
 
 
         // if (!empty($stsArray)) {
-        $combo = Combo::select('id', 'data_id', 'data_en', 'param_int', 'param_str')->whereIn('param_int', json_decode($role->sts, true))->get()->toarray();
+        $combo = Combo::select('id', 'data_id', 'data_en', 'param_int', 'param_str')->where('kelompok', 'sts-aduan')->whereIn('param_int', json_decode($role->sts, true))->get()->toarray();
         // }
 
         $this->userInfo = [

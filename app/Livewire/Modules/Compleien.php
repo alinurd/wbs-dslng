@@ -128,11 +128,12 @@ class Compleien extends Root
 
             if ($statusInfo) {
               $updateData = [
-    'status' => $this->submission_action,
-    'fwd_to' => ($this->submission_action == 5) ? $this->forwardDestination : 0,
-    'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
-    'updated_at' => now(),
-];
+                    'status' => $this->submission_action,
+                    'fwd_to' => ($this->submission_action == 5) ? $this->forwardDestination : 0,
+                    'sts_fwd' => ($pengaduan['fwd_to'] && $this->submission_action == 2) ? 1: 0,
+                    'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
+                    'updated_at' => now(),
+                ];
 
                 // Add catatan if provided
                 if (!empty($this->catatan)) {
@@ -211,7 +212,7 @@ class Compleien extends Root
 
     public function updateStatus($id, $status = null)
     {
-        $record = $this->model::with(['jenisPengaduan'])->findOrFail($id);
+        $record = $this->model::with(['jenisPengaduan'])->orderBy('created_at', 'desc')->findOrFail($id);
         $this->selected_pengaduan_id = $id;
         $this->pengaduan_id = $id;
 
@@ -258,7 +259,7 @@ class Compleien extends Root
     {
         $logs = LogApproval::with('user')
             ->where('pengaduan_id', $pengaduanId)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         if ($logs->isEmpty()) {
@@ -419,9 +420,10 @@ class Compleien extends Root
             case 7: // WBS CCO
                 $stsGet = [1, 3, 8];
                 break;
-            case 6: // WBS CCO
+            case 6: // WBS FWD
                 $stsGet = [5,2];
                 $q->where('fwd_to', $this->userInfo['user']['fwd_id']);
+                $q->orwhere('sts_fwd', 1);
                 break;
             default:
                 $stsGet = [-1];

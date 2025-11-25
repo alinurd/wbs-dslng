@@ -265,21 +265,21 @@
 
                     <!-- Footer -->
                     <!-- Button Lengkap -->
-                    {{-- {{dd($data['user']['user'])}} --}}
+                    {{-- {{dd($data)}} --}}
                     <!-- Footer -->
                     <!-- Footer -->
                     <div
                         class="modal-footer  px-6 py-4 flex justify-end space-x-3 flex-wrap gap-2 relative">
                         @foreach ($data['user']['sts'] as $p)
                             @if ($p['param_int'] !== $data['status_id'])
-                                @if ($p['param_int'] == 5)
+                                @if ($p['param_int'] == 5 && $data['user']['role']['id'] ==4)
                                     {{-- Forward --}}
                                     <!-- Button untuk membuka dropdown forward -->
                                     <div class="relative">
                                         <button type="button" wire:click="ShowFWD({{ $data['id'] }})"
                                             class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
                                             <i class="fas fa-share me-1"></i>
-                                            <span>{{ $p['data_en'] }} FORWARD</span>
+                                            <span>{{ $p['data_en'] }}</span>
                                         </button>
 
                                         <!-- Dropdown untuk pilihan forward -->
@@ -316,12 +316,22 @@
                                     </div>
                                 @else
                                     <!-- Button untuk status lainnya -->
+                                    @if($data['status_id']==2 && $data['user']['role']['id']==6)
+                                    <button 
+                                        
+                                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center"
+                                        disabled>
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        <span>{{ $data['status_ex']['name'] }}</span>
+                                    </button>
+                                     @else
                                     <button type="submit"
                                         wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
                                         class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
                                         <i class="fas fa-check-circle me-1"></i>
                                         <span>{{ $p['data_en'] }}</span>
                                     </button>
+                                @endif
                                 @endif
                             @endif
                         @endforeach
