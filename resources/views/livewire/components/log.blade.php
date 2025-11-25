@@ -19,12 +19,12 @@
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b border-gray-200">
                     <div class="flex items-center justify-between">
                         <div class="flex-1 min-w-0">
-                            <h2 class="text-sm font-semibold text-gray-900 truncate">{{ $pengaduan['judul_pengaduan'] }}</h2>
+                            <h2 class="text-sm font-semibold text-gray-900 truncate">{{ $pengaduan['jenis_pengaduan'] }}</h2>
                             <div class="flex items-center space-x-3 mt-1">
                                 <span class="text-xs text-gray-500">ID: {{ $pengaduan['id'] }}</span>
                                 @php
                                     $lastLog = end($pengaduan['log_approval']);
-                                    $warna = $lastLog['warna'];
+                                    $warna = $lastLog['status_color'];
                                 @endphp 
                             </div>
                         </div>
@@ -36,9 +36,8 @@
 
                 <!-- Progress Bar Compact -->
                 <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
-                    <div class="w-full bg-gray-200 rounded-full h-1.5">
-                        <div class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" 
-                             style="width: {{ $pengaduan['progress'] }}%"></div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-{{ $warna }}-600 h-2 rounded-full transition-all duration-500"></div>
                     </div>
                 </div>
 
@@ -52,36 +51,35 @@
                         <div class="relative flex items-start space-x-3 mb-4 last:mb-0">
                             <!-- Step Indicator Compact -->
                             <div class="relative z-10 flex-shrink-0">
-                                @if($log['getLogStatus'] === 'completed')
+                                @if($log['infoSts']['text1'] === 'completed')
                                 <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-check text-white text-xs"></i>
                                 </div>
-                                @elseif($log['getLogStatus'] === 'in_progress')
+                                @elseif($log['infoSts']['text1'] === 'in_progress')
                                 <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-sync-alt text-white text-xs animate-spin"></i>
                                 </div>
-                                @elseif($log['getLogStatus'] === 'rejected')
+                                @elseif($log['infoSts']['text1'] === 'rejected')
                                 <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-times text-white text-xs"></i>
                                 </div>
                                 @else
                                 <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                                     <i class="fas fa-clock text-gray-600 text-xs"></i>
-                                    {{$log['getLogStatus']}}
                                 </div>
                                 @endif
                             </div>
 
                             <!-- Content Compact -->
-                            <div class="flex-1 bg-{{ $log['warna'] }}-50 rounded-lg p-3 border border-{{ $log['warna'] }}-200">
+                            <div class="flex-1 bg-{{ $log['status_color'] }}-50 rounded-lg p-3 border border-{{ $log['status_color'] }}-200">
                                 <div class="flex items-start justify-between mb-2">
-                                    <div class="flex-1 min-w-0">
+                                    <div class="flex-1 min-w-0"> 
                                         <h3 class="text-sm font-semibold text-gray-900">{{ $log['role'] }}</h3>
-                                        {{-- <p class="text-xs text-gray-600 truncate">{{ $log['nama'] }}</p> --}}
+                                            <p class="text-sm text-gray-600">{{ $log['user_name'] }}</p>
                                     </div>
                                     <div class="text-right ml-2 flex-shrink-0">
-                                        <span class="px-2 py-0.5 bg-{{ $log['warna'] }}-100 text-{{ $log['warna'] }}-800 text-xs font-medium rounded-full">
-                                            {{ $log['status_text'] }}
+                                        <span class="px-2 py-0.5 bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 text-xs font-medium rounded-full">
+                                            {{ $log['status'] }}
                                         </span>
                                         <p class="text-xs text-gray-500 mt-0.5">{{ $log['waktu'] }}</p>
                                     </div>
@@ -97,26 +95,33 @@
                                 @endif
 
                                 <!-- File Attachments Compact -->
-                                @if(count($log['file']) > 0)
-                                <div class="border-t border-{{ $log['warna'] }}-200 pt-2 mt-2">
-                                    <p class="text-xs font-medium text-gray-700 mb-1">File Lampiran:</p>
-                                    <div class="space-y-1">
-                                        @foreach($log['file'] as $file)
-                                        <div class="flex items-center justify-between bg-white rounded px-2 py-1 border border-gray-200">
-                                            <div class="flex items-center space-x-1 min-w-0 flex-1">
-                                                <i class="fas fa-file text-gray-400 text-xs"></i>
-                                                <span class="text-xs text-gray-700 truncate">
-                                                    file
-                                                </span>
+                               @if (!empty($log['file']))
+                                        @php
+                                            $files = json_decode($log['file'], true);
+                                        @endphp
+                                        <div class="border-t border-{{ $log['status_color'] }}-200 pt-2 mt-2">
+                                            <p class="text-xs font-medium text-gray-700 mb-1">File Lampiran:</p>
+                                            <div class="space-y-1">
+                                                @foreach ($files as $file)
+                                                    <div
+                                                        class="flex items-center justify-between bg-white rounded-lg px-2 py-1 border border-gray-200">
+                                                        <div class="flex items-center space-x-5 min-w-0 flex-1">
+                                                            <i class="fas fa-file text-gray-400 text-xs"></i>
+                                                            <span class="text-xs text-gray-700 truncate">
+                                                                {{ $file['original_name'] }}</span>
+                                                            </span>
+                                                        </div>
+                                                        <button
+                                                            wire:click="downloadFile('{{ $file['path'] }}', '{{ $file['original_name'] }}')"
+                                                            class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-3 hover:underline">
+                                                            <i class="fas fa-download text-xs"></i>
+                                                            <span>Download</span>
+                                                        </button>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                            <button class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-1 ml-2 flex-shrink-0">
-                                                <i class="fas fa-download text-xs"></i>
-                                            </button>
                                         </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                @endif
+                                    @endif
                             </div>
                         </div>
                         @endforeach

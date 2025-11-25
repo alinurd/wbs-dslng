@@ -212,23 +212,16 @@ class Compleien extends Root
 
     public function updateStatus($id, $status = null)
     {
-        $record = $this->model::findOrFail($id);
+        $record = $this->model::with(['jenisPengaduan'])->findOrFail($id);
         $this->selected_pengaduan_id = $id;
         $this->pengaduan_id = $id;
 
-        // Reset forward dropdown ketika membuka modal baru
         $this->hideForwardDropdown();
 
         $logHistory = $this->getLogHistory($id);
         $currentStatusInfo = Combo::where('kelompok', 'sts-aduan')
             ->where('param_int', $record->status)
             ->first();
-
-        // Get available status options untuk user saat ini
-        $statusOptions = Combo::where('kelompok', 'sts-aduan')
-            ->where('is_active', 1)
-            ->orderBy('param_int')
-            ->get();
 
         $this->detailData = [
             'id' => $id,
@@ -246,10 +239,12 @@ class Compleien extends Root
             'log' => [
                 [
                     'id' => $record->code_pengaduan,
-                    'judul_pengaduan' => $record->perihal,
+                    'jenis_pengaduan' => $record->jenisPengaduan->data_id ?? 'Tidak diketahui',
                     'status_akhir' => $currentStatusInfo->data_id ?? 'Menunggu Review',
                     'progress' => $this->calculateProgress($record),
-                    'log_approval' => $logHistory
+                    'log_approval' => $logHistory,
+                    
+
                 ]
             ],
         ];
@@ -279,22 +274,30 @@ class Compleien extends Root
                     'catatan' => 'Laporan awal telah disampaikan',
                     'file' => [],
                     'warna' => 'gray',
+                    'infoSts' => $this->getStatusInfo(0, 0)
                 ]
             ];
         }
 
-        return $logs->map(function ($log, $index) {
+        return $logs->map(function ($item, $index) {
+             $catatan = $item->catatan ?: 'Tidak ada catatan';
+        
+        $truncatedCatatan = strlen($catatan) > 60 
+            ? substr($catatan, 0, 60) . '...' 
+            : $catatan;
             return [
-                'pengaduan_id' => $log->pengaduan_id,
-                'role' => $log->user->getRoleNames()->implode(', ') ?? 'Reviewer',
-                'step' => $index + 1,
-                'nama' => $log->user->name ?? 'System',
-                'status' => $log->status,
-                'status_text' => $log->status_text,
-                'waktu' => $log->created_at->format('d/m/Y H:i'),
-                'catatan' => $log->catatan,
-                'file' => json_decode($log->file, true) ?? [],
-                'warna' => $log->color,
+                'id' => $item->id,
+            'pengaduan_id' => $item->pengaduan_id,
+            'code' => '#' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
+            'waktu' => $this->getTimeAgo($item->created_at),
+            'catatan' => $truncatedCatatan,
+            'catatan_full' => $catatan,  
+            'file' => $item->file ?? json_decode($item->file, true) ?? [],
+            'status_color' => $item->color ?? 'blue',
+            'user_name' => $item->user->name ?? 'Unknown',
+            'role' => $item->user->getRoleNames()->first() ?? 'Unknown',  
+             'status' => $item->status_text,
+            'infoSts' => $this->getStatusInfo($item->status_id, 0)
             ];
         })->toArray();
     }

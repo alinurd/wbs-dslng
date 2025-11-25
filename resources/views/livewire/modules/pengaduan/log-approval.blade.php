@@ -198,11 +198,11 @@
                     </div>
                     <!-- Action Buttons -->
                     <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 mt-6">
-                        <button wire:click="comment({{ $detailPengaduan['id'] }})"
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2">
-                            <i class="fas fa-comment"></i>
-                            <span>Tambah Komentar</span>
-                        </button>
+                        <button wire:click="comment({{ $detailPengaduan['id'] }})" @click="open = false"
+                                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2">
+                                            <i class="fas fa-comments w-4 h-4"></i>
+                                              <span>Tambah Komentar</span>
+                                        </button>
                     </div>
                 </div>
             </div>

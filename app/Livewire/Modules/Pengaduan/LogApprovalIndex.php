@@ -95,7 +95,7 @@ class LogApprovalIndex extends Root
             'file' => $item->file ?? json_decode($item->file, true) ?? [],
             'status_color' => $item->color ?? 'blue',
             'user_name' => $item->user->name ?? 'Unknown',
-            'role' => $this->getUserRole($item->user_id), 
+            'role' => $item->user->getRoleNames()->first() ?? 'Unknown', 
             'status' => $item->status_text,
             'infoSts' => $this->getStatusInfo($item->status_id, 0)
         ];
@@ -105,20 +105,6 @@ class LogApprovalIndex extends Root
     }
 
       
-     
-    protected function getUserRole($userId)
-    {
-        // Anda bisa menyesuaikan dengan logic role user yang sesuai
-        $roleMap = [
-            5 => 'WBS Eksternal',
-            10 => 'WBS Internal',
-            12 => 'WBS Forward',
-            13 => 'CCO'
-        ];
-
-        return $roleMap[$userId] ?? 'User';
-    }
-
 
 
     public function columns()
