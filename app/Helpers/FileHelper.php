@@ -17,25 +17,15 @@ class FileHelper
      * @return array
      */
     public static function upload(UploadedFile $file, string $folder = 'uploads', string $disk = 'public'): array
-{
-    try {
-        \Log::info('FileHelper upload started', [
-            'file' => $file->getClientOriginalName(),
-            'folder' => $folder,
-            'disk' => $disk
-        ]);
-
+    {
         // Generate unique filename
         $extension = $file->getClientOriginalExtension();
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $filename = Str::slug($originalName) . '_' . time() . '_' . Str::random(6) . '.' . $extension;
         
-        \Log::info('Generated filename', ['filename' => $filename]);
-
         // Store file
         $path = $file->storeAs($folder, $filename, $disk);
-        \Log::info('File stored successfully', ['path' => $path]);
-
+        
         return [
             'path' => $path,
             'url' => Storage::disk($disk)->url($path),
@@ -46,16 +36,8 @@ class FileHelper
             'mime_type' => $file->getMimeType(),
             'uploaded_at' => now()->toDateTimeString()
         ];
-        
-    } catch (\Exception $e) {
-        \Log::error('FileHelper upload failed', [
-            'error' => $e->getMessage(),
-            'file' => $file->getClientOriginalName(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        throw $e;
     }
-}
+
     /**
      * Upload multiple files
      *

@@ -111,46 +111,7 @@ class Report extends Root
     /**
      * Override saving method untuk menambahkan field khusus pengaduan
      */
-
     protected function saving($payload)
-{
-    \Log::info('=== SAVING METHOD STARTED ===');
-    
-    // Upload lampiran
-    $lampiranPaths = [];
-    if ($this->lampiran && count($this->lampiran) > 0) {
-        \Log::info('Lampiran files found', [
-            'count' => count($this->lampiran),
-            'file_types' => array_map(function($file) {
-                return [
-                    'class' => get_class($file),
-                    'name' => method_exists($file, 'getClientOriginalName') ? $file->getClientOriginalName() : 'N/A',
-                    'isValid' => $file->isValid() ? 'Yes' : 'No',
-                    'size' => $file->getSize()
-                ];
-            }, $this->lampiran)
-        ]);
-
-        try {
-            $lampiranPaths = FileHelper::uploadMultiple(
-                $this->lampiran, 
-                'pengaduan/lampiran', 
-                'public'
-            );
-            \Log::info('FileHelper uploadMultiple completed', ['count' => count($lampiranPaths)]);
-        } catch (\Exception $e) {
-            \Log::error('FileHelper uploadMultiple failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
-    }
-
-    // ... rest of your code
-}
-
-    protected function saving_($payload)
     {
         // Upload lampiran
        $lampiranPaths = [];
@@ -162,8 +123,7 @@ class Report extends Root
             );
         }
 
-
-        // Generate code pengaduan
+ 
         $codePengaduan =  Str::random(8);
 
         // Build payload dari individual properties
