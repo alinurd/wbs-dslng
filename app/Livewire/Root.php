@@ -37,6 +37,7 @@ abstract class Root extends Component
     public $showFilterModal = false;
     public $updateMode = false;
     public $showDetailModal = false;
+    public $showDetailModal1 = false; 
     public $showComment = false;
     public $ShowNote = false;
     public $showuUdateStatus = false;
@@ -393,7 +394,7 @@ abstract class Root extends Component
         can_any([strtolower($this->modul) . '.view']);
         $record = ($this->model)::findOrFail($id);
 
-        $this->dispatch('showDetailModal', [
+        $this->dispatch('showDetailModal', [ 
             'title' => "Detail " . $this->title,
             'data'  => $record->toArray()
         ]);
@@ -434,6 +435,7 @@ abstract class Root extends Component
     public function closeDetailModal()
     {
         $this->showDetailModal = false;
+        $this->showDetailModal1 = false;
         $this->showComment = false;
         $this->showuUdateStatus = false;
         $this->ShowNote = false;
@@ -445,6 +447,7 @@ abstract class Root extends Component
     public function closeModal()
     {
         $this->showDetailModal = false;
+        $this->showDetailModal1 = false;
         $this->detailData = [];
         $this->detailTitle = '';
 
@@ -1027,4 +1030,6 @@ public function getPengaduanById($id){
         ];
         $this->detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
     }
+
+    
 }

@@ -25,8 +25,7 @@ class Compleien extends Root
     public $selected_pengaduan_id = '';
     public $pengaduan_id = '';
 
-    // Properties untuk detail modal
-    public $showuUdateStatus = false;
+    // Properties untuk detail modal 
     public $detailData = [];
     public $detailTitle = '';
 
@@ -433,17 +432,17 @@ class Compleien extends Root
         return $q;
     }
 
-       public function CloseViewDetail()
+       
+    public function closeViewDetail()
    {
-        $this->showDetailModal = false;
+        $this->showDetailModal1 = false;
         $this->updateStatus($this->pengaduan_id, $status = null) ;
     }
-    
     public function viewDetail($id)
     {
         can_any([strtolower($this->modul).'.view']);
         $this->getPengaduanById($id);
-        $this->showDetailModal = true;
+        $this->showDetailModal1 = true;
         $this->showuUdateStatus = false;
     }
     public function view($id)
