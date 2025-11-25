@@ -129,8 +129,22 @@ class Compleien extends Root
             if ($statusInfo) {
               $updateData = [
                     'status' => $this->submission_action,
-                    'fwd_to' => ($this->submission_action == 5) ? $this->forwardDestination : 0,
-                    'sts_fwd' => ($pengaduan['fwd_to'] && $this->submission_action == 2) ? 1: 0,
+                   'fwd_to' => ($this->submission_action == 5 && $this->forwardDestination != 0 && !$pengaduan['fwd_to']) 
+    ? $this->forwardDestination 
+    : $pengaduan['fwd_to'],
+
+    'sts_fwd' => ($this->submission_action == 2) 
+    ? (
+        // Jika sts_fwd sudah 1 DAN forwardDestination 0, pertahankan 1
+        ($pengaduan['sts_fwd'] == 1 && $this->forwardDestination == 0) 
+            ? 1 
+            : (
+                // Jika ada fwd_to, set 1, else 0
+                $pengaduan['fwd_to'] ? 1 : 0
+            )
+    )
+    : $pengaduan['sts_fwd'], // Jika bukan action 2, pertahankan nilai lama
+    
                     'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
                     'updated_at' => now(),
                 ];
@@ -235,6 +249,7 @@ class Compleien extends Root
                 'color' => $currentStatusInfo->param_str ?? 'yellow',
             ],
             'status_id' => $record->status,
+            'sts_fwd' => $record->sts_fwd,
             'user' => $this->userInfo,
             'log' => [
                 [

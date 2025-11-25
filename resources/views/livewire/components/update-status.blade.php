@@ -265,82 +265,91 @@
 
                     <!-- Footer -->
                     <!-- Button Lengkap -->
-                    {{-- {{dd($data)}} --}}
+                    {{-- {{dd($data['user']['sts'])}} --}}
                     <!-- Footer -->
                     <!-- Footer -->
-                    <div
-                        class="modal-footer  px-6 py-4 flex justify-end space-x-3 flex-wrap gap-2 relative">
-                        @foreach ($data['user']['sts'] as $p)
-                            @if ($p['param_int'] !== $data['status_id'])
-                                @if ($p['param_int'] == 5 && $data['user']['role']['id'] ==4)
-                                    {{-- Forward --}}
-                                    <!-- Button untuk membuka dropdown forward -->
-                                    <div class="relative">
-                                        <button type="button" wire:click="ShowFWD({{ $data['id'] }})"
-                                            class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
-                                            <i class="fas fa-share me-1"></i>
-                                            <span>{{ $p['data_en'] }}</span>
-                                        </button>
+                    <div class="modal-footer px-6 py-4 flex justify-end space-x-3 flex-wrap gap-2 relative">
+    @foreach ($data['user']['sts'] as $p)
+        @if ($p['param_int'] !== $data['status_id'])
+            @if ($p['param_int'] == 5 && $data['user']['role']['id'] == 4)
+                {{-- Forward untuk role 4 --}}
+                <div class="relative">
+                    <button type="button" wire:click="ShowFWD({{ $data['id'] }})"
+                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                        <i class="fas fa-share me-1"></i>
+                        <span>{{ $p['data_en'] }}</span>
+                    </button>
 
-                                        <!-- Dropdown untuk pilihan forward -->
-                                        @if ($showForwardDropdown)
-                                            <div
-                                                class="absolute bottom-full left-0 mb-2 p-4 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-64">
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                    Pilih Tujuan Forward:
-                                                </label>
-                                                <select wire:model="forwardDestination"
-                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                                    <option value="">-- Pilih Tujuan --</option>
-                                                    @foreach ($this->getForwardOptions() as $option)
-                                                        <option value="{{ $option->id }}">{{ $option->data_id }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                    <!-- Dropdown untuk pilihan forward -->
+                    @if ($showForwardDropdown)
+                        <div class="absolute bottom-full left-0 mb-2 p-4 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-64">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Pilih Tujuan Forward:
+                            </label>
+                            <select wire:model="forwardDestination"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">-- Pilih Tujuan --</option>
+                                @foreach ($this->getForwardOptions() as $option)
+                                    <option value="{{ $option->id }}">{{ $option->data_id }}</option>
+                                @endforeach
+                            </select>
 
-                                                <div class="mt-3 flex space-x-2">
-                                                    <button type="button"
-                                                        wire:click="setActionWithForward({{ $p['param_int'] }}, {{ $data['id'] }})"
-                                                        class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium flex-1 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                                        {{ empty($showForwardDropdown) ? 'disabled' : '' }}>
-                                                        <i class="fas fa-paper-plane me-1"></i>
-                                                        Submit Forward
-                                                    </button>
-                                                    <button type="button" wire:click="hideForwardDropdown"
-                                                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                @else
-                                    <!-- Button untuk status lainnya -->
-                                    @if($data['status_id']==2 && $data['user']['role']['id']==6)
-                                    <button 
-                                        
-                                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center"
-                                        disabled>
-                                        <i class="fas fa-check-circle me-1"></i>
-                                        <span>{{ $data['status_ex']['name'] }}</span>
-                                    </button>
-                                     @else
-                                    <button type="submit"
-                                        wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
-                                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
-                                        <i class="fas fa-check-circle me-1"></i>
-                                        <span>{{ $p['data_en'] }}</span>
-                                    </button>
-                                @endif
-                                @endif
-                            @endif
-                        @endforeach
-
-                        <button type="button" wire:click="closeModal"
-                            class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
-                            <i class="fas fa-times me-2"></i>Tutup
+                            <div class="mt-3 flex space-x-2">
+                                <button type="button"
+                                    wire:click="setActionWithForward({{ $p['param_int'] }}, {{ $data['id'] }})"
+                                    class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium flex-1 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                    {{ empty($showForwardDropdown) ? 'disabled' : '' }}>
+                                    <i class="fas fa-paper-plane me-1"></i>
+                                    Submit Forward
+                                </button>
+                                <button type="button" wire:click="hideForwardDropdown"
+                                    class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @else
+                {{-- Button untuk role lainnya --}}
+                @if($data['user']['role']['id'] == 6)
+                    {{-- Untuk role 6: hanya tampilkan button jika belum di-forward --}}
+                    @if($data['sts_fwd'] !== 1)
+                        <button type="submit"
+                            wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
+                            class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                            <i class="fas fa-check-circle me-1"></i>
+                            <span>{{ $p['data_en'] }}</span>
                         </button>
-                    </div>
+                    @endif
+                @else
+                    {{-- Untuk role selain 6 dan 4 --}}
+                    <button type="submit"
+                        wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
+                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                        <i class="fas fa-check-circle me-1"></i>
+                        <span>{{ $p['data_en'] }}</span>
+                    </button>
+                @endif
+            @endif
+        @endif
+    @endforeach
+
+    {{-- Button Read untuk role 6 yang sudah di-forward --}}
+    @if($data['sts_fwd'] === 1 && $data['user']['role']['id'] === 6)
+        <button 
+            class="px-6 py-2 bg-gray-500 text-white rounded-lg font-medium shadow-sm flex items-center opacity-50 cursor-not-allowed"
+            disabled>
+            <i class="fas fa-check-circle me-1"></i>
+            <span>Read</span>
+        </button>
+    @endif
+
+    <button type="button" wire:click="closeModal"
+        class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
+        <i class="fas fa-times me-2"></i>Tutup
+    </button>
+</div>
 
 
 
