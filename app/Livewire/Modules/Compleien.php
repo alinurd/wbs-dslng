@@ -267,14 +267,15 @@ class Compleien extends Root
                     'pengaduan_id' => $pengaduanId,
                     'role' => 'Pelapor',
                     'step' => 1,
-                    'nama' => $this->getNamaUser(Pengaduan::find($pengaduanId)),
+                    'user_name' => $this->getNamaUser(Pengaduan::find($pengaduanId)),
                     'status' => 'new',
                     'status_text' => 'Dilaporkan',
                     'waktu' => now()->subDays(2)->format('d/m/Y H:i'),
                     'catatan' => 'Laporan awal telah disampaikan',
                     'file' => [],
                     'warna' => 'gray',
-                    'infoSts' => $this->getStatusInfo(0, 0)
+                    'infoSts' => $this->getStatusInfo(0, 0),
+                    'status_color' => 'gray', 
                 ]
             ];
         }
@@ -286,7 +287,7 @@ class Compleien extends Root
             ? substr($catatan, 0, 60) . '...' 
             : $catatan;
             return [
-                'id' => $item->id,
+            'id' => $item->id,
             'pengaduan_id' => $item->pengaduan_id,
             'code' => '#' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
             'waktu' => $this->getTimeAgo($item->created_at),
