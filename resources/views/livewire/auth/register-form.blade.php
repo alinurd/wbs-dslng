@@ -245,7 +245,7 @@
                             <div class="text-center">
                                 <p class="text-sm text-gray-600">
                                     {{ __('auth.register.already_registered') }}
-                                    <a href="{{ route('login.form') }}"
+                                    <a href="{{ route('login') }}"
                                         class="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
                                         {{ __('auth.register.login_here') }}
                                     </a>

@@ -12,11 +12,11 @@
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium text-sm uppercase tracking-wide">
                     {{ __('wbs.header.home') }}
                 </a>
-                <a href="{{ route('register.form') }}"
+                <a href="{{ route('register') }}"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium text-sm uppercase tracking-wide">
                     {{ __('wbs.header.register') }}
                 </a>
-                <a href="{{ route('login.form') }}"
+                <a href="{{ route('login') }}"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium text-sm uppercase tracking-wide">
                     {{ __('wbs.header.login') }}
                 </a>

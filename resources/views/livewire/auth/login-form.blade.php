@@ -101,7 +101,7 @@
                 <div class="text-center">
                     <p class="text-sm text-gray-600">
                         {{ __('auth.login.no_account') }}
-                        <a href="{{ route('register.form') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                        <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:text-blue-500">
                             {{ __('auth.login.register_here') }}
                         </a>
                     </p>

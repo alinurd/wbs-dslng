@@ -45,9 +45,9 @@ use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 // Route::get('/tes/register', TestRegister::class)->name('register.ts');
-Route::get('/auth/register', RegisterForm::class)->name('register.form');
-Route::get('/auth/login', LoginFrom::class)->name('login.form');
-Route::get('/', LandingIndex::class)->name('landing.index');
+Route::get('/login', LoginFrom::class)->name('login');
+Route::get('/register', RegisterForm::class)->name('register');
+ Route::get('/', LandingIndex::class)->name('landing.index');
 Route::get('/news-landing', NewsIndex::class)->name('new.index');
 Route::get('/news-detail/{slug}', NewsDetail::class)->name('new-detail.index');
 Route::post('/change-language', [LanguageController::class, 'change'])->name('language.change');
