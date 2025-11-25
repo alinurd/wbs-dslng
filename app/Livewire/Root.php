@@ -26,7 +26,7 @@ abstract class Root extends Component
     public $modul = 'combo';
     public $views = 'index';
     public $model;
-    
+
     public $search = '';
     public $perPage = 10;
     public $page = 1;
@@ -53,7 +53,7 @@ abstract class Root extends Component
 
     public $rules = []; // child dapat override dengan property
     public $locale;
-    
+
     public $jenisPengaduanList = []; // child dapat override dengan property
     public $RolesList = []; // child dapat override dengan property
     public $saluranList = []; // child dapat override dengan property
@@ -61,14 +61,14 @@ abstract class Root extends Component
     public $tahunPengaduanList = []; // child dapat override dengan property
 
 
-    
+
     // Properties untuk file upload di chat
     public $fileUpload = null;
     public $fileDescription = '';
     public $uploadedFiles = [];
     public $lampiran = [];
     public $attachFile = null;
-    
+
 
     // ================== MOUNT =====================
     public function mount()
@@ -77,30 +77,30 @@ abstract class Root extends Component
         $this->formDefault = is_array($this->form) ? $this->form : [];
         // Title otomatis jika tidak didefinisikan
         $this->title = $this->title ?: class_basename($this->model);
-         // Hak akses
-        can_any([strtolower($this->modul).'.view']);
+        // Hak akses
+        can_any([strtolower($this->modul) . '.view']);
 
         // Locale
         $this->locale = Session::get('locale', config('app.locale'));
         App::setLocale($this->locale);
     }
 
-    public function userInfo(){
-        $user=\auth()->user();
-     $role = $user->roles()->first();
-     
-      
-    // if (!empty($stsArray)) {
-        $combo = Combo::select('id', 'data_id', 'data_en', 'param_int', 'param_str')->whereIn('param_int', json_decode($role->sts, true))->get()->toarray(); 
-    // }
-    
-    $this->userInfo=[
-        'user'=>$user,
-        'role' => $role,
-        // 'sts_array' => $stsArray,
-        'sts' => $combo ?? null
-    ];
- 
+    public function userInfo()
+    {
+        $user = \auth()->user();
+        $role = $user->roles()->first();
+
+
+        // if (!empty($stsArray)) {
+        $combo = Combo::select('id', 'data_id', 'data_en', 'param_int', 'param_str')->whereIn('param_int', json_decode($role->sts, true))->get()->toarray();
+        // }
+
+        $this->userInfo = [
+            'user' => $user,
+            'role' => $role,
+            // 'sts_array' => $stsArray,
+            'sts' => $combo ?? null
+        ];
     }
     // ================ QUERY BUILDER =================
     public function query()
@@ -120,10 +120,10 @@ abstract class Root extends Component
                 });
             }
         }
-        
+
         // Search
         if ($this->search && method_exists($this, 'columns')) {
-            
+
             $columns = $this->columns();
             if (is_array($columns) && count($columns)) {
                 $query->where(function ($q) use ($columns) {
@@ -152,18 +152,17 @@ abstract class Root extends Component
         try {
             // Build query menggunakan method query() yang sudah ada
             $query = $this->query();
-            
+
             // Apply sorting
             $query->orderBy($this->sortField, $this->sortDirection);
-            
+
             // Get paginated results
             $this->_records = $query->paginate($this->perPage);
-            
+
             // Apply custom formatting jika method formatRecords ada
             if (method_exists($this, 'formatRecords')) {
                 $this->formatRecords();
             }
-            
         } catch (\Exception $e) {
             \Log::error('Error loading records in Root: ' . $e->getMessage());
             // Fallback ke empty pagination
@@ -187,7 +186,7 @@ abstract class Root extends Component
         $this->loadRecords();
 
         return view($this->viewPath(), [
-                        '_records'    => $this->_records,
+            '_records'    => $this->_records,
 
             'title'       => $this->title,
             'permissions' => module_permissions(strtolower($this->modul))['can'] ?? []
@@ -205,7 +204,7 @@ abstract class Root extends Component
 
     public function create()
     {
-        can_any([strtolower($this->modul).'.create']);
+        can_any([strtolower($this->modul) . '.create']);
         $this->resetForm();
         $this->updateMode = false;
         $this->showModal = true;
@@ -216,7 +215,7 @@ abstract class Root extends Component
 
     public function edit($id)
     {
-        can_any([strtolower($this->modul).'.edit']);
+        can_any([strtolower($this->modul) . '.edit']);
 
         $record = ($this->model)::findOrFail($id);
 
@@ -232,129 +231,128 @@ abstract class Root extends Component
         $this->dispatch('modalOpened');
     }
 
-// Di App\Livewire\Root class, perbaiki method save()
-public function save()
-{
-    // Validasi - prioritaskan method rules(), lalu property $rules
-    $validationRules = [];
-    
-    if (method_exists($this, 'rules')) {
-        $validationRules = $this->rules();
-    } elseif (!empty($this->rules)) {
-        $validationRules = $this->rules;
-    }
+    // Di App\Livewire\Root class, perbaiki method save()
+    public function save()
+    {
+        // Validasi - prioritaskan method rules(), lalu property $rules
+        $validationRules = [];
 
-    if (!empty($validationRules)) {
-        $this->validate($validationRules);
-    }
-
-    $modelClass = $this->model;
-    $action = 'unknown';
-    $record = null;
-
-    // Payload hanya akan mengambil field yang ada di formDefault
-    $payload = collect($this->form)
-        ->only(array_keys($this->formDefault))
-        ->toArray();
-
-    // Call saving hook untuk modifikasi payload - FIXED
-    if (method_exists($this, 'saving')) {
-        $payload = $this->saving($payload);
-    }
-
-    if ($this->updateMode) {
-        can_any([strtolower($this->modul).'.edit']);
-        $record = $modelClass::findOrFail($this->form['id']);
-        
-        // Simpan data lama untuk audit trail
-        $oldData = $record->getOriginal();
-        
-        $record->update($payload);
-        $action = 'update';
-        
-        // Log audit trail
-        $this->logAudit($action, $record, [
-            'new_data' => $payload,
-            'old_data' => $oldData
-        ]);
-        
-    } else {
-        $action = 'create';
-        can_any([strtolower($this->modul).'.create']);
-        $record = $modelClass::create($payload);
-        
-        // Log audit trail
-        $this->logAudit($action, $record, $payload);
-    }
-
-    // Call saved hook - FIXED
-    if (method_exists($this, 'saved')) {
-        $this->saved($record, $action);
-    }
-
-    $this->loadRecords();
-
-    $this->closeModal();
-    $this->resetPage();
-    $this->dispatch('dataSaved');
-}
-protected function saved($record, $action)
-{
-    // NOTIFIKASI SUDAH DIHANDLE OLEH logAudit
-    // Hanya reset form/lampiran jika perlu
-    if (method_exists($this, 'resetLampiran')) {
-        $this->resetLampiran();
-    }
-}
-
-
-
-
-public function delete($id)
-{
-    can_any([strtolower($this->modul).'.delete']);
-    
-    $record = ($this->model)::findOrFail($id);
-    
-    // Simpan data lengkap record sebelum dihapus
-    $oldData = $record->toArray();
-    
-    // Log audit trail SEBELUM menghapus dengan data lengkap
-    $this->logAudit('delete', $record, ['deleted_data' => $oldData]);
-    
-    $record->delete();
-    
-    // NOTIFIKASI SUDAH DIHANDLE OLEH logAudit
-    $this->resetPage();
-    $this->loadRecords();
-    $this->dispatch('dataDeleted');
-}
-public function deleteBulk()
-{
-    can_any([strtolower($this->modul).'.delete']);
-
-    if (count($this->selectedItems)) {
-        // Ambil data sebelum dihapus untuk audit trail
-        $records = ($this->model)::whereIn('id', $this->selectedItems)->get();
-        
-        // Log audit trail untuk setiap record dengan data lengkap
-        foreach ($records as $record) {
-            $oldData = $record->toArray();
-            $this->logAudit('delete', $record, ['deleted_data' => $oldData]);
+        if (method_exists($this, 'rules')) {
+            $validationRules = $this->rules();
+        } elseif (!empty($this->rules)) {
+            $validationRules = $this->rules;
         }
-        
-        // Hapus records
-        ($this->model)::whereIn('id', $this->selectedItems)->delete();
-        
-        // Notifikasi untuk bulk delete
-        $this->notify('success', $this->getAuditMessage('bulk_delete', null, []));
+
+        if (!empty($validationRules)) {
+            $this->validate($validationRules);
+        }
+
+        $modelClass = $this->model;
+        $action = 'unknown';
+        $record = null;
+
+        // Payload hanya akan mengambil field yang ada di formDefault
+        $payload = collect($this->form)
+            ->only(array_keys($this->formDefault))
+            ->toArray();
+
+        // Call saving hook untuk modifikasi payload - FIXED
+        if (method_exists($this, 'saving')) {
+            $payload = $this->saving($payload);
+        }
+
+        if ($this->updateMode) {
+            can_any([strtolower($this->modul) . '.edit']);
+            $record = $modelClass::findOrFail($this->form['id']);
+
+            // Simpan data lama untuk audit trail
+            $oldData = $record->getOriginal();
+
+            $record->update($payload);
+            $action = 'update';
+
+            // Log audit trail
+            $this->logAudit($action, $record, [
+                'new_data' => $payload,
+                'old_data' => $oldData
+            ]);
+        } else {
+            $action = 'create';
+            can_any([strtolower($this->modul) . '.create']);
+            $record = $modelClass::create($payload);
+
+            // Log audit trail
+            $this->logAudit($action, $record, $payload);
+        }
+
+        // Call saved hook - FIXED
+        if (method_exists($this, 'saved')) {
+            $this->saved($record, $action);
+        }
+
+        $this->loadRecords();
+
+        $this->closeModal();
+        $this->resetPage();
+        $this->dispatch('dataSaved');
+    }
+    protected function saved($record, $action)
+    {
+        // NOTIFIKASI SUDAH DIHANDLE OLEH logAudit
+        // Hanya reset form/lampiran jika perlu
+        if (method_exists($this, 'resetLampiran')) {
+            $this->resetLampiran();
+        }
     }
 
-    $this->selectedItems = [];
-    
-    $this->loadRecords();
-    $this->dispatch('bulkDeleteCompleted');
-}
+
+
+
+    public function delete($id)
+    {
+        can_any([strtolower($this->modul) . '.delete']);
+
+        $record = ($this->model)::findOrFail($id);
+
+        // Simpan data lengkap record sebelum dihapus
+        $oldData = $record->toArray();
+
+        // Log audit trail SEBELUM menghapus dengan data lengkap
+        $this->logAudit('delete', $record, ['deleted_data' => $oldData]);
+
+        $record->delete();
+
+        // NOTIFIKASI SUDAH DIHANDLE OLEH logAudit
+        $this->resetPage();
+        $this->loadRecords();
+        $this->dispatch('dataDeleted');
+    }
+    public function deleteBulk()
+    {
+        can_any([strtolower($this->modul) . '.delete']);
+
+        if (count($this->selectedItems)) {
+            // Ambil data sebelum dihapus untuk audit trail
+            $records = ($this->model)::whereIn('id', $this->selectedItems)->get();
+
+            // Log audit trail untuk setiap record dengan data lengkap
+            foreach ($records as $record) {
+                $oldData = $record->toArray();
+                $this->logAudit('delete', $record, ['deleted_data' => $oldData]);
+            }
+
+            // Hapus records
+            ($this->model)::whereIn('id', $this->selectedItems)->delete();
+
+            // Notifikasi untuk bulk delete
+            $this->notify('success', $this->getAuditMessage('bulk_delete', null, []));
+        }
+
+        $this->selectedItems = [];
+
+        $this->loadRecords();
+        $this->dispatch('bulkDeleteCompleted');
+    }
 
     // ====================== FILTER ========================
     public function openFilter()
@@ -372,7 +370,7 @@ public function deleteBulk()
         $this->filterMode = true;
         $this->showFilterModal = false;
         $this->resetPage();
-            $this->notify('success', 'Filter diterapkan.');
+        $this->notify('success', 'Filter diterapkan.');
     }
 
 
@@ -384,15 +382,15 @@ public function deleteBulk()
 
         $this->filterMode = false;
         $this->showFilterModal = false;
-        
-    $this->notify('success', 'Filter direset.');
+
+        $this->notify('success', 'Filter direset.');
     }
 
 
     // ================= VIEW MODAL ======================
     public function view($id)
     {
-        can_any([strtolower($this->modul).'.view']);
+        can_any([strtolower($this->modul) . '.view']);
         $record = ($this->model)::findOrFail($id);
 
         $this->dispatch('showDetailModal', [
@@ -410,8 +408,8 @@ public function deleteBulk()
             'data'  => $record->toArray()
         ]);
     }
-    
-   public function updateStatus($id, $status)
+
+    public function updateStatus($id, $status)
     {
         // can_any([strtolower($this->modul).'.view']);
         $record = ($this->model)::findOrFail($id);
@@ -433,7 +431,7 @@ public function deleteBulk()
     }
 
 
-     public function closeDetailModal()
+    public function closeDetailModal()
     {
         $this->showDetailModal = false;
         $this->showComment = false;
@@ -442,14 +440,14 @@ public function deleteBulk()
         $this->detailData = [];
         $this->detailTitle = '';
     }
-    
+
     // =================== SUPPORT =======================
     public function closeModal()
     {
         $this->showDetailModal = false;
         $this->detailData = [];
         $this->detailTitle = '';
-        
+
         $this->showModal = false;
         $this->resetForm();
         $this->dispatch('modalClosed');
@@ -496,7 +494,7 @@ public function deleteBulk()
 
 
     // =================== PAGINATION =====================
-        public function gotoPage($page)
+    public function gotoPage($page)
     {
         $this->setPage($page);
     }
@@ -518,164 +516,162 @@ public function deleteBulk()
 
 
     // =================== EXPORT =========================
-   public function export($type = 'excel')
-{
-    // can_any([strtolower($this->modul).'.export']);
+    public function export($type = 'excel')
+    {
+        // can_any([strtolower($this->modul).'.export']);
 
-    $data = $this->query()->get();
+        $data = $this->query()->get();
 
-    if ($type === 'excel') {
-        $this->notify('success', 'Data berhasil diexport ke Excel.');
-    } elseif ($type === 'pdf') {
-        $this->notify('success', 'Data berhasil diexport ke PDF.');
+        if ($type === 'excel') {
+            $this->notify('success', 'Data berhasil diexport ke Excel.');
+        } elseif ($type === 'pdf') {
+            $this->notify('success', 'Data berhasil diexport ke PDF.');
+        }
+
+        $this->dispatch('exportCompleted', ['type' => $type]);
     }
 
-    $this->dispatch('exportCompleted', ['type' => $type]);
-}
 
-     
-    public function notify($type, $message, $errMessage='')
-{
-    // \dd($errMessage);
-    $this->dispatch('notify', [
-        'type' => $type,
-        'message' => $message,
-        'errMessage' => $errMessage
-    ]);
-}
-
-
-public function logAudit($action, $record, $data = [], $table_name = null)
-{
-    try {
-        $user = auth()->user();
-        
-        // Jika table_name tidak diberikan, gunakan nama model
-        if (empty($table_name)) {
-            if ($record) {
-                $table_name = $record->getTable();
-            } else {
-                // Untuk kasus delete, kita bisa dapatkan table_name dari model class
-                $table_name = strtolower(class_basename($this->model)) . 's'; // contoh: 'combos'
-            }
-        }
-
-        // Handle record_id dan old_values berdasarkan action
-        $record_id = null;
-        $old_values = null;
-        
-        if ($record) {
-            $record_id = $record->id;
-            
-            // Untuk update, ambil original data
-            if ($action === 'update') {
-                $old_values = $record->getOriginal();
-            }
-            // Untuk delete, data sudah ada di $data['deleted_data']
-            elseif ($action === 'delete' && isset($data['deleted_data'])) {
-                $old_values = $data['deleted_data'];
-            }
-        }
-
-        // Untuk create, new_values adalah data yang dibuat
-        // Untuk update, new_values adalah payload
-        // Untuk delete, new_values adalah null (karena data dihapus)
-        $new_values = null;
-        if ($action === 'create' || $action === 'update') {
-            $new_values = $data;
-        }
-
-        // Create audit log
-        AuditLog::create([
-            'user_id' => $user ? $user->id : null,
-            'action' => $action,
-            'table_name' => $table_name,
-            'record_id' => $record_id,
-            'old_values' => $old_values ? json_encode($old_values) : null,
-            'new_values' => $new_values ? json_encode($new_values) : null,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-            'created_at' => now()
+    public function notify($type, $message, $errMessage = '')
+    {
+        // \dd($errMessage);
+        $this->dispatch('notify', [
+            'type' => $type,
+            'message' => $message,
+            'errMessage' => $errMessage
         ]);
-
-        // NOTIFIKASI OTOMATIS BERDASARKAN ACTION
-        $message = $this->getAuditMessage($action, $record, $data);
-        $this->notify('success', $message);
-
-    } catch (\Exception $e) {
-        // Log error tetapi jangan hentikan proses
-        \Log::error('Audit log failed: ' . $e->getMessage());
-        $this->notify('error', 'Terjadi kesalahan saat menyimpan audit trail.');
     }
-}
 
-/**
- * Generate message berdasarkan action
- */
-protected function getAuditMessage($action, $record, $data)
-{
-    $modelName = class_basename($this->model);
-    
-    switch ($action) {
-        case 'create':
-            if (isset($record->code_pengaduan)) {
-                return 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan;
+
+    public function logAudit($action, $record, $data = [], $table_name = null)
+    {
+        try {
+            $user = auth()->user();
+
+            // Jika table_name tidak diberikan, gunakan nama model
+            if (empty($table_name)) {
+                if ($record) {
+                    $table_name = $record->getTable();
+                } else {
+                    // Untuk kasus delete, kita bisa dapatkan table_name dari model class
+                    $table_name = strtolower(class_basename($this->model)) . 's'; // contoh: 'combos'
+                }
             }
-            return 'Data  berhasil ditambahkan.';
-            
-        case 'update':
-            return 'Data  berhasil diperbarui.';
-            
-        case 'delete':
-            return 'Data  berhasil dihapus.';
-            
-        case 'bulk_delete':
-            return 'Beberapa data  berhasil dihapus.';
 
-        case 'error':
-            return 'Terjadi kesalahan';
+            // Handle record_id dan old_values berdasarkan action
+            $record_id = null;
+            $old_values = null;
 
-        case 'upStsSuccess':
-            return 'Berhasil update status';
-        case 'upStsErr':
-            return 'gagal update status';
-            
-        default:
-            return 'Aksi ' . $action . ' berhasil dilakukan.';
+            if ($record) {
+                $record_id = $record->id;
+
+                // Untuk update, ambil original data
+                if ($action === 'update') {
+                    $old_values = $record->getOriginal();
+                }
+                // Untuk delete, data sudah ada di $data['deleted_data']
+                elseif ($action === 'delete' && isset($data['deleted_data'])) {
+                    $old_values = $data['deleted_data'];
+                }
+            }
+
+            // Untuk create, new_values adalah data yang dibuat
+            // Untuk update, new_values adalah payload
+            // Untuk delete, new_values adalah null (karena data dihapus)
+            $new_values = null;
+            if ($action === 'create' || $action === 'update') {
+                $new_values = $data;
+            }
+
+            // Create audit log
+            AuditLog::create([
+                'user_id' => $user ? $user->id : null,
+                'action' => $action,
+                'table_name' => $table_name,
+                'record_id' => $record_id,
+                'old_values' => $old_values ? json_encode($old_values) : null,
+                'new_values' => $new_values ? json_encode($new_values) : null,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'created_at' => now()
+            ]);
+
+            // NOTIFIKASI OTOMATIS BERDASARKAN ACTION
+            $message = $this->getAuditMessage($action, $record, $data);
+            $this->notify('success', $message);
+        } catch (\Exception $e) {
+            // Log error tetapi jangan hentikan proses
+            \Log::error('Audit log failed: ' . $e->getMessage());
+            $this->notify('error', 'Terjadi kesalahan saat menyimpan audit trail.');
+        }
     }
-}
 
-public function loadDropdownData()
+    /**
+     * Generate message berdasarkan action
+     */
+    protected function getAuditMessage($action, $record, $data)
+    {
+        $modelName = class_basename($this->model);
+
+        switch ($action) {
+            case 'create':
+                if (isset($record->code_pengaduan)) {
+                    return 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan;
+                }
+                return 'Data  berhasil ditambahkan.';
+
+            case 'update':
+                return 'Data  berhasil diperbarui.';
+
+            case 'delete':
+                return 'Data  berhasil dihapus.';
+
+            case 'bulk_delete':
+                return 'Beberapa data  berhasil dihapus.';
+
+            case 'error':
+                return 'Terjadi kesalahan';
+
+            case 'upStsSuccess':
+                return 'Berhasil update status';
+            case 'upStsErr':
+                return 'gagal update status';
+
+            default:
+                return 'Aksi ' . $action . ' berhasil dilakukan.';
+        }
+    }
+
+    public function loadDropdownData()
     {
         $this->jenisPengaduanList = Combo::where('kelompok', 'jenis')
             ->select('data_id', 'data_en', 'data', 'id')
             ->where('is_active', true)
             ->orderBy('data_id')
-            ->get(); 
-        
-    $this->tahunPengaduanList = Pengaduan::
-    selectRaw('YEAR(tanggal_pengaduan) as tahun')
-    ->whereNotNull('tanggal_pengaduan')
-    ->groupBy('tahun')
-    ->orderBy('tahun', 'desc')
-    ->pluck('tahun', 'tahun') // Konversi ke array [tahun => tahun]
-    ->toArray();
+            ->get();
+
+        $this->tahunPengaduanList = Pengaduan::selectRaw('YEAR(tanggal_pengaduan) as tahun')
+            ->whereNotNull('tanggal_pengaduan')
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun', 'tahun') // Konversi ke array [tahun => tahun]
+            ->toArray();
 
         $this->saluranList = Combo::where('kelompok', 'aduan')
-         ->select('id','data_id', 'data_en', 'data')
+            ->select('id', 'data_id', 'data_en', 'data')
             ->where('is_active', true)
             ->orderBy('data_id')
             ->get();
 
         $this->direktoratList = Owner::where('is_active', 1)
-         ->select('id','owner_name', 'owner_name_1', 'parent_id')
+            ->select('id', 'owner_name', 'owner_name_1', 'parent_id')
             ->orderBy('owner_name')
             ->get();
     }
 
 
 
-  public function removeLampiran($index)
+    public function removeLampiran($index)
     {
         if (isset($this->lampiran[$index])) {
             unset($this->lampiran[$index]);
@@ -683,7 +679,7 @@ public function loadDropdownData()
         }
     }
     //files
-     public function uploadFile()
+    public function uploadFile()
     {
         $this->validate([
             'fileUpload' => 'required|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,zip,rar',
@@ -693,8 +689,8 @@ public function loadDropdownData()
         if (!$this->trackingId) return;
 
         $uploadedFile = FileHelper::upload(
-            $this->fileUpload, 
-            'pengaduan/attachments', 
+            $this->fileUpload,
+            'pengaduan/attachments',
             'public'
         );
 
@@ -725,42 +721,31 @@ public function loadDropdownData()
             'message' => 'File berhasil diupload'
         ]);
     }
-    
-     // Load uploaded files
+
     public function loadUploadedFiles()
     {
         if (!$this->trackingId) return;
 
-        // TODO: Load files dari database jika sudah disimpan
-        // Untuk sementara, kita reset uploadedFiles
         $this->uploadedFiles = [];
     }
-    
-       public function downloadFile($fileId)
-    {
-        $file = collect($this->uploadedFiles)->firstWhere('id', $fileId);
-        
-        if ($file && FileHelper::exists($file['path'])) {
-            return response()->download(
-                storage_path('app/public/' . $file['path']),
-                $file['name'] // Pastikan key 'name' ada
-            );
-        }
 
-        $this->dispatch('notify', [
-            'type' => 'error',
-            'message' => 'File tidak ditemukan'
-        ]);
+    public function downloadFile($filePath, $originName)
+    {
+        if ($filePath && FileHelper::exists($filePath)) {
+            return response()->download( storage_path('app/public/' . $filePath), $originName);
+        }
+        $this->dispatch('notify', ['type' => 'error', 'message' => 'File tidak ditemukan: ' . $originName, 'errMessage'=> 'patchFile:'.$filePath ]);
+        return back();
     }
 
-     public function deleteFile($fileId)
+    public function deleteFile($fileId)
     {
         $file = collect($this->uploadedFiles)->firstWhere('id', $fileId);
-        
+
         if ($file) {
             // Hapus dari storage
             FileHelper::delete($file['path']);
-            
+
             // Hapus dari list
             $this->uploadedFiles = collect($this->uploadedFiles)
                 ->reject(function ($item) use ($fileId) {
@@ -775,23 +760,23 @@ public function loadDropdownData()
             ]);
         }
     }
-    
 
 
-     public function closeChat()
+
+    public function closeChat()
     {
         parent::closeChat(); // Panggil parent dari HasChat
         $this->uploadedFiles = []; // Reset uploaded files spesifik untuk Tracking
     }
 
 
-     public function downloadMessageFile($messageId)
+    public function downloadMessageFile($messageId)
     {
         $message = Comment::find($messageId);
-        
+
         if ($message && $message->file_data) {
             $fileData = json_decode($message->file_data, true);
-            
+
             if ($fileData && FileHelper::exists($fileData['path'])) {
                 return response()->download(
                     storage_path('app/public/' . $fileData['path']),
@@ -806,7 +791,7 @@ public function loadDropdownData()
         ]);
     }
 
-      public function getFileInfo($file)
+    public function getFileInfo($file)
     {
         return [
             'name' => $file['name'] ?? $file['original_name'] ?? 'Unknown File',
@@ -822,29 +807,28 @@ public function loadDropdownData()
     }
 
     public function getJenisPelanggaran($record)
-    {                                                                 
+    {
         return $record->jenisPengaduan->data_id ?? 'Tidak diketahui';
     }
-     public function getComplienProgress($record)
+    public function getComplienProgress($record)
     {
         $progress = $this->calculateProgress($record);
         return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500'>
                  <i class='fas fa-check' ></i>
-            </span>" ;
+            </span>";
     }
 
     public function getAprvCco($record)
     {
- 
-        $sts=$this->getStatusBadge($record->status);
-        if($record->sts_final==0 && $record->status !==3){
-            $sts.=$this->getStatusBadge(12);
-           
+
+        $sts = $this->getStatusBadge($record->status);
+        if ($record->sts_final == 0 && $record->status !== 3) {
+            $sts .= $this->getStatusBadge(12);
         }
         return $sts;
     }
 
-      public function getStatusBadge($statusId)
+    public function getStatusBadge($statusId)
     {
         $statusInfo = Combo::where('kelompok', 'sts-aduan')
             ->where('param_int', $statusId)
@@ -865,71 +849,80 @@ public function loadDropdownData()
             </span>
         ";
     }
-public function calculateProgress($pengaduan)
+    public function calculateProgress($pengaduan)
     {
         $logCount = LogApproval::where('pengaduan_id', $pengaduan->id)->count();
         $totalSteps = 5;
         return min(100, (($logCount + 1) / $totalSteps) * 100);
     }
-// Method untuk mendapatkan dropdown options (jika perlu di view)
-public function getForwardOptions()
-{
-    return Combo::where('kelompok', 'wbs-forward')
-        ->where('is_active', true)
-        ->orderBy('data_id')
-        ->get();
-}
+    // Method untuk mendapatkan dropdown options (jika perlu di view)
+    public function getForwardOptions()
+    {
+        return Combo::where('kelompok', 'wbs-forward')
+            ->where('is_active', true)
+            ->orderBy('data_id')
+            ->get();
+    }
 
-   public function progressDashboard($status, $sts_final)
+    public function progressDashboard($status, $sts_final)
     {
         if ($sts_final == 1) {
             return 100;
         }
 
         switch ($status) {
-            case 0: return 10;   // Menunggu
-            case 1: return 30;   // Dalam Proses
-            case 2: return 50;   // Diteruskan
-            case 3: return 100;  // Ditolak (final)
-            case 4: return 20;   // Diterima
-            case 5: return 40;   // Diproses
-            case 6: return 60;   // Ditindaklanjuti
-            case 7: return 100;  // Ditutup (final)
-            case 8: return 25;   // Perlu Klarifikasi
-            default: return 0;
+            case 0:
+                return 10;   // Menunggu
+            case 1:
+                return 30;   // Dalam Proses
+            case 2:
+                return 50;   // Diteruskan
+            case 3:
+                return 100;  // Ditolak (final)
+            case 4:
+                return 20;   // Diterima
+            case 5:
+                return 40;   // Diproses
+            case 6:
+                return 60;   // Ditindaklanjuti
+            case 7:
+                return 100;  // Ditutup (final)
+            case 8:
+                return 25;   // Perlu Klarifikasi
+            default:
+                return 0;
         }
     }
     public function getComboById($i)
     {
-                $r = $this->model::findOrFail($i);
+        $r = $this->model::findOrFail($i);
 
-        return $r->data_id ??$r->data_en;
+        return $r->data_id ?? $r->data_en;
     }
 
-   
+
     public function getDataFAQ()
-{
-    // Ambil pertanyaan dengan jawaban menggunakan relationship
-    $q = Combo::where('kelompok', 'pertanyaan')
-        ->where('is_active', 1)
-        ->where('param_int', 1)
-        ->with(['jawaban' => function($query) {
-            $query->where('is_active', 1)
-                  ->orderBy('created_at');
-        }])
-        ->orderBy('created_at')
-        ->get();
+    {
+        // Ambil pertanyaan dengan jawaban menggunakan relationship
+        $q = Combo::where('kelompok', 'pertanyaan')
+            ->where('is_active', 1)
+            ->where('param_int', 1)
+            ->with(['jawaban' => function ($query) {
+                $query->where('is_active', 1)
+                    ->orderBy('created_at');
+            }])
+            ->orderBy('created_at')
+            ->get();
 
-    return $q->map(function($pertanyaan) {
-        return [
-            'pertanyaan' => $pertanyaan,
-            'jawaban' => $pertanyaan->jawaban
-        ];
-    })->toArray();
+        return $q->map(function ($pertanyaan) {
+            return [
+                'pertanyaan' => $pertanyaan,
+                'jawaban' => $pertanyaan->jawaban
+            ];
+        })->toArray();
+    }
 
-}
-
-public function updatedLampiran($value)
+    public function updatedLampiran($value)
     {
         $validation = FileHelper::validateMultipleFiles(
             $this->lampiran,
@@ -946,8 +939,32 @@ public function updatedLampiran($value)
                 $this->removeLampiranByName($filename);
             }
         }
-        
+
         $this->resetErrorBag('lampiran.*');
     }
+
+
     
+public function countComentFileByPengaduan($pengaduanId)
+{
+    $logs = LogApproval::where('pengaduan_id', $pengaduanId)->get();
+    
+    $totalComments = 0;
+    $totalFiles = 0;
+    
+    foreach ($logs as $log) { 
+        if (!empty(trim($log->catatan))) {
+            $totalComments++;
+        }
+         
+        $fileData = $log->file ? json_decode($log->file, true) : [];
+        if (!empty($fileData) && is_array($fileData)) {
+            $totalFiles += count($fileData);
+        }
+    }
+    return [
+        'comments' => $totalComments,
+        'files' => $totalFiles
+    ];
+}
 }

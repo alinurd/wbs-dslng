@@ -107,25 +107,25 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Quick Actions -->
             <div class="lg:col-span-1">
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-                    @if($isRole3 || $isRole3)
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex items-center space-x-4 mb-4">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-plus-circle text-green-600 text-xl"></i>
+                    @if ($isRole3 || $isRole3)
+                        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-plus-circle text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Buat Pengaduan Baru</h3>
+                                    <p class="text-sm text-gray-500">Laporkan pelanggaran</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900">Buat Pengaduan Baru</h3>
-                                <p class="text-sm text-gray-500">Laporkan pelanggaran</p>
-                            </div>
+                            <a href="{{ route('p_report') }}"
+                                class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Mulai Pengaduan</span>
+                            </a>
                         </div>
-                        <a href="{{ route('p_report') }}"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
-                            <i class="fas fa-plus"></i>
-                            <span>Mulai Pengaduan</span>
-                        </a>
-                    </div>
                     @endif
 
                     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -219,44 +219,48 @@
                         <div class="p-6">
                             <div class="space-y-4">
                                 @foreach ($log_approval as $log)
-                                    <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                    <div class="border-l-4 border-{{ $log['status_color'] }}-500 pl-4 py-2">
                                         <div class="flex justify-between items-start mb-1">
-                                            <p class="font-medium text-gray-900">{{ $log['judul'] }}</p>
+                                            <p class="font-medium text-gray-900">{{ $log['code'] }} <span
+                                                    class="px-2 py-1 bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 text-xs font-medium rounded-full">
+                                                    {{ $log['status'] }}
+                                                </span></p>
                                             <span class="text-xs text-gray-500">{{ $log['waktu'] }}</span>
                                         </div>
-                                        <p class="text-sm text-gray-600 mb-2">{{ $log['deskripsi'] }}</p>
+                                        <p class="text-sm text-gray-600 mb-2">{{ $log['catatan'] }}</p>
+                                        <div>
+                                        </div>
+
                                         <div class="flex items-center space-x-3">
-                                            <span
-                                                class="px-2 py-1 bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 text-xs font-medium rounded-full">
-                                                {{ $log['status'] }}
-                                            </span>
-                                            @if(!empty($log['file']))
-    @php
-        $files = json_decode($log['file'], true);
-    @endphp
-    
-    @if(is_array($files) && count($files) > 0)
-        <div class="mt-3">
-            <p class="text-xs font-medium text-gray-500 mb-2">Lampiran:</p>
-            <div class="space-y-2">
-                @foreach($files as $fileItem)
-                    <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-file text-gray-400"></i>
-                            <span class="text-sm text-gray-700">{{ $fileItem['original_name'] }}</span>
-                        </div>
-                        <a href="{{ $fileItem['url'] }}" 
-                           target="_blank"
-                           class="text-green-600 hover:text-green-700 text-sm flex items-center space-x-1">
-                            <i class="fas fa-download text-xs"></i>
-                            <span>Download</span>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endif
-@endif
+                                            @if (!empty($log['file']))
+                                                @php
+                                                    $files = json_decode($log['file'], true);
+                                                @endphp
+
+                                                @if (is_array($files) && count($files) > 0)
+                                                    <div class="mt-3">
+                                                        <p class="text-xs font-medium text-gray-500 mb-2">Lampiran:</p>
+                                                        <div class="space-y-2">
+                                                            @foreach ($files as $fileItem)
+                                                                <div
+                                                                    class="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
+                                                                    <div class="flex items-center space-x-5">
+                                                                        <i class="fas fa-file text-gray-400"></i>
+                                                                        <span
+                                                                            class="text-xs text-gray-700 ">{{ $fileItem['original_name'] }}</span>
+                                                                        <button
+                                                                            wire:click="downloadFile('{{ $fileItem['path'] }}', '{{ $fileItem['original_name'] }}')"
+                                                                            class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-1 hover:underline">
+                                                                            <i class="fas fa-download text-xs"></i>
+                                                                            Download
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach

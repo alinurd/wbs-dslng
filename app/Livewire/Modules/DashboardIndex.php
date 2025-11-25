@@ -104,38 +104,48 @@ class DashboardIndex extends Root
     }
 
     protected function loadLogApproval()
-    {
-        // Get the latest log approval for each unique pengaduan
-        $latestLogs = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
-            ->whereIn('id', function($query) {
-                $query->select(DB::raw('MAX(id)'))
-                      ->from('log_approval')
-                      ->groupBy('pengaduan_id');
-            })
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+{
+    $latestLogs = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
+        ->whereIn('id', function($query) {
+            $query->select(DB::raw('MAX(id)'))
+                  ->from('log_approval')
+                  ->groupBy('pengaduan_id');
+        })
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
 
-        $this->log_approval = $latestLogs->map(function($item) {
-            return [
-                'id' => $item->id,
-                'pengaduan_id' => $item->pengaduan_id,
-                'judul' => 'Approval #' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
-                'waktu' => $this->getTimeAgo($item->created_at),
-                'deskripsi' => $item->status_text . ' - ' . ($item->catatan ?: 'Tidak ada catatan'),
-                'komentar' => $item->catatan ? '1 komentar' : '0 komentar',
-                'file' => $item->file?? json_decode($item->file, true) ?? [],
-                'status_color' => $item->color ?? 'blue',
-                'user_name' => $item->user->name ?? 'Unknown',
-                'status' => $item->status_text
-            ];
-        })->toArray();
+    $this->log_approval = $latestLogs->map(function($item) {
+        $catatan = $item->catatan ?: 'Tidak ada catatan';
+        
+        $truncatedCatatan = strlen($catatan) > 60 
+            ? substr($catatan, 0, 60) . '...' 
+            : $catatan;
+        
+        // Hitung total komentar dan file untuk pengaduan ini
+        $counts = $this->countComentFileByPengaduan($item->pengaduan_id);
+        
+        return [
+            'id' => $item->id,
+            'pengaduan_id' => $item->pengaduan_id,
+            'code' => '#' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
+            'waktu' => $this->getTimeAgo($item->created_at),
+            'catatan' => $truncatedCatatan,
+            'catatan_full' => $catatan, 
+            'countComment' => $counts['comments'] . ' komentar',
+            'countFile' => $counts['files'] . ' file',
+            'file' => $item->file ?? json_decode($item->file, true) ?? [],
+            'status_color' => $item->color ?? 'blue',
+            'user_name' => $item->user->name ?? 'Unknown',
+            'status' => $item->status_text
+        ];
+    })->toArray();
 
-        // If no approval data, use recent pengaduan as fallback
-        if (empty($this->log_approval)) {
-            $this->loadRecentPengaduanAsLog();
-        }
+    if (empty($this->log_approval)) {
+        $this->loadRecentPengaduanAsLog();
     }
+}
+
 
     protected function loadRecentPengaduanAsLog()
     {
@@ -152,7 +162,7 @@ class DashboardIndex extends Root
                 'pengaduan_id' => $item->id,
                 'judul' => 'Update ' . ($item->jenisPengaduan->nama_jenis ?? 'Pengaduan') . ' #' . $item->code_pengaduan,
                 'waktu' => $this->getTimeAgo($item->updated_at),
-                'deskripsi' => 'Status: ' . $statusInfo['text'] . ' - ' . ($item->perihal ?? ''),
+                'deskripsi' =>  ($item->perihal ?? ''),
                 'komentar' => '0 komentar',
                 'file' => !empty($item->lampiran) && $item->lampiran != '[]',
                 'status_color' => $statusInfo['color'],
