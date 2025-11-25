@@ -2,6 +2,7 @@
 namespace App\Livewire\Modules;
 
 use App\Livewire\Root;
+use App\Models\Combo;
 use App\Models\JenisPengaduan;
 use App\Models\LogApproval;
 use App\Models\Pengaduan;
@@ -78,30 +79,33 @@ class DashboardIndex extends Root
         // \dd($this->stats);
     }
 
-    protected function loadPengaduanTerbaru()
-    {
-        $pengaduan = Pengaduan::with(['jenisPengaduan', 'pelapor'])
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
-
-        $this->pengaduan_terbaru = $pengaduan->map(function($item, $index) {
-            $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
-            
-            return [
-                'id' => $item->id,
-                'code_pengaduan' => $item->code_pengaduan,
-                'no' => $index + 1,
-                'judul' => $item->perihal ?? 'Tidak ada judul',
-                'progress' => $this->progressDashboard($item->status, $item->sts_final),
-                'tanggal' => $item->created_at?->format('d/m/Y H:i') ?? '-',
-                'status' => $statusInfo['text'],
-                'status_color' => $statusInfo['color'],
-                'jenis_pengaduan' => $item->jenisPengaduan->nama_jenis ?? '-',
-                'pelapor' => $item->user->name ?? 'Unknown'
-            ];
-        })->toArray();
-    }
+   protected function loadPengaduanTerbaru()
+{
+    $pengaduan = Pengaduan::with(['jenisPengaduan', 'pelapor', 'logApprovals'])
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
+    $this->pengaduan_terbaru = $pengaduan->map(function($item, $index) {
+        $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
+                $counts = $this->countComentFileByPengaduan($item->id);
+        return [
+            'id' => $item->id,
+            'code_pengaduan' => $item->code_pengaduan,
+            'no' => $index + 1,
+            'judul' => $item->perihal ?? 'Tidak ada judul',
+            'progress' => $this->progressDashboard($item->status, $item->sts_final),
+            'tanggal' => $item->created_at?->format('d/m/Y H:i') ?? '-',
+            'status' => $statusInfo['text'],
+            'status_color' => $statusInfo['color'],
+            'jenis_pengaduan' => $item->jenisPengaduan->data_id ?? '-',
+            'pelapor' => $item->user->name ?? 'Unknown',
+    
+            'countComment' => $counts['comments'] . ' komentar',
+            'countFile' => $counts['files'] . ' file',
+            'countAktivitas' => $counts['aktivitas'] . ' aktivitas',
+        ];
+    })->toArray();
+}
 
     protected function loadLogApproval()
 {
@@ -122,7 +126,6 @@ class DashboardIndex extends Root
             ? substr($catatan, 0, 60) . '...' 
             : $catatan;
         
-        // Hitung total komentar dan file untuk pengaduan ini
         $counts = $this->countComentFileByPengaduan($item->pengaduan_id);
         
         return [
@@ -230,35 +233,18 @@ class DashboardIndex extends Root
 
     protected function getStatusInfo($status, $sts_final)
     {
-        if ($sts_final == 1) {
-            return ['text' => 'Selesai', 'color' => 'green'];
+      $statusInfo = Combo::where('kelompok', 'sts-aduan')
+            ->where('param_int', $status)
+            ->first();
+        if (!$statusInfo) {
+            $color = 'gray';
+            $text = 'Menunggu Review';
+        } else {
+            $color = $statusInfo->param_str ?? 'gray';
+            $text = $statusInfo->data_id;
         }
-
-        switch ($status) {
-            case 0:
-                return ['text' => 'Menunggu', 'color' => 'gray'];
-            case 1:
-                return ['text' => 'Dalam Proses', 'color' => 'yellow'];
-            case 2:
-                return ['text' => 'Diteruskan', 'color' => 'blue'];
-            case 3:
-                return ['text' => 'Ditolak', 'color' => 'red'];
-            case 4:
-                return ['text' => 'Diterima', 'color' => 'green'];
-            case 5:
-                return ['text' => 'Diproses', 'color' => 'yellow'];
-            case 6:
-                return ['text' => 'Ditindaklanjuti', 'color' => 'blue'];
-            case 7:
-                return ['text' => 'Ditutup', 'color' => 'green'];
-            case 8:
-                return ['text' => 'Perlu Klarifikasi', 'color' => 'orange'];
-            default:
-                return ['text' => 'Unknown', 'color' => 'gray'];
-        }
+        return ['text' =>$text , 'color' => $color];
     }
-
- 
 
     protected function getTimeAgo($datetime)
     {
@@ -284,7 +270,6 @@ class DashboardIndex extends Root
         }
     }
 
-    // Refresh dashboard data
     public function refreshDashboard()
     {
         $this->loadDashboardData();

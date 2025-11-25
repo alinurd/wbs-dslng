@@ -964,7 +964,8 @@ public function countComentFileByPengaduan($pengaduanId)
     }
     return [
         'comments' => $totalComments,
-        'files' => $totalFiles
+        'files' => $totalFiles,
+        'aktivitas' => $logs->count(),
     ];
 }
 }

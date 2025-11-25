@@ -186,12 +186,17 @@
                                             <i class="fas fa-exclamation-triangle text-blue-600"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-900">{{ $pengaduan['judul'] }} -
+                                            <p class="font-medium text-gray-900">{{ $pengaduan['jenis_pengaduan'] }} -
                                                 {{ $pengaduan['code_pengaduan'] }}</p>
                                             <p class="text-sm text-gray-500">Dilaporkan {{ $pengaduan['tanggal'] }}</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-3">
+                                         <span class="text-xs text-gray-500">{{ $pengaduan['countFile'] }}</span>
+                                            <span class="text-xs text-gray-500">{{ $pengaduan['countAktivitas'] }}</span>
+
+                                       
+
                                         <span
                                             class="px-3 py-1 bg-{{ $pengaduan['status_color'] }}-100 text-{{ $pengaduan['status_color'] }}-800 text-xs font-medium rounded-full">
                                             {{ $pengaduan['status'] }}
