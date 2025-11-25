@@ -115,33 +115,22 @@ public function getDataByUser()
         ];
     })->toArray();
 }
-protected function loadLogApproval()
+
+    protected function loadLogApproval()
 {
-    $query = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
+    $latestLogs = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
         ->whereIn('id', function($query) {
             $query->select(DB::raw('MAX(id)'))
                   ->from('log_approval')
                   ->groupBy('pengaduan_id');
-        });
-
-    // Filter berdasarkan pelapor
-    if ($this->pelapor && isset($this->userInfo['user']['id'])) {
-        $query->whereHas('pengaduan', function($q) {
-            $q->where('user_id', $this->userInfo['user']['id']);
-        });
-    }
-
-    $latestLogs = $query->orderBy('created_at', 'desc')
+        })
+        ->orderBy('created_at', 'desc')
         ->limit(5)
         ->get();
 
     $this->log_approval = $latestLogs->map(function($item) {
-        // Skip jika pengaduan tidak ada
-        if (!$item->pengaduan) {
-            return null;
-        }
-
         $catatan = $item->catatan ?: 'Tidak ada catatan';
+        
         $truncatedCatatan = strlen($catatan) > 60 
             ? substr($catatan, 0, 60) . '...' 
             : $catatan;
@@ -151,7 +140,7 @@ protected function loadLogApproval()
         return [
             'id' => $item->id,
             'pengaduan_id' => $item->pengaduan_id,
-            'code' => '#' . $item->pengaduan->code_pengaduan,
+            'code' => '#' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
             'waktu' => $this->getTimeAgo($item->created_at),
             'catatan' => $truncatedCatatan,
             'catatan_full' => $catatan, 
@@ -160,11 +149,9 @@ protected function loadLogApproval()
             'file' => $item->file ?? json_decode($item->file, true) ?? [],
             'status_color' => $item->color ?? 'blue',
             'user_name' => $item->user->name ?? 'Unknown',
-            'status' => $item->status_text ?? 'Unknown'
+            'status' => $item->status_text
         ];
-    })->filter() // Hapus null values
-      ->values() // Reset array keys
-      ->toArray();
+    })->toArray();
 
     if (empty($this->log_approval)) {
         $this->loadRecentPengaduanAsLog();
