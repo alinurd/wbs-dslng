@@ -198,7 +198,7 @@
                                         </button>
                                     @endif
 
-                                    @if ($permissions['act_complien'] ?? false)
+                                    {{-- @if ($permissions['act_complien'] ?? false)
                                         <button wire:click="addNote({{ $record->id }})" @click="open = false"
                                             class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group"
                                             role="menuitem">
@@ -206,7 +206,7 @@
                                                 class="fas fa-sticky-note w-4 h-4 text-gray-400 mr-3 group-hover:text-stone-500"></i>
                                             <span>Catatan</span>
                                         </button>
-                                    @endif
+                                    @endif --}}
 
                                     <!-- Status Actions Section -->
                                     @if ($permissions['act_complien'] ?? false)
