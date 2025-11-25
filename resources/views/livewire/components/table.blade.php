@@ -95,11 +95,20 @@
                     @elseif(str_contains($column, 'created_at') ||
                             str_contains($column, 'updated_at') ||
                             str_contains($column, 'tanggal_pengaduan'))
-                        {{-- {{ $record->$column ? \Carbon\Carbon::parse($record->$column)->format('d/m/Y H:i') : '-' }} --}}
+                        {{ $record->$column ? \Carbon\Carbon::parse($record->$column)->format('d/m/Y H:i') : '-' }}
                     @elseif($column === 'complien_progress')
                         {!! $record->complien_progress_html ?? '<span class="text-gray-400">-</span>' !!}
                     @elseif($column === 'aprv_cco')
+                    @php
+                        $roleIds = array_keys($userRole);
+                        $isRole6 = in_array(6, $roleIds); 
+                    @endphp
+ 
+                    @if($record->sts_fwd ==1 && $isRole6)
+                    <span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'><span class='w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5'></span>Dibaca</span>
+                    @else
                         {!! $record->aprv_cco_html ?? '<span class="text-gray-400">-</span>' !!}
+                    @endif
                     @else
                         {{ $record->$column ?? '-' }}
                     @endif

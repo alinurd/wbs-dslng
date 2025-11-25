@@ -314,46 +314,9 @@ class Compleien extends Root
     }
 
 
-    // Method untuk mendapatkan status badge
-    public function getStatusBadge($statusId)
-    {
-        $statusInfo = Combo::where('kelompok', 'sts-aduan')
-            ->where('param_int', $statusId)
-            ->first();
+    
 
-        if (!$statusInfo) {
-            $color = 'gray';
-            $text = 'Menunggu Review';
-        } else {
-            $color = $statusInfo->param_str ?? 'gray';
-            $text = $statusInfo->data_id;
-        }
-
-        return "
-            <span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{$color}-100 text-{$color}-800'>
-                <span class='w-1.5 h-1.5 bg-{$color}-500 rounded-full mr-1.5'></span>
-                {$text}
-            </span>
-        ";
-    }
-
-    public function getComplienProgress($record)
-    {
-        $progress = $this->calculateProgress($record);
-        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500'>
-                 <i class='fas fa-check' ></i>
-            </span>" ;
-    }
-
-    public function getAprvCco($record)
-    {
-        $sts = $this->getStatusBadge($record->status);
-        if($record->sts_final == 0 && $record->status !== 3){
-            $sts .= $this->getStatusBadge(12);
-        }
-        return $sts;
-    }
-
+     
     public function getNamaUser($record)
     {
         return $record->pelapor->name ?? $record->user->name ?? 'N/A';
