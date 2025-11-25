@@ -52,21 +52,22 @@
                         <div class="relative flex items-start space-x-3 mb-4 last:mb-0">
                             <!-- Step Indicator Compact -->
                             <div class="relative z-10 flex-shrink-0">
-                                @if($log['status'] === 'completed')
+                                @if($log['getLogStatus'] === 'completed')
                                 <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-check text-white text-xs"></i>
                                 </div>
-                                @elseif($log['status'] === 'in_progress')
+                                @elseif($log['getLogStatus'] === 'in_progress')
                                 <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-sync-alt text-white text-xs animate-spin"></i>
                                 </div>
-                                @elseif($log['status'] === 'rejected')
+                                @elseif($log['getLogStatus'] === 'rejected')
                                 <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-times text-white text-xs"></i>
                                 </div>
                                 @else
                                 <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                                     <i class="fas fa-clock text-gray-600 text-xs"></i>
+                                    {{$log['getLogStatus']}}
                                 </div>
                                 @endif
                             </div>

@@ -192,10 +192,10 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-3">
-                                         <span class="text-xs text-gray-500">{{ $pengaduan['countFile'] }}</span>
-                                            <span class="text-xs text-gray-500">{{ $pengaduan['countAktivitas'] }}</span>
+                                        <span class="text-xs text-gray-500">{{ $pengaduan['countFile'] }}</span>
+                                        <span class="text-xs text-gray-500">{{ $pengaduan['countAktivitas'] }}</span>
 
-                                       
+
 
                                         <span
                                             class="px-3 py-1 bg-{{ $pengaduan['status_color'] }}-100 text-{{ $pengaduan['status_color'] }}-800 text-xs font-medium rounded-full">
@@ -248,16 +248,18 @@
                                                         <div class="space-y-2">
                                                             @foreach ($files as $fileItem)
                                                                 <div
-                                                                    class="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
-                                                                    <div class="flex items-center space-x-5">
+                                                                    class="flex items-center justify-between bg-white rounded-lg px-2 py-1 border border-gray-200">
+
+                                                                    <div
+                                                                        class="flex items-center space-x-5 min-w-0 flex-1">
                                                                         <i class="fas fa-file text-gray-400"></i>
                                                                         <span
                                                                             class="text-xs text-gray-700 ">{{ $fileItem['original_name'] }}</span>
                                                                         <button
                                                                             wire:click="downloadFile('{{ $fileItem['path'] }}', '{{ $fileItem['original_name'] }}')"
-                                                                            class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-1 hover:underline">
+                                                                            class="text-green-600 hover:text-green-700 text-xs flex items-center space-x-3 hover:underline">
                                                                             <i class="fas fa-download text-xs"></i>
-                                                                            Download
+                                                                            <span>Download</span>
                                                                         </button>
                                                                     </div>
                                                                 </div>

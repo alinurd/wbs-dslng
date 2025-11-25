@@ -968,4 +968,46 @@ public function countComentFileByPengaduan($pengaduanId)
         'aktivitas' => $logs->count(),
     ];
 }
+
+public function getTimeAgo($datetime)
+    {
+        if (!$datetime) return 'Baru saja';
+        
+        $time = strtotime($datetime);
+        $now = time();
+        $diff = $now - $time;
+
+        if ($diff < 60) {
+            return 'Baru saja';
+        } elseif ($diff < 3600) {
+            $minutes = floor($diff / 60);
+            return $minutes . ' menit lalu';
+        } elseif ($diff < 86400) {
+            $hours = floor($diff / 3600);
+            return $hours . ' jam lalu';
+        } elseif ($diff < 2592000) {
+            $days = floor($diff / 86400);
+            return $days . ' hari lalu';
+        } else {
+            return date('d/m/Y', $time);
+        }
+    }
+
+public function getStatusInfo($status, $sts_final)
+    {
+      $statusInfo = Combo::where('kelompok', 'sts-aduan')
+            ->where('param_int', $status)
+            ->first();
+        if (!$statusInfo) {
+            $color = 'gray';
+            $text = 'Menunggu Review';
+            $text1 = 'in_progress';
+        } else {
+            $color = $statusInfo->param_str ?? 'gray';
+            $text = $statusInfo->data_id;
+            $text1 = $statusInfo->param_str_1;
+        }
+        return ['text' =>$text , 'color' => $color, 'text1'=>$text1];
+    }
+
 }

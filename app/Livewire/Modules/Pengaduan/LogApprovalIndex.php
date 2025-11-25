@@ -43,103 +43,68 @@ class LogApprovalIndex extends Root
 }
 
 
-    public function loadPengaduanDetail()
+   public function loadPengaduanDetail()
     {
-        // Load detail pengaduan berdasarkan code_pengaduan
-        $pengaduan = Pengaduan::with([
+         $pengaduan = Pengaduan::with([
             'jenisPengaduan', 
             'saluranAduan', 
             'pelapor',
-            'logApprovals.user'
+            'logApprovals'
         ])->where('code_pengaduan', $this->code_pengaduan)->first();
 
         if (!$pengaduan) {
             abort(404, 'Pengaduan tidak ditemukan');
         }
-
-        // Load detail pengaduan
+       $statusInfo = $this->getStatusInfo($pengaduan->status, $pengaduan->sts_final);
         $this->detailPengaduan = [
             'id' => $pengaduan->id,
             'code_pengaduan' => $pengaduan->code_pengaduan,
             'perihal' => $pengaduan->perihal,
             'nama_terlapor' => $pengaduan->nama_terlapor,
-            'jenis_pengaduan' => $pengaduan->jenisPengaduan->data_en ?? 'Tidak diketahui',
-            'saluran_aduan' => $pengaduan->saluranAduan->nama_saluran ?? 'Tidak diketahui',
+            'jenis_pengaduan' => $pengaduan->jenisPengaduan->data_id ?? 'Tidak diketahui',
+            'saluran_aduan' => $pengaduan->saluranAduan->data_id ?? 'Tidak diketahui',
             'email_pelapor' => $pengaduan->email_pelapor,
             'telepon_pelapor' => $pengaduan->telepon_pelapor,
             'waktu_kejadian' => $pengaduan->waktu_kejadian?->format('d/m/Y H:i'),
             'tanggal_pengaduan' => $pengaduan->tanggal_pengaduan?->format('d/m/Y H:i'),
             'uraian' => $pengaduan->uraian,
             'alamat_kejadian' => $pengaduan->alamat_kejadian,
-            'status' => $this->getStatusText($pengaduan->status, $pengaduan->sts_final),
-            'status_color' => $this->getStatusColor($pengaduan->status, $pengaduan->sts_final),
+            'status' => $statusInfo['text'],
+            'status_color' => $statusInfo['color'], 
             'progress' => $this->progressDashboard($pengaduan->status, $pengaduan->sts_final),
             'lampiran' =>  [],
             'created_at' => $pengaduan->created_at?->format('d/m/Y H:i'),
             'updated_at' => $pengaduan->updated_at?->format('d/m/Y H:i'),
         ];
 
-        // Load log approval data
-        $this->logApprovalData = $pengaduan->logApprovals->map(function($log, $index) {
-            return [
-                'step' => $index + 1,
-                'role' => $this->getUserRole($log->user_id),
-                'nama' => $log->user->name ?? 'Unknown',
-                'status' => $this->getLogStatus($log->status_text),
-                'status_text' => $log->status_text,
-                'waktu' => $log->created_at?->format('d/m/Y H:i'),
-                'catatan' => $log->catatan,
-                'file' =>  [],
-                'warna' => $log->color ?? $this->getColorByStatus($log->status_text),
-                'user_id' => $log->user_id
-            ];
+ 
+        $this->logApprovalData = $pengaduan->logApprovals->sortByDesc('id')->map(function($item, $index) {
+
+         $catatan = $item->catatan ?: 'Tidak ada catatan';
+        
+        $truncatedCatatan = strlen($catatan) > 60 
+            ? substr($catatan, 0, 60) . '...' 
+            : $catatan;
+        return [
+            'id' => $item->id,
+            'pengaduan_id' => $item->pengaduan_id,
+            'code' => '#' . ($item->pengaduan->code_pengaduan ?? $item->pengaduan_id),
+            'waktu' => $this->getTimeAgo($item->created_at),
+            'catatan' => $truncatedCatatan,
+            'catatan_full' => $catatan,  
+            'file' => $item->file ?? json_decode($item->file, true) ?? [],
+            'status_color' => $item->color ?? 'blue',
+            'user_name' => $item->user->name ?? 'Unknown',
+            'role' => $this->getUserRole($item->user_id), 
+            'status' => $item->status_text,
+            'infoSts' => $this->getStatusInfo($item->status_id, 0)
+        ];
         })->toArray();
 
         $this->detailTitle = "Detail Pengaduan - " . $pengaduan->code_pengaduan;
     }
 
-    protected function getStatusText($status, $sts_final)
-    {
-        if ($sts_final == 1) {
-            return 'Selesai';
-        }
-
-        $statusMap = [
-            0 => 'Menunggu',
-            1 => 'Dalam Proses',
-            2 => 'Diteruskan',
-            3 => 'Ditolak',
-            4 => 'Diterima',
-            5 => 'Diproses',
-            6 => 'Ditindaklanjuti',
-            7 => 'Ditutup',
-            8 => 'Perlu Klarifikasi'
-        ];
-
-        return $statusMap[$status] ?? 'Unknown';
-    }
-
-    protected function getStatusColor($status, $sts_final)
-    {
-        if ($sts_final == 1) {
-            return 'green';
-        }
-
-        $colorMap = [
-            0 => 'gray',
-            1 => 'yellow',
-            2 => 'blue',
-            3 => 'red',
-            4 => 'green',
-            5 => 'yellow',
-            6 => 'blue',
-            7 => 'green',
-            8 => 'orange'
-        ];
-
-        return $colorMap[$status] ?? 'gray';
-    }
-
+      
      
     protected function getUserRole($userId)
     {
@@ -154,37 +119,7 @@ class LogApprovalIndex extends Root
         return $roleMap[$userId] ?? 'User';
     }
 
-    protected function getLogStatus($statusText)
-    {
-        $statusMap = [
-            'Complete [Ex]' => 'completed',
-            'Not Complete [Ex]' => 'rejected',
-            'Complete [In]' => 'completed',
-            'Not Complete [In]' => 'rejected',
-            'Forward' => 'completed',
-            'Sufficient' => 'completed',
-            'Need further clarification' => 'in_progress',
-            'Read' => 'completed'
-        ];
 
-        return $statusMap[$statusText] ?? 'pending';
-    }
-
-    protected function getColorByStatus($statusText)
-    {
-        $colors = [
-            'Complete [Ex]' => 'green',
-            'Not Complete [Ex]' => 'red',
-            'Complete [In]' => 'green',
-            'Not Complete [In]' => 'red',
-            'Forward' => 'blue',
-            'Sufficient' => 'green',
-            'Need further clarification' => 'yellow',
-            'Read' => 'blue'
-        ];
-        
-        return $colors[$statusText] ?? 'gray';
-    }
 
     public function columns()
     {
