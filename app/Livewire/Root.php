@@ -1009,5 +1009,22 @@ public function getStatusInfo($status, $sts_final)
         }
         return ['text' =>$text , 'color' => $color, 'text1'=>$text1];
     }
-
+public function getPengaduanById($id){
+        $record = $this->model::where('id',$id)->first();
+        $statusInfo = Combo::where('kelompok', 'sts-aduan')
+            ->where('param_int', $record->status)
+            ->first();
+            $this->pengaduan_id=$id;
+        $this->detailData = [
+            'Kode Tracking' => $record->code_pengaduan,
+            'Perihal' => $record->perihal,
+            'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
+            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
+            'Status' => $statusInfo->data_id ?? 'Menunggu Review',
+            'Status Color' => $statusInfo->param_str ?? 'gray',
+            'Lokasi Kejadian' => $record->alamat_kejadian ?? '-',
+            'Deskripsi' => $record->uraian ?? '-',
+        ];
+        $this->detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
+    }
 }

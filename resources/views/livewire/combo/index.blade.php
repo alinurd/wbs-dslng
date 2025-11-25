@@ -286,7 +286,7 @@
         <div class="fixed inset-0 z-50 overflow-y-auto animate-fade-in" style="background-color: rgba(0,0,0,0.5)">
             <div class="flex min-h-full items-center justify-center p-4">
                 <div
-                    class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl transform transition-all duration-300 scale-95 animate-scale-in">
+                    class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl transform transition-all duration-300 scale-95 ">
                     <div class="modal-header bg-[rgb(0,111,188)] text-white rounded-t-lg px-6 py-4">
                         <h5 class="modal-title text-lg font-semibold">
                             <i class="fas {{ $updateMode ? 'fa-edit' : 'fa-plus' }} me-2"></i>
@@ -376,7 +376,7 @@
         <div class="fixed inset-0 z-50 overflow-y-auto animate-fade-in" style="background-color: rgba(0,0,0,0.5)">
             <div class="flex min-h-full items-center justify-center p-4">
                 <div
-                    class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 scale-95 animate-scale-in">
+                    class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 scale-95 ">
                     <div class="modal-header bg-[rgb(0,111,188)] text-white rounded-t-lg px-6 py-4">
                         <h5 class="modal-title text-lg font-semibold">
                             <i class="fas fa-filter me-2"></i>

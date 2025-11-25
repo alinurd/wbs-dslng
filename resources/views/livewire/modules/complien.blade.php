@@ -121,6 +121,12 @@
             'data' => $detailData,
             'onClose' => 'closeDetailModal',
         ]) 
+        @include('livewire.components.detail-modal', [
+            'show' => $showDetailModal,
+            'title' => $detailTitle,
+            'data' => $detailData,
+            'onClose' => 'CloseViewDetail',
+        ]) 
 
         @include('livewire.components.comment', [
             'show' => $showComment,

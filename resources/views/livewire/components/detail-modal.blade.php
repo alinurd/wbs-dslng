@@ -18,7 +18,7 @@
 @if($show)
 <div class="fixed inset-0 z-50 overflow-y-auto animate-fade-in" style="background-color: rgba(0,0,0,0.5)">
     <div class="flex min-h-full items-center justify-center p-4">
-        <div class="modal-content bg-white rounded-lg shadow-xl w-full {{ $modalSize }} transform transition-all duration-300 scale-95 animate-scale-in">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full {{ $modalSize }} transform transition-all duration-300 scale-95 ">
             <!-- Header -->
             <div class="modal-header bg-gradient-to-r from-[rgb(0,111,188)] to-[rgb(0,95,160)] text-white rounded-t-lg px-6 py-5 shadow-lg">
                 <div class="flex items-center justify-between">
@@ -230,23 +230,4 @@
     </div>
 </div>
 @endif
-
-<style>
-    .animate-fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-    
-    .animate-scale-in {
-        animation: scaleIn 0.3s ease-in-out;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    @keyframes scaleIn {
-        from { transform: scale(0.95); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-</style>
+ 

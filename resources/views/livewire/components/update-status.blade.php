@@ -9,7 +9,7 @@
     <div class="fixed inset-0 z-50  animate-fade-in" style="background-color: rgba(0,0,0,0.5)">
         <div class="flex min-h-full items-center justify-center p-4">
             <div
-                class="modal-content bg-white rounded-lg shadow-xl w-full transform transition-all duration-300 scale-95 animate-scale-in">
+                class="modal-content bg-white rounded-lg shadow-xl w-full transform transition-all duration-300 scale-95 ">
                 <!-- Form wrapper -->
                 <form wire:submit.prevent="submitForm">
                     <!-- Header -->
@@ -38,14 +38,14 @@
 
                     <!-- Body -->
                     <div class="modal-body p-0 max-h-[75vh]  flex">
-                        <!-- Sidebar Informasi Pengaduan -->
+                         <!-- Sidebar Informasi Pengaduan -->
                         <div class="w-1/3 border-r border-gray-200 bg-gray-50 flex flex-col">
                             <div class="p-6 flex-1 flex flex-col">
                                 <h6 class="font-semibold text-gray-700 mb-4 flex items-center">
                                     <i class="fas fa-info-circle mr-2 text-blue-500"></i>
                                     Informasi Pengaduan
                                 </h6>
-
+                                
                                 <!-- Komponen log dengan height yang sesuai -->
                                 <div class="flex-1">
                                     @include('livewire.components.log', [

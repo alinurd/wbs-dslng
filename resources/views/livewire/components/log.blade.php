@@ -1,8 +1,7 @@
 @php
     // Jika data kosong, tampilkan empty state
     $isEmpty = empty($data);
-@endphp
-
+@endphp 
 <div class="h-full flex flex-col">
     <!-- Header Compact -->
     <div class="mb-4 pb-3 border-b border-gray-200">
@@ -21,7 +20,7 @@
                         <div class="flex-1 min-w-0">
                             <h2 class="text-sm font-semibold text-gray-900 truncate">{{ $pengaduan['jenis_pengaduan'] }}</h2>
                             <div class="flex items-center space-x-3 mt-1">
-                                <span class="text-xs text-gray-500">ID: {{ $pengaduan['id'] }}</span>
+                                <span class="text-xs text-gray-500">Code: {{ $pengaduan['code'] }}</span>
                                 @php
                                     $lastLog = end($pengaduan['log_approval']);
                                     $warna = $lastLog['status_color'];
@@ -29,7 +28,14 @@
                             </div>
                         </div>
                         <div class="text-right ml-3">
-                            lihat Detail Pengaduan 
+                            <button 
+                                wire:key="viewDetail-{{ $pengaduan['id'] }}"
+                                wire:click="viewDetail({{ $pengaduan['id'] }})"
+                                type="button"
+                                class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group">
+                                <i class="fas fa-eye me-1"></i>
+                                <span>Lihat Detail</span>
+                            </button>                   
                         </div>
                     </div>
                 </div>

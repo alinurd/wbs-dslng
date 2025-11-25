@@ -14,7 +14,7 @@
     <div class="fixed inset-0 z-50 overflow-y-auto animate-fade-in" style="background-color: rgba(0,0,0,0.5)">
         <div class="flex min-h-full items-center justify-center p-4">
             <div
-                class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2{{ $size }} transform transition-all duration-300 scale-95 animate-scale-in">
+                class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2{{ $size }} transform transition-all duration-300 scale-95 ">
                 <!-- Header -->
                 <div
                     class="modal-header bg-gradient-to-r from-[rgb(0,111,188)] to-[rgb(0,95,160)] text-white rounded-t-lg px-6 py-5 shadow-lg">

@@ -238,7 +238,8 @@ class Compleien extends Root
             'user' => $this->userInfo,
             'log' => [
                 [
-                    'id' => $record->code_pengaduan,
+                    'id' => $record->id,
+                    'code' => $record->code_pengaduan,
                     'jenis_pengaduan' => $record->jenisPengaduan->data_id ?? 'Tidak diketahui',
                     'status_akhir' => $currentStatusInfo->data_id ?? 'Menunggu Review',
                     'progress' => $this->calculateProgress($record),
@@ -432,27 +433,24 @@ class Compleien extends Root
         return $q;
     }
 
+       public function CloseViewDetail()
+   {
+        $this->showDetailModal = false;
+        $this->updateStatus($this->pengaduan_id, $status = null) ;
+    }
+    
+    public function viewDetail($id)
+    {
+        can_any([strtolower($this->modul).'.view']);
+        $this->getPengaduanById($id);
+        $this->showDetailModal = true;
+        $this->showuUdateStatus = false;
+    }
     public function view($id)
     {
         can_any([strtolower($this->modul).'.view']);
-        
-        $record = $this->model::findOrFail($id);
-        $statusInfo = Combo::where('kelompok', 'sts-aduan')
-            ->where('param_int', $record->status)
-            ->first();
-
-        $this->detailData = [
-            'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
-            'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
-            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status' => $statusInfo->data_id ?? 'Menunggu Review',
-            'Status Color' => $statusInfo->param_str ?? 'gray',
-            'Lokasi Kejadian' => $record->alamat_kejadian ?? '-',
-            'Deskripsi' => $record->uraian ?? '-',
-        ];
-        
-        $this->detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
+         $this->pengaduan_id=$id;
+        $this->getPengaduanById($id);
         $this->showDetailModal = true;
     }
 
