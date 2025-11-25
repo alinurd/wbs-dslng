@@ -70,8 +70,20 @@
                                             <div
                                                 class="w-2 h-2 bg-{{ $data['status_ex']['color'] }}-500 rounded-full animate-pulse">
                                             </div>
-                                            <span
-                                                class="text-sm font-medium text-{{ $data['status_ex']['color'] }}-700">{{ $data['status_ex']['name'] }}</span>
+                                            
+                                                @if($data['sts_fwd']['id'] === 1 && $data['user']['role']['id'] === 6)
+                                                <span
+                                                class="text-sm font-medium text-{{$data['sts_fwd']['data']['color']}}-700">
+                                                {{$data['sts_fwd']['data']['text']}}
+                                            </span>
+                                                @else
+                                                <span
+                                                class="text-sm font-medium text-{{ $data['status_ex']['color'] }}-700">
+                                                    {{ $data['status_ex']['name'] }}
+                                                </span>
+                                                </span>
+                                                
+                                                @endif
                                         </div>
                                     </div>
                                 </div>
@@ -314,7 +326,7 @@
                 {{-- Button untuk role lainnya --}}
                 @if($data['user']['role']['id'] == 6)
                     {{-- Untuk role 6: hanya tampilkan button jika belum di-forward --}}
-                    @if($data['sts_fwd'] !== 1)
+                    @if($data['sts_fwd']['id'] !== 1)
                         <button type="submit"
                             wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
                             class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
@@ -336,12 +348,12 @@
     @endforeach
 
     {{-- Button Read untuk role 6 yang sudah di-forward --}}
-    @if($data['sts_fwd'] === 1 && $data['user']['role']['id'] === 6)
+    @if($data['sts_fwd']['id'] === 1 && $data['user']['role']['id'] === 6)
         <button 
-            class="px-6 py-2 bg-gray-500 text-white rounded-lg font-medium shadow-sm flex items-center opacity-50 cursor-not-allowed"
+            class="px-6 py-2 bg-{{$data['sts_fwd']['data']['color']}}-600 text-white rounded-lg font-medium shadow-sm flex items-center opacity-50 cursor-not-allowed"
             disabled>
             <i class="fas fa-check-circle me-1"></i>
-            <span>Read</span>
+            <span>{{$data['sts_fwd']['data']['text']}}</span>
         </button>
     @endif
 
