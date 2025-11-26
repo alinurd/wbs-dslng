@@ -270,7 +270,8 @@ class Compleien extends Root
             ],
             'status_id' => $record->status,
             'act_cc' => $record->act_cc,
-            'act_int' => $act_int,
+            // 'act_int' => $act_int,
+            'act_int' => true,
             'act_cco' => $record->act_cco,
             'sts_fwd' => [
                 'id' => $record->sts_fwd,
