@@ -224,15 +224,16 @@
                         <div class="p-6">
                             <div class="space-y-4">
                                 @foreach ($log_approval as $log)
+                                @if(!empty($log['code']))
                                     <div class="border-l-4 border-{{ $log['status_color'] }}-500 pl-4 py-2">
                                         <div class="flex justify-between items-start mb-1">
-                                            <p class="font-medium text-gray-900">{{ $log['code'] }} <span
+                                            <p class="font-medium text-gray-900">{{ $log['code'] ??'-' }} <span
                                                     class="px-2 py-1 bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 text-xs font-medium rounded-full">
                                                     {{ $log['status'] }}
                                                 </span></p>
-                                            <span class="text-xs text-gray-500">{{ $log['waktu'] }}</span>
+                                            <span class="text-xs text-gray-500">{{ $log['waktu'] ??'-'}}</span>
                                         </div>
-                                        <p class="text-sm text-gray-600 mb-2">{{ $log['catatan'] }}</p>
+                                        <p class="text-sm text-gray-600 mb-2">{{ $log['catatan'] ??'-'}}</p>
                                         <div>
                                         </div>
 
@@ -270,6 +271,7 @@
                                             @endif
                                         </div>
                                     </div>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>
