@@ -150,6 +150,13 @@ class Compleien extends Root
                         'updated_at' => now(),
                     ];
 
+                    $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+                    if($roleId == 5){
+                        $updateData['act_cc'] = 1;
+                    }
+                    if($roleId == 7){
+                        $updateData['act_cco'] = 1;
+                    }
                     // Add catatan if provided
                     if (!empty($this->catatan)) {
                         $updateData['catatan'] = $this->catatan;
@@ -249,6 +256,7 @@ class Compleien extends Root
             ->where('param_int', $record->status)
             ->first();
 
+            $act_int = ($record->act_cc || $record->act_cco) == 1 ? false : true;
         $this->detailData = [
             'id' => $id,
             'Kode Tracking' => $record->code_pengaduan,
@@ -261,6 +269,9 @@ class Compleien extends Root
                 'color' => $currentStatusInfo->param_str ?? 'yellow',
             ],
             'status_id' => $record->status,
+            'act_cc' => $record->act_cc,
+            'act_int' => $act_int,
+            'act_cco' => $record->act_cco,
             'sts_fwd' => [
                 'id' => $record->sts_fwd,
                 'data' => $this->getStatusInfo(2, 0)

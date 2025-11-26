@@ -28,6 +28,8 @@ class Pengaduan extends Model
         'user_id',
         'fwd_to',
         'sts_fwd',
+        'act_cco',
+        'act_cc',
         'ditutup_pada'
     ];
 
