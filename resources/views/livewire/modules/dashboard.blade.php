@@ -2,6 +2,7 @@
     $roleIds = array_keys($userRole);
     $isRole3 = in_array(3, $roleIds);
     $reportRoute = $isRole3 ? 'p_tracking' : 'complien';
+    $isVerif=$user->email_verified_at;
 @endphp
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -19,22 +20,19 @@
                         Sistem pelaporan yang aman, rahasia, dan terpercaya untuk menciptakan budaya kerja transparan
                         dan berintegritas
                     </p>
-                    @if (!$user->email_verified_at)
-                        <div class="bg-red-500/20 border border-red-300 rounded-lg p-4 inline-block">
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-exclamation-triangle text-red-300"></i>
-                                <span class="text-red-100 font-medium">Silahkan lakukan verifikasi email terlebih
-                                    dahulu!</span>
-                            </div>
-                        </div>
-                    @endif
+                   
+                       
                 </div>
-                <div class="hidden lg:block">
+                <div >
                     <i class="fas fa-shield-alt text-blue-300 text-8xl opacity-50"></i>
                 </div>
             </div>
+             @if (!$isVerif)
+            @include('livewire.components.email-verification', [ 'isVerif' => $isVerif,'canResend' => $canResend, ])
+             @endif
         </div>
 
+        @if ($isVerif)
         <!-- Quick Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -306,5 +304,6 @@
                 @include('livewire.components.suport')
             </div>
         </div>
+        @endif
     </div>
 </div>

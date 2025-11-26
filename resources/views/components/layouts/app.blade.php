@@ -369,6 +369,33 @@
   }
 }
         </script>
+
+        <script>
+document.addEventListener('livewire:load', function () {
+    Livewire.on('start-countdown', (data) => {
+        let countdown = data.duration;
+        const interval = setInterval(() => {
+            countdown--;
+            
+            // Update Livewire property
+            Livewire.emit('updateCountdown', countdown);
+            
+            if (countdown <= 0) {
+                clearInterval(interval);
+                Livewire.emit('enableResend');
+            }
+        }, 1000);
+    });
+    
+    Livewire.on('updateCountdown', (countdown) => {
+        // This will be handled by Livewire
+    });
+    
+    Livewire.on('enableResend', () => {
+        // This will be handled by Livewire
+    });
+});
+</script>
     @endif
 
 </body>

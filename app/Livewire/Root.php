@@ -9,13 +9,15 @@ use App\Models\Comment;
 use App\Models\LogApproval;
 use App\Models\Owner;
 use App\Models\Pengaduan;
+use App\Services\EmailService;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
-use Laravel\Jetstream\Role;
+use Illuminate\Support\Str;
+
+
 use Livewire\Component;
 use Livewire\WithPagination;
-
-
 
 abstract class Root extends Component
 {
@@ -73,6 +75,14 @@ abstract class Root extends Component
     public $pelapor = false;
 
 
+    //verif
+    public $verification_code;
+    public $user;
+    public $isVerif;
+    public $canResend = true;
+    public $countdown = 0;
+    public $showCountdown = false;
+
     // ================== MOUNT =====================
     public function mount()
     {
@@ -88,7 +98,8 @@ abstract class Root extends Component
         if($this->userInfo['role']['id'] === 3){
             $this->pelapor=true;
         }
-        $this->userInfo();
+        $this->isVerif = !is_null($this->userInfo['user']['email_verified_at']);
+        $this->checkResendCooldown();
         can_any([strtolower($this->modul) . '.view']);
 
         // Locale
@@ -1048,5 +1059,125 @@ public function getPengaduanById($id){
         $this->detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
     }
 
+
+      public function verifyEmail()
+    {
+
+        $user = \auth()->user(); 
+        $key = 'email-verification-attempts:' . $user->id;
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+            
+
+            $this->addError('verification_code', "Terlalu banyak percobaan. Silakan coba lagi dalam {$seconds} detik.");
+            return;
+        }
+
+        RateLimiter::hit($key);
+
+        // Verifikasi kode
+        if ($user->code_verif === $this->verification_code) {
+            // Update user
+            $user->update([
+                'email_verified_at' => now(),
+                'status' => 1,
+                'code_verif' => null
+            ]);
+
+            // Kirim email welcome
+            $emailService = new EmailService();
+            $emailService->setUserId($user->id)
+                        ->sendWelcomeEmail($user->email, $user->name);
+
+            // Audit log
+            AuditLog::create([
+                'user_id' => $user->id,
+                'action' => 'email_verified',
+                'table_name' => 'users',
+                'record_id' => $user->id,
+                'old_values' => json_encode(['email_verified_at' => null]),
+                'new_values' => json_encode([
+                    'email_verified_at' => now()->toDateTimeString(),
+                    'status' => 1
+                ]),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'created_at' => now()
+            ]);
+
+            $this->isVerif = true;
+            $this->notify('success', 'Email berhasil diverifikasi! halaman akan di refresh');
+            
+            return redirect()->intended('/dashboard');
+         } else {
+            $this->addError('verification_code', 'Kode verifikasi tidak valid. Silakan coba lagi.');
+        }
+    }
+    
+        public function resendVerificationCode()
+    {
+        // Rate limiting untuk pengiriman ulang
+        $user = \auth()->user();
+        $key = 'email-verification-resend:' . $user->id;
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            $seconds = RateLimiter::availableIn($key);
+            
+            $this->notify('error', "Terlalu banyak permintaan. Silakan coba lagi dalam {$seconds} detik."); 
+            return;
+        }
+
+        RateLimiter::hit($key, 180);
+
+        // Generate kode baru
+        $newCode = Str::random(8);
+        
+        $user->update([
+            'code_verif' => $newCode
+        ]);
+
+        // Kirim email verifikasi baru
+        $emailService = new EmailService();
+        $emailSent = $emailService->setUserId($user->id)
+                                 ->sendVerificationEmail($user->email, $newCode, $user->name);
+
+        // Set cooldown
+        $this->canResend = false;
+        $this->countdown = 60;
+        $this->showCountdown = true;
+
+        if ($emailSent) {
+             $this->notify('success', "Kode verifikasi baru telah dikirim ke email Anda."); 
+            //  $this->addError('verification_code', 'Kode verifikasi baru telah dikirim ke email Anda.');
+ 
+        } else {
+             $this->notify('error', "Gagal mengirim kode verifikasi. Silakan coba lagi.");  
+        }
+
+        // Start countdown
+        $this->dispatch('start-countdown');
+    }
+
+    private function checkResendCooldown()
+    {
+        $user = \auth()->user();
+        $key = 'email-verification-resend:' . $user->id;
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            $this->canResend = false;
+            $this->countdown = RateLimiter::availableIn($key);
+            $this->showCountdown = true;
+        }
+    }
+ 
+    public function decreaseCountdown()
+    {
+        if ($this->countdown > 0) {
+            $this->countdown--;
+            
+            if ($this->countdown === 0) {
+                $this->canResend = true;
+                $this->showCountdown = false;
+            }
+        }
+    }
     
 }

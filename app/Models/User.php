@@ -44,6 +44,7 @@ class User extends Authenticatable
         'insert_datetime',
         'update_datetime',
         'code_verif',
+        'email_verified_at',
     ];
 
  
