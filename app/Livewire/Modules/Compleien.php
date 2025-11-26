@@ -256,7 +256,8 @@ class Compleien extends Root
             ->where('param_int', $record->status)
             ->first();
 
-        $act_int = ($record->act_cc || $record->act_cco) == 1 ? false : true;
+        $act_int = ( $record->act_cco) == 1 ? false : true;
+        // $act_int = ($record->act_cc || $record->act_cco) == 1 ? false : true;
         $this->detailData = [
             'id' => $id,
             'Kode Tracking' => $record->code_pengaduan,
@@ -271,7 +272,7 @@ class Compleien extends Root
             'status_id' => $record->status,
             'act_cc' => $record->act_cc,
             // 'act_int' => $act_int,
-            'act_int' => true,
+            'act_int' => $act_int,
             'act_cco' => $record->act_cco,
             'sts_fwd' => [
                 'id' => $record->sts_fwd,
