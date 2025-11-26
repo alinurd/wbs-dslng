@@ -115,7 +115,7 @@ class EmailService
      */
     public function sendVerificationEmail(string $to, string $verificationCode, string $userName = ''): bool
     {
-        $subject = 'Kode Verifikasi Akun - The Gallery Villa';
+        $subject = 'Kode Verifikasi Akun - Whistleblowing System DSLNG';
         $view = 'emails.verification';
         $purpose = 'account_verification';
         
@@ -133,7 +133,7 @@ class EmailService
      */
     public function sendWelcomeEmail(string $to, string $userName = ''): bool
     {
-        $subject = 'Selamat Datang di The Gallery Villa';
+        $subject = 'Selamat Datang di Whistleblowing System DSLNG';
         $view = 'emails.welcome';
         $purpose = 'welcome_email';
         
@@ -149,7 +149,7 @@ class EmailService
      */
     public function sendPasswordResetEmail(string $to, string $resetLink, string $userName = ''): bool
     {
-        $subject = 'Reset Password - The Gallery Villa';
+        $subject = 'Reset Password - Whistleblowing System DSLNG';
         $view = 'emails.password-reset';
         $purpose = 'password_reset';
         
