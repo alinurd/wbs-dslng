@@ -104,7 +104,7 @@ function initializePatternChallenge(componentId) {
     const currentStep = document.getElementById(`current-step-${componentId}`);
     
     if (!patternGrid) {
-        console.log('Pattern grid not found for:', componentId);
+        // console.log('Pattern grid not found for:', componentId);
         return;
     }
     
@@ -112,7 +112,7 @@ function initializePatternChallenge(componentId) {
     const expectedPattern = @json($challengeData['pattern'] ?? []);
     const totalSteps = expectedPattern.length;
     
-    console.log('Initializing pattern challenge:', { expectedPattern, totalSteps });
+    // console.log('Initializing pattern challenge:', { expectedPattern, totalSteps });
 
     function resetState() {
         userPattern = [];
@@ -189,11 +189,11 @@ function initializePatternChallenge(componentId) {
                 const userPatternArray = userPattern.map(Number);
                 const isMatch = JSON.stringify(userPatternArray) === JSON.stringify(expectedPattern);
                 
-                console.log('Pattern verification:', {
-                    userPattern: userPatternArray,
-                    expectedPattern: expectedPattern,
-                    isMatch: isMatch
-                });
+                // console.log('Pattern verification:', {
+                //     userPattern: userPatternArray,
+                //     expectedPattern: expectedPattern,
+                //     isMatch: isMatch
+                // });
                 
                 if (isMatch) {
                     showPatternSuccess();
@@ -322,7 +322,7 @@ function enableLoginButtonDirectly() {
             btn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
         });
         window.captchaVerified = true;
-        console.log('Login button enabled');
+        // console.log('Login button enabled');
     }
 }
 
@@ -335,7 +335,7 @@ function disableLoginButton() {
             btn.classList.add('bg-gray-400', 'cursor-not-allowed');
         });
         window.captchaVerified = false;
-        console.log('Login button disabled');
+        // console.log('Login button disabled');
     }
 }
 
@@ -351,13 +351,13 @@ function initializeCurrentChallenge() {
         return;
     }
     
-    console.log('Initializing current challenge:', componentId);
+    // console.log('Initializing current challenge:', componentId);
     initializePatternChallenge(componentId);
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing captcha');
+    // console.log('DOM loaded, initializing captcha');
     initializeCurrentChallenge();
 });
 
@@ -371,34 +371,34 @@ if (document.readyState === 'loading') {
 // Livewire event handlers
 document.addEventListener('livewire:init', function() {
     const componentId = '{{ $componentId }}';
-    console.log('Livewire initialized for captcha:', componentId);
+    // console.log('Livewire initialized for captcha:', componentId);
     
     Livewire.on('new-challenge-generated', () => {
-        console.log('New challenge generated, reinitializing...');
+        // console.log('New challenge generated, reinitializing...');
         setTimeout(() => {
             initializeCurrentChallenge();
         }, 50);
     });
     
     Livewire.on('captchaReset', () => {
-        console.log('Captcha reset, disabling login button');
+        // console.log('Captcha reset, disabling login button');
         disableLoginButton();
     });
     
     Livewire.on('patternMismatch', () => {
-        console.log('Pattern mismatch detected');
+        // console.log('Pattern mismatch detected');
         // Error sudah ditangani oleh generateNewChallenge()
     });
     
     Livewire.on('captchaVerified', () => {
-        console.log('Captcha verified successfully');
+        // console.log('Captcha verified successfully');
         enableLoginButtonDirectly();
     });
     
     // Handle Livewire component updates
     Livewire.hook('element.updated', (el, component) => {
         if (el.id === componentId) {
-            console.log('Captcha element updated, reinitializing...');
+            // console.log('Captcha element updated, reinitializing...');
             setTimeout(() => {
                 initializeCurrentChallenge();
             }, 50);
@@ -409,7 +409,7 @@ document.addEventListener('livewire:init', function() {
 // Handle manual refresh button
 document.addEventListener('click', function(e) {
     if (e.target.closest('[wire\\:click="generateNewChallenge"]')) {
-        console.log('Manual refresh triggered');
+        // console.log('Manual refresh triggered');
         disableLoginButton();
     }
 });
