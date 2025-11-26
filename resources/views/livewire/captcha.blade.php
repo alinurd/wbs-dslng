@@ -3,6 +3,9 @@
         <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
+                    {{-- <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center justify-center">
+                        <span class="text-white text-xs font-bold"></span>
+                    </div> --}}
                     <span class="text-sm font-medium text-gray-700">{{ __('captcha.security_verification') }}</span>
                 </div>
                 
@@ -81,11 +84,11 @@
                         @endif
                     </div>
                     
-                    {{-- <div class="mt-2">
+                    <div class="mt-2">
                         <p class="text-sm text-gray-600" id="pattern-status-{{ $componentId }}">
                             {!! __('captcha.select_step', ['current' => '<span class="font-bold text-blue-600" id="current-step-' . $componentId . '">1</span>', 'total' => $patternLength]) !!}
                         </p>
-                    </div> --}}
+                    </div>
                 </div>
                 @endif
             @endif
@@ -100,12 +103,17 @@ function initializePatternChallenge(componentId) {
     const patternStatus = document.getElementById(`pattern-status-${componentId}`);
     const currentStep = document.getElementById(`current-step-${componentId}`);
     
-    if (!patternGrid) return;
+    if (!patternGrid) {
+        console.log('Pattern grid not found for:', componentId);
+        return;
+    }
     
     let userPattern = [];
     const expectedPattern = @json($challengeData['pattern'] ?? []);
     const totalSteps = expectedPattern.length;
     
+    console.log('Initializing pattern challenge:', { expectedPattern, totalSteps });
+
     function resetState() {
         userPattern = [];
         updateSequenceIndicators();
@@ -122,7 +130,9 @@ function initializePatternChallenge(componentId) {
     
     function updateSequenceIndicators() {
         const dots = sequenceIndicators?.querySelectorAll('.sequence-dot');
-        dots?.forEach((dot, index) => {
+        if (!dots) return;
+        
+        dots.forEach((dot, index) => {
             if (index < userPattern.length) {
                 dot.classList.remove('bg-gray-300');
                 dot.classList.add('bg-blue-500');
@@ -140,22 +150,17 @@ function initializePatternChallenge(componentId) {
         currentStep.textContent = currentStepNumber;
         
         if (userPattern.length === totalSteps) {
-            patternStatus.innerHTML = `<span class="text-green-600 font-bold">${lang('captcha.pattern_complete')}</span>`;
+            patternStatus.innerHTML = `<span class="text-green-600 font-bold">${getTranslation('captcha.pattern_complete')}</span>`;
         } else {
-            patternStatus.innerHTML = lang('captcha.select_step', {
+            patternStatus.innerHTML = getTranslation('captcha.select_step', {
                 current: `<span class="font-bold text-blue-600">${currentStepNumber}</span>`,
                 total: totalSteps
             });
         }
     }
     
-    resetState();
-    
-    showPatternDemo(expectedPattern, componentId, () => {
-        enableUserInput();
-    });
-    
     function enableUserInput() {
+        // Remove existing listeners and add new one
         patternGrid.removeEventListener('click', handleCellClick);
         patternGrid.addEventListener('click', handleCellClick);
     }
@@ -166,19 +171,17 @@ function initializePatternChallenge(componentId) {
         
         const index = parseInt(cell.dataset.index);
         
-        // HAPUS: Pengecekan duplikat - biarkan user memilih angka yang sama
-        // if (userPattern.includes(index)) {
-        //     return;
-        // }
-        
+        // Biarkan user memilih angka yang sama (tidak ada pengecekan duplikat)
         userPattern.push(index);
         
+        // Update tampilan cell yang diklik
         cell.classList.remove('bg-white', 'border-gray-300');
         cell.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
         
         updateSequenceIndicators();
         updatePatternStatus();
         
+        // Jika user sudah memilih semua step
         if (userPattern.length === totalSteps) {
             patternGrid.removeEventListener('click', handleCellClick);
             
@@ -186,10 +189,17 @@ function initializePatternChallenge(componentId) {
                 const userPatternArray = userPattern.map(Number);
                 const isMatch = JSON.stringify(userPatternArray) === JSON.stringify(expectedPattern);
                 
+                console.log('Pattern verification:', {
+                    userPattern: userPatternArray,
+                    expectedPattern: expectedPattern,
+                    isMatch: isMatch
+                });
+                
                 if (isMatch) {
                     showPatternSuccess();
                     enableLoginButtonDirectly();
                     
+                    // Kirim ke Livewire untuk verifikasi
                     if (typeof Livewire !== 'undefined') {
                         Livewire.dispatch('verify-pattern', { 
                             pattern: userPatternArray 
@@ -198,6 +208,7 @@ function initializePatternChallenge(componentId) {
                 } else {
                     showPatternError();
                     
+                    // Kirim ke Livewire untuk trigger refresh
                     if (typeof Livewire !== 'undefined') {
                         Livewire.dispatch('verify-pattern', { 
                             pattern: userPatternArray 
@@ -216,7 +227,7 @@ function initializePatternChallenge(componentId) {
         });
         
         if (patternStatus) {
-            patternStatus.innerHTML = `<span class="text-red-600 font-bold">${lang('captcha.pattern_incorrect')}</span>`;
+            patternStatus.innerHTML = `<span class="text-red-600 font-bold">${getTranslation('captcha.pattern_incorrect')}</span>`;
         }
         
         patternGrid.style.pointerEvents = 'none';
@@ -232,55 +243,71 @@ function initializePatternChallenge(componentId) {
         });
         
         if (patternStatus) {
-            patternStatus.innerHTML = `<span class="text-green-600 font-bold">${lang('captcha.verification_success')}</span>`;
+            patternStatus.innerHTML = `<span class="text-green-600 font-bold">${getTranslation('captcha.verification_success')}</span>`;
         }
     }
     
     function showPatternDemo(pattern, compId, callback) {
         const cells = document.querySelectorAll(`#pattern-grid-${compId} .pattern-cell`);
         
+        // Reset semua cell terlebih dahulu
         cells.forEach(cell => {
             cell.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
             cell.classList.add('bg-white', 'border-gray-300');
         });
         
         let step = 0;
-        const interval = setInterval(() => {
+        
+        function highlightNext() {
             if (step >= pattern.length) {
-                clearInterval(interval);
-                resetCells(cells);
+                // Demo selesai, reset cells dan panggil callback
+                resetDemoCells(cells);
                 setTimeout(callback, 300);
                 return;
             }
             
             const cellIndex = pattern[step];
             if (cells[cellIndex]) {
+                // Highlight cell
                 cells[cellIndex].classList.add('bg-blue-500', 'text-white', 'border-blue-500');
                 
+                // Kembalikan ke normal setelah delay
                 setTimeout(() => {
                     cells[cellIndex].classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+                    step++;
+                    setTimeout(highlightNext, 300); // Delay sebelum step berikutnya
                 }, 500);
+            } else {
+                step++;
+                setTimeout(highlightNext, 300);
             }
-            
-            step++;
-        }, 800);
+        }
+        
+        // Mulai demo
+        setTimeout(highlightNext, 500);
     }
     
-    function resetCells(cells) {
+    function resetDemoCells(cells) {
         cells.forEach(cell => {
             cell.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
             cell.classList.add('bg-white', 'border-gray-300');
         });
     }
+    
+    // Initialize
+    resetState();
+    showPatternDemo(expectedPattern, componentId, () => {
+        enableUserInput();
+    });
 }
 
-// Language helper function
-function lang(key, replacements = {}) {
+// Translation helper function
+function getTranslation(key, replacements = {}) {
     const translations = {
         'captcha.select_step': `Pilih ${replacements.current} dari ${replacements.total} angka`,
         'captcha.pattern_complete': 'Pola lengkap! Memverifikasi...',
         'captcha.verification_success': 'Verifikasi Berhasil!',
-        'captcha.pattern_incorrect': 'Pola tidak sesuai!',
+        'captcha.pattern_incorrect': 'Pola tidak sesuai! Memuat pola baru...',
     };
     
     return translations[key] || key;
@@ -295,6 +322,7 @@ function enableLoginButtonDirectly() {
             btn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
         });
         window.captchaVerified = true;
+        console.log('Login button enabled');
     }
 }
 
@@ -307,6 +335,7 @@ function disableLoginButton() {
             btn.classList.add('bg-gray-400', 'cursor-not-allowed');
         });
         window.captchaVerified = false;
+        console.log('Login button disabled');
     }
 }
 
@@ -315,16 +344,24 @@ function initializeCurrentChallenge() {
     const isRefreshing = @json($isRefreshing ?? false);
     
     if (isRefreshing) {
+        // Jika sedang refreshing, tunggu sebentar lalu coba lagi
         setTimeout(() => {
             initializeCurrentChallenge();
         }, 100);
         return;
     }
     
+    console.log('Initializing current challenge:', componentId);
     initializePatternChallenge(componentId);
 }
 
 // Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing captcha');
+    initializeCurrentChallenge();
+});
+
+// Juga initialize jika DOM sudah ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeCurrentChallenge);
 } else {
@@ -334,27 +371,34 @@ if (document.readyState === 'loading') {
 // Livewire event handlers
 document.addEventListener('livewire:init', function() {
     const componentId = '{{ $componentId }}';
+    console.log('Livewire initialized for captcha:', componentId);
     
     Livewire.on('new-challenge-generated', () => {
+        console.log('New challenge generated, reinitializing...');
         setTimeout(() => {
             initializeCurrentChallenge();
         }, 50);
     });
     
     Livewire.on('captchaReset', () => {
+        console.log('Captcha reset, disabling login button');
         disableLoginButton();
     });
     
     Livewire.on('patternMismatch', () => {
-        // Error already handled by generateNewChallenge()
+        console.log('Pattern mismatch detected');
+        // Error sudah ditangani oleh generateNewChallenge()
     });
     
     Livewire.on('captchaVerified', () => {
+        console.log('Captcha verified successfully');
         enableLoginButtonDirectly();
     });
     
+    // Handle Livewire component updates
     Livewire.hook('element.updated', (el, component) => {
         if (el.id === componentId) {
+            console.log('Captcha element updated, reinitializing...');
             setTimeout(() => {
                 initializeCurrentChallenge();
             }, 50);
@@ -365,6 +409,7 @@ document.addEventListener('livewire:init', function() {
 // Handle manual refresh button
 document.addEventListener('click', function(e) {
     if (e.target.closest('[wire\\:click="generateNewChallenge"]')) {
+        console.log('Manual refresh triggered');
         disableLoginButton();
     }
 });
