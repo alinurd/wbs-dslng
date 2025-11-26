@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\Audit as AuditLog;
 use App\Models\Combo;
-use App\Models\User;
-use Illuminate\Http\RedirectResponse;
+
+use App\Models\User; 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
@@ -99,29 +101,52 @@ class RegisterForm extends Component
 
     public function register()
 {
+    //  $this->validate();
     $user = User::create([
+    'username' => $this->username,
+    'name' => $this->full_name, // mapping full_name
+    'email' => $this->email,
+    'password' => Hash::make($this->password),
+    'security_question' => $this->security_question,
+    'answer' => $this->answer, 
+    'no_identitas' => $this->id_number,
+    'telepon' => $this->phone,
+    'reporter_type' => $this->reporter_type === 'employee' ? 1 : 0,
+    'alamat' => $this->detail,
+    'active' => 1,
+    'status' => 0,
+    'must_change_password' => 0, 
+]);
+
+$user->assignRole('user Pelapor');  
+AuditLog::create([
+    'user_id' => $user->id,
+    'action' => 'register',
+    'table_name' => 'users',
+    'record_id' => $user->id,
+    'old_values' => null,
+    'new_values' => json_encode([
         'username' => $this->username,
-        'name' => $this->full_name, // mapping full_name
+        'name' => $this->full_name,
         'email' => $this->email,
-        'password' => Hash::make($this->password),
         'security_question' => $this->security_question,
-        'answer' => $this->answer,
-        // 'answer' => Hash::make($this->answer),
         'no_identitas' => $this->id_number,
         'telepon' => $this->phone,
-        'reporter_type' => $this->reporter_type === 'employee' ? 1 : 0,
+        'reporter_type' => $this->reporter_type,
         'alamat' => $this->detail,
         'active' => 1,
         'status' => 0,
         'must_change_password' => 0,
-        // 'insert_datetime' => now(),
-        // 'update_datetime' => now(),
-    ]);
-    $user->assignRole('user');
-    // Login user atau redirect
-    auth()->login($user);
+        'registered_at' => now()->toDateTimeString()
+    ]),
+    'ip_address' => request()->ip(),
+    'user_agent' => request()->userAgent(),
+    'created_at' => now()
+]);
 
-    return redirect()->route('dashboard');
+auth()->login($user);
+
+return redirect()->route('dashboard'); 
 }
 
 }

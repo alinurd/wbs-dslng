@@ -162,57 +162,11 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Verification Code Section -->
-                            <div class="border-t border-gray-200 pt-6">
-                                <div class="flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-4">
-                                    <!-- Image -->
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ asset('assets/images/key.jpg') }}" alt="Logo"
-                                            class="max-w-[90%] h-auto">
-                                    </div>
-
-                                    <!-- Input verification code -->
-                                    <div class="flex-1 w-full">
-                                        <label for="verification_code"
-                                            class="block text-sm font-medium text-gray-700 mb-2 required">
-                                            {{ __('auth.verification_code') }}
-                                        </label>
-                                        <input wire:model="verification_code" id="verification_code"
-                                            name="verification_code" type="text" required
-                                            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
-                                            @error('verification_code') border-red-500 @enderror">
-                                        @error('verification_code')
-                                            <p class="mt-1 text-sm text-red-600">{{ __($message) }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
+ 
 
                             <!-- Reporter Type -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-3 required">
-                                    {{ __('auth.register.type_of_reporter') }}
-                                </label>
-                                <div class="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0">
-                                    <div class="flex items-center">
-                                        <input wire:model="reporter_type" id="employee" name="reporter_type"
-                                            type="radio" value="employee"
-                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                        <label for="employee" class="ml-2 block text-sm text-gray-700">
-                                            {{ __('auth.register.employee') }}
-                                        </label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input wire:model="reporter_type" id="non_employee" name="reporter_type"
-                                            type="radio" value="non_employee"
-                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                        <label for="non_employee" class="ml-2 block text-sm text-gray-700">
-                                            {{ __('auth.register.non_employee') }}
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                             <livewire:innovative-captcha :patternLength="4" :gridSize="9" />
+                                     
 
                             <!-- Confirmation Checkbox -->
                             <div class="border-t border-gray-200 pt-6">
@@ -236,9 +190,24 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit"
-                                class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[rgb(0,95,160)] hover:bg-[rgb(0,110,160)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                                {{ __('auth.register.submit') }}
+                            <button type="submit" wire:loading.attr="disabled"
+                                class="verif-btn w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[rgb(0,95,160)] hover:bg-[rgb(0,110,160)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                <span wire:loading.remove wire:target="login">
+        {{ __('auth.register.submit') }}
+    </span>
+    <span wire:loading wire:target="login">
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10"
+                stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+        </svg>
+    </span>
+
+
+                                
                             </button>
 
                             <!-- Login Link -->
