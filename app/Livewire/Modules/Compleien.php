@@ -421,12 +421,12 @@ class Compleien extends Root
                 $stsGet = 'all';
                 break;
             case 5: // WBS CC
-                $stsGet = [7,  9, 8, 3];
+                $stsGet = [7,  9,  3];
 
                 $q->where(function ($query) use ($stsGet) {
                     $query->where('status', 7);
                     $query->orWhere(function ($subQuery) {
-                        $subQuery->whereIn('status', [ 8, 9, 3])
+                        $subQuery->whereIn('status', [  9, 3])
                             ->where('act_cc', 1);
                     });
                 });
