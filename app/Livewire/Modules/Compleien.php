@@ -423,13 +423,13 @@ class Compleien extends Root
             case 5: // WBS CC
                 $stsGet = [7,    3];
 
-                $q->where(function ($query) use ($stsGet) {
-                    $query->where('status', 7);
-                    // $query->orWhere(function ($subQuery) {
-                    //     $subQuery->whereIn('status', [  9,])
-                    //         ->where('act_cc', 1);
-                    // });
-                });
+                // $q->where(function ($query) use ($stsGet) {
+                //     $query->where('status', 7);
+                //     // $query->orWhere(function ($subQuery) {
+                //     //     $subQuery->whereIn('status', [  9,])
+                //     //         ->where('act_cc', 1);
+                //     // });
+                // });
                 break;
                 break;
             case 7: // WBS CCO
