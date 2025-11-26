@@ -97,6 +97,7 @@ public function getDataByUser()
     $this->pengaduan_terbaru = $pengaduan->map(function($item, $index) {
         $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
                 $counts = $this->countComentFileByPengaduan($item->id);
+                
         return [
             'id' => $item->id,
             'code_pengaduan' => $item->code_pengaduan,
@@ -118,15 +119,25 @@ public function getDataByUser()
 
     protected function loadLogApproval()
 {
-    $latestLogs = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
+   
+    $query = LogApproval::with(['pengaduan.jenisPengaduan', 'user'])
         ->whereIn('id', function($query) {
             $query->select(DB::raw('MAX(id)'))
                   ->from('log_approval')
                   ->groupBy('pengaduan_id');
         })
         ->orderBy('created_at', 'desc')
-        ->limit(5)
-        ->get();
+        ->limit(5);
+
+    // Jika pelapor, filter by user_id melalui relasi pengaduan
+    if ($this->pelapor && isset($this->userInfo['user']['id'])) {
+        $query->whereHas('pengaduan', function($q) {
+            $q->where('user_id', $this->userInfo['user']['id']);
+        });
+    }
+
+    $latestLogs = $query->get();
+    
 
     $this->log_approval = $latestLogs->map(function($item) {
         $catatan = $item->catatan ?: 'Tidak ada catatan';
@@ -136,7 +147,7 @@ public function getDataByUser()
             : $catatan;
         
         $counts = $this->countComentFileByPengaduan($item->pengaduan_id);
-        
+         
         return [
             'id' => $item->id,
             'pengaduan_id' => $item->pengaduan_id,
@@ -190,7 +201,7 @@ public function getDataByUser()
         })->toArray();
     }
 
-    protected function loadProgressBulanan()
+    protected function loadProgressBulanan_old()
     {
         $currentMonth = date('m');
         $currentYear = date('Y');
@@ -245,6 +256,52 @@ public function getDataByUser()
             ];
         }
     }
+
+
+    protected function loadProgressBulanan()
+{
+    $currentMonth = date('m');
+    $currentYear = date('Y');
+    $query = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
+        ->whereMonth('tanggal_pengaduan', $currentMonth);
+    if ($this->pelapor) {
+        $query->where('user_id', $this->userInfo['user']['id'] ?? null);
+    }
+    $menunggu = (clone $query)->where('status', 0)->where('sts_final', 0)->count();
+    $dalamProses = (clone $query)->where('status', 1)->where('sts_final', 0)->count();
+    $selesai = (clone $query)->where('sts_final', 1)->count();
+
+    $totalBulanan = $menunggu + $dalamProses + $selesai;
+
+    if ($totalBulanan > 0) {
+        $this->progress_bulanan = [
+            [
+                'label' => 'Menunggu',
+                'jumlah' => $menunggu,
+                'persentase' => round(($menunggu / $totalBulanan) * 100),
+                'color' => 'gray'
+            ],
+            [
+                'label' => 'Dalam Proses',
+                'jumlah' => $dalamProses,
+                'persentase' => round(($dalamProses / $totalBulanan) * 100),
+                'color' => 'yellow'
+            ],
+            [
+                'label' => 'Selesai',
+                'jumlah' => $selesai,
+                'persentase' => round(($selesai / $totalBulanan) * 100),
+                'color' => 'green'
+            ]
+        ];
+    } else {
+        $this->progress_bulanan = [
+            ['label' => 'Menunggu', 'jumlah' => 0, 'persentase' => 0, 'color' => 'gray'],
+            ['label' => 'Dalam Proses', 'jumlah' => 0, 'persentase' => 0, 'color' => 'yellow'],
+            ['label' => 'Selesai', 'jumlah' => 0, 'persentase' => 0, 'color' => 'green']
+        ];
+    }
+}
     
     public function refreshDashboard()
     {
