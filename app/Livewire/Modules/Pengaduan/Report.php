@@ -5,6 +5,7 @@ namespace App\Livewire\Modules\Pengaduan;
 use App\Helpers\FileHelper;
 use App\Livewire\Root; 
 use App\Models\Pengaduan;
+use App\Services\PengaduanEmailService;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 
@@ -104,7 +105,7 @@ class Report extends Root
     protected function autoFillUserData()
     {
         if ($this->userInfo) {
-            $this->email_pelapor = $this->userInfo['email'] ?? '';
+            $this->email_pelapor = $this->userInfo['user']['email'] ?? '';
         }
     }
 
@@ -147,6 +148,9 @@ class Report extends Root
         $payload['user_id'] = auth()->id();
         $payload['tanggal_pengaduan'] = now();
 
+
+ 
+
         return $payload;
     }
 
@@ -158,12 +162,18 @@ class Report extends Root
     $message = $action === 'create' 
         ? 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan
         : 'Pengaduan berhasil diperbarui.';
+$emailService = new PengaduanEmailService();
+$emailService->sendNewPengaduanNotifications($record, $this->email_pelapor);
 
 $this->dispatch('notify', [
     'type' => 'success',
     'message' => 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan
 ]);
 
+
+
+
+ 
     $this->resetLampiran();
     $this->redirectRoute('p_tracking');
 
