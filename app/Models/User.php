@@ -43,6 +43,7 @@ class User extends Authenticatable
         'must_change_password',
         'insert_datetime',
         'update_datetime',
+        'code_verif',
     ];
 
  

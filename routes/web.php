@@ -40,7 +40,7 @@ use App\Livewire\Roles\Form as RoleForm;
  use App\Livewire\WbsLanding\Index as LandingIndex;
 use App\Livewire\Roles\Index as RoleIndex;
 use App\Livewire\TestRegister;
-
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -120,11 +120,34 @@ Route::get('/faq', FAQ::class)->name('faq');
 
 
 // routes/web.php (sementara)
-
-Route::get('/test-helpers', function() {
-    return [
-        'can_combo_view' => can('combo.view', false),
-        'module_perms' => module_permissions('combo'),
-        'crud_access' => can_crud('combo')
-    ];
+// routes/web.php
+// routes/web.php
+// routes/web.php
+Route::get('/debug-email', function () {
+    $emailService = new App\Services\EmailService();
+    
+    echo "<h3>Debug Email Configuration</h3>";
+    echo "MAIL_HOST: " . config('mail.mailers.smtp.host') . "<br>";
+    echo "MAIL_PORT: " . config('mail.mailers.smtp.port') . "<br>";
+    echo "MAIL_USERNAME: " . config('mail.mailers.smtp.username') . "<br>";
+    echo "MAIL_FROM: " . config('mail.from.address') . "<br>";
+    echo "MAIL_ENCRYPTION: " . config('mail.mailers.smtp.encryption') . "<br><br>";
+    
+    // Test kirim email
+    echo "<h4>Test Kirim Email:</h4>";
+    $result = $emailService->sendVerificationEmail(
+        'alidevs1405@gmail.com', // Email yang valid
+        '123456', 
+        'Test User'
+    );
+    
+    echo "Status pengiriman: " . ($result ? 'BERHASIL' : 'GAGAL') . "<br>";
+    
+    if (!$result) {
+        echo "<p style='color: red;'>Email gagal dikirim. Check storage/logs/laravel.log untuk detail error.</p>";
+    } else {
+        echo "<p style='color: green;'>Email berhasil dikirim! Cek inbox/spam folder.</p>";
+    }
+    
+    return "<br><br>Debug selesai";
 });

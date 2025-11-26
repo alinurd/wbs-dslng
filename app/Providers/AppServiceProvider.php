@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Menu;
+use App\Services\EmailService;
 use App\Services\MenuService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
@@ -14,6 +15,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(MenuService::class, function ($app) {
             return new MenuService();
+        });
+        $this->app->singleton(EmailService::class, function ($app) {
+            return new EmailService();
         });
     }
     

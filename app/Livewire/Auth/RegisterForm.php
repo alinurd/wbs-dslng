@@ -6,12 +6,13 @@ use App\Models\Audit as AuditLog;
 use App\Models\Combo;
 
 use App\Models\User; 
+use App\Services\EmailService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Livewire\Component;
-
 class RegisterForm extends Component
 {
     public $username;
@@ -99,9 +100,10 @@ class RegisterForm extends Component
         $this->validateOnly($propertyName);
     }
 
-    public function register()
+public function register()
 {
     //  $this->validate();
+    $codeVerif =  Str::random(8);
     $user = User::create([
     'username' => $this->username,
     'name' => $this->full_name, // mapping full_name
@@ -113,39 +115,67 @@ class RegisterForm extends Component
     'telepon' => $this->phone,
     'reporter_type' => $this->reporter_type === 'employee' ? 1 : 0,
     'alamat' => $this->detail,
+    'code_verif' => $codeVerif,
     'active' => 1,
     'status' => 0,
     'must_change_password' => 0, 
 ]);
 
 $user->assignRole('user Pelapor');  
+$emailService = new EmailService();
+    
+    $emailSent = $emailService->setUserId($user->id)
+                             ->sendVerificationEmail($this->email, $codeVerif, $this->full_name);
+                             
 AuditLog::create([
-    'user_id' => $user->id,
-    'action' => 'register',
-    'table_name' => 'users',
-    'record_id' => $user->id,
-    'old_values' => null,
-    'new_values' => json_encode([
-        'username' => $this->username,
-        'name' => $this->full_name,
-        'email' => $this->email,
-        'security_question' => $this->security_question,
-        'no_identitas' => $this->id_number,
-        'telepon' => $this->phone,
-        'reporter_type' => $this->reporter_type,
-        'alamat' => $this->detail,
-        'active' => 1,
-        'status' => 0,
-        'must_change_password' => 0,
-        'registered_at' => now()->toDateTimeString()
-    ]),
-    'ip_address' => request()->ip(),
-    'user_agent' => request()->userAgent(),
-    'created_at' => now()
-]);
+        'user_id' => $user->id,
+        'action' => 'register',
+        'table_name' => 'users',
+        'record_id' => $user->id,
+        'old_values' => null,
+        'new_values' => json_encode([
+            'username' => $this->username,
+            'name' => $this->full_name,
+            'email' => $this->email,
+            'security_question' => $this->security_question,
+            'no_identitas' => $this->id_number,
+            'telepon' => $this->phone,
+            'reporter_type' => $this->reporter_type,
+            'alamat' => $this->detail,
+            'active' => 1,
+            'status' => 0,
+            'code_verif' => $codeVerif,
+            'email_verification_sent' => $emailSent,
+            'registered_at' => now()->toDateTimeString()
+        ]),
+        'ip_address' => request()->ip(),
+        'user_agent' => request()->userAgent(),
+        'created_at' => now()
+    ]);
+
+ 
+    
 
 auth()->login($user);
 
+ if ($emailSent) {
+     $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Registrasi berhasil! Silakan cek email Anda untuk kode verifikasi.',
+            'errMessage' => ''
+        ]);
+        
+    } else {
+           $this->dispatch('notify', [
+            // 'type' => 'error',
+            // 'message' => 'Registrasi berhasil, Silakan hubungi administrator untuuk lakukan verifikasi',
+            
+            'type' => 'success',
+            'message' => 'Registrasi berhasil! Silakan cek email Anda untuk kode verifikasi.',
+            'errMessage' => 'Registrasi berhasil! Namun email verifikasi gagal dikirim. Silakan hubungi administrator.'
+        ]);
+    }
+    
 return redirect()->route('dashboard'); 
 }
 
