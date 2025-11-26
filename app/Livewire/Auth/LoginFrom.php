@@ -2,57 +2,30 @@
 
 namespace App\Livewire\Auth;
 
-use App\Models\User;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Hash;
+ use Illuminate\Support\Facades\App;
+
+use App\Models\Audit as AuditLog;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+
 
 class LoginFrom extends Component
 {
-    public $username;
-    public $security_question;
-    public $answer;
-    public $password;
-    public $password_confirmation;
-    public $full_name;
-    public $email;
-    public $id_number;
-    public $phone;
-    public $reporter_type = 'employee';
-    public $verification_code;
-    public $confirmation = false;
+      public $email = '';
+    public $password = '';
+    public $remember = false;
 
     protected $rules = [
-        'username' => 'required|min:3|unique:users',
-        'security_question' => 'required',
-        'answer' => 'required|min:2',
-        'password' => 'required|min:8|confirmed',
-        'password_confirmation' => 'required',
-        'full_name' => 'nullable|min:2',
-        'email' => 'required|email|unique:users',
-        'id_number' => 'nullable|min:5',
-        'phone' => 'nullable|min:10',
-        'reporter_type' => 'required|in:employee,non_employee',
-        'verification_code' => 'required',
-        'confirmation' => 'accepted'
+        'email' => 'required|email',
+        'password' => 'required',
     ];
 
-    protected $messages = [
-        'username.required' => 'auth.validation.required',
-        'username.min' => 'auth.validation.min',
-        'username.unique' => 'auth.validation.unique',
-        'security_question.required' => 'auth.validation.required',
-        'answer.required' => 'auth.validation.required',
-        'answer.min' => 'auth.validation.min',
-        'password.required' => 'auth.validation.required',
-        'password.min' => 'auth.validation.min',
-        'password.confirmed' => 'auth.validation.confirmed',
+    protected $messages = [ 
+        'password.required' => 'auth.validation.required', 
         'email.required' => 'auth.validation.required',
-        'email.email' => 'auth.validation.email',
-        'email.unique' => 'auth.validation.unique',
-        'verification_code.required' => 'auth.validation.required',
-        'confirmation.accepted' => 'auth.validation.required',
+        'email.email' => 'auth.validation.email', 
     ];
 
     public $currentLocale = 'en';
@@ -88,26 +61,34 @@ class LoginFrom extends Component
         $this->validateOnly($propertyName);
     }
 
-    public function register()
+public function login()
     {
         $this->validate();
-
-        // Proses registrasi
-        $user = User::create([
-            'username' => $this->username,
-            'security_question' => $this->security_question,
-            'security_answer' => Hash::make($this->answer),
-            'password' => Hash::make($this->password),
-            'full_name' => $this->full_name,
+        if (!Auth::attempt([
             'email' => $this->email,
-            'id_number' => $this->id_number,
-            'phone' => $this->phone,
-            'reporter_type' => $this->reporter_type,
+            'password' => $this->password
+        ], $this->remember)) {
+            
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+
+        
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'login',
+            'table_name' => 'users',
+            'record_id' => Auth::id(),
+            'old_values' => null,
+            'new_values' => json_encode(['login_time' => now()]),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'created_at' => now()
         ]);
 
-        // Login user atau redirect
-        auth()->login($user);
+        session()->regenerate();
 
-        return redirect()->route('dashboard');
+        return redirect()->intended('/dashboard');
     }
 }
