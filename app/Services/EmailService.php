@@ -36,7 +36,7 @@ class EmailService
     /**
      * Send email dengan template yang dinamis
      */
-    public function sendEmail(string $to, string $subject, string $view, array $data = [], array $attachments = [], string $purpose = ''): bool
+   public function sendEmail(string $to, string $subject, string $view, array $data = [], array $attachments = [], string $purpose = ''): bool
     {
         $status = false;
         $error = '';
@@ -50,8 +50,6 @@ class EmailService
         }
 
         try {
-            
-
             Mail::send($view, $data, function ($message) use ($to, $subject, $attachments) {
                 $message->to($to)
                         ->subject($subject);
@@ -69,16 +67,16 @@ class EmailService
             });
 
             $status = true;
-           
             
         } catch (\Exception $e) {
             $error = $e->getMessage();
-             
+            Log::error("Email error to {$to}: {$error}");
         }
 
         $this->createAuditLog($to, $subject, $purpose, $status, $error);
         return $status;
     }
+
 
     /**
      * Create audit log untuk email
@@ -167,7 +165,8 @@ class EmailService
     /**
      * Kirim email notifikasi umum
      */
-    public function sendNotificationEmail(string $to, string $title, string $message, string $type = 'info'): bool
+
+    public function sendNotificationEmail(string $to, string $title, string $content, string $type = 'info'): bool
     {
         $subject = $title;
         $view = 'emails.notification';
@@ -175,13 +174,13 @@ class EmailService
         
         $data = [
             'title' => $title,
-            'message' => $message,
-            'type' => $type
+            'content' => $content, // Ganti dari 'message' jadi 'content'
+                        'type' => $type
         ];
         
         return $this->sendEmail($to, $subject, $view, $data, [], $purpose);
     }
-
+     
     /**
      * Kirim email dengan template custom
      */

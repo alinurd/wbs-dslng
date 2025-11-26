@@ -149,6 +149,8 @@ class Report extends Root
         $payload['tanggal_pengaduan'] = now();
 
 
+$emailService = new PengaduanEmailService();
+$emailService->sendNewPengaduanNotifications($payload, auth()->id());
  
 
         return $payload;
@@ -162,8 +164,7 @@ class Report extends Root
     $message = $action === 'create' 
         ? 'Pengaduan berhasil dibuat dengan nomor: ' . $record->code_pengaduan
         : 'Pengaduan berhasil diperbarui.';
-$emailService = new PengaduanEmailService();
-$emailService->sendNewPengaduanNotifications($record, $this->email_pelapor);
+// $emailService->sendNewPengaduanNotifications($record, $this->email_pelapor);
 
 $this->dispatch('notify', [
     'type' => 'success',
