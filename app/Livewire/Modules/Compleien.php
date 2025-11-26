@@ -151,10 +151,10 @@ class Compleien extends Root
                     ];
 
                     $roleId = (int)($this->userInfo['role']['id'] ?? 0);
-                    if($roleId == 5){
+                    if ($roleId == 5) {
                         $updateData['act_cc'] = 1;
                     }
-                    if($roleId == 7){
+                    if ($roleId == 7) {
                         $updateData['act_cco'] = 1;
                     }
                     // Add catatan if provided
@@ -256,7 +256,7 @@ class Compleien extends Root
             ->where('param_int', $record->status)
             ->first();
 
-            $act_int = ($record->act_cc || $record->act_cco) == 1 ? false : true;
+        $act_int = ($record->act_cc || $record->act_cco) == 1 ? false : true;
         $this->detailData = [
             'id' => $id,
             'Kode Tracking' => $record->code_pengaduan,
@@ -411,36 +411,44 @@ class Compleien extends Root
 
         // Filter berdasarkan role user
         $roleId = (int)($this->userInfo['role']['id'] ?? 0);
-switch ($roleId) {
-    case 2: // WBS External
-        $stsGet = 'all';
-        break;
-    case 4: // WBS Internal  
-        $stsGet = 'all';
-        break;
-    case 5: // WBS CC
-        $stsGet = [7, 1, 9];
-        break;
-    case 7: // WBS CCO
-        $stsGet = [1, 3, 8];
-        break;
-    case 6: // WBS FWD
-        $stsGet = [5, 2];
-        // Menggunakan where dengan closure untuk grouping
-        $q->where(function($query) {
-            $query->where('fwd_to', $this->userInfo['user']['fwd_id'])
-                  ->orWhere('sts_fwd', 1);
-        });
-        break;
-    default:
-        $stsGet = [-1]; // Tidak akan pernah match
-}
-// Apply status filters
-if ($roleId == 4) { 
-    $q->whereNotIn('status', [0, 10]);
-} elseif ($stsGet !== 'all') { 
-    $q->whereIn('status', $stsGet);
-}
+        switch ($roleId) {
+            case 2: // WBS External
+                $stsGet = 'all';
+                break;
+            case 4: // WBS Internal  
+                $stsGet = 'all';
+                break;
+            case 5: // WBS CC
+                $stsGet = [7, 1, 9, 8, 3];
+
+                $q->where(function ($query) use ($stsGet) {
+                    $query->where('status', 7);
+                    $query->orWhere(function ($subQuery) {
+                        $subQuery->whereIn('status', [1, 8, 9, 3])
+                            ->where('act_cc', 1);
+                    });
+                });
+                break;
+                break;
+            case 7: // WBS CCO
+                $stsGet = [1, 3, 8];
+                break;
+            case 6: // WBS FWD
+                $stsGet = [5, 2];
+                $q->where(function ($query) {
+                    $query->where('fwd_to', $this->userInfo['user']['fwd_id'])
+                        ->orWhere('sts_fwd', 1);
+                });
+                break;
+            default:
+                $stsGet = [-1]; // Tidak akan pernah match
+        }
+        // Apply status filters
+        if ($roleId == 4) {
+            $q->whereNotIn('status', [0, 10]);
+        } elseif ($stsGet !== 'all') {
+            $q->whereIn('status', $stsGet);
+        }
 
         return $q;
     }
@@ -512,7 +520,7 @@ if ($roleId == 4) {
     }
 
     public function setActionWithForward($action, $id = null)
-    { 
+    {
         \Log::info('setActionWithForward called', [
             'action' => $action,
             'id' => $id,
@@ -531,7 +539,7 @@ if ($roleId == 4) {
             $this->selected_pengaduan_id = $id;
             $this->pengaduan_id = $id;
         }
- 
+
         if ($action == 5 && !empty($this->forwardDestination)) {
             $destinationText = $this->getDestinationText($this->forwardDestination);
             $existingCatatan = $this->catatan ?? '';
