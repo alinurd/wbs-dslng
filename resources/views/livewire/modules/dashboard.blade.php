@@ -1,7 +1,7 @@
 @php
     $roleIds = array_keys($userRole);
     $isRole3 = in_array(3, $roleIds);
-    $reportRoute = $isRole3 ? 'p_report' : 'complien';
+    $reportRoute = $isRole3 ? 'p_tracking' : 'complien';
 @endphp
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

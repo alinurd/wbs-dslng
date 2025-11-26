@@ -843,16 +843,20 @@ abstract class Root extends Component
 
     public function getStatusBadge($statusId)
     {
+        $user = \auth()->user();
+        $role = $user->roles()->first();
         $statusInfo = Combo::where('kelompok', 'sts-aduan')
             ->where('param_int', $statusId)
             ->first();
 
         if (!$statusInfo) {
             $color = 'gray';
-            $text = 'Menunggu Review';
+            $text = 'Open';
         } else {
             $color = $statusInfo->param_str ?? 'gray';
-            $text = $statusInfo->data_id;
+            // $text = $statusInfo->data_id;
+             $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
+
         }
 
         return "
@@ -1008,16 +1012,19 @@ public function getTimeAgo($datetime)
 
 public function getStatusInfo($status, $sts_final)
     {
+ 
+         $user = \auth()->user();
+        $role = $user->roles()->first();
       $statusInfo = Combo::where('kelompok', 'sts-aduan')
             ->where('param_int', $status)
             ->first();
         if (!$statusInfo) {
             $color = 'gray';
-            $text = 'Menunggu Review';
+            $text = 'Open';
             $text1 = 'in_progress';
         } else {
             $color = $statusInfo->param_str ?? 'gray';
-            $text = $statusInfo->data_id;
+            $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
             $text1 = $statusInfo->param_str_1;
         }
         return ['text' =>$text , 'color' => $color, 'text1'=>$text1];
@@ -1033,7 +1040,7 @@ public function getPengaduanById($id){
             'Perihal' => $record->perihal,
             'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status' => $statusInfo->data_id ?? 'Menunggu Review',
+            'Status' => $statusInfo->data_id ?? 'Open',
             'Status Color' => $statusInfo->param_str ?? 'gray',
             'Lokasi Kejadian' => $record->alamat_kejadian ?? '-',
             'Deskripsi' => $record->uraian ?? '-',
