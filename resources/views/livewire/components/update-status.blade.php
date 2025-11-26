@@ -323,26 +323,38 @@
                     @endif
                 </div>
             @else
-                {{-- Button untuk role lainnya --}}
+  
+                
                 @if($data['user']['role']['id'] == 6)
-                    {{-- Untuk role 6: hanya tampilkan button jika belum di-forward --}}
-                    @if($data['sts_fwd']['id'] !== 1)
-                        <button type="submit"
-                            wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
-                            class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
-                            <i class="fas fa-check-circle me-1"></i>
-                            <span>{{ $p['data_en'] }}</span>
-                        </button>
-                    @endif
-                @else
-                    {{-- Untuk role selain 6 dan 4 --}}
-                    <button type="submit"
-                        wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
-                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
-                        <i class="fas fa-check-circle me-1"></i>
-                        <span>{{ $p['data_en'] }}</span>
-                    </button>
-                @endif
+    {{-- Untuk role 6: hanya tampilkan button jika belum di-forward --}}
+    @if($data['sts_fwd']['id'] !== 1)
+        <button type="submit"
+            wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
+            class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+            <i class="fas fa-check-circle me-1"></i>
+            <span>{{ $p['data_en'] }}</span>
+        </button>
+    @endif
+@elseif($data['user']['role']['id'] == 2)
+    {{-- Untuk role 2: tampilkan button jika status_id bukan 0, 6, atau 10 --}}
+    @if(in_array($data['status_id'], [0, 6, 10]))
+        <button type="submit"
+            wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
+            class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+            <i class="fas fa-check-circle me-1"></i>
+            <span>{{ $p['data_en'] }}</span>
+        </button>
+    @endif
+@else
+    {{-- Untuk role selain 6 dan 2 --}}
+    <button type="submit"
+        wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
+        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+        <i class="fas fa-check-circle me-1"></i>
+        <span>{{ $p['data_en'] }}</span>
+    </button>
+@endif
+
             @endif
         @endif
     @endforeach

@@ -402,7 +402,8 @@ class Compleien extends Root
         $roleId = (int)($this->userInfo['role']['id'] ?? 0);
         switch ($roleId) {
             case 2: // WBS External
-                $stsGet = [0, 6, 10];
+                // $stsGet = [0, 6, 10];
+                $stsGet = 'all';
                 break;
             case 4: // WBS Internal  
                 $stsGet = [6, 7, 9, 11, 2];
@@ -421,8 +422,9 @@ class Compleien extends Root
             default:
                 $stsGet = [-1];
         }
-
-        $q->whereIn('status', $stsGet);
+if($stsGet !=='all'){
+    $q->whereIn('status', $stsGet);
+}
 
         return $q;
     }
