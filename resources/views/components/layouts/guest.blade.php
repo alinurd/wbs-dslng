@@ -29,7 +29,65 @@
 
     @include('components.partials.footer')
 
-    @livewireScripts
+ @livewireScripts
+
+                    <script>
+                       // File: resources/js/captcha-handler.js
+document.addEventListener('livewire:init', () => {
+    disableLoginButton();
+
+    Livewire.on('enable-login-button', () => {
+        enableLoginButton();
+    });
+
+    Livewire.on('disable-login-button', () => {
+        disableLoginButton();
+    });
+});
+
+function enableLoginButton() {
+    const loginBtns = document.querySelectorAll('.verif-btn');
+    if (loginBtns.length > 0) {
+        loginBtns.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            btn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
+        });
+    }
+}
+
+function disableLoginButton() {
+    const loginBtns = document.querySelectorAll('.verif-btn');
+    if (loginBtns.length > 0) {
+        loginBtns.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
+            btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('form[wire\\:submit="login"]');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('.verif-btn');
+            
+            if (submitBtn && submitBtn.disabled) {
+                e.preventDefault();
+                e.stopPropagation();
+                alert('{{ __("captcha.complete_verification_first") }}');
+                return false;
+            }
+        });
+    });
+    
+    disableLoginButton();
+});
+
+window.captchaVerified = false;
+                    </script>
 
     <script>
      window.AppConfig = {

@@ -2,21 +2,20 @@
 
 namespace App\Livewire\Auth;
 
- use Illuminate\Support\Facades\App;
-
 use App\Models\Audit as AuditLog;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
-
 class LoginFrom extends Component
 {
-      public $email = '';
+    public $email = '';
     public $password = '';
     public $remember = false;
-
+    public $captchaVerified = false;
+    
     protected $rules = [
         'email' => 'required|email',
         'password' => 'required',
@@ -28,32 +27,36 @@ class LoginFrom extends Component
         'email.email' => 'auth.validation.email', 
     ];
 
+    // GUNAKAN FORMAT YANG BENAR UNTUK CHILD COMPONENT EVENTS
+    protected $listeners = [
+        'captchaVerified' => 'handleCaptchaVerified',
+        'captchaReset' => 'handleCaptchaReset'
+    ];
+    
     public $currentLocale = 'en';
-
-        public $locale;
-        
+    public $locale;
+    
     public function mount()
     {
         $this->locale = Session::get('locale', config('app.locale'));
         App::setLocale($this->locale);
     }
 
-      public function changeLanguage($lang)
+    public function changeLanguage($lang)
     {
         $this->locale = $lang;
         Session::put('locale', $lang);
         App::setLocale($lang);
-
         $this->dispatch('reload-page');
     }
     
     public function render()
     {
         return view('livewire.auth.login-form')
-         ->layout('components.layouts.guest', [
+            ->layout('components.layouts.guest', [
                 'title' => 'Login',
                 'currentLocale' => app()->getLocale(),
-            ]);;
+            ]);
     }
 
     public function updated($propertyName)
@@ -61,20 +64,24 @@ class LoginFrom extends Component
         $this->validateOnly($propertyName);
     }
 
-public function login()
+    public function login()
     {
         $this->validate();
+        
+        // if (!$this->captchaVerified) {
+        //     $this->addError('captcha', 'Harap selesaikan verifikasi keamanan terlebih dahulu.');
+        //     return;
+        // }
+
         if (!Auth::attempt([
             'email' => $this->email,
             'password' => $this->password
         ], $this->remember)) {
-            
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
         }
 
-        
         AuditLog::create([
             'user_id' => Auth::id(),
             'action' => 'login',
@@ -88,7 +95,23 @@ public function login()
         ]);
 
         session()->regenerate();
-
         return redirect()->intended('/dashboard');
+    }
+
+    public function handleCaptchaVerified()
+    {
+        \Log::info('CAPTCHA VERIFIED - Login component received event');
+        $this->captchaVerified = true;
+        $this->resetErrorBag('captcha');
+        
+        // Dispatch event untuk JavaScript
+        $this->dispatch('enable-login-button');
+    }
+
+    public function handleCaptchaReset()
+    {
+        \Log::info('CAPTCHA RESET - Login component received event');
+        $this->captchaVerified = false;
+        $this->dispatch('disable-login-button');
     }
 }
