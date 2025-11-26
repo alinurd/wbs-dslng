@@ -400,29 +400,34 @@ class Compleien extends Root
 
         // Filter berdasarkan role user
         $roleId = (int)($this->userInfo['role']['id'] ?? 0);
-        switch ($roleId) {
-            case 2: // WBS External
-                // $stsGet = [0, 6, 10];
-                $stsGet = 'all';
-                break;
-            case 4: // WBS Internal  
-                $stsGet = [6, 7, 9, 11, 2];
-                break;
-            case 5: // WBS CC
-                $stsGet = [7, 1, 9];
-                break;
-            case 7: // WBS CCO
-                $stsGet = [1, 3, 8];
-                break;
-            case 6: // WBS FWD
-                $stsGet = [5, 2];
-                $q->where('fwd_to', $this->userInfo['user']['fwd_id']);
-                $q->orwhere('sts_fwd', 1);
-                break;
-            default:
-                $stsGet = [-1];
-        }
-if($stsGet !=='all'){
+switch ($roleId) {
+    case 2: // WBS External
+        $stsGet = 'all';
+        break;
+    case 4: // WBS Internal  
+        $stsGet = 'all';
+        break;
+    case 5: // WBS CC
+        $stsGet = [7, 1, 9];
+        break;
+    case 7: // WBS CCO
+        $stsGet = [1, 3, 8];
+        break;
+    case 6: // WBS FWD
+        $stsGet = [5, 2];
+        // Menggunakan where dengan closure untuk grouping
+        $q->where(function($query) {
+            $query->where('fwd_to', $this->userInfo['user']['fwd_id'])
+                  ->orWhere('sts_fwd', 1);
+        });
+        break;
+    default:
+        $stsGet = [-1]; // Tidak akan pernah match
+}
+// Apply status filters
+if ($roleId == 4) { 
+    $q->whereNotIn('status', [0, 10]);
+} elseif ($stsGet !== 'all') { 
     $q->whereIn('status', $stsGet);
 }
 
