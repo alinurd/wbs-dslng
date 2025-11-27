@@ -9,6 +9,7 @@ use App\Models\Audit as AuditLog;
 use App\Models\Combo;
 use App\Models\LogApproval;
 use App\Models\Pengaduan;
+use App\Services\PengaduanEmailService;
 use App\Traits\HasChat;
 use Livewire\WithFileUploads;
 
@@ -116,7 +117,7 @@ class Compleien extends Root
 
 
             // Update pengaduan
-            $pengaduan = Pengaduan::find($this->selected_pengaduan_id);
+            $pengaduan = Pengaduan::with('pelapor')->find($this->selected_pengaduan_id);
 
             if ($pengaduan) {
                 $dataOld = [
@@ -181,7 +182,15 @@ class Compleien extends Root
                         'created_at' => now()
                     ]);
 
-
+                    
+$emailService = new PengaduanEmailService();
+$emailService->handleStatusChange(
+    $pengaduan,                    // Object pengaduan
+    $this->submission_action,      // Status action (6, 10, 7, dll)
+    $roleId,                       // Role ID user yang melakukan aksi
+    $this->catatan,                // Catatan (opsional)
+    ($this->forwardDestination??0)      // Forward destination (opsional)
+);
                     // Create log approval
                     $this->createLogApproval($pengaduan, $statusInfo, $filePath);
 

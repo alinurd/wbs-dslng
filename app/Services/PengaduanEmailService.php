@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\User;
 use App\Services\EmailService;
 
 class PengaduanEmailService 
@@ -14,9 +15,121 @@ class PengaduanEmailService
     const ROLE_WBS_FORWARD = 6;
     const ROLE_WBS_CCO = 7;
 
+    // Status mapping berdasarkan penjelasan Anda
+    const STATUS_REJECT_EKS = [10];                    // Reject oleh WBS Eksternal
+    const STATUS_APPROVE_EKS = [6];                    // Approve oleh WBS Eksternal → Notif WBS internal dan ke pelapor
+    const STATUS_REJECT_INT = [9, 11];                 // Reject oleh WBS Internal → Notif ke pelapor dan WBS EKS
+    const STATUS_APPROVE_INT_CC = [7];                 // APPROVE oleh WBS Internal → Notif ke pelapor dan CC
+    const STATUS_APPROVE_INT_FORWARD = [5];            // APPROVE oleh WBS Internal → Notif ke pelapor dan Forward  
+    const STATUS_APPROVE_INT_CCO = [1];                // APPROVE oleh WBS Internal → Notif ke pelapor dan CCO
+    const STATUS_COMPLETE_FWD = [2];                   // Complete oleh Forward → Notif ke Pelapor dan WBS internal
+    const STATUS_APPROVE_CCO = [3];                    // Final approve → Notif ke pelapor
+    const STATUS_REJECT_CCO = [8];                     // Final reject → Notif ke pelapor
+
     public function __construct()
     {
         $this->emailService = new EmailService();
+    }
+
+    /**
+     * MAIN METHOD: Handle semua email flow berdasarkan status change
+     */
+    public function handleStatusChange($pengaduan, $statusAction, $roleId, $catatan = '', $forwardDestination = null)
+    {
+        \Log::info('PengaduanEmailService: Handling status change', [
+            'pengaduan_id' => $pengaduan->id,
+            'status_action' => $statusAction,
+            'role_id' => $roleId,
+            'forward_destination' => $forwardDestination
+        ]);
+
+        // Format data untuk email
+        $pengaduanData = $this->formatPengaduanData($pengaduan);
+
+        // REJECT BY WBS EKSTERNAL
+        if (in_array($statusAction, self::STATUS_REJECT_EKS) && $roleId == self::ROLE_WBS_EKSTERNAL) {
+            $this->sendRejectByWbsEks($pengaduanData, $this->getRejectReason($statusAction), $catatan);
+        }
+        
+        // APPROVE BY WBS EKSTERNAL (Submit to Internal)
+        elseif (in_array($statusAction, self::STATUS_APPROVE_EKS) && $roleId == self::ROLE_WBS_EKSTERNAL) {
+            $this->sendSubmitToWbsInternal($pengaduanData);
+        }
+        
+        // REJECT BY WBS INTERNAL  
+        elseif (in_array($statusAction, self::STATUS_REJECT_INT) && $roleId == self::ROLE_WBS_INTERNAL) {
+            $this->sendRejectByWbsInternal($pengaduanData, $this->getRejectReason($statusAction), $catatan);
+        }
+        
+        // APPROVE BY WBS INTERNAL - KE CC
+        elseif (in_array($statusAction, self::STATUS_APPROVE_INT_CC) && $roleId == self::ROLE_WBS_INTERNAL) {
+            $this->sendSubmitToCc($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
+        }
+        
+        // APPROVE BY WBS INTERNAL - KE FORWARD
+        elseif (in_array($statusAction, self::STATUS_APPROVE_INT_FORWARD) && $roleId == self::ROLE_WBS_INTERNAL) {
+            $this->sendSubmitToForward($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
+        }
+        
+        // APPROVE BY WBS INTERNAL - KE CCO
+        elseif (in_array($statusAction, self::STATUS_APPROVE_INT_CCO) && $roleId == self::ROLE_WBS_INTERNAL) {
+            $this->sendSubmitToCco($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
+        }
+        
+        // COMPLETE BY FORWARD
+        elseif (in_array($statusAction, self::STATUS_COMPLETE_FWD) && $roleId == self::ROLE_WBS_FORWARD) {
+            $this->sendForwardCompleted($pengaduanData, $catatan);
+        }
+        
+        // FINAL APPROVE BY CCO
+        elseif (in_array($statusAction, self::STATUS_APPROVE_CCO) && $roleId == self::ROLE_WBS_CCO) {
+            $this->sendFinalApproval($pengaduanData, $catatan);
+        }
+        
+        // FINAL REJECT BY CCO
+        elseif (in_array($statusAction, self::STATUS_REJECT_CCO) && $roleId == self::ROLE_WBS_CCO) {
+            $this->sendRejectByRole($pengaduanData, $roleId, $this->getRejectReason($statusAction), $catatan);
+        }
+
+        else {
+            \Log::warning('No email flow matched', [
+                'status_action' => $statusAction,
+                'role_id' => $roleId
+            ]);
+        }
+    }
+
+    /**
+     * Get alasan reject berdasarkan status
+     */
+    private function getRejectReason($statusAction)
+    {
+        $reasons = [
+            10 => 'Data tidak lengkap',
+            9 => 'Data tidak cukup',
+            11 => 'Data tidak lengkap',
+            8 => 'Tidak dapat diproses'
+        ];
+
+        return $reasons[$statusAction] ?? 'Tidak dapat diproses';
+    }
+
+    /**
+     * Format pengaduan data for email
+     */
+    private function formatPengaduanData($pengaduan)
+    {
+        return [
+            'code_pengaduan' => $pengaduan->code_pengaduan,
+            'tanggal_pengaduan' => $pengaduan->tanggal_pengaduan,
+            'perihal' => $pengaduan->perihal,
+            'email_pelapor' => $pengaduan->pelapor->email ?? $pengaduan->email_pelapor,
+            'telepon_pelapor' => $pengaduan->telepon_pelapor,
+            'waktu_kejadian' => $pengaduan->waktu_kejadian,
+            'direktorat' => $pengaduan->direktorat,
+            'uraian' => $pengaduan->uraian,
+            'catatan' => $pengaduan->catatan,
+        ];
     }
 
     /**
@@ -24,25 +137,18 @@ class PengaduanEmailService
      */
     private function getEmailsByRoleId($roleId)
     {
-        return \App\Models\User::whereHas('roles', function($query) use ($roleId) {
+        return User::whereHas('roles', function($query) use ($roleId) {
             $query->where('id', $roleId)->where('is_active', 1);
         })->pluck('email')->toArray();
     }
 
     /**
-     * Helper untuk mendapatkan nama role berdasarkan ID
+     * Helper untuk mendapatkan nama role berdasarkan ID - AMBIL DARI DATABASE
      */
     private function getRoleNameById($roleId)
     {
-        $roles = [
-            self::ROLE_WBS_EKSTERNAL => 'WBS Eksternal',
-            self::ROLE_WBS_INTERNAL => 'WBS Internal',
-            self::ROLE_WBS_CC => 'WBS CC',
-            self::ROLE_WBS_FORWARD => 'WBS Forward',
-            self::ROLE_WBS_CCO => 'WBS CCO',
-        ];
-
-        return $roles[$roleId] ?? 'Unknown Role';
+        $role = \App\Models\Role::where('id', $roleId)->where('is_active', 1)->first();
+        return $role ? $role->name : 'Unknown Role';
     }
 
     /**
@@ -89,7 +195,7 @@ class PengaduanEmailService
         // 2. EMAIL KE SEMUA WBS EKSTERNAL
         $wbsEksEmails = $this->getEmailsByRoleId(self::ROLE_WBS_EKSTERNAL);
         $contentToWbsEks = "
-            <h3>🚨 TUGAS BARU - Pengaduan Masuk</h3>
+            <h3>TUGAS BARU - Pengaduan Masuk</h3>
             <p>Ada pengaduan baru yang membutuhkan review segera:</p>
             
             <div style='background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;'>
@@ -104,7 +210,7 @@ class PengaduanEmailService
             <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
             
             <div style='margin-top: 20px; padding: 10px; background: #dc3545; color: white; border-radius: 5px;'>
-                ⚠️ <strong>Segera tinjau pengaduan ini!</strong>
+                <strong>Segera tinjau pengaduan ini!</strong>
             </div>
         ";
 
@@ -153,7 +259,7 @@ class PengaduanEmailService
         // 2. EMAIL KE SEMUA WBS EKSTERNAL (Notifikasi tugas selesai)
         $wbsEksEmails = $this->getEmailsByRoleId(self::ROLE_WBS_EKSTERNAL);
         $contentToWbsEksTeam = "
-            <h3>✅ Tugas Selesai - Pengaduan Ditolak</h3>
+            <h3>Tugas Selesai - Pengaduan Ditolak</h3>
             <p>Pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditolak oleh kolega Anda.</p>
             
             <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
@@ -267,7 +373,7 @@ class PengaduanEmailService
         // 2. EMAIL KE SEMUA WBS INTERNAL (Notifikasi tugas selesai)
         $wbsIntEmails = $this->getEmailsByRoleId(self::ROLE_WBS_INTERNAL);
         $contentToWbsIntTeam = "
-            <h3>✅ Tugas Selesai - Pengaduan Ditolak</h3>
+            <h3>Tugas Selesai - Pengaduan Ditolak</h3>
             <p>Pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditolak oleh kolega Anda.</p>
             
             <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
@@ -478,7 +584,7 @@ class PengaduanEmailService
     {
         $wbsIntEmails = $this->getEmailsByRoleId(self::ROLE_WBS_INTERNAL);
         $contentToWbsInt = "
-            <h3>✅ Tugas Forward Selesai</h3>
+            <h3>Tugas Forward Selesai</h3>
             <p>Tim Forward telah menyelesaikan tugas untuk pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong>.</p>
             
             <div style='background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0;'>
@@ -544,7 +650,7 @@ class PengaduanEmailService
         // 2. EMAIL KE SEMUA USER ROLE TERSEBUT (Notifikasi tugas selesai)
         $roleEmails = $this->getEmailsByRoleId($roleId);
         $contentToRoleTeam = "
-            <h3>✅ Tugas Selesai - Pengaduan Ditolak</h3>
+            <h3>Tugas Selesai - Pengaduan Ditolak</h3>
             <p>Pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditolak oleh kolega Anda di tim {$roleName}.</p>
             
             <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
@@ -564,5 +670,37 @@ class PengaduanEmailService
                 'info'
             );
         }
+    }
+
+    /**
+     * TAHAP 9: FINAL APPROVAL - Pengaduan Selesai
+     * Email ke: Pelapor
+     */
+    public function sendFinalApproval($pengaduanData, $catatan = '')
+    {
+        $contentToPelapor = "
+            <h3>Pengaduan Telah Selesai</h3>
+            <p>Pengaduan Anda dengan kode <strong>{$pengaduanData['code_pengaduan']}</strong> telah diselesaikan dan disetujui.</p>
+            
+            <div style='background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Status:</strong> <span style='color: #28a745;'>Selesai dan Disetujui</span><br>
+                <strong>Perihal:</strong> {$pengaduanData['perihal']}
+            </div>
+
+            " . (!empty($catatan) ? "
+            <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Catatan Penutupan:</strong><br>{$catatan}
+            </div>
+            " : "") . "
+
+            <p><em>Terima kasih telah menggunakan layanan pengaduan kami.</em></p>
+        ";
+
+        return $this->sendNotification(
+            $pengaduanData['email_pelapor'], 
+            'Pengaduan Selesai - ' . $pengaduanData['code_pengaduan'],
+            $contentToPelapor, 
+            'success'
+        );
     }
 }
