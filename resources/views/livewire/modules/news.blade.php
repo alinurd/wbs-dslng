@@ -39,118 +39,117 @@
         </div>
 
         <!-- Form Modal -->
-       @include('livewire.components.form', [
-    'showModal' => $showModal,
-    'updateMode' => $updateMode,
-    'form' => $form,
-    'onClose' => 'closeModal',
-    'onSave' => 'save',
-    'title' => $title,
-    'size' => 'md',
-    'cols' => 2,
-    'fields' => [
-        [
-            'type' => 'text',
-            'model' => 'form.title_id',
-            'label' => 'Title Indonesia',
-            'required' => true,
-            'placeholder' => 'Masukan title....',
-            'error' => 'form.title_id',
-            'messages' => [
-                'required' => 'Title Indonesia wajib diisi',
-            ],
-        ],
-        [
-            'type' => 'text',
-            'label' => 'Title English',
-            'model' => 'form.title_en',
-            'error' => 'form.title_en',
-            'required' => true,
-            'placeholder' => 'Masukkan nama dalam bahasa Inggris',
-            'messages' => [
-                'required' => 'Title English wajib diisi',
-            ],
-        ],
+        @include('livewire.components.form', [
+            'showModal' => $showModal,
+            'updateMode' => $updateMode,
+            'form' => $form,
+            'onClose' => 'closeModal',
+            'onSave' => 'save',
+            'title' => $title,
+            'size' => 'md',
+            'cols' => 2,
+            'fields' => [
+                [
+                    'type' => 'text',
+                    'model' => 'form.title_id',
+                    'label' => 'Title Indonesia',
+                    'required' => true,
+                    'placeholder' => 'Masukan title....',
+                    'error' => 'form.title_id',
+                    'messages' => [
+                        'required' => 'Title Indonesia wajib diisi',
+                    ],
+                ],
+                [
+                    'type' => 'text',
+                    'label' => 'Title English',
+                    'model' => 'form.title_en',
+                    'error' => 'form.title_en',
+                    'required' => true,
+                    'placeholder' => 'Masukkan nama dalam bahasa Inggris',
+                    'messages' => [
+                        'required' => 'Title English wajib diisi',
+                    ],
+                ],
         
-        [
-            'type' => 'text-editor',
-            'model' => 'form.xxx',
-            'label' => 'Content Indonesia',
-            'required' => true,
-            'placeholder' => 'Masukan content....',
-            'error' => 'form.xxx',
-            'messages' => [
-                'required' => 'Content Indonesia wajib diisi',
-            ],
-        ],
-        [
-            'type' => 'text-editor',
-            'label' => 'Content English',
-            'model' => 'form.content_en',
-            'error' => 'form.content_en',
-            'required' => true,
-            'placeholder' => 'Masukkan content dalam bahasa Inggris',
-            'messages' => [
-                'required' => 'Content English wajib diisi',
-            ],
-        ],
+                [
+                    'type' => 'text-editor',
+                    'model' => 'content_id',
+                    'label' => 'Content Indonesia',
+                    'required' => true,
+                    'placeholder' => 'Masukan content....',
+                    'error' => 'content_id',
+                    'messages' => [
+                        'required' => 'Content Indonesia wajib diisi',
+                    ],
+                ],
+                [
+                    'type' => 'text-editor',
+                    'label' => 'Content English',
+                    'model' => 'content_id',
+                    'error' => 'content_id',
+                    'required' => true,
+                    'placeholder' => 'Masukkan content dalam bahasa Inggris',
+                    'messages' => [
+                        'required' => 'Content English wajib diisi',
+                    ],
+                ],
         
-       [
-    'type' => 'file',
-    'label' => 'Files',
-    'model' => 'form.files',
-    'error' => 'form.files',
-    'required' => true,
-    'multiple' => true,
-    'size' => '100', // MB
-    'format' => 'ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3',
-    'placeholder' => 'Pilih file...',
-    'messages' => [
-        'required' => 'File wajib diisi',
-    ],
-],
-[
-    'type' => 'file',
-    'label' => 'Gambar',
-    'model' => 'form.image',
-    'error' => 'form.image',
-    'format' => 'JPG, JPEG, PNG, GIF, WEBP',
-    'size' => '10',
-    'required' => false,
-    'multiple' => false,
-    'placeholder' => 'Pilih gambar...',
-    'messages' => [
-        'required' => 'Gambar wajib diisi',
-    ],
-],
-
-        [
-            'type' => 'select',
-            'label' => 'Category',
-            'model' => 'form.category', // Fixed typo: 'categry' to 'category'
-            'required' => true,
-            'options' => collect($newCategory)->mapWithKeys(function ($p) {
-                return [
-                    $p->id => $p->data ?? $p->data_id ?? $p->data_en ?? 'No Data'
-                ];
-            })->toArray(),
-            'error' => 'form.category',
-            'messages' => [
-                'required' => 'Category wajib dipilih',
+                [
+                    'type' => 'file',
+                    'label' => 'Files',
+                    'model' => 'form.files',
+                    'error' => 'form.files',
+                    'required' => true,
+                    'multiple' => true,
+                    'size' => '100', // MB
+                    'format' =>
+                        'ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3',
+                    'placeholder' => 'Pilih file...',
+                    'messages' => [
+                        'required' => 'File wajib diisi',
+                    ],
+                ],
+                [
+                    'type' => 'file',
+                    'label' => 'Gambar',
+                    'model' => 'form.image',
+                    'error' => 'form.image',
+                    'format' => 'JPG, JPEG, PNG, GIF, WEBP',
+                    'size' => '10',
+                    'required' => false,
+                    'multiple' => false,
+                    'placeholder' => 'Pilih gambar...',
+                    'messages' => [
+                        'required' => 'Gambar wajib diisi',
+                    ],
+                ],
+        
+                [
+                    'type' => 'select',
+                    'label' => 'Category',
+                    'model' => 'form.category', // Fixed typo: 'categry' to 'category'
+                    'required' => true,
+                    'options' => collect($newCategory)->mapWithKeys(function ($p) {
+                            return [
+                                $p->id => $p->data ?? ($p->data_id ?? ($p->data_en ?? 'No Data')),
+                            ];
+                        })->toArray(),
+                    'error' => 'form.category',
+                    'messages' => [
+                        'required' => 'Category wajib dipilih',
+                    ],
+                ],
+                [
+                    'type' => 'switch-single',
+                    'label' => 'Status Aktif',
+                    'model' => 'form.is_active',
+                    'error' => 'form.is_active',
+                    'on_label' => 'AKTIF',
+                    'off_label' => 'NONAKTIF',
+                ],
             ],
-        ],
-         [
-            'type' => 'switch-single',
-            'label' => 'Status Aktif',
-            'model' => 'form.is_active',
-            'error' => 'form.is_active',
-            'on_label' => 'AKTIF',
-            'off_label' => 'NONAKTIF',
-        ],
-       
-
-    ],
-])
+        ])
 
         <!-- Filter Modal -->
         @include('livewire.components.form-filtering', [
