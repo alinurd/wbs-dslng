@@ -573,11 +573,13 @@ public function export($type = 'excel')
         }
 
         switch ($type) {
-            case 'excel':
+            case 'excelReportFull':
                 return $this->exportToExcel($data);
                 
-            case 'pdf':
-                // Sementara non-aktifkan PDF
+            case 'excel': 
+                $this->notify('info', 'Fitur export PDF sedang dalam pengembangan.');
+                return;
+            case 'pdf': 
                 $this->notify('info', 'Fitur export PDF sedang dalam pengembangan.');
                 return;
                 
@@ -623,49 +625,75 @@ public function closePreviewModal()
 }
 
 
-private function exportToExcel($data)
+protected function exportExcel($data, $view, $filename = null, $additionalData = [])
 {
     try {
-        \Log::info('=== EXPORT EXCEL DEBUG START ===');
-        \Log::info('Data count:', ['count' => $data->count()]);
-
-        // Generate filename
-        $filename = 'laporan-pengaduan-' . date('Y-m-d-H-i-s') . '.xls';
-
-        // Prepare additional data
-        $additionalData = [
-            'periodInfo' => $this->getPeriodInfo(),
-            'filterData' => $this->getFilterData()
-        ];
-
-        // Export menggunakan template Blade
-        $exportService = new \App\Services\ExcelExportService();
-        $response = $exportService->exportToExcel(
-            $data,
-            'exports.pengaduan',
+        $filename = $filename ?: 'export-' . date('Y-m-d-H-i-s') . '.xls';
+         
+        $viewData = array_merge([
+            'data' => $data,
+            'exportTime' => now()->format('d/m/Y H:i'),
+            'totalRecords' => $data->count()
+        ], $additionalData);
+ 
+        $html = view($view, $viewData)->render();
+ 
+        $html = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html);
+        $html = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $html);
+        $html = preg_replace('/<!--(.|\s)*?-->/', '', $html);
+ 
+        return response()->streamDownload(
+            function () use ($html) {
+                echo $html;
+            },
             $filename,
-            $additionalData
+            [
+                'Content-Type' => 'application/vnd.ms-excel',
+            ]
         );
 
-        \Log::info('Export service completed', [
-            'response_type' => get_class($response),
-            'status_code' => $response->getStatusCode()
-        ]);
-
-        // Untuk Livewire, kita perlu return array dengan download information
-        // atau menggunakan Livewire file download feature
-        return $this->downloadExcelFile($response, $filename);
-
     } catch (\Exception $e) {
-        \Log::error('Excel Export Error:', [
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine()
-        ]);
+        \Log::error('Export Excel Error: ' . $e->getMessage());
         $this->notify('error', 'Export Excel gagal: ' . $e->getMessage());
         return null;
     }
 }
+
+
+
+private function exportToExcel($data)
+{
+    // Tinggal panggil function di atas dengan parameter yang sesuai
+    return $this->exportExcel(
+        $data, 
+        'exports.pengaduan', // view template
+        'laporan-pengaduan-' . date('Y-m-d-H-i-s') . '.xls', // filename
+        [ // additional data untuk view
+            'periodInfo' => $this->getPeriodInfo(),
+            'filterData' => $this->getFilterData(),
+            'getNamaUser' => function($item) {
+                return $item->pelapor->name ?? $item->user->name ?? 'N/A';
+            },
+            'getDirektoratName' => function($direktoratId) {
+                if (!$direktoratId) return '-';
+                $direktorat = \App\Models\Owner::find($direktoratId);
+                return $direktorat->owner_name ?? $direktoratId;
+            },
+            'getStatusInfo' => function($status, $sts_final) {
+                $statusInfo = \App\Models\Combo::where('kelompok', 'sts-aduan')
+                    ->where('param_int', $status)
+                    ->first();
+                if (!$statusInfo) return ['text' => 'Open', 'color' => 'gray'];
+                return ['text' => $statusInfo->data_id, 'color' => $statusInfo->param_str ?? 'gray'];
+            },
+            'getJenisPelanggaran' => function($item) {
+                return $item->jenisPengaduan->data_id ?? 'Tidak diketahui';
+            }
+        ]
+    );
+}
+
+
 
 private function downloadExcelFile($response, $filename)
 {

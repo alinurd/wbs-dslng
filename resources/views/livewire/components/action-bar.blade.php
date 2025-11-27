@@ -8,14 +8,19 @@
     'onPreview' => '',
     'onDeleteBulk' => '',
 ])
-
 @php
     if ($modul == 'p_tracking') {
         $permissions['delete'] = false;
     }
-    if ($modul == 'r_full' || $modul == 'r_jenis') {
+    if ($modul == 'r_full') {
         $permissions['create'] = false;
         $permissions['preview'] = true;
+        $onExportExcel='export("excelReportFull")';
+    }
+    if ($modul == 'r_jenis') {
+        $permissions['create'] = false;
+        $permissions['preview'] = true;
+        $onExportExcel='export("excelReportJenis")';
     }
 @endphp
 
@@ -38,7 +43,7 @@
 
     <div class="flex items-center gap-1.5">
     <!-- Excel Button -->
-    <button wire:click="export('excel')" 
+    <button wire:click="{{$onExportExcel}}" 
             wire:loading.attr="disabled"
             wire:loading.class="opacity-50 cursor-not-allowed"
             class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-green-600 border border-green-600 rounded-md hover:bg-green-700 focus:z-10 focus:ring-1 focus:ring-green-600 focus:text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
