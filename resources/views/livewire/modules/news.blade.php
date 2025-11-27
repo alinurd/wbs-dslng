@@ -73,27 +73,27 @@
                 ],
         
                 [
-                    'type' => 'text-editor',
-                    'model' => 'content_id',
-                    'label' => 'Content Indonesia',
-                    'required' => true,
-                    'placeholder' => 'Masukan content....',
-                    'error' => 'content_id',
-                    'messages' => [
-                        'required' => 'Content Indonesia wajib diisi',
-                    ],
-                ],
-                [
-                    'type' => 'text-editor',
-                    'label' => 'Content English',
-                    'model' => 'content_id',
-                    'error' => 'content_id',
-                    'required' => true,
-                    'placeholder' => 'Masukkan content dalam bahasa Inggris',
-                    'messages' => [
-                        'required' => 'Content English wajib diisi',
-                    ],
-                ],
+        'type' => 'text-editor',
+        'model' => 'content_id',
+        'label' => 'Content Indonesia',
+        'error' => 'content_id',
+        'required' => true,
+        'placeholder' => 'Masukan content....',
+        'messages' => [
+            'required' => 'Content Indonesia wajib diisi',
+        ],
+    ],
+    [
+        'type' => 'text-editor', 
+        'label' => 'Content English',
+        'model' => 'content_en',
+        'error' => 'content_en',
+        'required' => true,
+        'placeholder' => 'Masukkan content dalam bahasa Inggris',
+        'messages' => [
+            'required' => 'Content English wajib diisi',
+        ],
+    ],
         
                 [
                     'type' => 'file',

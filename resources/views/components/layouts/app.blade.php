@@ -260,7 +260,7 @@
                 timer: null,
 
                 showNotification(detail) {
-                    console.log('Detail received:', detail); // Debug log
+                    // console.log('Detail received:', detail); // Debug log
 
                     // Handle both object and array formats
                     let notificationData;
@@ -272,7 +272,7 @@
                         notificationData = detail;
                     }
 
-                    console.log('Processed data:', notificationData); // Debug log
+                    // console.log('Processed data:', notificationData); // Debug log
 
                     this.type = notificationData.type;
                     this.message = notificationData.message;

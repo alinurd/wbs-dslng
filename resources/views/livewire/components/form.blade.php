@@ -811,24 +811,30 @@
 
 
     
+                                        @elseif ($field['type'] === 'text-editor')
+    @php
+        $contentValue = data_get($this, $field['model'], '');
+    @endphp
 
-@elseif ($field['type'] === 'text-editor')
     <div class="relative" wire:ignore>
         <livewire:rich-text-editor 
-            wire:model="{{ $field['model'] }}"
+            :model="$field['model']"
+            :content="$contentValue"
             placeholder="{{ $field['placeholder'] ?? 'Ketik sesuatu...' }}"
             height="200px"
             toolbar="full"
+            key="editor-{{ $field['model'] }}"
         />
-    </div> 
+    </div>
     
     @error($errorField)
         <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
             <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
             {{ $fieldMessages[$message] ?? $message }}
         </div>
-    @enderror 
-
+    @enderror
+    
+    
 
                                         @else ($field['type'] === 'text')
                                         <div class="relative">
