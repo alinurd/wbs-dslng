@@ -10,6 +10,7 @@ use App\Models\LogApproval;
 use App\Models\Owner;
 use App\Models\Pengaduan;
 use App\Services\EmailService;
+use App\Services\ExcelExportService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
@@ -622,25 +623,74 @@ public function closePreviewModal()
 }
 
 
-
-
 private function exportToExcel($data)
 {
     try {
-        // Generate filename dengan timestamp
-        $filename = 'export-pengaduan-' . date('Y-m-d-H-i-s') . '.xlsx';
-        
-        // Logic export Excel di sini
-        // Contoh menggunakan Laravel Excel
-        // return Excel::download(new PengaduanExport($data), $filename);
-        
-        $this->notify('success', "Data berhasil diexport ke Excel ({$data->count()} records)");
-        $this->dispatch('exportCompleted', ['type' => 'excel', 'count' => $data->count()]);
-        
+        \Log::info('=== EXPORT EXCEL DEBUG START ===');
+        \Log::info('Data count:', ['count' => $data->count()]);
+
+        // Generate filename
+        $filename = 'laporan-pengaduan-' . date('Y-m-d-H-i-s') . '.xls';
+
+        // Prepare additional data
+        $additionalData = [
+            'periodInfo' => $this->getPeriodInfo(),
+            'filterData' => $this->getFilterData()
+        ];
+
+        // Export menggunakan template Blade
+        $exportService = new \App\Services\ExcelExportService();
+        $response = $exportService->exportToExcel(
+            $data,
+            'exports.pengaduan',
+            $filename,
+            $additionalData
+        );
+
+        \Log::info('Export service completed', [
+            'response_type' => get_class($response),
+            'status_code' => $response->getStatusCode()
+        ]);
+
+        // Untuk Livewire, kita perlu return array dengan download information
+        // atau menggunakan Livewire file download feature
+        return $this->downloadExcelFile($response, $filename);
+
     } catch (\Exception $e) {
-        throw new \Exception("Export Excel gagal: " . $e->getMessage());
+        \Log::error('Excel Export Error:', [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]);
+        $this->notify('error', 'Export Excel gagal: ' . $e->getMessage());
+        return null;
     }
-} 
+}
+
+private function downloadExcelFile($response, $filename)
+{
+    try {
+        // Dapatkan content dari response
+        $content = $response->getContent();
+        
+        \Log::info('Download file preparation:', [
+            'filename' => $filename,
+            'content_length' => strlen($content)
+        ]);
+
+        // Method 1: Using Livewire file download (recommended)
+        return response()->streamDownload(function () use ($content) {
+            echo $content;
+        }, $filename, [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Download file error:', ['message' => $e->getMessage()]);
+        throw $e;
+    }
+}
 
     public function notify($type, $message, $errMessage = '')
     {
