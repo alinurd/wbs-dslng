@@ -1,10 +1,4 @@
 <div>
-    <h1 class="text-3xl font-bold mb-2">Selamat Datang, {{ $user->name }}!</h1>
-    <p class="text-blue-100 text-lg mb-4">
-        Sistem pelaporan yang aman, rahasia, dan terpercaya untuk menciptakan budaya kerja transparan
-        dan berintegritas
-    </p>
-    
     @if (!$isVerif)
         <!-- Alert Verifikasi -->
         <div class="bg-red-500/20 border border-red-300 rounded-lg p-6 mb-6">
