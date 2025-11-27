@@ -118,32 +118,32 @@ Route::get('/faq', FAQ::class)->name('faq');
     
 });
  
-// Route::get('/debug-email', function () {
-//    try {
-//         $emailService = new \App\Services\PengaduanEmailService();
+Route::get('/debug-email', function () {
+   try {
+        $emailService = new \App\Services\PengaduanEmailService();
         
-//         $pengaduanData = [
-//             'code_pengaduan' => 'TEST-001',
-//             'tanggal_pengaduan' => now()->format('d/m/Y'),
-//             'perihal' => 'Test Pengaduan',
-//             'email_pelapor' => 'alidevs1405@gmail.com',
-//             'telepon_pelapor' => '08123456789',
-//             'waktu_kejadian' => '2024-01-01 10:00',
-//             'direktorat' => 'IT',
-//             'uraian' => 'Ini adalah test pengaduan'
-//         ];
+        $pengaduanData = [
+            'code_pengaduan' => 'TEST-001',
+            'tanggal_pengaduan' => now()->format('d/m/Y'),
+            'perihal' => 'Test Pengaduan',
+            'email_pelapor' => 'alidevs1405@gmail.com',
+            'telepon_pelapor' => '08123456789',
+            'waktu_kejadian' => '2024-01-01 10:00',
+            'direktorat' => 'IT',
+            'uraian' => 'Ini adalah test pengaduan'
+        ];
         
-//         $result = $emailService->sendNewPengaduanNotifications($pengaduanData, 1);
+        $result = $emailService->sendNewPengaduanNotifications($pengaduanData, 1);
         
-//         if ($result) {
-//             echo "Email berhasil dikirim!";
-//         } else {
-//             echo "Email gagal dikirim";
-//         }
+        if ($result) {
+            echo "Email berhasil dikirim!";
+        } else {
+            echo "Email gagal dikirim";
+        }
         
-//     } catch (\Exception $e) {
-//         echo "Error: " . $e->getMessage();
-//     }
+    } catch (\Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
     
-//     return "<br><br>Debug selesai";
-// });
+    return "<br><br>Debug selesai";
+});
