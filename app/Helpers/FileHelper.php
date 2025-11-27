@@ -28,7 +28,7 @@ class FileHelper
         
         return [
             'path' => $path,
-            'url' => Storage::disk($disk)->url($path),
+            // 'url' => Storage::disk($disk)->url($path),
             'filename' => $filename,
             'original_name' => $file->getClientOriginalName(),
             'extension' => $extension,

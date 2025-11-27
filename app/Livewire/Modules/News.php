@@ -36,10 +36,9 @@ class News extends Root
     public function mount()
     {
         parent::mount(); 
-        $this->newCategory = Combo::where('kelompok', 'pertanyaan')
+        $this->newCategory = Combo::where('kelompok', 'news')
             ->select('data_id', 'data_en', 'data', 'id')
-            ->where('is_active', true)
-            ->where('param_int', true)
+            ->where('is_active', true) 
             ->orderBy('data_id')
             ->get(); 
     }
