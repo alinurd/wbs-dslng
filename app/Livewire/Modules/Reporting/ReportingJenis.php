@@ -3,6 +3,8 @@
 namespace App\Livewire\Modules\Reporting;
 
 use App\Livewire\Root;
+use App\Models\Combo;
+use App\Models\Owner;
 use App\Models\Pengaduan;
 use App\Traits\HasChat;
 use Livewire\WithFileUploads;
@@ -11,10 +13,10 @@ class ReportingJenis extends Root
 {
     use WithFileUploads, HasChat;
 
-    public $modul = 'p_tracking';
+    public $modul = 'r_full';
     public $model = Pengaduan::class;
-    public $views = 'modules.pengaduan.tracking';
-    public $title = "Lacak Aduan";
+    public $views = 'modules.reporting.jenis-aduan';
+    public $title = "Laporan Berdasarkan Jenis Aduan";
 
     // Properties untuk detail (dari HasChat sudah include chat properties)
     public $detailData = [];
@@ -39,7 +41,7 @@ class ReportingJenis extends Root
     public function filterDefault()
     {
         return [
-            ['f' => 'user_id', 'v' => auth()->id()],
+            // ['f' => 'user_id', 'v' => auth()->id()],
         ];
     }
     public function query()
@@ -81,23 +83,28 @@ class ReportingJenis extends Root
                 });
             }
         }
-
     if (is_array($this->filters)) {
         foreach ($this->filters as $key => $val) {
             if ($key == 'tahun' && !empty($val)) {
                 $q->whereYear('tanggal_pengaduan', $val);
             }
+            if ($key == 'bulan' && !empty($val)) {
+                $q->whereMonth('tanggal_pengaduan', $val);
+            }
             if ($key == 'jenis_pengaduan_id' && !empty($val)) {
                 $q->where('jenis_pengaduan_id', $val);
+            }
+            if ($key == 'saluran_id' && !empty($val)) {
+                $q->where('saluran_aduan_id', $val);
+            }
+            if ($key == 'fwd_id' && !empty($val)) {
+                $q->where('fwd_to', $val);
             }
             if ($key == 'status' && !empty($val)) {
                 $q->where('status', $val);
             }
         }
     }
-
-     
-
         return $q;
     }
 
@@ -119,26 +126,41 @@ class ReportingJenis extends Root
         $this->showDetailModal = true;
     }
 
-    public function comment($id)
-    {
-        can_any([strtolower($this->modul) . '.view']);
+public function formatFilterKey($key)
+{
+    $keyMap = [
+        'bulan' => 'Bulan',
+        'tahun' => 'Tahun',
+        'jenis_pengaduan_id' => 'Jenis Pelanggaran',
+        'saluran_id' => 'Saluran Aduan',
+        'fwd_id' => 'WBS Forward',
+        'search' => 'Pencarian'
+    ];
+    
+    return $keyMap[$key] ?? str_replace('_', ' ', ucwords($key, '_'));
+}
 
-        $record = $this->model::with(['comments.user'])->findOrFail($id);
 
-        $detailData = [
-            'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
-            'Jenis Pelanggaran' => $record->jenisPengaduan->name ?? 'Tidak diketahui',
-            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status' => $record->status ? 'Aktif' : 'Nonaktif',
-            'Lokasi' => $record->alamat_kejadian ?? 'Tidak diketahui',
-            'Deskripsi' => $record->uraian ?? 'Tidak ada deskripsi',
-        ];
 
-        $detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
 
-        $this->openChat($id, $detailData, $detailTitle);
+public function getPeriodInfo()
+{
+    $currentMonth = date('m');
+    $currentYear = date('Y');
+    
+    $bulan = $this->filters['bulan'] ?? request('bulan', $currentMonth);
+    $tahun = $this->filters['tahun'] ?? request('tahun', $currentYear);     
+    $months = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 
+                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            ];
 
-        $this->loadUploadedFiles();
-    }
+    $monthName = $months[$bulan] ?? 'Semua Bulan';
+    
+    return $monthName . ' ' . $tahun;
+}
+
+
+
 }
