@@ -2,6 +2,7 @@
 
 namespace App\Livewire\WbsLanding;
 
+use App\Helpers\FileHelper;
 use App\Models\News;  
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
@@ -128,4 +129,22 @@ abstract class RootLanding extends Component
         
         $this->dispatch('reload-page');
     }
+
+      public function downloadFile($filePath, $originName)
+    {
+        if ($filePath && FileHelper::exists($filePath)) {
+            return response()->download( storage_path('app/public/' . $filePath), $originName);
+        }
+        return back();
+    }
+    protected function formatFileSize($bytes)
+{
+    if ($bytes == 0) return '0 Bytes';
+    
+    $k = 1024;
+    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    $i = floor(log($bytes) / log($k));
+    
+    return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+}
 }
