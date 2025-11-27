@@ -18,7 +18,7 @@
                         class=" bg-white rounded-xl shadow-md overflow-hidden hover:scale-[1.02] transition relative">
                         <div class="relative">
                             <img src="{{ $news['image'] ? url('/file/'.base64_encode($news['image'])) : asset('assets/images/news/4.png') }}" alt="{{ $news['title_' . $locale] }}" class="w-full h-30 object-cover"/>
-                               <div class="absolute inset-0 bg-black bg-opacity-5"></div>
+                               {{-- <div class="absolute inset-0 bg-black bg-opacity-5"></div> --}}
 
                             <span
                                 class="absolute top-3 left-3 bg-white bg-opacity-80 text-gray-700 text-xs font-medium px-2 py-1 rounded shadow">
