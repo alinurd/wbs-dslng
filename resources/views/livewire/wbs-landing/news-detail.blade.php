@@ -48,7 +48,7 @@
 
                         <!-- Isi Berita -->
                         <p class="text-gray-700 text-lg sm:text-xl leading-relaxed mb-8">
-                             {{ $newsDetail['content_'.$locale] }}
+                                     {!! $newsDetail['content_' . $locale] !!}
                         </p>
 
                         <!-- Tombol Download File -->
