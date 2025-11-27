@@ -618,124 +618,15 @@
 
 
 
-
-
-
-
-
-
-
-                                        @elseif ($field['type'] === 'text-editor')
-    <div class="relative" wire:ignore id="editor-container-{{ $field['model'] }}">
-        <!-- Textarea biasa sebagai fallback -->
-        <textarea 
+@elseif ($field['type'] === 'text-editor')
+    <div class="relative">
+        <livewire:rich-text-editor 
             wire:model="{{ $field['model'] }}"
-            id="textarea-{{ $field['model'] }}"
-            class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
-            placeholder="{{ $field['placeholder'] ?? '' }}"
-            rows="6"
-        ></textarea>
-        
-        <!-- Status indicator -->
-        <div id="status-{{ $field['model'] }}" class="text-xs text-gray-500 mt-1 flex items-center">
-            <i class="fas fa-info-circle mr-1"></i>
-            <span id="status-text-{{ $field['model'] }}">Memuat teks-editor...</span>
-        </div>
-    </div>
-
-    <script>
-    function loadTinyMCE() {
-        const model = '{{ $field['model'] }}';
-        const statusText = document.getElementById('status-text-' + model);
-        
-        // Cek jika TinyMCE sudah ada
-        if (typeof tinymce !== 'undefined') {
-            initTinyMCE();
-            return;
-        }
-        
-        // Try loading TinyMCE
-        statusText.textContent = 'Memuat editor...';
-        
-        const script = document.createElement('script');
-        // Gunakan CDN yang berbeda
-        script.src = 'https://cdn.jsdelivr.net/npm/tinymce@6.8.2/tinymce.min.js';
-        script.onload = function() {
-            statusText.textContent = 'Editor berhasil dimuat!';
-            setTimeout(() => {
-                initTinyMCE();
-            }, 500);
-        };
-        script.onerror = function() {
-            statusText.innerHTML = '<span class="text-orange-600">Gagal memuat editor, menggunakan mode teks biasa</span>';
-        };
-        
-        document.head.appendChild(script);
-    }
-    
-    function initTinyMCE() {
-        const model = '{{ $field['model'] }}';
-        const textarea = document.getElementById('textarea-' + model);
-        const statusText = document.getElementById('status-text-' + model);
-        
-        if (typeof tinymce === 'undefined') {
-            statusText.innerHTML = '<span class="text-red-600">Error: TinyMCE tidak tersedia</span>';
-            return;
-        }
-        
-        try {
-            tinymce.init({
-                selector: '#textarea-' + model,
-                plugins: 'link lists',
-                toolbar: 'bold italic | bullist numlist | link',
-                height: 300,
-                menubar: false,
-                statusbar: false,
-                promotion: false,
-                branding: false,
-                setup: function(editor) {
-                    editor.on('init', function() {
-                        statusText.innerHTML = '<span class="text-green-600">Editor siap digunakan!</span>';
-                    });
-                    
-                    editor.on('change', function() {
-                        const content = editor.getContent();
-                        @this.set(model, content);
-                    });
-                    
-                    editor.on('blur', function() {
-                        const content = editor.getContent();
-                        @this.set(model, content);
-                    });
-                }
-            });
-        } catch (error) {
-            console.error('TinyMCE Error:', error);
-            statusText.innerHTML = '<span class="text-red-600">Error inisialisasi editor</span>';
-        }
-    }
-    
-    // Initialize when modal opens
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check when modal becomes visible
-        const observer = new MutationObserver(function(mutations) {
-            for (let mutation of mutations) {
-                for (let node of mutation.addedNodes) {
-                    if (node.nodeType === 1) {
-                        const editorContainer = document.getElementById('editor-container-{{ $field['model'] }}');
-                        if (editorContainer && editorContainer.offsetParent !== null) {
-                            setTimeout(loadTinyMCE, 100);
-                            observer.disconnect();
-                            return;
-                        }
-                    }
-                }
-            }
-        });
-        
-        observer.observe(document.body, { childList: true, subtree: true });
-    });
-    </script>
+            placeholder="{{ $field['placeholder'] ?? 'Ketik sesuatu...' }}"
+            height="200px"
+            toolbar="full"
+        />
+    </div> 
     
     @error($errorField)
         <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">

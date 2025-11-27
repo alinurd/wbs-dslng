@@ -19,6 +19,7 @@
     @livewireStyles
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {{-- Lucide Icons --}}
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -124,9 +125,7 @@
 </aside>
 
 {{-- Overlay for mobile --}}
-<div id="sidebarBackdrop" class="fixed inset-0 bg-black/40 hidden md:hidden z-30"></div>
-
-<script>
+ <script>
     function sidebarNavigation() {
         return {
             openMenus: {},
@@ -240,6 +239,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     @livewireScripts
     <script>
         window.AppConfig = {
