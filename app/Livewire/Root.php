@@ -693,8 +693,31 @@ abstract class Root extends Component
             ->get();
     }
 
-
-
+ 
+public function removeFileCore($model, $index){
+    $files = data_get($this, $model);
+    
+    if ($files === null) {
+        return;
+    }
+    
+    // Handle single file (bukan array)
+    if (!is_array($files)) {
+        data_set($this, $model, null);
+        return;
+    }
+    
+    if (isset($files[$index])) {
+        unset($files[$index]);
+        $files = array_values($files); 
+         
+        if (empty($files)) {
+            data_set($this, $model, null);
+        } else {
+            data_set($this, $model, $files);
+        }
+    }
+}
     public function removeLampiran($index)
     {
         if (isset($this->lampiran[$index])) {
@@ -702,13 +725,59 @@ abstract class Root extends Component
             $this->lampiran = array_values($this->lampiran);
         }
     }
+
+    // Di Livewire component
+protected function isValidFileFormat($file, $allowedFormats)
+{
+    if (empty($file)) {
+        return false;
+    }
+    
+    $fileName = is_object($file) ? $file->getClientOriginalName() : $file;
+    $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    
+    return in_array($extension, $allowedFormats);
+}
+
+protected function getAcceptAttribute($allowedFormats)
+{
+    $mimeTypes = [
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'webp' => 'image/webp',
+        'pdf' => 'application/pdf',
+        'doc' => 'application/msword',
+        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'xls' => 'application/vnd.ms-excel',
+        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'ppt' => 'application/vnd.ms-powerpoint',
+        'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'zip' => 'application/zip',
+        'rar' => 'application/vnd.rar',
+        'mp3' => 'audio/mpeg',
+        'mp4' => 'video/mp4',
+        'avi' => 'video/x-msvideo',
+    ];
+    
+    $acceptTypes = [];
+    foreach ($allowedFormats as $format) {
+        if (isset($mimeTypes[$format])) {
+            $acceptTypes[] = $mimeTypes[$format];
+        }
+    }
+    
+    return implode(',', $acceptTypes);
+}
+
     //files
     public function uploadFile()
     {
-        $this->validate([
-            'fileUpload' => 'required|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,zip,rar',
-            'fileDescription' => 'nullable|string|max:255',
-        ]);
+        // $this->validate([
+        //     'fileUpload' => 'required|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,zip,rar',
+        //     'fileDescription' => 'nullable|string|max:255',
+        // ]);
 
         if (!$this->trackingId) return;
 

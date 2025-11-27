@@ -616,10 +616,204 @@
 
 
 
+                                       
+                                       
 
+                                        @elseif ($field['type'] === 'file')
+    @php
+        // Konfigurasi default
+        $maxSize = $field['size'] ?? '100';
+        $formats = $field['format'] ?? 'ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3';
+        $isMultiple = $field['multiple'] ?? true;
+        $fileModel = $field['model'];
+        
+        // Parse allowed formats
+        $allowedFormats = array_map('strtolower', array_map('trim', explode(',', $formats)));
+        
+        $currentFiles = data_get($this, $fileModel, []);
+        
+        $fileCount = 0;
+        $fileList = [];
+        $invalidFiles = [];
+        
+        if ($isMultiple) {
+            $fileList = is_array($currentFiles) ? $currentFiles : [];
+            
+            // Filter hanya file yang formatnya diizinkan
+            $validFiles = [];
+            foreach ($fileList as $file) {
+                if ($this->isValidFileFormat($file, $allowedFormats)) {
+                    $validFiles[] = $file;
+                } else {
+                    $invalidFiles[] = $file;
+                }
+            }
+            $fileList = $validFiles;
+            $fileCount = count($fileList);
+        } else {
+            if (!empty($currentFiles)) {
+                // Cek format untuk single file
+                if ($this->isValidFileFormat($currentFiles, $allowedFormats)) {
+                    $fileList = [$currentFiles];
+                    $fileCount = 1;
+                } else {
+                    $invalidFiles[] = $currentFiles;
+                    $fileList = [];
+                    $fileCount = 0;
+                }
+            } else {
+                $fileList = [];
+                $fileCount = 0;
+            }
+        }
+        
+        // Hitung total size
+        $totalSize = 0;
+        foreach ($fileList as $file) {
+            if (is_object($file) && method_exists($file, 'getSize')) {
+                $totalSize += $file->getSize();
+            }
+        }
+    @endphp
+
+    <div class="relative">
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center transition-colors duration-200 ease-in-out hover:border-blue-400 bg-white">
+            <input type="file" 
+                   wire:model="{{ $fileModel }}" 
+                   {{ $isMultiple ? 'multiple' : '' }} 
+                   id="file-input-{{ $field['model'] }}" 
+                   class="hidden"
+                   accept="{{ $this->getAcceptAttribute($allowedFormats) }}">
+            
+            <div class="flex flex-col items-center justify-center space-y-2">
+                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400"></i>
+                <div class="space-y-1">
+                    <p class="text-sm font-medium text-gray-700">Klik untuk memilih file</p>
+                    <p class="text-xs text-gray-500 max-w-xs mx-auto">
+                        Maksimal {{ $maxSize }}MB {{ $isMultiple ? 'per file' : '' }}. Format: {{ $formats }}
+                    </p>
+                </div>
+                <button type="button" onclick="document.getElementById('file-input-{{ $field['model'] }}').click()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center text-sm">
+                    <i class="fas fa-folder-open mr-2"></i>Pilih File
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tampilkan error untuk file yang tidak valid -->
+        @if (count($invalidFiles) > 0)
+            <div class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-center text-red-700 text-sm">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span class="font-medium">File tidak valid:</span>
+                </div>
+                <ul class="mt-2 text-xs text-red-600 space-y-1">
+                    @foreach ($invalidFiles as $invalidFile)
+                        @php
+                            $fileName = is_object($invalidFile) ? $invalidFile->getClientOriginalName() : (is_string($invalidFile) ? basename($invalidFile) : 'Unknown File');
+                            $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                        @endphp
+                        <li class="flex items-center">
+                            <i class="fas fa-times mr-2 text-red-500"></i>
+                            {{ $fileName }} (Format .{{ strtoupper($extension) }} tidak diizinkan)
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        
+        @if ($fileCount > 0)
+            <div class="mt-4">
+                <!-- Header dengan info total file -->
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="text-sm font-medium text-gray-700">File yang akan diunggah:</h4>
+                    <div class="text-xs text-blue-600 font-medium">
+                        <span>Total: {{ $fileCount }} file</span>
+                        @if($isMultiple && $fileCount > 0)
+                        <span class="mx-1">•</span>
+                        <span>{{ round($totalSize / 1024 / 1024, 2) }} MB</span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- List file -->
+                <div class="space-y-2 max-h-40 overflow-y-auto">
+                    @foreach ($fileList as $index => $file)
+                        @php
+                            // Pastikan file valid sebelum menampilkan
+                            if (empty($file)) continue;
+                            
+                            $fileName = is_object($file) ? $file->getClientOriginalName() : (is_string($file) ? basename($file) : 'Unknown File');
+                            $fileSize = is_object($file) && method_exists($file, 'getSize') ? $file->getSize() : 0;
+                            $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                            $icon = 'fa-file';
+                            $iconColor = 'text-blue-500';
+
+                            $iconMappings = [
+                                'jpg|jpeg|png|gif|bmp|webp' => ['fa-file-image', 'text-green-500'],
+                                'pdf' => ['fa-file-pdf', 'text-red-500'],
+                                'doc|docx' => ['fa-file-word', 'text-blue-600'],
+                                'xls|xlsx' => ['fa-file-excel', 'text-green-600'],
+                                'ppt|pptx' => ['fa-file-powerpoint', 'text-orange-500'],
+                                'zip|rar|7z|tar|gz' => ['fa-file-archive', 'text-yellow-500'],
+                                'mp3|wav|aac|flac|ogg' => ['fa-file-audio', 'text-purple-500'],
+                                'mp4|avi|mov|3gp|mkv|wmv|flv' => ['fa-file-video', 'text-pink-500'],
+                            ];
+
+                            foreach ($iconMappings as $pattern => [$matchedIcon, $matchedColor]) {
+                                if (preg_match("/{$pattern}/", $extension)) {
+                                    $icon = $matchedIcon;
+                                    $iconColor = $matchedColor;
+                                    break;
+                                }
+                            }
+                        @endphp
+
+                        <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                            <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                <i class="fas {{ $icon }} {{ $iconColor }} text-xl flex-shrink-0"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-medium text-gray-900 truncate">
+                                        {{ $fileName }}
+                                    </p>
+                                    <div class="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                                        <span>{{ round($fileSize / 1024, 2) }} KB</span>
+                                        <span>•</span>
+                                        <span>{{ strtoupper($extension) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" 
+                                    wire:click="removeFile('{{ $fileModel }}', {{ $index }})"
+                                    class="text-red-500 hover:text-red-700 transition-colors p-1 rounded-full hover:bg-red-100 ml-2 flex-shrink-0"
+                                    title="Hapus file">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    </div>
+    
+    @error($errorField)
+        <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+            <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+            {{ $fieldMessages[$message] ?? $message }}
+        </div>
+    @enderror
+
+
+
+
+
+
+
+
+    
 
 @elseif ($field['type'] === 'text-editor')
-    <div class="relative">
+    <div class="relative" wire:ignore>
         <livewire:rich-text-editor 
             wire:model="{{ $field['model'] }}"
             placeholder="{{ $field['placeholder'] ?? 'Ketik sesuatu...' }}"
