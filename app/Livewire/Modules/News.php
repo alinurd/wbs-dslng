@@ -64,22 +64,20 @@ class News extends Root
         if (!empty($this->form['files']) && is_array($this->form['files'])) {
             $filesPaths = FileHelper::uploadMultiple(
                 $this->form['files'], 
-                'pengaduan/news', 
+                'news', 
                 'public'
             );
         }
-
         // Upload image
         $imagePath = null;
         if (!empty($this->form['image']) && is_object($this->form['image'])) {
             $uploadedImages = FileHelper::uploadMultiple(
                 [$this->form['image']], 
-                'pengaduan/news', 
+                'news', 
                 'public'
             );
             $imagePath = !empty($uploadedImages) ? $uploadedImages[0] : null;
-        }
-
+        } 
         $codeNews = Str::random(8);
 
         $payload = [
@@ -90,7 +88,7 @@ class News extends Root
             'content_en' => $this->content_en ?: '',
             'is_active' => $this->form['is_active'],
             'files' => !empty($filesPaths) ? json_encode($filesPaths) : null,
-            'image' => $imagePath,
+            'image' => !empty($imagePath) ? json_encode($imagePath) : null, 
             'code_news' => $codeNews,
             'created_by' => auth()->id(),
         ]; 
