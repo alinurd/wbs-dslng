@@ -20,11 +20,9 @@ use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
 use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
 use App\Livewire\Modules\Users\PermissionManagement;
 use App\Livewire\Modules\Users\UserManagement;
-use App\Livewire\News\Detail as NewsDetail;
+ 
 
-
-use App\Livewire\News\Index as NewsIndex;
-use App\Livewire\Param\ParamAduan;
+ use App\Livewire\Param\ParamAduan;
 use App\Livewire\Param\ParamDirektorat;
 use App\Livewire\Param\ParamEmailNotif;
 use App\Livewire\Param\ParamFAQ;
@@ -38,6 +36,8 @@ use App\Livewire\Roles\Editor as RoleEditor;
 
 use App\Livewire\Roles\Form as RoleForm;
  use App\Livewire\WbsLanding\Index as LandingIndex;
+ use App\Livewire\WbsLanding\NewsIndex;
+ use App\Livewire\WbsLanding\NewsDetail;
 use App\Livewire\Roles\Index as RoleIndex;
 use App\Livewire\TestRegister;
 use Illuminate\Support\Facades\Mail;
@@ -118,32 +118,50 @@ Route::get('/faq', FAQ::class)->name('faq');
     
 });
  
-Route::get('/debug-email', function () {
-   try {
-        $emailService = new \App\Services\PengaduanEmailService();
-        
-        $pengaduanData = [
-            'code_pengaduan' => 'TEST-001',
-            'tanggal_pengaduan' => now()->format('d/m/Y'),
-            'perihal' => 'Test Pengaduan',
-            'email_pelapor' => 'alidevs1405@gmail.com',
-            'telepon_pelapor' => '08123456789',
-            'waktu_kejadian' => '2024-01-01 10:00',
-            'direktorat' => 'IT',
-            'uraian' => 'Ini adalah test pengaduan'
-        ];
-        
-        $result = $emailService->sendNewPengaduanNotifications($pengaduanData, 1);
-        
-        if ($result) {
-            echo "Email berhasil dikirim!";
-        } else {
-            echo "Email gagal dikirim";
-        }
-        
-    } catch (\Exception $e) {
-        echo "Error: " . $e->getMessage();
-    }
-    
-    return "<br><br>Debug selesai";
+
+Route::get('/file/', function() {
+    return redirect()->route('landing.index');
 });
+
+Route::get('/file/{path}', function($path) {
+    $decoded = base64_decode($path);
+    $fullPath = storage_path('app/public/'.$decoded);
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+    return response()->file($fullPath, [
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+});
+
+
+
+// Route::get('/debug-email', function () {
+//    try {
+//         $emailService = new \App\Services\PengaduanEmailService();
+        
+//         $pengaduanData = [
+//             'code_pengaduan' => 'TEST-001',
+//             'tanggal_pengaduan' => now()->format('d/m/Y'),
+//             'perihal' => 'Test Pengaduan',
+//             'email_pelapor' => 'alidevs1405@gmail.com',
+//             'telepon_pelapor' => '08123456789',
+//             'waktu_kejadian' => '2024-01-01 10:00',
+//             'direktorat' => 'IT',
+//             'uraian' => 'Ini adalah test pengaduan'
+//         ];
+        
+//         $result = $emailService->sendNewPengaduanNotifications($pengaduanData, 1);
+        
+//         if ($result) {
+//             echo "Email berhasil dikirim!";
+//         } else {
+//             echo "Email gagal dikirim";
+//         }
+        
+//     } catch (\Exception $e) {
+//         echo "Error: " . $e->getMessage();
+//     }
+    
+//     return "<br><br>Debug selesai";
+// });

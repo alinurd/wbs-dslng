@@ -1,24 +1,16 @@
 <div class="min-h-screen flex flex-col">
 
-       @php
-                $slug = 'Partnership-1';
-                $newsDetail = null;
-                foreach (__('wbs.news.items') as $news) {
-                    if (isset($news['slug']) && $news['slug'] === $slug) {
-                        $newsDetail = $news;
-                        break;
-                    }
-                }
-            @endphp
+    {{-- {{dd($newsDetail)}}  --}}
 
     <!-- Header Section -->
     <section class="new-bg-page text-white py-32">
         <div class="text-center max-w-3xl mx-auto px-4">
+
             <h2 class="font-extrabold text-5xl sm:text-6xl mb-4" style="text-shadow: 1px 4px 4px rgba(0,0,0,0.78);">
-                {{ $newsDetail['title'] }}
+                 {{ $newsDetail['title_' . $locale] }}
             </h2>
              <span class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-600 text-white">
-                                {{ $newsDetail['category'] }}
+                 {{ $newsDetail['category'] }}
                             </span>
         </div>
     </section>
@@ -33,8 +25,7 @@
                     <!-- Gambar Berita -->
                     @if(!empty($newsDetail['image']))
                     <div class="overflow-hidden rounded-t-3xl">
-                        <img src="{{ asset($newsDetail['image']) }}" alt="{{ $newsDetail['title'] }}"
-                             class="w-full h-[500px] object-cover transition-transform duration-500 hover:scale-105">
+                        <img src="{{ $newsDetail['image'] ? url('/file/'.base64_encode($newsDetail['image'])) : asset('assets/images/news/4.png') }}" alt="{{ $newsDetail['title_' . $locale] }}" class="w-full h-[400px] object-cover transition-transform duration-500 hover:scale-105"/>
                     </div>
                     @endif
 
@@ -43,7 +34,7 @@
                         <!-- Metadata -->
                         <div class="flex justify-between items-center mb-6">
                             <span class="text-sm text-gray-500">
-                                {{ \Carbon\Carbon::parse($newsDetail['created'])->format('d M Y') }}
+                                {{ \Carbon\Carbon::parse($newsDetail['created'])->format('d M Y -h:s') }}
                             </span>
                             <span class="text-xs font-semibold px-3 py-1 text-gray-500">
                                 @admin
@@ -52,12 +43,12 @@
 
                         <!-- Judul -->
                         <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-                            {{ $newsDetail['title'] }}
+                            {{ $newsDetail['title_' . $locale] }} 
                         </h1>
 
                         <!-- Isi Berita -->
                         <p class="text-gray-700 text-lg sm:text-xl leading-relaxed mb-8">
-                            {{ $newsDetail['desc'] }}
+                             {{ $newsDetail['content_'.$locale] }}
                         </p>
 
                         <!-- Tombol Download File -->
