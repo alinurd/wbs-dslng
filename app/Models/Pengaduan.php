@@ -58,7 +58,7 @@ class Pengaduan extends Model
     }
 
     // Relasi dengan owner untuk direktorat
-    public function direktoratRelasi()
+    public function direktorat()
     {
         return $this->belongsTo(Owner::class, 'direktorat');
     }

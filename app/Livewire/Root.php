@@ -1006,6 +1006,12 @@ protected function getAcceptAttribute($allowedFormats)
     {
         return $record->pelapor->name ?? $record->user->name ?? 'N/A';
     }
+    public function getDirektoratName($id)
+    {
+        $p= Owner::where('id', $id)
+            ->first();
+        return $p->owner_name  ?? 'N/A';
+    }
 
     public function getJenisPelanggaran($record)
     {
