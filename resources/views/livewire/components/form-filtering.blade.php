@@ -27,7 +27,7 @@
                                     {{ $title }}
                                 </h5>
                                 <p class="text-white/80 text-sm">
-                                    Detail informasi data
+                                Filter data
                                 </p>
                             </div>
                         </div>

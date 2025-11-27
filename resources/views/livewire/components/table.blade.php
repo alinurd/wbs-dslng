@@ -18,10 +18,12 @@
 
 {{-- {{dd($modul)}} --}}
 @php
-    if ($modul == 'p_tracking') {
+    if ($modul == 'p_tracking' || $modul == 'r_full' || $modul == 'r_jenis') {
         $permissions['delete'] = false;
         $permissions['edit'] = false;
-        $permissions['comment'] = true;
+        if($modul=='p_tracking'){
+            $permissions['comment'] = true;
+        }
     }
 
     if ($modul == 'complien') {

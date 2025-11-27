@@ -60,8 +60,10 @@ abstract class Root extends Component
     public $jenisPengaduanList = []; // child dapat override dengan property
     public $RolesList = []; // child dapat override dengan property
     public $saluranList = []; // child dapat override dengan property
+    public $fwdList = []; // child dapat override dengan property
     public $direktoratList = []; // child dapat override dengan property
     public $tahunPengaduanList = []; // child dapat override dengan property
+    public $bulanList = []; // child dapat override dengan property
 
 
 
@@ -83,9 +85,18 @@ abstract class Root extends Component
     public $countdown = 0;
     public $showCountdown = false;
 
+
+
+    public $previewData = [];
+public $previewTotal = 0;
+public $previewMonth = '';
+public $showPreviewModal = false;
+
+
     // ================== MOUNT =====================
     public function mount()
     {
+        $this->export();
         // Simpan default form
         $this->formDefault = is_array($this->form) ? $this->form : [];
         // Title otomatis jika tidak didefinisikan
@@ -540,21 +551,96 @@ abstract class Root extends Component
 
 
     // =================== EXPORT =========================
-    public function export($type = 'excel')
-    {
-        // can_any([strtolower($this->modul).'.export']);
+public function export($type = 'excel')
+{
+    try {
+        $currentMonth = date('m');
+        $currentYear = date('Y');
 
+        // Hitung data pengaduan
+        $dataPengaduan = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
+            ->whereMonth('tanggal_pengaduan', $currentMonth)
+            ->count();
+
+        // Ambil data untuk export
         $data = $this->query()->get();
 
-        if ($type === 'excel') {
-            $this->notify('success', 'Data berhasil diexport ke Excel.');
-        } elseif ($type === 'pdf') {
-            $this->notify('success', 'Data berhasil diexport ke PDF.');
+        // Validasi jika tidak ada data
+        if ($data->isEmpty()) {
+            $this->notify('warning', 'Tidak ada data untuk diexport.');
+            return;
         }
 
-        $this->dispatch('exportCompleted', ['type' => $type]);
-    }
+        switch ($type) {
+            case 'excel':
+                return $this->exportToExcel($data);
+                
+            case 'pdf':
+                // Sementara non-aktifkan PDF
+                $this->notify('info', 'Fitur export PDF sedang dalam pengembangan.');
+                return;
+                
+            case 'preview':
+                
+                return $this->showPreview($data);
+                
+            default:
+                $this->notify('error', 'Jenis export tidak valid.');
+                return;
+        }
 
+    } catch (\Exception $e) {
+        $this->notify('error', 'Terjadi kesalahan saat export: ' . $e->getMessage());
+    }
+}
+
+private function showPreview($data)
+{
+    try {
+        // Set data untuk preview
+        $this->previewData = $data;
+        $this->previewTotal = $data->count();
+        $this->previewMonth = $this->getPeriodInfo();
+        
+        // Tampilkan modal preview
+        $this->showPreviewModal = true;
+        
+        $this->notify('success', "Preview data berhasil ({$this->previewTotal} records)");
+        
+    } catch (\Exception $e) {
+        $this->notify('error', "Preview gagal: " . $e->getMessage());
+    }
+}
+
+// Tambahkan method ini di class Root
+public function closePreviewModal()
+{
+    $this->showPreviewModal = false;
+    $this->previewData = [];
+    $this->previewTotal = 0;
+    $this->previewMonth = '';
+}
+
+
+
+
+private function exportToExcel($data)
+{
+    try {
+        // Generate filename dengan timestamp
+        $filename = 'export-pengaduan-' . date('Y-m-d-H-i-s') . '.xlsx';
+        
+        // Logic export Excel di sini
+        // Contoh menggunakan Laravel Excel
+        // return Excel::download(new PengaduanExport($data), $filename);
+        
+        $this->notify('success', "Data berhasil diexport ke Excel ({$data->count()} records)");
+        $this->dispatch('exportCompleted', ['type' => 'excel', 'count' => $data->count()]);
+        
+    } catch (\Exception $e) {
+        throw new \Exception("Export Excel gagal: " . $e->getMessage());
+    }
+} 
 
     public function notify($type, $message, $errMessage = '')
     {
@@ -674,6 +760,22 @@ abstract class Root extends Component
             ->orderBy('data_id')
             ->get();
 
+       $this->bulanList = [
+    [ 'id'=>1,  'sort'=>'Jan', 'full'=>'January' ],
+    [ 'id'=>2,  'sort'=>'Feb', 'full'=>'February' ],
+    [ 'id'=>3,  'sort'=>'Mar', 'full'=>'March' ],
+    [ 'id'=>4,  'sort'=>'Apr', 'full'=>'April' ],
+    [ 'id'=>5,  'sort'=>'May', 'full'=>'May' ],
+    [ 'id'=>6,  'sort'=>'Jun', 'full'=>'June' ],
+    [ 'id'=>7,  'sort'=>'Jul', 'full'=>'July' ],
+    [ 'id'=>8,  'sort'=>'Aug', 'full'=>'August' ],
+    [ 'id'=>9,  'sort'=>'Sep', 'full'=>'September' ],
+    [ 'id'=>10, 'sort'=>'Oct', 'full'=>'October' ],
+    [ 'id'=>11, 'sort'=>'Nov', 'full'=>'November' ],
+    [ 'id'=>12, 'sort'=>'Dec', 'full'=>'December' ],
+];
+
+
         $this->tahunPengaduanList = Pengaduan::selectRaw('YEAR(tanggal_pengaduan) as tahun')
             ->whereNotNull('tanggal_pengaduan')
             ->groupBy('tahun')
@@ -682,6 +784,12 @@ abstract class Root extends Component
             ->toArray();
 
         $this->saluranList = Combo::where('kelompok', 'aduan')
+            ->select('id', 'data_id', 'data_en', 'data')
+            ->where('is_active', true)
+            ->orderBy('data_id')
+            ->get();
+
+        $this->fwdList = Combo::where('kelompok', 'wbs-forward')
             ->select('id', 'data_id', 'data_en', 'data')
             ->where('is_active', true)
             ->orderBy('data_id')
@@ -1249,4 +1357,104 @@ public function getPengaduanById($id){
         }
     }
     
+    
+public function getFilterData()
+{
+    $filterInfo = [];
+    
+    $filterLabels = [
+        'search' => 'Pencarian',
+        'status' => 'Status',
+        'jenis_pengaduan_id' => 'Jenis Pelanggaran', 
+        'tahun' => 'Tahun',
+        'bulan' => 'Bulan',
+        'direktorat' => 'Direktorat',
+        'saluran_id' => 'Saluran Aduan',
+        'fwd_id' => 'WBS Forward',
+        'nama_pelapor' => 'Nama Pelapor',
+        'nama_terlapor' => 'Nama Terlapor'
+    ];
+    
+    if (!empty($this->search)) {
+        $filterInfo['Kata Kunci'] = $this->search;
+    }
+    
+    if (!empty($this->filters) && is_array($this->filters)) {
+        foreach ($this->filters as $key => $value) {
+            if (!empty($value) && $value !== '' && $value !== null) {
+                $label = $filterLabels[$key] ?? $this->formatFilterKey($key);
+                $formattedValue = $this->formatFilterValue($key, $value);
+                $filterInfo[$label] = $formattedValue;
+            }
+        }
+    }
+    
+    $queryParams = request()->query();
+    $commonFilterKeys = ['search', 'status', 'jenis_pengaduan_id', 'tahun', 'bulan_id', 'saluran_id', 'fwd_id'];
+    
+    foreach ($commonFilterKeys as $key) {
+        if (isset($queryParams[$key]) && !empty($queryParams[$key]) && !isset($filterInfo[$filterLabels[$key] ?? $key])) {
+            $label = $filterLabels[$key] ?? $this->formatFilterKey($key);
+            $formattedValue = $this->formatFilterValue($key, $queryParams[$key]);
+            $filterInfo[$label] = $formattedValue;
+        }
+    }
+     
+    if (empty($filterInfo)) {
+        $filterInfo['Periode'] = 'Semua Data';
+    }
+    
+    return $filterInfo;
+}
+
+public function formatFilterKey($key)
+{
+    $keyMap = [];
+    
+    return $keyMap[$key] ?? str_replace('_', ' ', ucwords($key, '_'));
+}
+
+public function formatFilterValue($key, $value)
+{
+    switch ($key) {
+        case 'status':
+            $statusInfo = $this->getStatusInfo($value, 0);
+            return $statusInfo['text'] ?? $value;
+            
+        case 'jenis_pengaduan_id':
+        case 'jenis_pengaduan':
+            $combo = Combo::find($value);
+            return $combo->data ?? $combo->data_id ?? $combo->data_en ?? $value;
+            
+        case 'tahun':
+            return "Tahun {$value}";
+            
+        case 'bulan_id':
+        case 'bulan':
+            $months = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 
+                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            ];
+            return $months[$value] ?? $value;
+            
+        case 'saluran_id':
+        case 'saluran':
+            $combo = Combo::find($value);
+            return $combo->data ?? $combo->data_id ?? $combo->data_en ?? $value;
+            
+        case 'fwd_id':
+        case 'fwd':
+            $combo = Combo::find($value);
+            return $combo->data ?? $combo->data_en ?? $combo->data_id ?? $value;
+            
+        case 'direktorat':
+            $owner = Owner::find($value);
+            return $owner->owner_name ?? $value;
+            
+        default:
+            return $value;
+    }
+} 
+
 }
