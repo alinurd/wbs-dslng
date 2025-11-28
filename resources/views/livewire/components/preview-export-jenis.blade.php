@@ -6,7 +6,7 @@
     'filterData' => [],
     'title' => 'Preview Export Data',
     'onClose' => '$set(\'showPreviewModal\', false)',
-    'onExportExcel' => 'export(\'excelReportFull\')',
+    'onExportExcel' => 'export(\'excelReportJenis\')',
     'onExportPdf' => 'export(\'pdf\')',
 ])
 

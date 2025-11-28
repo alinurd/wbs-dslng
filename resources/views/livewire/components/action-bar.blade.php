@@ -16,6 +16,8 @@
         $permissions['create'] = false;
         $permissions['preview'] = true;
         $onPreview='export("preview")';
+        $onExportExcel='export("excelReportFull")';
+
     }
     if ($modul == 'r_jenis') {
         $permissions['create'] = false;

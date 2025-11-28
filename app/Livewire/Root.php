@@ -575,9 +575,11 @@ public function export($type = 'excel')
         switch ($type) {
             case 'excelReportFull':
                 return $this->exportToExcel($data);
+            case 'excelReportJenis':
+                return $this->exportToExcelJenis();
                 
             case 'excel': 
-                $this->notify('info', 'Fitur export PDF sedang dalam pengembangan.');
+                $this->notify('info', 'Fitur export Excel sedang dalam pengembangan.');
                 return;
             case 'pdf': 
                 $this->notify('info', 'Fitur export PDF sedang dalam pengembangan.');
@@ -586,7 +588,7 @@ public function export($type = 'excel')
             case 'preview':
                 return $this->showPreview($data);
             case 'previewJenis':
-                return $this->previewJenis($data);
+                return $this->previewJenis();
                 
             default:
                 $this->notify('error', 'Jenis export tidak valid.');
@@ -620,32 +622,31 @@ public function closePreviewModal()
     $this->previewMonth = '';
 }
 
-
 protected function exportExcel($data, $view, $filename = null, $additionalData = [])
 {
     try {
         $filename = $filename ?: 'export-' . date('Y-m-d-H-i-s') . '.xls';
-         
+
+         $total = is_array($data) ? count($data) : $data->count();
+
         $viewData = array_merge([
-            'data' => $data,
+            'data' => $data, // kita kirim sebagai rows, bukan data
+            'periode' => $this->previewMonth,
             'exportTime' => now()->format('d/m/Y H:i'),
-            'totalRecords' => $data->count()
+            'totalRecords' => $total
         ], $additionalData);
- 
+
         $html = view($view, $viewData)->render();
- 
+
+        // strip script/style/comment
         $html = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html);
         $html = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $html);
         $html = preg_replace('/<!--(.|\s)*?-->/', '', $html);
- 
+
         return response()->streamDownload(
-            function () use ($html) {
-                echo $html;
-            },
+            fn() => print($html),
             $filename,
-            [
-                'Content-Type' => 'application/vnd.ms-excel',
-            ]
+            ['Content-Type' => 'application/vnd.ms-excel']
         );
 
     } catch (\Exception $e) {
@@ -654,6 +655,8 @@ protected function exportExcel($data, $view, $filename = null, $additionalData =
         return null;
     }
 }
+
+
 
 
 

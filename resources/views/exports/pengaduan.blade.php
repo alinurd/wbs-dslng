@@ -1,122 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Laporan Pengaduan</title>
-    <style>
-        /* Reset dan base styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-
-        /* Table styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            vertical-align: top;
-        }
-
-        th {
-            background-color: #006FBC;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* Header styles */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #006FBC;
-            padding-bottom: 10px;
-        }
-
-        .header h1 {
-            color: #006FBC;
-            margin: 0;
-            font-size: 18px;
-        }
-
-        .header .subtitle {
-            color: #666;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        /* Filter info */
-        .filter-info {
-            background-color: #f8f9fa;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid #006FBC;
-            font-size: 10px;
-        }
-
-        .filter-item {
-            display: inline-block;
-            margin-right: 15px;
-        }
-
-        /* Column styles */
-        .text-center { text-align: center; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
-        .bg-gray { background-color: #f8f9fa; }
-        .bg-blue { background-color: #e3f2fd; }
-        .bg-orange { background-color: #fff3e0; }
-
-        /* Status badges */
-        .status-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 9px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .status-open { background-color: #e0e0e0; color: #424242; }
-        .status-process { background-color: #fff3cd; color: #856404; }
-        .status-completed { background-color: #d1edff; color: #004085; }
-        .status-closed { background-color: #d4edda; color: #155724; }
-        .status-rejected { background-color: #f8d7da; color: #721c24; }
-
-        /* Numbering */
-        .row-number {
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* Wrap text */
-        .wrap-text {
-            word-wrap: break-word;
-            word-break: break-word;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 20px;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-            font-size: 9px;
-            color: #666;
-            text-align: right;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <div class="header">
+<div class="header">
         <h1>LAPORAN PENGADUAN LENGKAP</h1>
         <div class="subtitle">
             Dicetak pada: {{ date('d/m/Y H:i') }} | Total Data: {{ $data->count() }} records
@@ -139,7 +21,7 @@
     @endif
 
     <!-- Table -->
-    <table>
+<table border="1" style="border-collapse:collapse; font-size:13px; width:100%;">
         <thead>
             <tr>
                 <th rowspan="2" width="30">NO</th>
@@ -181,8 +63,8 @@
                 
                 <!-- Waktu Kejadian -->
                 <td class="text-center">
-                    @if(isset($item->waktu_kejadian_mulai))
-                        {{ \Carbon\Carbon::parse($item->waktu_kejadian_mulai)->format('d/m/Y') }}
+                    @if(isset($item->waktu_kejadian))
+                        {{ \Carbon\Carbon::parse($item->waktu_kejadian)->format('d/m/Y') }}
                     @else
                         -
                     @endif
@@ -191,7 +73,7 @@
                 <!-- Tanggal Aduan -->
                 <td class="text-center">
                     @if(isset($item->tanggal_pengaduan))
-                        {{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->format('d/m/Y H:i') }}
+                        {{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->format('d/m/Y') }}
                     @else
                         -
                     @endif
@@ -234,7 +116,7 @@
                 <!-- Tanggal Dibuat -->
                 <td class="text-center">
                     @if(isset($item->created_at))
-                        {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}
+                        {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}
                     @else
                         -
                     @endif
@@ -243,10 +125,3 @@
             @endforeach
         </tbody>
     </table>
-
-    <!-- Footer -->
-    <div class="footer">
-        Dokumen ini dibuat secara otomatis oleh Sistem Pengaduan | Halaman 1
-    </div>
-</body>
-</html>

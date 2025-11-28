@@ -26,6 +26,7 @@ class ReportingJenis extends Root
     public $fileUpload = null;
     public $fileDescription = '';
     public $uploadedFiles = [];
+    public $previewData = [];
 
     public function columns()
     {
@@ -36,7 +37,8 @@ class ReportingJenis extends Root
     {
         parent::mount();
         $this->loadDropdownData();
-    }
+        $this->dataPreview();
+     }
 
     public function filterDefault()
     {
@@ -140,49 +142,26 @@ public function formatFilterKey($key)
     return $keyMap[$key] ?? str_replace('_', ' ', ucwords($key, '_'));
 }
 
-public function previewJenis()
+
+public function dataPreview()
 {
     try {
         $tahun = $this->filters['tahun'] ?? date('Y');
         $bulan = $this->filters['bulan'] ?? date('m');
-        
-        // DEBUG: Cek filter
-        logger("Preview Jenis - Tahun: {$tahun}, Bulan: {$bulan}");
-        
-        // Ambil semua jenis pengaduan dari combo - PERBAIKAN: gunanakan kelompok = 'jenis'
         $jenisPengaduan = Combo::where('kelompok', 'jenis')->where('is_active', 1)->get();
-        
-        // DEBUG: Cek data jenis pengaduan
-        logger("Jenis Pengaduan Count: " . $jenisPengaduan->count());
-        logger("Jenis Pengaduan Data: " . json_encode($jenisPengaduan->pluck('data_id', 'id')));
-        
-        // Query untuk menghitung jumlah per jenis pengaduan
         $data = Pengaduan::selectRaw('jenis_pengaduan_id, COUNT(*) as total')
             ->whereYear('tanggal_pengaduan', $tahun)
             ->whereMonth('tanggal_pengaduan', $bulan)
             ->groupBy('jenis_pengaduan_id')
             ->get();
-        
-        // DEBUG: Cek data pengaduan
-        logger("Data Pengaduan Count: " . $data->count());
-        logger("Data Pengaduan: " . json_encode($data->toArray()));
-            
         $dataKeyed = $data->keyBy('jenis_pengaduan_id');
-        
-        // Query untuk detail per hari
         $detailHari = Pengaduan::selectRaw('jenis_pengaduan_id, DAY(tanggal_pengaduan) as hari, COUNT(*) as jumlah')
             ->whereYear('tanggal_pengaduan', $tahun)
             ->whereMonth('tanggal_pengaduan', $bulan)
             ->groupBy('jenis_pengaduan_id', 'hari')
             ->get();
             
-        // DEBUG: Cek detail hari
-        logger("Detail Hari Count: " . $detailHari->count());
-        logger("Detail Hari: " . json_encode($detailHari->toArray()));
-            
         $detailHariGrouped = $detailHari->groupBy('jenis_pengaduan_id');
-
-        // Siapkan data rekap
         $rekapPengaduan = [
             'bulan' => $bulan,
             'tahun' => $tahun,
@@ -190,11 +169,6 @@ public function previewJenis()
                 $jenisId = $jenis->id;
                 $totalBulan = $dataKeyed[$jenisId]->total ?? 0;
                 $detailPerHari = $detailHariGrouped[$jenisId] ?? collect();
-                
-                // DEBUG: Cek per jenis
-                logger("Jenis ID: {$jenisId}, Nama: {$jenis->data_id}, Total: {$totalBulan}");
-                
-                // Format detail harian
                 $detailHarian = [];
                 for ($day = 1; $day <= 31; $day++) {
                     $dayData = $detailPerHari->where('hari', $day)->first();
@@ -206,30 +180,78 @@ public function previewJenis()
                 
                 return [
                     'id' => $jenisId,
-                    'nama_jenis' => $jenis->data_id, // PERBAIKAN: gunakan data_id bukan name
+                    'nama_jenis' => $jenis->data_id,
                     'total' => $totalBulan,
                     'detail_harian' => $detailHarian,
                     'total_harian' => array_sum($detailHarian)
                 ];
             })
-        ];
-
-        // DEBUG: Cek final data
-        logger("Rekap Pengaduan Final: " . json_encode($rekapPengaduan));
-
-        // Set preview data
+        ]; 
         $this->previewData = $rekapPengaduan;
         $this->previewTotal = $jenisPengaduan->count();
         $this->previewMonth = $this->getPeriodInfo();
+        
+    } catch (\Exception $e) {
+        logger("Preview Error: " . $e->getMessage());
+        $this->notify('error', "Preview gagal: " . $e->getMessage());
+    }
+}
+
+public function previewJenis()
+{
+    try {
+       
+ 
         $this->showPreviewModal = true;
         
-        $totalLaporan = collect($rekapPengaduan['dataRekap'])->sum('total');
+        $totalLaporan = collect($this->previewData['dataRekap'])->sum('total');
         $this->notify('success', "Preview data berhasil ({$totalLaporan} laporan ditemukan)");
         
     } catch (\Exception $e) {
         logger("Preview Error: " . $e->getMessage());
         $this->notify('error', "Preview gagal: " . $e->getMessage());
     }
+}
+
+
+public function exportToExcelJenis()
+{ 
+    $rekap = $this->previewData['dataRekap'] ?? [];
+
+     if (empty($this->previewData)) {
+        $this->notify('error', 'Belum ada data preview! Klik Preview dulu sebelum export.');
+        return;
+    }
+
+    if (empty($this->previewData['dataRekap'])) {
+        $this->notify('error', 'previewData ada, tapi dataRekap kosong → query preview gagal.');
+        return;
+    }
+     
+    $data = [];
+    foreach ($rekap as $index => $item) {
+        $row = [
+            'No' => $index + 1,
+            'Jenis Pelanggaran' => $item['nama_jenis'],
+        ];
+ 
+        for ($d = 1; $d <= 31; $d++) {
+            $row[$d] = $item['detail_harian'][$d] ?? 0;
+        }
+ 
+        $row['Jumlah'] = $item['total'];
+
+        $data[] = $row;
+    } 
+    return $this->exportExcel(
+        $data,
+    'exports.pengaduan-rekap-jenis',
+    'rekap-pengaduan-jenis-' . date('Y-m-d-H-i-s') . '.xls',
+    [
+        'periodInfo' => $this->getPeriodInfo(),
+            'filterData' => $this->getFilterData(),
+    ]
+);
 }
 
 
@@ -251,6 +273,46 @@ public function getPeriodInfo()
     return $monthName . ' ' . $tahun;
 }
 
+public function getFilterData()
+{
+    $filterInfo = [];
+    
+    $filterLabels = [
+        'tahun' => 'Tahun',
+        'bulan' => 'Bulan',
+    ];
+    
+    if (!empty($this->search)) {
+        $filterInfo['Kata Kunci'] = $this->search;
+    }
+    
+    if (!empty($this->filters) && is_array($this->filters)) {
+        foreach ($this->filters as $key => $value) {
+            if (!empty($value) && $value !== '' && $value !== null) {
+                $label = $filterLabels[$key] ?? $this->formatFilterKey($key);
+                $formattedValue = $this->formatFilterValue($key, $value);
+                $filterInfo[$label] = $formattedValue;
+            }
+        }
+    }
+    
+    $queryParams = request()->query();
+    $commonFilterKeys = ['search', 'status', 'jenis_pengaduan_id', 'tahun', 'bulan_id', 'saluran_id', 'fwd_id'];
+    
+    foreach ($commonFilterKeys as $key) {
+        if (isset($queryParams[$key]) && !empty($queryParams[$key]) && !isset($filterInfo[$filterLabels[$key] ?? $key])) {
+            $label = $filterLabels[$key] ?? $this->formatFilterKey($key);
+            $formattedValue = $this->formatFilterValue($key, $queryParams[$key]);
+            $filterInfo[$label] = $formattedValue;
+        }
+    }
+     
+    if (empty($filterInfo)) {
+        $filterInfo['Periode'] = 'Semua Data';
+    }
+    
+    return $filterInfo;
+}
 
 
 }
