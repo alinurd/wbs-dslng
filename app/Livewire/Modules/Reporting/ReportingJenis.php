@@ -16,7 +16,7 @@ class ReportingJenis extends Root
     public $modul = 'r_jenis';
     public $model = Pengaduan::class;
     public $views = 'modules.reporting.jenis-aduan';
-    public $title = "Laporan Berdasarkan Jenis Aduan";
+    public $title = "Laporan Berdasarkan Jenis Pelanggaran";
 
     // Properties untuk detail (dari HasChat sudah include chat properties)
     public $detailData = [];
