@@ -41,7 +41,8 @@
                                     {{-- <i class="fas fa-database mr-1"></i> --}}
                                     {{-- Total: <strong>{{ $previewTotal }}</strong> records --}}
                                     @if ($previewMonth)
-                                        • <i class="fas fa-calendar mr-1"></i>
+                                        {{-- •  --}}
+                                        <i class="fas fa-calendar mr-1"></i>
                                         Periode: <strong>{{ $previewMonth }}</strong>
                                     @endif
                                 </p>
