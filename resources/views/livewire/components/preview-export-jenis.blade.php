@@ -38,7 +38,7 @@
                                     {{ $title }}
                                 </h3>
                                 <p class="text-white/90 text-sm mt-1">
-                                    <i class="fas fa-database mr-1"></i>
+                                    {{-- <i class="fas fa-database mr-1"></i> --}}
                                     {{-- Total: <strong>{{ $previewTotal }}</strong> records --}}
                                     @if ($previewMonth)
                                         • <i class="fas fa-calendar mr-1"></i>
