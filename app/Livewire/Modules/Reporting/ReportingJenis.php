@@ -188,7 +188,7 @@ public function dataPreview()
             })
         ]; 
         $this->previewData = $rekapPengaduan;
-        $this->previewTotal = $jenisPengaduan->count();
+        $this->previewTotal = \count($rekapPengaduan);
         $this->previewMonth = $this->getPeriodInfo();
         
     } catch (\Exception $e) {
