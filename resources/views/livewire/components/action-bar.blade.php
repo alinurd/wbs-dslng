@@ -15,12 +15,13 @@
     if ($modul == 'r_full') {
         $permissions['create'] = false;
         $permissions['preview'] = true;
-        $onExportExcel='export("excelReportFull")';
+        $onPreview='export("preview")';
     }
     if ($modul == 'r_jenis') {
         $permissions['create'] = false;
         $permissions['preview'] = true;
         $onExportExcel='export("excelReportJenis")';
+        $onPreview='export("previewJenis")';
     }
 @endphp
 
@@ -76,7 +77,7 @@
 
     <!-- Preview Button -->
     @if ($permissions['preview'] ?? false)
-    <button wire:click="export('preview')" 
+    <button wire:click="{{$onPreview}}" 
             wire:loading.attr="disabled"
             wire:loading.class="opacity-50 cursor-not-allowed"
             class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-yellow-600 border border-yellow-600 rounded-md hover:bg-yellow-700 focus:z-10 focus:ring-1 focus:ring-yellow-600 focus:text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-95">

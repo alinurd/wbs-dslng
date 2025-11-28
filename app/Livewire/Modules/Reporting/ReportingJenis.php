@@ -13,7 +13,7 @@ class ReportingJenis extends Root
 {
     use WithFileUploads, HasChat;
 
-    public $modul = 'r_full';
+    public $modul = 'r_jenis';
     public $model = Pengaduan::class;
     public $views = 'modules.reporting.jenis-aduan';
     public $title = "Laporan Berdasarkan Jenis Aduan";
@@ -140,7 +140,97 @@ public function formatFilterKey($key)
     return $keyMap[$key] ?? str_replace('_', ' ', ucwords($key, '_'));
 }
 
+public function previewJenis()
+{
+    try {
+        $tahun = $this->filters['tahun'] ?? date('Y');
+        $bulan = $this->filters['bulan'] ?? date('m');
+        
+        // DEBUG: Cek filter
+        logger("Preview Jenis - Tahun: {$tahun}, Bulan: {$bulan}");
+        
+        // Ambil semua jenis pengaduan dari combo - PERBAIKAN: gunanakan kelompok = 'jenis'
+        $jenisPengaduan = Combo::where('kelompok', 'jenis')->where('is_active', 1)->get();
+        
+        // DEBUG: Cek data jenis pengaduan
+        logger("Jenis Pengaduan Count: " . $jenisPengaduan->count());
+        logger("Jenis Pengaduan Data: " . json_encode($jenisPengaduan->pluck('data_id', 'id')));
+        
+        // Query untuk menghitung jumlah per jenis pengaduan
+        $data = Pengaduan::selectRaw('jenis_pengaduan_id, COUNT(*) as total')
+            ->whereYear('tanggal_pengaduan', $tahun)
+            ->whereMonth('tanggal_pengaduan', $bulan)
+            ->groupBy('jenis_pengaduan_id')
+            ->get();
+        
+        // DEBUG: Cek data pengaduan
+        logger("Data Pengaduan Count: " . $data->count());
+        logger("Data Pengaduan: " . json_encode($data->toArray()));
+            
+        $dataKeyed = $data->keyBy('jenis_pengaduan_id');
+        
+        // Query untuk detail per hari
+        $detailHari = Pengaduan::selectRaw('jenis_pengaduan_id, DAY(tanggal_pengaduan) as hari, COUNT(*) as jumlah')
+            ->whereYear('tanggal_pengaduan', $tahun)
+            ->whereMonth('tanggal_pengaduan', $bulan)
+            ->groupBy('jenis_pengaduan_id', 'hari')
+            ->get();
+            
+        // DEBUG: Cek detail hari
+        logger("Detail Hari Count: " . $detailHari->count());
+        logger("Detail Hari: " . json_encode($detailHari->toArray()));
+            
+        $detailHariGrouped = $detailHari->groupBy('jenis_pengaduan_id');
 
+        // Siapkan data rekap
+        $rekapPengaduan = [
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'dataRekap' => $jenisPengaduan->map(function($jenis) use ($dataKeyed, $detailHariGrouped) {
+                $jenisId = $jenis->id;
+                $totalBulan = $dataKeyed[$jenisId]->total ?? 0;
+                $detailPerHari = $detailHariGrouped[$jenisId] ?? collect();
+                
+                // DEBUG: Cek per jenis
+                logger("Jenis ID: {$jenisId}, Nama: {$jenis->data_id}, Total: {$totalBulan}");
+                
+                // Format detail harian
+                $detailHarian = [];
+                for ($day = 1; $day <= 31; $day++) {
+                    $dayData = $detailPerHari->where('hari', $day)->first();
+                    $jumlahHari = $dayData ? $dayData->jumlah : 0;
+                    if ($jumlahHari > 0) {
+                        $detailHarian[$day] = $jumlahHari;
+                    }
+                }
+                
+                return [
+                    'id' => $jenisId,
+                    'nama_jenis' => $jenis->data_id, // PERBAIKAN: gunakan data_id bukan name
+                    'total' => $totalBulan,
+                    'detail_harian' => $detailHarian,
+                    'total_harian' => array_sum($detailHarian)
+                ];
+            })
+        ];
+
+        // DEBUG: Cek final data
+        logger("Rekap Pengaduan Final: " . json_encode($rekapPengaduan));
+
+        // Set preview data
+        $this->previewData = $rekapPengaduan;
+        $this->previewTotal = $jenisPengaduan->count();
+        $this->previewMonth = $this->getPeriodInfo();
+        $this->showPreviewModal = true;
+        
+        $totalLaporan = collect($rekapPengaduan['dataRekap'])->sum('total');
+        $this->notify('success', "Preview data berhasil ({$totalLaporan} laporan ditemukan)");
+        
+    } catch (\Exception $e) {
+        logger("Preview Error: " . $e->getMessage());
+        $this->notify('error', "Preview gagal: " . $e->getMessage());
+    }
+}
 
 
 public function getPeriodInfo()

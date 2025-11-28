@@ -584,8 +584,9 @@ public function export($type = 'excel')
                 return;
                 
             case 'preview':
-                
                 return $this->showPreview($data);
+            case 'previewJenis':
+                return $this->previewJenis($data);
                 
             default:
                 $this->notify('error', 'Jenis export tidak valid.');
@@ -600,16 +601,11 @@ public function export($type = 'excel')
 private function showPreview($data)
 {
     try {
-        // Set data untuk preview
         $this->previewData = $data;
         $this->previewTotal = $data->count();
         $this->previewMonth = $this->getPeriodInfo();
-        
-        // Tampilkan modal preview
         $this->showPreviewModal = true;
-        
         $this->notify('success', "Preview data berhasil ({$this->previewTotal} records)");
-        
     } catch (\Exception $e) {
         $this->notify('error', "Preview gagal: " . $e->getMessage());
     }
