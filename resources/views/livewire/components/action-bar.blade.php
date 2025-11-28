@@ -25,6 +25,13 @@
         $onExportExcel='export("excelReportJenis")';
         $onPreview='export("previewJenis")';
     }
+    if($modul == 'complien'){
+                $permissions['create'] = false;
+
+          $permissions['preview'] = true;
+        $onPreview='export("preview")';
+        $onExportExcel='export("excelReportComplien")';
+    }
 @endphp
 
 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">

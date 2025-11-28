@@ -575,6 +575,8 @@ public function export($type = 'excel')
         switch ($type) {
             case 'excelReportFull':
                 return $this->exportToExcel($data);
+            case 'excelReportComplien':
+                return $this->exportToExcelComplien($data);
             case 'excelReportJenis':
                 return $this->exportToExcelJenis();
                 
@@ -692,20 +694,44 @@ private function exportToExcel($data)
     );
 }
 
+private function exportToExcelComplien($data)
+{
+    // Tinggal panggil function di atas dengan parameter yang sesuai
+    return $this->exportExcel(
+        $data, 
+        'exports.pengaduan-complien', // view template
+        'laporan-pengaduan-' . date('Y-m-d-H-i-s') . '.xls', // filename
+        [ // additional data untuk view
+            'periodInfo' => $this->getPeriodInfo(),
+            'filterData' => $this->getFilterData(),
+            'getNamaUser' => function($item) {
+                return $item->pelapor->name ?? $item->user->name ?? 'N/A';
+            },
+            'getDirektoratName' => function($direktoratId) {
+                if (!$direktoratId) return '-';
+                $direktorat = \App\Models\Owner::find($direktoratId);
+                return $direktorat->owner_name ?? $direktoratId;
+            },
+            'getStatusInfo' => function($status, $sts_final) {
+                $statusInfo = \App\Models\Combo::where('kelompok', 'sts-aduan')
+                    ->where('param_int', $status)
+                    ->first();
+                if (!$statusInfo) return ['text' => 'Open', 'color' => 'gray'];
+                return ['text' => $statusInfo->data_id, 'color' => $statusInfo->param_str ?? 'gray'];
+            },
+            'getJenisPelanggaran' => function($item) {
+                return $item->jenisPengaduan->data_id ?? 'Tidak diketahui';
+            }
+        ]
+    );
+}
+
 
 
 private function downloadExcelFile($response, $filename)
 {
-    try {
-        // Dapatkan content dari response
-        $content = $response->getContent();
-        
-        \Log::info('Download file preparation:', [
-            'filename' => $filename,
-            'content_length' => strlen($content)
-        ]);
-
-        // Method 1: Using Livewire file download (recommended)
+    try { 
+        $content = $response->getContent(); 
         return response()->streamDownload(function () use ($content) {
             echo $content;
         }, $filename, [
@@ -1539,5 +1565,23 @@ public function formatFilterValue($key, $value)
             return $value;
     }
 } 
+
+public function getPeriodInfo()
+{
+    $currentMonth = date('m');
+    $currentYear = date('Y');
+    
+    $bulan = $this->filters['bulan'] ?? request('bulan', $currentMonth);
+    $tahun = $this->filters['tahun'] ?? request('tahun', $currentYear);     
+    $months = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 
+                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            ];
+
+    $monthName = $months[$bulan] ?? 'Semua Bulan';
+    
+    return $monthName . ' ' . $tahun;
+}
 
 }
