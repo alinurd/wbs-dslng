@@ -46,6 +46,8 @@
 
     <div class="flex items-center gap-1.5">
     <!-- Excel Button -->
+    
+    @if ($permissions['preview'] ?? false)
     <button wire:click="{{$onExportExcel}}" 
             wire:loading.attr="disabled"
             wire:loading.class="opacity-50 cursor-not-allowed"
@@ -78,7 +80,6 @@
     </button>
 
     <!-- Preview Button -->
-    @if ($permissions['preview'] ?? false)
     <button wire:click="{{$onPreview}}" 
             wire:loading.attr="disabled"
             wire:loading.class="opacity-50 cursor-not-allowed"
