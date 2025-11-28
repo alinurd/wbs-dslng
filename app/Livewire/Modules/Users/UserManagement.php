@@ -217,7 +217,7 @@ class UserManagement extends Root
         
         $this->detailData = [
             'Name' => $record->name,
-            'Email' => $record->email, 
+            'Code Verifikasi' => $record->code_verif, 
             'Roles' => $roles ?: 'No Role',
             'Forward Destination' => $forwardDestination,
             'Email Verified' => $record->email_verified_at ? 
