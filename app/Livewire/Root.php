@@ -183,23 +183,17 @@ public $showPreviewModal = false;
 
     public function loadRecords()
     {
-        try {
-            // Build query menggunakan method query() yang sudah ada
+        try { 
             $query = $this->query();
-
-            // Apply sorting
+ 
             $query->orderBy($this->sortField, $this->sortDirection);
-
-            // Get paginated results
+ 
             $this->_records = $query->paginate($this->perPage);
-
-            // Apply custom formatting jika method formatRecords ada
+ 
             if (method_exists($this, 'formatRecords')) {
                 $this->formatRecords();
             }
-        } catch (\Exception $e) {
-            \Log::error('Error loading records in Root: ' . $e->getMessage());
-            // Fallback ke empty pagination
+        } catch (\Exception $e) { 
             $this->_records = $this->model::query()->paginate($this->perPage);
         }
     }

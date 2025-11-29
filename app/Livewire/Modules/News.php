@@ -84,16 +84,13 @@ class News extends Root
             $existingFilesArray = json_decode($filesPaths, true) ?? [];
             $filesPaths = json_encode(array_merge($existingFilesArray, $newFilesPaths));
         } elseif (!empty($newFilesPaths)) {
-            // Jika tidak ada file lama, gunakan file baru saja
-            $filesPaths = json_encode($newFilesPaths);
+             $filesPaths = json_encode($newFilesPaths);
         }
     }
     
-    // Handle image - pertahankan image lama jika tidak ada upload baru
-    $imagePath = $this->existingImage ?? null;
+     $imagePath = $this->existingImage ?? null;
     
-    // Jika ada image baru yang diupload
-    if (!empty($this->form['image']) && is_object($this->form['image'])) {
+     if (!empty($this->form['image']) && is_object($this->form['image'])) {
         $uploadedImages = FileHelper::uploadMultiple(
             [$this->form['image']], 
             'news', 
@@ -102,8 +99,8 @@ class News extends Root
         $imagePath = !empty($uploadedImages) ? json_encode($uploadedImages[0]) : null;
     }
     
-    // $codeNews = $this->updateMode ? $this->form['code_news'] : Str::random(8);
-
+    $codeNews = Str::random(8);
+// 
     $payload = [
         'category' => $this->form['category'],
         'title_id' => $this->form['title_id'],
@@ -113,7 +110,7 @@ class News extends Root
         'is_active' => $this->form['is_active'],
         'files' => $filesPaths,
         'image' => $imagePath, 
-        // 'code_news' => $codeNews,
+        'code_news' => $codeNews,
         'updated_by' => auth()->id(),
     ];
     
@@ -353,91 +350,56 @@ public function edit($id)
 
 
     public function removeFileCore($model, $index, $type = 'new')
-{
-    \Log::debug("=== removeFileCore START ===");
-    \Log::debug("Model: " . $model);
-    \Log::debug("Index: " . $index);
-    \Log::debug("Type: " . $type);
+{ 
     
     if ($type === 'existing') {
         $this->removeExistingFile($model, $index);
     } else {
         $this->removeNewFile($model, $index);
-    }
-    
-    \Log::debug("=== removeFileCore END ===");
+    } 
 }
 
 private function removeExistingFile($model, $index)
-{
-    \Log::debug("=== removeExistingFile START ===");
-    \Log::debug("Model: " . $model . ", Index: " . $index);
-    \Log::debug("existingFiles before: " . $this->existingFiles);
+{ 
     
     if ($model === 'form.files' && !empty($this->existingFiles)) {
-        $filesArray = json_decode($this->existingFiles, true);
-        \Log::debug("Decoded filesArray:", $filesArray);
+        $filesArray = json_decode($this->existingFiles, true); 
         
-        if (is_array($filesArray) && isset($filesArray[$index])) {
-            \Log::debug("Removing file at index: " . $index);
-            \Log::debug("File to remove:", $filesArray[$index]);
-            
+        if (is_array($filesArray) && isset($filesArray[$index])) { 
             // Hapus file dari array
-            array_splice($filesArray, $index, 1);
-            \Log::debug("FilesArray after removal:", $filesArray);
+            array_splice($filesArray, $index, 1); 
             
             if (empty($filesArray)) {
-                $this->existingFiles = null;
-                \Log::debug("existingFiles set to NULL");
+                $this->existingFiles = null; 
             } else {
-                $this->existingFiles = json_encode($filesArray);
-                \Log::debug("existingFiles updated to: " . $this->existingFiles);
+                $this->existingFiles = json_encode($filesArray); 
             }
-            
-            \Log::debug("✅ Existing file removed successfully");
-        } else {
-            \Log::debug("❌ File not found at index or filesArray is not array");
-            \Log::debug("is_array: " . (is_array($filesArray) ? 'true' : 'false'));
-            if (is_array($filesArray)) {
-                \Log::debug("Available indexes: " . json_encode(array_keys($filesArray)));
+             
+        } else { 
+            if (is_array($filesArray)) { 
             }
         }
-    } elseif ($model === 'form.image' && !empty($this->existingImage)) {
-        \Log::debug("Removing existing image");
-        $this->existingImage = null;
-        \Log::debug("✅ Existing image removed");
-    } else {
-        \Log::debug("❌ No existing files to remove");
-        \Log::debug("Model matches form.files: " . ($model === 'form.files' ? 'true' : 'false'));
-        \Log::debug("existingFiles is empty: " . (empty($this->existingFiles) ? 'true' : 'false'));
+    } elseif ($model === 'form.image' && !empty($this->existingImage)) { 
+        $this->existingImage = null; 
+    } else { 
     }
-    
-    \Log::debug("=== removeExistingFile END ===");
+     
 }
 
 private function removeNewFile($model, $index)
-{
-    \Log::debug("=== removeNewFile START ===");
-    \Log::debug("Model: " . $model . ", Index: " . $index);
+{ 
     
     $files = data_get($this, $model);
-    \Log::debug("Files data before:", ['files' => $files, 'type' => gettype($files)]);
-    
-    if (is_array($files)) {
-        \Log::debug("Files is array, count: " . count($files));
-        \Log::debug("Available indexes: " . json_encode(array_keys($files)));
+     
+    if (is_array($files)) { 
         
-        if (isset($files[$index])) {
-            \Log::debug("Removing file at index: " . $index);
-            \Log::debug("File to remove:", ['file' => $files[$index]]);
+        if (isset($files[$index])) { 
             
             // Hapus file dari array
-            array_splice($files, $index, 1);
-            \Log::debug("Files after removal:", $files);
+            array_splice($files, $index, 1); 
             
             data_set($this, $model, empty($files) ? null : $files);
-            \Log::debug("✅ New file removed successfully");
-        } else {
+         } else {
             \Log::debug("❌ File not found at index " . $index);
         }
     } else {
@@ -445,9 +407,6 @@ private function removeNewFile($model, $index)
         data_set($this, $model, null);
     }
     
-    $filesAfter = data_get($this, $model);
-    \Log::debug("Files data after:", ['files' => $filesAfter]);
-    
-    \Log::debug("=== removeNewFile END ===");
+    $filesAfter = data_get($this, $model); 
 }
 }
