@@ -14,6 +14,10 @@ class News extends Root
 {
     use WithFileUploads, HasChat;
 
+    
+    public $showModal = false;
+    public $updateMode = false;
+
     public $modul = 'news';
     public $model = NewModel::class; 
     public $views = 'modules.news';
@@ -31,6 +35,11 @@ class News extends Root
         'files' => [], 
         'image' => null, 
         'is_active' => true, 
+    ];
+
+      protected $listeners = [
+        'editorContentUpdated' => 'handleEditorContentUpdate',
+        'modalOpened' => 'handleModalOpened'
     ];
 
     public function mount()
@@ -204,9 +213,7 @@ private function formatFileSize($bytes)
     return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
 }
 
-     
-
-public function edit($id)
+      public function edit($id)
     {
         can_any([strtolower($this->modul) . '.edit']);
 
@@ -217,11 +224,27 @@ public function edit($id)
         }
 
         $this->form['id'] = $id;
-
+        
+        // Set content untuk editor
+        $this->content_id = $record->content_id ?? '';
+        $this->content_en = $record->content_en ?? '';
+        
         $this->updateMode = true;
         $this->showModal = true;
 
-        $this->dispatch('modalOpened');
+        // Dispatch event setelah modal terbuka
+        $this->dispatch('modal-opened');
     }
-    
+    public function handleEditorContentUpdate($model, $content)
+    {
+        // Update property berdasarkan model
+        $this->$model = $content;
+    }
+
+    public function handleModalOpened()
+    {
+        // Refresh editor content dengan delay sedikit
+        $this->dispatch('refreshEditor', content: $this->content_id);
+        $this->dispatch('refreshEditor', content: $this->content_en);
+    }
 }

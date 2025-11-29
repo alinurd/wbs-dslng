@@ -1,57 +1,78 @@
-<div wire:ignore>
-    <div 
-        id="{{ $editorId }}" 
-        style="height: {{ $height }};"
-        x-data="{
-            quill: null,
-            isInitialized: false,
-            
-            init() {
-                if (this.isInitialized) return;
-                
-                if (typeof Quill === 'undefined') { 
-                    return;
+<div 
+    x-data="{
+        editor: null,
+        content: @entangle('content'),
+        model: '{{ $model }}',
+        placeholder: '{{ $placeholder }}',
+        height: '{{ $height }}',
+        toolbar: '{{ $toolbar }}',
+        init() {
+            // Initialize Quill editor
+            this.editor = new Quill(`#{{ $editorId }}`, {
+                theme: 'snow',
+                placeholder: this.placeholder,
+                modules: {
+                    toolbar: this.getToolbarOptions()
                 }
-                
-                const toolbarOptions = [
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    [{ 'font': [] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    [{ 'align': [] }],
-                    ['blockquote', 'code-block'],
-                    ['link', 'clean'],
-                    {{-- ['image'] --}}
-                ];
-                
-                this.quill = new Quill(this.$el, {
-                    theme: 'snow',
-                    placeholder: '{{ $placeholder }}',
-                    modules: {
-                        toolbar: toolbarOptions
-                    }
-                });
- 
-                @if(!empty($content))
-                    this.quill.root.innerHTML = {!! json_encode($content) !!};
-                @endif
- 
-                let debounceTimer;
-                this.quill.on('text-change', () => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => {
-                        const content = this.quill.root.innerHTML;  
-                        Livewire.dispatch('editor-content-updated', {
-                            model: '{{ $model }}',
-                            content: content
-                        });
-                    }, 500);
-                });
+            });
 
-                this.isInitialized = true;
+            // Set initial content
+            if (this.content) {
+                this.editor.root.innerHTML = this.content;
             }
-        }"
-        x-init="init()"
-    ></div>
+
+            // Handle text change with debounce
+            let debounceTimer;
+            this.editor.on('text-change', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const htmlContent = this.editor.root.innerHTML;
+                    this.content = htmlContent;
+                    
+                    // Dispatch to Livewire - GUNAKAN DASH UNTUK KONSISTENSI
+                    Livewire.dispatch('editor-content-updated', {
+                        model: this.model,
+                        content: htmlContent
+                    });
+                }, 500);
+            });
+
+            // Listen for refresh events
+            Livewire.on('refreshQuill', (data) => {
+                if (data.editorId === '{{ $editorId }}' && this.editor) {
+                    this.editor.root.innerHTML = data.content || '';
+                }
+            });
+        },
+        getToolbarOptions() {
+            if (this.toolbar === 'basic') {
+                return [
+                    ['bold', 'italic', 'underline'],
+                    ['link'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+                ];
+            }
+            
+            // Full toolbar
+            return [
+                [{ 'font': [] }, { 'size': [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'header': 1 }, { 'header': 2 }, 'blockquote', 'code-block'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                ['link'],
+                {{-- ['link', 'image', 'video'], --}}
+                [{ 'align': [] }],
+                ['clean']
+            ];
+        }
+    }"
+    wire:key="editor-{{ $editorId }}"
+>
+    <div id="{{ $editorId }}" style="height: {{ $height }};"></div>
+    
+    <!-- Hidden input untuk Livewire binding -->
+    <input type="hidden" wire:model="content">
 </div>
+ 
