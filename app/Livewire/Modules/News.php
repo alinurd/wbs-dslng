@@ -128,5 +128,100 @@ class News extends Root
         $this->resetValidation();
     }
 
+    public function view($id)
+{
+    can_any([strtolower($this->modul) . '.view']);
+
+    $news = $this->model::findOrFail($id);
+
+    $imageData = $news->image ? json_decode($news->image, true) : null;
+    $imagePath = $imageData['path'] ?? null; 
+    $categoryName = $news->categoryData ? $news->categoryData->data_id : 'Uncategorized';
+
+    $filesData = [];
+    if ($news->files) {
+        $files = json_decode($news->files, true);
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                $filesData[] = [
+                    'path' => $file['path'] ?? null,
+                    'filename' => $file['filename'] ?? null,
+                    'original_name' => $file['original_name'] ?? null,
+                    'extension' => $file['extension'] ?? null,
+                    'size' => $file['size'] ?? null,
+                ];
+            }
+        }
+    }
+
+    // Format size file menjadi readable
+    $formattedFilesData = [];
+    foreach ($filesData as $file) {
+        $formattedFilesData[] = [
+            'path' => $file['path'],
+            'filename' => $file['filename'],
+            'original_name' => $file['original_name'],
+            'extension' => $file['extension'],
+            'size' => $file['size'] ? $this->formatFileSize($file['size']) : '0 KB'
+        ];
+    }
+
+    // Struktur data yang sesuai dengan komponen Blade
+    $this->detailData = [
+        'id' => [
+            'Judul' => $news->title_id,
+            'Konten' => purifyHtml($news->content_id),
+        ],
+        'en' => [
+            'Title' => $news->title_en,
+            'Content' => purifyHtml($news->content_en),
+        ],
+        'common' => [
+            // 'ID' => $news->id,
+            'Kode Berita' => $news->code_news,
+            // 'Slug' => $news->code_news,
+            'Kategori' => $categoryName,
+            // 'Kategori Slug' => $news->categoryData->param_str_1 ?? 'general',
+            'Gambar' => $imagePath,
+            'File' => $formattedFilesData,
+            'Dibuat Pada' => $news->created_at,
+        ]
+    ];
+
+    $this->detailTitle = "Detail " . $this->title;
+    $this->showDetailModal = true;
+}
+
+// Helper method untuk format file size
+private function formatFileSize($bytes)
+{
+    if ($bytes == 0) return '0 Bytes';
+    
+    $k = 1024;
+    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    $i = floor(log($bytes) / log($k));
+    
+    return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+}
+
      
+
+public function edit($id)
+    {
+        can_any([strtolower($this->modul) . '.edit']);
+
+        $record = ($this->model)::findOrFail($id);
+
+        foreach ($this->formDefault as $key => $default) {
+            $this->form[$key] = $record->$key ?? $default;
+        }
+
+        $this->form['id'] = $id;
+
+        $this->updateMode = true;
+        $this->showModal = true;
+
+        $this->dispatch('modalOpened');
+    }
+    
 }

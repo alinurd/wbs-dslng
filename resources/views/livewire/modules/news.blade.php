@@ -184,7 +184,7 @@
         ])
 
         <!-- Detail Modal -->
-        @include('livewire.components.detail-modal', [
+        @include('livewire.components.detail-modal-news', [
             'show' => $showDetailModal,
             'title' => $detailTitle,
             'data' => $detailData,
