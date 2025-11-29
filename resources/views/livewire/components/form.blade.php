@@ -619,57 +619,75 @@
                                        
                                        
 
-                                        @elseif ($field['type'] === 'file')
+                                       @elseif ($field['type'] === 'file')
     @php
         // Konfigurasi default
         $maxSize = $field['size'] ?? '100';
-        $formats = $field['format'] ?? 'ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3';
+        $formats = $field['format'] ?? 'ZIP,RAR,DOC,DOCX,XLS,XLSX,PPT,PPTX,PDF,JPG,JPEG,PNG,AVI,MP4,3GP,MP3';
         $isMultiple = $field['multiple'] ?? true;
         $fileModel = $field['model'];
         
-        // Parse allowed formats
+        // Parse allowed formats dengan cleaning
         $allowedFormats = array_map('strtolower', array_map('trim', explode(',', $formats)));
+        $allowedFormats = array_filter($allowedFormats, function($format) {
+            return !empty($format);
+        });
         
         $currentFiles = data_get($this, $fileModel, []);
         
-        $fileCount = 0;
-        $fileList = [];
+        // Pisahkan secara jelas existing files dan new files
+        $existingFiles = [];
+        $newFiles = [];
         $invalidFiles = [];
         
-        if ($isMultiple) {
-            $fileList = is_array($currentFiles) ? $currentFiles : [];
-            
-            // Filter hanya file yang formatnya diizinkan
-            $validFiles = [];
-            foreach ($fileList as $file) {
-                if ($this->isValidFileFormat($file, $allowedFormats)) {
-                    $validFiles[] = $file;
-                } else {
-                    $invalidFiles[] = $file;
+        $isEditMode = !empty($this->form['id']);
+        
+        // Handle existing files dari database
+        if ($isEditMode) {
+            if ($fileModel === 'form.files' && !empty($this->existingFiles)) {
+                $existingFilesData = json_decode($this->existingFiles, true);
+                if (is_array($existingFilesData)) {
+                    $existingFiles = $existingFilesData;
                 }
-            }
-            $fileList = $validFiles;
-            $fileCount = count($fileList);
-        } else {
-            if (!empty($currentFiles)) {
-                // Cek format untuk single file
-                if ($this->isValidFileFormat($currentFiles, $allowedFormats)) {
-                    $fileList = [$currentFiles];
-                    $fileCount = 1;
-                } else {
-                    $invalidFiles[] = $currentFiles;
-                    $fileList = [];
-                    $fileCount = 0;
+            } elseif ($fileModel === 'form.image' && !empty($this->existingImage)) {
+                $existingFilesData = json_decode($this->existingImage, true);
+                if (is_array($existingFilesData)) {
+                    $existingFiles = [$existingFilesData];
                 }
-            } else {
-                $fileList = [];
-                $fileCount = 0;
             }
         }
         
-        // Hitung total size
+        // Handle new uploaded files
+        if ($isMultiple) {
+            $fileList = is_array($currentFiles) ? $currentFiles : [];
+            
+            foreach ($fileList as $file) {
+                if (is_object($file)) {
+                    if ($this->isValidFileFormat($file, $allowedFormats)) {
+                        $newFiles[] = $file;
+                    } else {
+                        $invalidFiles[] = $file;
+                    }
+                }
+            }
+        } else {
+            if (!empty($currentFiles) && is_object($currentFiles)) {
+                if ($this->isValidFileFormat($currentFiles, $allowedFormats)) {
+                    $newFiles = [$currentFiles];
+                } else {
+                    $invalidFiles = [$currentFiles];
+                }
+            }
+        }
+        
+        // Hitung total
+        $existingFileCount = count($existingFiles);
+        $newFileCount = count($newFiles);
+        $totalFileCount = $existingFileCount + $newFileCount;
+        
+        // Hitung total size hanya untuk new files
         $totalSize = 0;
-        foreach ($fileList as $file) {
+        foreach ($newFiles as $file) {
             if (is_object($file) && method_exists($file, 'getSize')) {
                 $totalSize += $file->getSize();
             }
@@ -710,8 +728,8 @@
                 <ul class="mt-2 text-xs text-red-600 space-y-1">
                     @foreach ($invalidFiles as $invalidFile)
                         @php
-                            $fileName = is_object($invalidFile) ? $invalidFile->getClientOriginalName() : (is_string($invalidFile) ? basename($invalidFile) : 'Unknown File');
-                            $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                            $fileName = $invalidFile->getClientOriginalName();
+                            $extension = strtolower($invalidFile->getClientOriginalExtension());
                         @endphp
                         <li class="flex items-center">
                             <i class="fas fa-times mr-2 text-red-500"></i>
@@ -722,30 +740,18 @@
             </div>
         @endif
         
-        @if ($fileCount > 0)
+        <!-- Tampilkan existing files -->
+        @if ($existingFileCount > 0)
             <div class="mt-4">
-                <!-- Header dengan info total file -->
-                <div class="flex items-center justify-between mb-2">
-                    <h4 class="text-sm font-medium text-gray-700">File yang akan diunggah:</h4>
-                    <div class="text-xs text-blue-600 font-medium">
-                        <span>Total: {{ $fileCount }} file</span>
-                        @if($isMultiple && $fileCount > 0)
-                        <span class="mx-1">•</span>
-                        <span>{{ round($totalSize / 1024 / 1024, 2) }} MB</span>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- List file -->
-                <div class="space-y-2 max-h-40 overflow-y-auto">
-                    @foreach ($fileList as $index => $file)
+                <h4 class="text-sm font-medium text-gray-700 mb-2">File yang sudah ada:</h4>
+                <div class="space-y-2">
+                    @foreach ($existingFiles as $index => $file)
                         @php
-                            // Pastikan file valid sebelum menampilkan
-                            if (empty($file)) continue;
+                            $fileName = $file['original_name'] ?? $file['filename'] ?? 'Unknown File';
+                            $fileSize = $file['size'] ?? 0;
+                            $extension = $file['extension'] ?? '';
+                            $filePath = $file['path'] ?? '';
                             
-                            $fileName = is_object($file) ? $file->getClientOriginalName() : (is_string($file) ? basename($file) : 'Unknown File');
-                            $fileSize = is_object($file) && method_exists($file, 'getSize') ? $file->getSize() : 0;
-                            $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                             $icon = 'fa-file';
                             $iconColor = 'text-blue-500';
 
@@ -761,7 +767,74 @@
                             ];
 
                             foreach ($iconMappings as $pattern => [$matchedIcon, $matchedColor]) {
-                                if (preg_match("/{$pattern}/", $extension)) {
+                                if (!empty($extension) && preg_match("/{$pattern}/", $extension)) {
+                                    $icon = $matchedIcon;
+                                    $iconColor = $matchedColor;
+                                    break;
+                                }
+                            }
+                        @endphp
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                            <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                <i class="fas {{ $icon }} {{ $iconColor }} text-xl flex-shrink-0"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-medium text-gray-900 truncate">
+                                        {{ $fileName }}
+                                        <span class="text-xs text-green-600 ml-1">(Existing)</span>
+                                    </p>
+                                    <div class="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                                        <span>{{ round($fileSize / 1024, 2) }} KB</span>
+                                        <span>•</span>
+                                        <span>{{ !empty($extension) ? strtoupper($extension) : 'UNKNOWN' }}</span>
+                                        @if(!empty($filePath))
+                                        <span>•</span>
+                                        <a href="{{ asset('storage/' . $filePath) }}" target="_blank" class="text-blue-600 hover:text-blue-800">
+                                            Lihat File
+                                        </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" 
+                                    wire:click="removeFileCore('{{ $fileModel }}', {{ $index }}, 'existing')"
+                                    class="text-red-500 hover:text-red-700 transition-colors p-1 rounded-full hover:bg-red-100 ml-2 flex-shrink-0"
+                                    title="Hapus file">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+        
+        <!-- Tampilkan file baru yang valid -->
+        @if ($newFileCount > 0)
+            <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">File baru yang akan diunggah:</h4>
+                <div class="space-y-2">
+                    @foreach ($newFiles as $index => $file)
+                        @php
+                            $fileName = $file->getClientOriginalName();
+                            $fileSize = $file->getSize();
+                            $extension = strtolower($file->getClientOriginalExtension());
+                            
+                            $icon = 'fa-file';
+                            $iconColor = 'text-blue-500';
+
+                            $iconMappings = [
+                                'jpg|jpeg|png|gif|bmp|webp' => ['fa-file-image', 'text-green-500'],
+                                'pdf' => ['fa-file-pdf', 'text-red-500'],
+                                'doc|docx' => ['fa-file-word', 'text-blue-600'],
+                                'xls|xlsx' => ['fa-file-excel', 'text-green-600'],
+                                'ppt|pptx' => ['fa-file-powerpoint', 'text-orange-500'],
+                                'zip|rar|7z|tar|gz' => ['fa-file-archive', 'text-yellow-500'],
+                                'mp3|wav|aac|flac|ogg' => ['fa-file-audio', 'text-purple-500'],
+                                'mp4|avi|mov|3gp|mkv|wmv|flv' => ['fa-file-video', 'text-pink-500'],
+                            ];
+
+                            foreach ($iconMappings as $pattern => [$matchedIcon, $matchedColor]) {
+                                if (!empty($extension) && preg_match("/{$pattern}/", $extension)) {
                                     $icon = $matchedIcon;
                                     $iconColor = $matchedColor;
                                     break;
@@ -784,7 +857,7 @@
                                 </div>
                             </div>
                             <button type="button" 
-                                    wire:click="removeFile('{{ $fileModel }}', {{ $index }})"
+                                    wire:click="removeFileCore('{{ $fileModel }}', {{ $index }}, 'new')"
                                     class="text-red-500 hover:text-red-700 transition-colors p-1 rounded-full hover:bg-red-100 ml-2 flex-shrink-0"
                                     title="Hapus file">
                                 <i class="fas fa-trash text-sm"></i>
@@ -792,10 +865,30 @@
                         </div>
                     @endforeach
                 </div>
+                
+                @if($isMultiple && $newFileCount > 0)
+                <div class="mt-2 text-xs text-blue-600 font-medium text-right">
+                    Total: {{ $newFileCount }} file • {{ round($totalSize / 1024 / 1024, 2) }} MB
+                </div>
+                @endif
+            </div>
+        @endif
+        
+        <!-- Info total files -->
+        @if ($totalFileCount > 0)
+            <div class="mt-2 text-sm text-gray-600">
+                Total file: {{ $totalFileCount }} ({{ $existingFileCount }} existing + {{ $newFileCount }} baru)
             </div>
         @endif
     </div>
-    
+
+    @error($errorField)
+        <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
+            <i class="fas fa-exclamation-circle mr-2 text-xs"></i>
+            {{ $fieldMessages[$message] ?? $message }}
+        </div>
+    @enderror
+
     @error($errorField)
         <div class="text-red-600 text-sm mt-2 animate-shake flex items-center bg-red-50 p-2 rounded border border-red-200">
             <i class="fas fa-exclamation-circle mr-2 text-xs"></i>

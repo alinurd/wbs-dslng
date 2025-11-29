@@ -24,7 +24,8 @@ class News extends Root
     public $title = "News";
     public $dataFAQ = [];
     public $newCategory = [];
-    
+      public $existingImage = null;
+    public $existingFiles = null;
     public $content_id = '';
     public $content_en = '';
     
@@ -66,44 +67,63 @@ class News extends Root
     }
 
     protected function saving()
-    {
-        // Upload files
-        $filesPaths = [];
-        if (!empty($this->form['files']) && is_array($this->form['files'])) {
-            $filesPaths = FileHelper::uploadMultiple(
-                $this->form['files'], 
-                'news', 
-                'public'
-            );
-        }
-        // Upload image
-        $imagePath = null;
-        if (!empty($this->form['image']) && is_object($this->form['image'])) {
-            $uploadedImages = FileHelper::uploadMultiple(
-                [$this->form['image']], 
-                'news', 
-                'public'
-            );
-            $imagePath = !empty($uploadedImages) ? $uploadedImages[0] : null;
-        } 
-        $codeNews = Str::random(8);
-
-        $payload = [
-            'category' => $this->form['category'],
-            'title_id' => $this->form['title_id'],
-            'title_en' => $this->form['title_en'],
-            'content_id' => $this->content_id ?: '',
-            'content_en' => $this->content_en ?: '',
-            'is_active' => $this->form['is_active'],
-            'files' => !empty($filesPaths) ? json_encode($filesPaths) : null,
-            'image' => !empty($imagePath) ? json_encode($imagePath) : null, 
-            'code_news' => $codeNews,
-            'created_by' => auth()->id(),
-        ]; 
+{
+    // Handle files - pertahankan file lama jika tidak ada upload baru
+    $filesPaths = $this->existingFiles ?? null;
+    
+    // Jika ada file baru yang diupload
+    if (!empty($this->form['files']) && is_array($this->form['files'])) {
+        $newFilesPaths = FileHelper::uploadMultiple(
+            $this->form['files'], 
+            'news', 
+            'public'
+        );
         
-        return $payload;
+        // Jika ada file lama, gabungkan dengan file baru
+        if ($filesPaths && !empty($newFilesPaths)) {
+            $existingFilesArray = json_decode($filesPaths, true) ?? [];
+            $filesPaths = json_encode(array_merge($existingFilesArray, $newFilesPaths));
+        } elseif (!empty($newFilesPaths)) {
+            // Jika tidak ada file lama, gunakan file baru saja
+            $filesPaths = json_encode($newFilesPaths);
+        }
     }
+    
+    // Handle image - pertahankan image lama jika tidak ada upload baru
+    $imagePath = $this->existingImage ?? null;
+    
+    // Jika ada image baru yang diupload
+    if (!empty($this->form['image']) && is_object($this->form['image'])) {
+        $uploadedImages = FileHelper::uploadMultiple(
+            [$this->form['image']], 
+            'news', 
+            'public'
+        );
+        $imagePath = !empty($uploadedImages) ? json_encode($uploadedImages[0]) : null;
+    }
+    
+    // $codeNews = $this->updateMode ? $this->form['code_news'] : Str::random(8);
 
+    $payload = [
+        'category' => $this->form['category'],
+        'title_id' => $this->form['title_id'],
+        'title_en' => $this->form['title_en'],
+        'content_id' => $this->content_id ?: '',
+        'content_en' => $this->content_en ?: '',
+        'is_active' => $this->form['is_active'],
+        'files' => $filesPaths,
+        'image' => $imagePath, 
+        // 'code_news' => $codeNews,
+        'updated_by' => auth()->id(),
+    ];
+    
+    // Untuk create, set created_by
+    if (!$this->updateMode) {
+        $payload['created_by'] = auth()->id();
+    }
+    
+    return $payload;
+}
     public function saved($record, $action)
     {
         $message = $action === 'create' 
@@ -132,7 +152,8 @@ class News extends Root
         
         $this->content_id = '';
         $this->content_en = '';
-        
+         $this->existingImage = null;
+    $this->existingFiles = null;
         $this->resetErrorBag();
         $this->resetValidation();
     }
@@ -144,7 +165,7 @@ class News extends Root
     $news = $this->model::findOrFail($id);
 
     $imageData = $news->image ? json_decode($news->image, true) : null;
-    $imagePath = $imageData['path'] ?? null; 
+   
     $categoryName = $news->categoryData ? $news->categoryData->data_id : 'Uncategorized';
 
     $filesData = [];
@@ -191,7 +212,10 @@ class News extends Root
             // 'Slug' => $news->code_news,
             'Kategori' => $categoryName,
             // 'Kategori Slug' => $news->categoryData->param_str_1 ?? 'general',
-            'Gambar' => $imagePath,
+            'Gambar' =>[
+                'imagePath'=>$imageData['path']?? null,
+                'original_name'=>$imageData['original_name']?? null,
+            ],
             'File' => $formattedFilesData,
             'Dibuat Pada' => $news->created_at,
         ]
@@ -201,40 +225,110 @@ class News extends Root
     $this->showDetailModal = true;
 }
 
-// Helper method untuk format file size
-private function formatFileSize($bytes)
+public function isValidFileFormat($file, $allowedFormats)
 {
-    if ($bytes == 0) return '0 Bytes';
-    
-    $k = 1024;
-    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    $i = floor(log($bytes) / log($k));
-    
-    return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+    if (empty($file)) {
+        return false;
+    }
+
+    // Clean allowed formats - remove empty values
+    $allowedFormats = array_filter($allowedFormats, function($format) {
+        return !empty(trim($format));
+    });
+
+    // Jika file adalah object Livewire UploadedFile (file baru)
+    if (is_object($file) && method_exists($file, 'getClientOriginalExtension')) {
+        $extension = strtolower($file->getClientOriginalExtension());
+        return in_array($extension, $allowedFormats);
+    }
+
+    // Jika file adalah string JSON (data existing dari database) - skip validation
+    if (is_string($file) && $this->isJsonString($file)) {
+        return true; // Skip validation untuk data JSON existing dari database
+    }
+
+    // Jika file adalah string path biasa
+    if (is_string($file)) {
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        return in_array($extension, $allowedFormats);
+    }
+
+    return false;
 }
 
-      public function edit($id)
-    {
-        can_any([strtolower($this->modul) . '.edit']);
+/**
+ * Helper method untuk generate accept attribute dengan perbaikan
+ */
+public function getAcceptAttribute($allowedFormats)
+{
+    // Clean allowed formats - remove empty values
+    $allowedFormats = array_filter($allowedFormats, function($format) {
+        return !empty(trim($format));
+    });
 
-        $record = ($this->model)::findOrFail($id);
+    $mimeTypes = [
+        'zip' => '.zip',
+        'rar' => '.rar',
+        'doc' => '.doc',
+        'docx' => '.docx,.doc',
+        'xls' => '.xls',
+        'xlsx' => '.xlsx,.xls',
+        'ppt' => '.ppt',
+        'pptx' => '.pptx,.ppt',
+        'pdf' => '.pdf',
+        'jpg' => '.jpg,.jpeg',
+        'jpeg' => '.jpg,.jpeg',
+        'png' => '.png',
+        'gif' => '.gif',
+        'webp' => '.webp',
+        'avi' => '.avi',
+        'mp4' => '.mp4',
+        '3gp' => '.3gp',
+        'mp3' => '.mp3',
+    ];
 
-        foreach ($this->formDefault as $key => $default) {
-            $this->form[$key] = $record->$key ?? $default;
+    $accept = [];
+    foreach ($allowedFormats as $format) {
+        $format = trim($format);
+        if (isset($mimeTypes[$format])) {
+            $accept[] = $mimeTypes[$format];
+        } else {
+            $accept[] = ".{$format}";
         }
-
-        $this->form['id'] = $id;
-        
-        // Set content untuk editor
-        $this->content_id = $record->content_id ?? '';
-        $this->content_en = $record->content_en ?? '';
-        
-        $this->updateMode = true;
-        $this->showModal = true;
-
-        // Dispatch event setelah modal terbuka
-        $this->dispatch('modal-opened');
     }
+
+    return implode(',', array_unique($accept));
+}
+ 
+ 
+public function edit($id)
+{
+    can_any([strtolower($this->modul) . '.edit']);
+
+    $record = ($this->model)::findOrFail($id);
+
+    foreach ($this->formDefault as $key => $default) {
+        $this->form[$key] = $record->$key ?? $default;
+    }
+
+    $this->form['id'] = $id;
+    
+    // Set content untuk editor
+    $this->content_id = $record->content_id ?? '';
+    $this->content_en = $record->content_en ?? '';
+    
+    // Simpan data file lama untuk referensi
+    $this->existingImage = $record->image;
+    $this->existingFiles = $record->files;
+    
+    $this->updateMode = true;
+    $this->showModal = true;
+
+    // Dispatch event setelah modal terbuka
+    $this->dispatch('modal-opened');
+}
+
+
     public function handleEditorContentUpdate($model, $content)
     {
         // Update property berdasarkan model
@@ -247,4 +341,113 @@ private function formatFileSize($bytes)
         $this->dispatch('refreshEditor', content: $this->content_id);
         $this->dispatch('refreshEditor', content: $this->content_en);
     }
+
+
+
+
+
+
+
+
+
+
+
+    public function removeFileCore($model, $index, $type = 'new')
+{
+    \Log::debug("=== removeFileCore START ===");
+    \Log::debug("Model: " . $model);
+    \Log::debug("Index: " . $index);
+    \Log::debug("Type: " . $type);
+    
+    if ($type === 'existing') {
+        $this->removeExistingFile($model, $index);
+    } else {
+        $this->removeNewFile($model, $index);
+    }
+    
+    \Log::debug("=== removeFileCore END ===");
+}
+
+private function removeExistingFile($model, $index)
+{
+    \Log::debug("=== removeExistingFile START ===");
+    \Log::debug("Model: " . $model . ", Index: " . $index);
+    \Log::debug("existingFiles before: " . $this->existingFiles);
+    
+    if ($model === 'form.files' && !empty($this->existingFiles)) {
+        $filesArray = json_decode($this->existingFiles, true);
+        \Log::debug("Decoded filesArray:", $filesArray);
+        
+        if (is_array($filesArray) && isset($filesArray[$index])) {
+            \Log::debug("Removing file at index: " . $index);
+            \Log::debug("File to remove:", $filesArray[$index]);
+            
+            // Hapus file dari array
+            array_splice($filesArray, $index, 1);
+            \Log::debug("FilesArray after removal:", $filesArray);
+            
+            if (empty($filesArray)) {
+                $this->existingFiles = null;
+                \Log::debug("existingFiles set to NULL");
+            } else {
+                $this->existingFiles = json_encode($filesArray);
+                \Log::debug("existingFiles updated to: " . $this->existingFiles);
+            }
+            
+            \Log::debug("✅ Existing file removed successfully");
+        } else {
+            \Log::debug("❌ File not found at index or filesArray is not array");
+            \Log::debug("is_array: " . (is_array($filesArray) ? 'true' : 'false'));
+            if (is_array($filesArray)) {
+                \Log::debug("Available indexes: " . json_encode(array_keys($filesArray)));
+            }
+        }
+    } elseif ($model === 'form.image' && !empty($this->existingImage)) {
+        \Log::debug("Removing existing image");
+        $this->existingImage = null;
+        \Log::debug("✅ Existing image removed");
+    } else {
+        \Log::debug("❌ No existing files to remove");
+        \Log::debug("Model matches form.files: " . ($model === 'form.files' ? 'true' : 'false'));
+        \Log::debug("existingFiles is empty: " . (empty($this->existingFiles) ? 'true' : 'false'));
+    }
+    
+    \Log::debug("=== removeExistingFile END ===");
+}
+
+private function removeNewFile($model, $index)
+{
+    \Log::debug("=== removeNewFile START ===");
+    \Log::debug("Model: " . $model . ", Index: " . $index);
+    
+    $files = data_get($this, $model);
+    \Log::debug("Files data before:", ['files' => $files, 'type' => gettype($files)]);
+    
+    if (is_array($files)) {
+        \Log::debug("Files is array, count: " . count($files));
+        \Log::debug("Available indexes: " . json_encode(array_keys($files)));
+        
+        if (isset($files[$index])) {
+            \Log::debug("Removing file at index: " . $index);
+            \Log::debug("File to remove:", ['file' => $files[$index]]);
+            
+            // Hapus file dari array
+            array_splice($files, $index, 1);
+            \Log::debug("Files after removal:", $files);
+            
+            data_set($this, $model, empty($files) ? null : $files);
+            \Log::debug("✅ New file removed successfully");
+        } else {
+            \Log::debug("❌ File not found at index " . $index);
+        }
+    } else {
+        \Log::debug("❌ Files is not an array, setting to null");
+        data_set($this, $model, null);
+    }
+    
+    $filesAfter = data_get($this, $model);
+    \Log::debug("Files data after:", ['files' => $filesAfter]);
+    
+    \Log::debug("=== removeNewFile END ===");
+}
 }

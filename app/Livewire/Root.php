@@ -1584,4 +1584,32 @@ public function getPeriodInfo()
     return $monthName . ' ' . $tahun;
 }
 
+public function formatFileSize($bytes)
+{
+    if ($bytes == 0) return '0 Bytes';
+    
+    $k = 1024;
+    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    $i = floor(log($bytes) / log($k));
+    
+    return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+}
+
+public function isJsonString($string)
+{
+    if (!is_string($string)) {
+        return false;
+    }
+    
+    // Cek jika string mengandung karakter JSON
+    if (str_contains($string, '{') && str_contains($string, '}')) {
+        return true;
+    }
+    
+    if (str_contains($string, '[') && str_contains($string, ']')) {
+        return true;
+    }
+    
+    return false;
+}
 }

@@ -103,8 +103,7 @@
                     'required' => true,
                     'multiple' => true,
                     'size' => '100', // MB
-                    'format' =>
-                        'ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3',
+                            'format' => 'ZIP,RAR,DOC,DOCX,XLS,XLSX,PPT,PPTX,PDF,JPG,JPEG,PNG,AVI,MP4,3GP,MP3', // HAPUS KOMA DI AKHIR
                     'placeholder' => 'Pilih file...',
                     'messages' => [
                         'required' => 'File wajib diisi',
@@ -115,7 +114,7 @@
                     'label' => 'Gambar',
                     'model' => 'form.image',
                     'error' => 'form.image',
-                    'format' => 'JPG, JPEG, PNG, GIF, WEBP',
+                            'format' => 'JPG,JPEG,PNG,GIF,WEBP', 
                     'size' => '10',
                     'required' => false,
                     'multiple' => false,
