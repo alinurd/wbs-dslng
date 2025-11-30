@@ -22,16 +22,16 @@
                     </div>
                 </div>
 
-                <!-- Jenis Pelanggaran -->
+                <!-- Saluran Aduan -->
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200"
-                     x-data="chartContainer('jenisPelanggaranChart')">
+                     x-data="chartContainer('saluranAduanChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-chart-bar mr-2 text-green-600"></i>
-                        Jenis Pelanggaran
+                        <i class="fas fa-inbox mr-2 text-orange-600"></i>
+                        Saluran Aduan
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
-                                data-chart-data='@json($chartData['jenis_pelanggaran'] ?? [])'></canvas>
+                                data-chart-data='@json($chartData['saluran_aduan'] ?? [])'></canvas>
                     </div>
                 </div>
 
@@ -48,19 +48,19 @@
                     </div>
                 </div>
 
-                <!-- Saluran Aduan -->
+                
+<!-- Jenis Pelanggaran -->
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200"
-                     x-data="chartContainer('saluranAduanChart')">
+                     x-data="chartContainer('jenisPelanggaranChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-inbox mr-2 text-orange-600"></i>
-                        Saluran Aduan
+                        <i class="fas fa-chart-bar mr-2 text-green-600"></i>
+                        Jenis Pelanggaran
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
-                                data-chart-data='@json($chartData['saluran_aduan'] ?? [])'></canvas>
+                                data-chart-data='@json($chartData['jenis_pelanggaran'] ?? [])'></canvas>
                     </div>
                 </div>
-
                 <!-- Direktorat -->
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200"
                      x-data="chartContainer('direktoratChart')">
