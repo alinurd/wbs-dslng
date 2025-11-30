@@ -99,15 +99,16 @@
                 @endif
                 @if($direktoratFilter)
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    Direktorat: {{ $direktoratFilter }}
+                    Direktorat: {{$this->getDirektoratName($direktoratFilter) }}
                     <button wire:click="$set('direktoratFilter', '')" class="ml-1 hover:text-purple-600">
                         <i class="fas fa-times"></i>
                     </button>
                 </span>
                 @endif
                 @if($statusFilter)
+                {{-- {{dd($this->getComboById($statusFilter))}} --}}
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    Status: {{ ucfirst(str_replace('_', ' ', $statusFilter)) }}
+                    Status: {{$this->getComboById($statusFilter) }}
                     <button wire:click="$set('statusFilter', '')" class="ml-1 hover:text-yellow-600">
                         <i class="fas fa-times"></i>
                     </button>
@@ -115,7 +116,7 @@
                 @endif
                 @if($fwdToFilter)
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
-                    Code: {{ ucfirst(str_replace('_', ' ', $fwdToFilter)) }}
+                    Forward: {{ $this->getComboById($fwdToFilter)}}
                     <button wire:click="$set('fwdToFilter', '')" class="ml-1 hover:text-cyan-600">
                         <i class="fas fa-times"></i>
                     </button>

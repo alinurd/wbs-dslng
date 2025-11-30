@@ -333,7 +333,7 @@ protected function getStatusAduanChart()
                 ],
                 'title' => [
                     'display' => true,
-                    'text' => 'Status Aduan ' . $this->getFilterDescription(true),
+                    'text' => 'Status Aduan ',
                     'font' => ['size' => 16]
                 ]
             ]
@@ -472,7 +472,7 @@ protected function getJenisPelanggaranChart()
                 ],
                 'title' => [
                     'display' => true,
-                    'text' => 'Jenis Pelanggaran ' . $this->getFilterDescription(true),
+                    'text' => 'Jenis Pelanggaran ',
                     'font' => ['size' => 16]
                 ]
             ],
@@ -623,7 +623,7 @@ protected function getSaluranAduanChart()
                 ],
                 'title' => [
                     'display' => true,
-                    'text' => 'Saluran Aduan ' . $this->getFilterDescription(true),
+                    'text' => 'Saluran Aduan ',
                     'font' => ['size' => 16]
                 ]
             ]
@@ -651,7 +651,7 @@ protected function getDirektoratChart()
     ];
 
     foreach ($data as $item) {
-        $labels[] = $item->direktorat ?: 'Tidak Diketahui';
+        $labels[] = $this->getDirektoratName($item->direktorat) ?: 'Tidak Diketahui';
         $values[] = $item->total;
     }
 
@@ -684,7 +684,7 @@ protected function getDirektoratChart()
                 ],
                 'title' => [
                     'display' => true,
-                    'text' => 'Aduan per Direktorat ' . $this->getFilterDescription(true),
+                    'text' => 'Aduan per Direktorat ',
                     'font' => ['size' => 16]
                 ]
             ],
@@ -763,9 +763,9 @@ protected function getDirektoratChart()
 
         if ($this->direktoratFilter) {
             if ($forChart) {
-                $descriptions[] = $this->direktoratFilter;
+                $descriptions[] = $this->getDirektoratName($this->direktoratFilter);
             } else {
-                $descriptions[] = 'Direktorat: ' . $this->direktoratFilter;
+                $descriptions[] = 'Direktorat: ' . $this->getDirektoratName($this->direktoratFilter);
             }
         }
 

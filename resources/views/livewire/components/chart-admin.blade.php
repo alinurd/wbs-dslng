@@ -1,7 +1,7 @@
  <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Analytics & Charts 📊</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Analytics & Charts </h2>
                     <p class="text-gray-600">Visualisasi data pengaduan untuk analisis yang lebih baik</p>
                 </div>
                 

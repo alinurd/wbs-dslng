@@ -1210,7 +1210,7 @@ protected function getAcceptAttribute($allowedFormats)
     }
     public function getComboById($i)
     {
-        $r = $this->model::findOrFail($i);
+        $r = Combo::findOrFail($i);
 
         return $r->data_id ?? $r->data_en;
     }
