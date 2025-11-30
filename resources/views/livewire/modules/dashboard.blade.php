@@ -202,7 +202,7 @@
                                 <div class="flex items-center space-x-4">
                                     <a href="{{ route('log_detail', ['code_pengaduan' => $log['code']]) }}"
                                        class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center group">
-                                        Log Aktivitas
+                                        Log Aktivitas {{$log['code']}}
                                         <i class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
                                     </a>
                                     <div class="flex items-center space-x-3">
