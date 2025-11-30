@@ -48,7 +48,7 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-
+{{-- {{dd($saluranList)}} --}}
                 <!-- Saluran Aduan -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -58,7 +58,7 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('saluran_aduan_id') border-red-500 @enderror">
                         <option value="">Pilih Saluran Aduan</option>
                         @foreach ($saluranList as $p)
-                            <option value="{{ $p->id }}">{{ $p->data ?? $p->data_id }}</option>
+                            <option value="{{ $p['id'] }}">{{ $p->data ?? $p['data_id'] }}</option>
                         @endforeach
                     </select>
                     @error('saluran_aduan_id')
@@ -75,7 +75,7 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('direktorat') border-red-500 @enderror">
                         <option value="">Pilih Direktorat</option>
                         @foreach ($direktoratList as $dir)
-                            <option value="{{ $dir->id }}">{{ $dir->owner_name }}</option>
+                            <option value="{{ $dir['id'] }}">{{ $dir['owner_name'] }}</option>
                         @endforeach
                     </select>
                     @error('direktorat')
@@ -328,6 +328,9 @@
             </button>
             @if ($confirmation)
                 <div class="flex gap-3">
+                    
+
+                    
                     <button type="submit"
                         class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center">
                         <i class="fas fa-paper-plane mr-2"></i>Kirim Pengaduan
