@@ -177,10 +177,13 @@
                     
                     <div class="space-y-4">
                         @forelse($log_approval as $log)
+                        @php
+                            $cleanCode = str_replace('#', '', $log['code']);
+                        @endphp
                         <div class="border-l-4 border-{{ $log['status_color'] }}-500 pl-4 py-3 hover:bg-gray-50 rounded-r-lg transition-colors">
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="font-semibold text-gray-800 text-sm">
-                                    Code: {{ $log['code'] ?? $log['judul'] ?? 'Aktivitas Sistem' }}
+                                    Code: {{ $cleanCode }}
                                 </h3>
                                 <span class="px-3 py-1 text-xs font-medium rounded-full bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 border border-{{ $log['status_color'] }}-200">
                                     {{ $log['status'] }}
@@ -200,9 +203,9 @@
                                     </span>
                                 </div>
                                 <div class="flex items-center space-x-4">
-                                    <a href="{{ route('log_detail', ['code_pengaduan' => $log['code']]) }}"
+                                    <a href="{{ route('log_detail', ['code_pengaduan' => $cleanCode]) }}"
                                        class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center group">
-                                        Log Aktivitas {{$log['code']}}
+                                        Log Aktivitas {{$cleanCode}}
                                         <i class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
                                     </a>
                                     <div class="flex items-center space-x-3">
