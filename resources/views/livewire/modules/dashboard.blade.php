@@ -217,7 +217,7 @@
                     </div>
                 </div>
                 <!-- Recent Pengaduan -->
-                 @include('livewire.components.suport')
+                 {{-- @include('livewire.components.suport') --}}
 
             </div>
         </div>
@@ -228,9 +228,9 @@
             @include('livewire.components.pengaduan-terbaru')
         </div>
         <!-- Support Info -->
-        {{-- <div class="mt-8">
+        <div class="mt-8">
             @include('livewire.components.suport')
-        </div>--}}
+        </div>
         @endif 
     </div>
 </div>

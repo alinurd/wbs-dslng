@@ -136,7 +136,7 @@ class DashboardIndex extends Root
                       ->groupBy('pengaduan_id');
             })
             ->orderBy('created_at', 'desc')
-            ->limit(5);
+            ->limit(4);
 
         // Apply filters to log approval through pengaduan relation
         if ($this->hasActiveFilters() || ($this->pelapor && isset($this->userInfo['user']['id']))) {
