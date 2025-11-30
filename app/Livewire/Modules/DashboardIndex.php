@@ -2,12 +2,10 @@
 namespace App\Livewire\Modules;
 
 use App\Livewire\Root;
-use App\Models\Combo;
-use App\Models\JenisPengaduan;
+use App\Models\Combo; 
 use App\Models\LogApproval;
-use App\Models\Pengaduan;
-use App\Models\SaluranAduan;
-use App\Models\User;
+use App\Models\Owner;
+use App\Models\Pengaduan; 
 use App\Traits\HasChat;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithFileUploads;
@@ -39,8 +37,22 @@ class DashboardIndex extends Root
     public $progress_bulanan = [];
     public $chartData = [];
     
-    // Properties untuk filter chart
+    // Properties untuk filter
     public $tahunFilter;
+    public $jenisPengaduanFilter;
+    public $direktoratFilter;
+    public $statusFilter;
+    public $fwdToFilter;
+    public $codePengaduanFilter;
+
+    // Properties untuk dropdown data
+    public $jenisPengaduanList = [];
+    public $stsPengaduanList = [];
+    public $bulanList = [];
+    public $tahunPengaduanList = [];
+    public $saluranList = [];
+    public $fwdList = [];
+    public $direktoratList = [];
 
     public function mount()
     {
@@ -51,6 +63,7 @@ class DashboardIndex extends Root
 
     public function loadDashboardData()
     {
+        $this->loadDropdownData(); // Load dropdown data first
         $this->loadStats();
         $this->loadPengaduanTerbaru();
         $this->loadLogApproval();
@@ -58,20 +71,22 @@ class DashboardIndex extends Root
         $this->loadChartData();
     }
 
+    /**
+     * Build base query dengan semua filter
+     */
+ /**
+ * Build base query dengan semua filter - PASTIKAN INI SUDAH LENGKAP
+ */
+ 
+
     protected function loadStats()
     {
-        $currentYear = date('Y');
-         
-        $baseQuery = Pengaduan::whereYear('tanggal_pengaduan', $currentYear);
+        $query = $this->buildBaseQuery();
         
-        if ($this->pelapor) {
-            $baseQuery->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
-
-        $totalPengaduan = $baseQuery->count();
-        $dalamProses = (clone $baseQuery)->where('status','!=', 0)->where('sts_final', 0)->count();
-        $selesai = (clone $baseQuery)->where('sts_final', 1)->count();
-        $menunggu = (clone $baseQuery)->where('status', 0)->where('sts_final', 0)->count();
+        $totalPengaduan = $query->count();
+        $dalamProses = (clone $query)->where('status','!=', 0)->where('sts_final', 0)->count();
+        $selesai = (clone $query)->where('sts_final', 1)->count();
+        $menunggu = (clone $query)->where('status', 0)->where('sts_final', 0)->count();
 
         $this->stats = [
             'total_pengaduan' => $totalPengaduan,
@@ -83,14 +98,12 @@ class DashboardIndex extends Root
 
     protected function loadPengaduanTerbaru()
     {
-        $pengaduan = Pengaduan::with(['jenisPengaduan', 'pelapor', 'logApprovals'])
-            ->orderBy('created_at', 'desc');
+        $query = $this->buildBaseQuery()
+            ->with(['jenisPengaduan', 'pelapor', 'logApprovals'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5);
 
-        if ($this->pelapor) {
-            $pengaduan->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
-
-        $pengaduan = $pengaduan->limit(5)->get();
+        $pengaduan = $query->get();
            
         $this->pengaduan_terbaru = $pengaduan->map(function($item, $index) {
             $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
@@ -125,9 +138,25 @@ class DashboardIndex extends Root
             ->orderBy('created_at', 'desc')
             ->limit(5);
 
-        if ($this->pelapor && isset($this->userInfo['user']['id'])) {
+        // Apply filters to log approval through pengaduan relation
+        if ($this->hasActiveFilters() || ($this->pelapor && isset($this->userInfo['user']['id']))) {
             $query->whereHas('pengaduan', function($q) {
-                $q->where('user_id', $this->userInfo['user']['id']);
+                if ($this->pelapor && isset($this->userInfo['user']['id'])) {
+                    $q->where('user_id', $this->userInfo['user']['id']);
+                }
+                // Apply other filters
+                if ($this->tahunFilter) {
+                    $q->whereYear('tanggal_pengaduan', $this->tahunFilter);
+                }
+                if ($this->jenisPengaduanFilter) {
+                    $q->where('jenis_pengaduan_id', $this->jenisPengaduanFilter);
+                }
+                if ($this->direktoratFilter) {
+                    $q->where('direktorat', $this->direktoratFilter);
+                }
+                if ($this->codePengaduanFilter) {
+                    $q->where('code_pengaduan', 'like', '%' . $this->codePengaduanFilter . '%');
+                }
             });
         }
 
@@ -165,14 +194,12 @@ class DashboardIndex extends Root
 
     protected function loadRecentPengaduanAsLog()
     {
-        $recentPengaduan = Pengaduan::with(['jenisPengaduan', 'pelapor', 'logApprovals'])
-            ->orderBy('created_at', 'desc');
+        $query = $this->buildBaseQuery()
+            ->with(['jenisPengaduan', 'pelapor', 'logApprovals'])
+            ->orderBy('created_at', 'desc')
+            ->limit(3);
 
-        if ($this->pelapor) {
-            $recentPengaduan->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
-
-        $recentPengaduan = $recentPengaduan->limit(3)->get();
+        $recentPengaduan = $query->get();
 
         $this->log_approval = $recentPengaduan->map(function($item) {
             $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
@@ -195,12 +222,12 @@ class DashboardIndex extends Root
     protected function loadProgressBulanan()
     {
         $currentMonth = date('m');
-        $currentYear = date('Y');
-        $query = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
+        $currentYear = $this->tahunFilter ?: date('Y');
+        
+        $query = $this->buildBaseQuery()
+            ->whereYear('tanggal_pengaduan', $currentYear)
             ->whereMonth('tanggal_pengaduan', $currentMonth);
-        if ($this->pelapor) {
-            $query->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
+
         $menunggu = (clone $query)->where('status', 0)->where('sts_final', 0)->count();
         $dalamProses = (clone $query)->where('status', 1)->where('sts_final', 0)->count();
         $selesai = (clone $query)->where('sts_final', 1)->count();
@@ -236,386 +263,586 @@ class DashboardIndex extends Root
             ];
         }
     }
-
+   /**
+ * Load data untuk chart dengan filter
+ */
+protected function loadChartData()
+{
+    $this->chartData = [
+        'status_aduan' => $this->getStatusAduanChart(),
+        'jenis_pelanggaran' => $this->getJenisPelanggaranChart(),
+        'pergerakan_tahunan' => $this->getPergerakanTahunanChart(),
+        'saluran_aduan' => $this->getSaluranAduanChart(),
+        'direktorat' => $this->getDirektoratChart()
+    ];
+}
     /**
-     * Load data untuk chart berdasarkan struktur database yang benar
-     */
-    protected function loadChartData()
-    {
-        $this->chartData = [
-            'status_aduan' => $this->getStatusAduanChart(),
-            'jenis_pelanggaran' => $this->getJenisPelanggaranChart(),
-            'pergerakan_tahunan' => $this->getPergerakanTahunanChart(),
-            'saluran_aduan' => $this->getSaluranAduanChart(),
-            'direktorat' => $this->getDirektoratChart()
-        ];
+     * /**
+ * Chart 1: Status Aduan (Pie/Donut Chart) - DIPERBAIKI
+ */
+protected function getStatusAduanChart()
+{
+    $query = $this->buildBaseQuery();
+
+    $data = $query->selectRaw('
+        COUNT(*) as total,
+        CASE 
+            WHEN status = 0 AND sts_final = 0 THEN "Menunggu"
+            WHEN status = 1 AND sts_final = 0 THEN "Dalam Proses" 
+            WHEN sts_final = 1 THEN "Selesai"
+            ELSE "Status Lain"
+        END as status_label
+    ')
+    ->groupBy('status_label')
+    ->get();
+
+    $labels = [];
+    $values = [];
+    $colors = ['#FF6384', '#36A2EB', '#4BC0C0', '#FFCD56'];
+
+    foreach ($data as $item) {
+        $labels[] = $item->status_label;
+        $values[] = $item->total;
     }
 
-    /**
-     * Chart 1: Status Aduan (Pie/Donut Chart)
-     * Sesuai dengan field status dan sts_final di database
-     */
-    protected function getStatusAduanChart()
-    {
-        $currentYear = $this->tahunFilter;
-        
-        $query = Pengaduan::whereYear('tanggal_pengaduan', $currentYear);
-        
-        if ($this->pelapor) {
-            $query->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
-
-        // Query sesuai dengan struktur status yang ada
-        $data = $query->selectRaw('
-            COUNT(*) as total,
-            CASE 
-                WHEN status = 0 AND sts_final = 0 THEN "Menunggu"
-                WHEN status = 1 AND sts_final = 0 THEN "Dalam Proses" 
-                WHEN sts_final = 1 THEN "Selesai"
-                ELSE "Status Lain"
-            END as status_label
-        ')
-        ->groupBy('status_label')
-        ->get();
-
-        $labels = [];
-        $values = [];
-        $colors = ['#FF6384', '#36A2EB', '#4BC0C0', '#FFCD56'];
-
-        foreach ($data as $item) {
-            $labels[] = $item->status_label;
-            $values[] = $item->total;
-        }
-
-        return [
-            'type' => 'doughnut',
-            'data' => [
-                'labels' => $labels,
-                'datasets' => [[
-                    'data' => $values,
-                    'backgroundColor' => $colors,
-                    'hoverBackgroundColor' => $colors,
-                    'borderWidth' => 2,
-                    'borderColor' => '#fff'
-                ]]
-            ],
-            'options' => [
-                'responsive' => true,
-                'maintainAspectRatio' => false,
-                'plugins' => [
-                    'legend' => [
-                        'position' => 'bottom',
-                        'labels' => [
-                            'usePointStyle' => true,
-                            'padding' => 20
-                        ]
-                    ],
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Status Aduan Tahun ' . $currentYear,
-                        'font' => ['size' => 16]
-                    ]
-                ]
-            ]
-        ];
+    // Jika tidak ada data, buat data kosong
+    if (empty($labels)) {
+        $labels = ['Menunggu', 'Dalam Proses', 'Selesai'];
+        $values = [0, 0, 0];
     }
 
-    /**
-     * Chart 2: Jenis Pelanggaran (Bar Chart)
-     * Menggunakan relasi jenisPengaduan yang benar
-     */
-    protected function getJenisPelanggaranChart()
-    {
-        $currentYear = $this->tahunFilter;
-        
-        $query = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->with('jenisPengaduan')
-            ->select('jenis_pengaduan_id', DB::raw('COUNT(*) as total'))
-            ->groupBy('jenis_pengaduan_id')
-            ->orderBy('total', 'desc')
-            ->limit(8);
-            
-        if ($this->pelapor) {
-            $query->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
-
-        $data = $query->get();
-
-        $labels = [];
-        $values = [];
-        $backgroundColors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#7CFFB2', '#FD7F6F'
-        ];
-
-        foreach ($data as $item) {
-            $labels[] = $item->jenisPengaduan->data_id ?? 'Tidak Diketahui';
-            $values[] = $item->total;
-        }
-
-        return [
-            'type' => 'bar',
-            'data' => [
-                'labels' => $labels,
-                'datasets' => [[
-                    'label' => 'Jumlah Aduan',
-                    'data' => $values,
-                    'backgroundColor' => $backgroundColors,
-                    'borderColor' => $backgroundColors,
-                    'borderWidth' => 1
-                ]]
-            ],
-            'options' => [
-                'responsive' => true,
-                'maintainAspectRatio' => false,
-                'plugins' => [
-                    'legend' => [
-                        'display' => false
-                    ],
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Jenis Pelanggaran Tahun ' . $currentYear,
-                        'font' => ['size' => 16]
+    return [
+        'type' => 'doughnut',
+        'data' => [
+            'labels' => $labels,
+            'datasets' => [[
+                'data' => $values,
+                'backgroundColor' => $colors,
+                'hoverBackgroundColor' => $colors,
+                'borderWidth' => 2,
+                'borderColor' => '#fff'
+            ]]
+        ],
+        'options' => [
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'plugins' => [
+                'legend' => [
+                    'position' => 'bottom',
+                    'labels' => [
+                        'usePointStyle' => true,
+                        'padding' => 20
                     ]
                 ],
-                'scales' => [
-                    'y' => [
-                        'beginAtZero' => true,
-                        'ticks' => [
-                            'stepSize' => 1
-                        ]
+                'title' => [
+                    'display' => true,
+                    'text' => 'Status Aduan ' . $this->getFilterDescription(true),
+                    'font' => ['size' => 16]
+                ]
+            ]
+        ]
+    ];
+}
+
+ 
+ 
+ 
+/**
+ * Build base query dengan semua filter - DIPASTIKAN KONSISTEN
+ */
+protected function buildBaseQuery()
+{
+    $query = Pengaduan::query();
+
+     if ($this->tahunFilter) {
+        $query->whereYear('tanggal_pengaduan', $this->tahunFilter);
+    }
+
+     if ($this->jenisPengaduanFilter) {
+        $query->where('jenis_pengaduan_id', $this->jenisPengaduanFilter);
+    }
+
+     if ($this->direktoratFilter) {
+         if (is_numeric($this->direktoratFilter)) {
+             $query->where('direktorat', $this->direktoratFilter);
+        } else {
+             $query->where('direktorat', 'like', '%' . $this->direktoratFilter . '%');
+        }
+    }
+
+    // Filter status
+    if ($this->statusFilter) {
+        switch ($this->statusFilter) {
+            case 'menunggu':
+                $query->where('status', 0)->where('sts_final', 0);
+                break;
+            case 'dalam_proses':
+                $query->where('status', 1)->where('sts_final', 0);
+                break;
+            case 'selesai':
+                $query->where('sts_final', 1);
+                break;
+            default: 
+                if (is_numeric($this->statusFilter)) {
+                    $query->where('status', $this->statusFilter);
+                }
+                break;
+        }
+    }
+ 
+    if ($this->fwdToFilter) {
+        $query->where('fwd_to', $this->fwdToFilter);
+    }
+ 
+    if ($this->codePengaduanFilter) {
+        $query->where('code_pengaduan', 'like', '%' . $this->codePengaduanFilter . '%');
+    }
+ 
+    if ($this->pelapor && isset($this->userInfo['user']['id'])) {
+        $query->where('user_id', $this->userInfo['user']['id']);
+    }
+
+    // Debug query (optional, bisa dihapus setelah testing)
+    // \Log::info('Dashboard Query: ', [
+    //     'tahun' => $this->tahunFilter,
+    //     'jenis' => $this->jenisPengaduanFilter,
+    //     'direktorat' => $this->direktoratFilter,
+    //     'status' => $this->statusFilter,
+    //     'sql' => $query->toSql(),
+    //     'bindings' => $query->getBindings()
+    // ]);
+
+    return $query;
+}
+
+/**
+ * Chart 2: Jenis Pelanggaran (Bar Chart) - DIPERBAIKI
+ */
+protected function getJenisPelanggaranChart()
+{
+    $query = $this->buildBaseQuery()
+        ->with('jenisPengaduan')
+        ->select('jenis_pengaduan_id', DB::raw('COUNT(*) as total'))
+        ->groupBy('jenis_pengaduan_id')
+        ->orderBy('total', 'desc')
+        ->limit(8);
+
+    $data = $query->get();
+    //  \Log::info('Dashboard Query: ', [
+    //     'tahun' => $this->tahunFilter,
+    //     'jenis' => $this->jenisPengaduanFilter,
+    //     'direktorat' => $this->direktoratFilter,
+    //     'status' => $this->statusFilter,
+    //     'sql' => $query->toSql(),
+    //     'data' => $data
+    // ]);
+    $labels = [];
+    $values = [];
+    $backgroundColors = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+        '#FF9F40', '#7CFFB2', '#FD7F6F'
+    ];
+
+    foreach ($data as $item) {
+        $labels[] = $item->jenisPengaduan->data_id ?? 'Tidak Diketahui';
+        $values[] = $item->total;
+    }
+
+    // Jika tidak ada data, buat data kosong
+    if (empty($labels)) {
+        $labels = ['Tidak ada data'];
+        $values = [0];
+        $backgroundColors = ['#B0B0B0'];
+    }
+
+    return [
+        'type' => 'bar',
+        'data' => [
+            'labels' => $labels,
+            'datasets' => [[
+                'label' => 'Jumlah Aduan',
+                'data' => $values,
+                'backgroundColor' => $backgroundColors,
+                'borderColor' => $backgroundColors,
+                'borderWidth' => 1
+            ]]
+        ],
+        'options' => [
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'plugins' => [
+                'legend' => [
+                    'display' => false
+                ],
+                'title' => [
+                    'display' => true,
+                    'text' => 'Jenis Pelanggaran ' . $this->getFilterDescription(true),
+                    'font' => ['size' => 16]
+                ]
+            ],
+            'scales' => [
+                'y' => [
+                    'beginAtZero' => true,
+                    'ticks' => [
+                        'stepSize' => 1
                     ]
                 ]
             ]
-        ];
-    }
+        ]
+    ];
+}
 
-    /**
-     * Chart 3: Pergerakan Tahunan (Line Chart)
-     * Berdasarkan tanggal_pengaduan
-     */
-    protected function getPergerakanTahunanChart()
-    {
-        $currentYear = $this->tahunFilter;
-        
-        $query = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->selectRaw('MONTH(tanggal_pengaduan) as bulan, COUNT(*) as total')
-            ->groupBy('bulan')
-            ->orderBy('bulan');
-            
-        if ($this->pelapor) {
-            $query->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
+/**
+ * Chart 3: Pergerakan Tahunan (Line Chart) - DIPERBAIKI
+ */
+protected function getPergerakanTahunanChart()
+{
+    $query = $this->buildBaseQuery()
+        ->selectRaw('MONTH(tanggal_pengaduan) as bulan, COUNT(*) as total')
+        ->groupBy('bulan')
+        ->orderBy('bulan');
 
-        $data = $query->get();
+    $data = $query->get();
 
-        // Inisialisasi data untuk semua bulan
-        $monthlyData = array_fill(1, 12, 0);
-        $monthNames = [
-            'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-            'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'
-        ];
+    // Inisialisasi data untuk semua bulan
+    $monthlyData = array_fill(1, 12, 0);
+    $monthNames = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+        'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'
+    ];
 
-        foreach ($data as $item) {
+    foreach ($data as $item) {
+        if ($item->bulan >= 1 && $item->bulan <= 12) {
             $monthlyData[$item->bulan] = $item->total;
         }
+    }
 
-        return [
-            'type' => 'line',
-            'data' => [
-                'labels' => $monthNames,
-                'datasets' => [[
-                    'label' => 'Jumlah Aduan',
-                    'data' => array_values($monthlyData),
-                    'borderColor' => '#36A2EB',
-                    'backgroundColor' => 'rgba(54, 162, 235, 0.1)',
-                    'fill' => true,
-                    'tension' => 0.4,
-                    'pointBackgroundColor' => '#36A2EB',
-                    'pointBorderColor' => '#fff',
-                    'pointBorderWidth' => 2,
-                    'pointRadius' => 5
-                ]]
+    // Buat judul yang sesuai dengan filter
+    $title = 'Trend Bulanan ';
+    if ($this->tahunFilter) {
+        $title .= 'Tahun ' . $this->tahunFilter;
+    } else {
+        // Jika tidak ada filter tahun, ambil tahun dari data yang ada
+        $availableYears = $this->getTahunOptions();
+        if (!empty($availableYears)) {
+            $title .= 'Semua Tahun';
+        } else {
+            $title .= 'Tidak Ada Data';
+        }
+    }
+
+    return [
+        'type' => 'line',
+        'data' => [
+            'labels' => $monthNames,
+            'datasets' => [[
+                'label' => 'Jumlah Aduan',
+                'data' => array_values($monthlyData),
+                'borderColor' => '#36A2EB',
+                'backgroundColor' => 'rgba(54, 162, 235, 0.1)',
+                'fill' => true,
+                'tension' => 0.4,
+                'pointBackgroundColor' => '#36A2EB',
+                'pointBorderColor' => '#fff',
+                'pointBorderWidth' => 2,
+                'pointRadius' => 5
+            ]]
+        ],
+        'options' => [
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'plugins' => [
+                'legend' => [
+                    'display' => true,
+                    'position' => 'top'
+                ],
+                'title' => [
+                    'display' => true,
+                    'text' => $title,
+                    'font' => ['size' => 16]
+                ]
             ],
-            'options' => [
-                'responsive' => true,
-                'maintainAspectRatio' => false,
-                'plugins' => [
-                    'legend' => [
-                        'display' => true,
-                        'position' => 'top'
-                    ],
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Pergerakan Aduan Tahun ' . $currentYear,
-                        'font' => ['size' => 16]
+            'scales' => [
+                'y' => [
+                    'beginAtZero' => true,
+                    'ticks' => [
+                        'stepSize' => 1
+                    ]
+                ]
+            ]
+        ]
+    ];
+}
+
+/**
+ * Chart 4: Saluran Aduan (Pie Chart) - DIPERBAIKI
+ */
+protected function getSaluranAduanChart()
+{
+    $query = $this->buildBaseQuery()
+        ->with('saluranAduan')
+        ->select('saluran_aduan_id', DB::raw('COUNT(*) as total'))
+        ->groupBy('saluran_aduan_id');
+
+    $data = $query->get();
+
+    $labels = [];
+    $values = [];
+    $colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+
+    foreach ($data as $item) {
+        $labels[] = $item->saluranAduan->data_id ?? 'Tidak Diketahui';
+        $values[] = $item->total;
+    }
+
+    // Jika tidak ada data, buat data kosong
+    if (empty($labels)) {
+        $labels = ['Tidak ada data'];
+        $values = [0];
+        $colors = ['#B0B0B0'];
+    }
+
+    return [
+        'type' => 'pie',
+        'data' => [
+            'labels' => $labels,
+            'datasets' => [[
+                'data' => $values,
+                'backgroundColor' => $colors,
+                'hoverBackgroundColor' => $colors,
+                'borderWidth' => 2,
+                'borderColor' => '#fff'
+            ]]
+        ],
+        'options' => [
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'plugins' => [
+                'legend' => [
+                    'position' => 'bottom',
+                    'labels' => [
+                        'usePointStyle' => true,
+                        'padding' => 20
                     ]
                 ],
-                'scales' => [
-                    'y' => [
-                        'beginAtZero' => true,
-                        'ticks' => [
-                            'stepSize' => 1
-                        ]
-                    ]
+                'title' => [
+                    'display' => true,
+                    'text' => 'Saluran Aduan ' . $this->getFilterDescription(true),
+                    'font' => ['size' => 16]
                 ]
             ]
-        ];
+        ]
+    ];
+}
+
+/**
+ * Chart 5: Direktorat (Horizontal Bar Chart) - DIPERBAIKI
+ */
+protected function getDirektoratChart()
+{
+    $query = $this->buildBaseQuery()
+        ->select('direktorat', DB::raw('COUNT(*) as total'))
+        ->groupBy('direktorat')
+        ->orderBy('total', 'desc')
+        ->limit(10);
+
+    $data = $query->get();
+
+    $labels = [];
+    $values = [];
+    $backgroundColors = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+        '#FF9F40', '#7CFFB2', '#FD7F6F', '#B2B2B2', '#6A0DAD'
+    ];
+
+    foreach ($data as $item) {
+        $labels[] = $item->direktorat ?: 'Tidak Diketahui';
+        $values[] = $item->total;
     }
 
-    /**
-     * Chart 4: Saluran Aduan (Pie Chart)
-     * Menggunakan relasi saluranAduan yang benar
-     */
-    protected function getSaluranAduanChart()
-    {
-        $currentYear = $this->tahunFilter;
-        
-        $query = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->with('saluranAduan')
-            ->select('saluran_aduan_id', DB::raw('COUNT(*) as total'))
-            ->groupBy('saluran_aduan_id');
-            
-        if ($this->pelapor) {
-            $query->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
-
-        $data = $query->get();
-
-        $labels = [];
-        $values = [];
-        $colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
-
-        foreach ($data as $item) {
-            $labels[] = $item->saluranAduan->data_id ?? 'Tidak Diketahui';
-            $values[] = $item->total;
-        }
-
-        return [
-            'type' => 'pie',
-            'data' => [
-                'labels' => $labels,
-                'datasets' => [[
-                    'data' => $values,
-                    'backgroundColor' => $colors,
-                    'hoverBackgroundColor' => $colors,
-                    'borderWidth' => 2,
-                    'borderColor' => '#fff'
-                ]]
-            ],
-            'options' => [
-                'responsive' => true,
-                'maintainAspectRatio' => false,
-                'plugins' => [
-                    'legend' => [
-                        'position' => 'bottom',
-                        'labels' => [
-                            'usePointStyle' => true,
-                            'padding' => 20
-                        ]
-                    ],
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Saluran Aduan Tahun ' . $currentYear,
-                        'font' => ['size' => 16]
-                    ]
-                ]
-            ]
-        ];
+    // Jika tidak ada data, buat data kosong
+    if (empty($labels)) {
+        $labels = ['Tidak ada data'];
+        $values = [0];
+        $backgroundColors = ['#B0B0B0'];
     }
 
-    /**
-     * Chart 5: Direktorat (Horizontal Bar Chart)
-     * Berdasarkan field direktorat
-     */
-    protected function getDirektoratChart()
-    {
-        $currentYear = $this->tahunFilter;
-        
-        $query = Pengaduan::whereYear('tanggal_pengaduan', $currentYear)
-            ->select('direktorat', DB::raw('COUNT(*) as total'))
-            ->groupBy('direktorat')
-            ->orderBy('total', 'desc')
-            ->limit(10);
-            
-        if ($this->pelapor) {
-            $query->where('user_id', $this->userInfo['user']['id'] ?? null);
-        }
-
-        $data = $query->get();
-
-        $labels = [];
-        $values = [];
-        $backgroundColors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#7CFFB2', '#FD7F6F', '#B2B2B2', '#6A0DAD'
-        ];
-
-        foreach ($data as $item) {
-            $labels[] = $item->direktorat ?: 'Tidak Diketahui';
-            $values[] = $item->total;
-        }
-
-        return [
-            'type' => 'bar',
-            'data' => [
-                'labels' => $labels,
-                'datasets' => [[
-                    'label' => 'Jumlah Aduan',
-                    'data' => $values,
-                    'backgroundColor' => $backgroundColors,
-                    'borderColor' => $backgroundColors,
-                    'borderWidth' => 1
-                ]]
-            ],
-            'options' => [
-                'indexAxis' => 'y',
-                'responsive' => true,
-                'maintainAspectRatio' => false,
-                'plugins' => [
-                    'legend' => [
-                        'display' => false
-                    ],
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Aduan per Direktorat Tahun ' . $currentYear,
-                        'font' => ['size' => 16]
-                    ]
+    return [
+        'type' => 'bar',
+        'data' => [
+            'labels' => $labels,
+            'datasets' => [[
+                'label' => 'Jumlah Aduan',
+                'data' => $values,
+                'backgroundColor' => $backgroundColors,
+                'borderColor' => $backgroundColors,
+                'borderWidth' => 1
+            ]]
+        ],
+        'options' => [
+            'indexAxis' => 'y',
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'plugins' => [
+                'legend' => [
+                    'display' => false
                 ],
-                'scales' => [
-                    'x' => [
-                        'beginAtZero' => true,
-                        'ticks' => [
-                            'stepSize' => 1
-                        ]
+                'title' => [
+                    'display' => true,
+                    'text' => 'Aduan per Direktorat ' . $this->getFilterDescription(true),
+                    'font' => ['size' => 16]
+                ]
+            ],
+            'scales' => [
+                'x' => [
+                    'beginAtZero' => true,
+                    'ticks' => [
+                        'stepSize' => 1
                     ]
                 ]
             ]
-        ];
-    }
+        ]
+    ];
+}
+
 
     /**
-     * Method untuk filter chart by tahun
+     * Load dropdown data
      */
-    public function updatedTahunFilter()
-    {
-        $this->loadChartData();
-    }
+     
 
     /**
-     * Get available years for filter
+     * Method untuk mendapatkan opsi filter (gunakan data yang sudah di-load)
      */
     public function getTahunOptions()
     {
-        $query = Pengaduan::selectRaw('YEAR(tanggal_pengaduan) as tahun')
-            ->distinct()
-            ->orderBy('tahun', 'desc');
-            
-        if ($this->pelapor) {
-            $query->where('user_id', $this->userInfo['user']['id'] ?? null);
+        return $this->tahunPengaduanList;
+    }
+
+    public function getJenisPengaduanOptions()
+    {
+        return $this->jenisPengaduanList->pluck('data_id', 'id')->toArray();
+    }
+
+    public function getDirektoratOptions()
+    {
+        return collect($this->direktoratList)->pluck('owner_name', 'owner_name')->toArray();
+    }
+
+    public function getFwdToOptions()
+    {
+        return collect($this->fwdList)->pluck('data_id', 'id')->toArray();
+    }
+
+    /**
+     * Check jika ada filter aktif
+     */
+    public function hasActiveFilters()
+    {
+        return !empty($this->tahunFilter) || 
+               !empty($this->jenisPengaduanFilter) || 
+               !empty($this->direktoratFilter) || 
+               !empty($this->statusFilter) || 
+               !empty($this->fwdToFilter) || 
+               !empty($this->codePengaduanFilter);
+    }
+
+    /**
+     * Get description untuk filter yang aktif
+     */
+    public function getFilterDescription($forChart = false)
+    {
+        $descriptions = [];
+
+        if ($this->tahunFilter) {
+            $descriptions[] = 'Tahun ' . $this->tahunFilter;
         }
 
-        return $query->pluck('tahun')->toArray();
+        if ($this->jenisPengaduanFilter && isset($this->getJenisPengaduanOptions()[$this->jenisPengaduanFilter])) {
+            if ($forChart) {
+                $descriptions[] = $this->getJenisPengaduanOptions()[$this->jenisPengaduanFilter];
+            } else {
+                $descriptions[] = 'Jenis: ' . $this->getJenisPengaduanOptions()[$this->jenisPengaduanFilter];
+            }
+        }
+
+        if ($this->direktoratFilter) {
+            if ($forChart) {
+                $descriptions[] = $this->direktoratFilter;
+            } else {
+                $descriptions[] = 'Direktorat: ' . $this->direktoratFilter;
+            }
+        }
+
+        if ($this->statusFilter) {
+            $statusText = ucfirst(str_replace('_', ' ', $this->statusFilter));
+            if ($forChart) {
+                $descriptions[] = $statusText;
+            } else {
+                $descriptions[] = 'Status: ' . $statusText;
+            }
+        }
+
+        if ($this->codePengaduanFilter) {
+            if (!$forChart) {
+                $descriptions[] = 'Code: ' . $this->codePengaduanFilter;
+            }
+        }
+
+        if (empty($descriptions)) {
+            return $forChart ? '' : 'Semua Data';
+        }
+
+        return $forChart ? '(' . implode(', ', $descriptions) . ')' : implode(' • ', $descriptions);
+    }
+
+    /**
+     * Reset semua filter
+     */
+    public function resetFilters()
+    {
+        $this->tahunFilter = date('Y');
+        $this->jenisPengaduanFilter = null;
+        $this->direktoratFilter = null;
+        $this->statusFilter = null;
+        $this->fwdToFilter = null;
+        $this->codePengaduanFilter = null;
+        
+        $this->loadDashboardData();
+        $this->dispatch('show-toast', type: 'success', message: 'Filter berhasil direset');
+    }
+
+    /**
+     * Updated hooks untuk setiap filter
+     */
+    public function updatedTahunFilter()
+    {
+        $this->loadDashboardData();
+    }
+
+    public function updatedJenisPengaduanFilter()
+    {
+        $this->loadDashboardData();
+    }
+
+    public function updatedDirektoratFilter()
+    {
+        $this->loadDashboardData();
+    }
+
+    public function updatedStatusFilter()
+    {
+        $this->loadDashboardData();
+    }
+
+    public function updatedFwdToFilter()
+    {
+        $this->loadDashboardData();
+    }
+
+    public function updatedCodePengaduanFilter()
+    {
+        $this->loadDashboardData();
     }
 
     public function refreshDashboard()

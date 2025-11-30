@@ -59,6 +59,7 @@ abstract class Root extends Component
     public $locale;
 
     public $jenisPengaduanList = []; // child dapat override dengan property
+    public $stsPengaduanList = []; // child dapat override dengan property
     public $RolesList = []; // child dapat override dengan property
     public $saluranList = []; // child dapat override dengan property
     public $fwdList = []; // child dapat override dengan property
@@ -851,7 +852,13 @@ private function downloadExcelFile($response, $filename)
 
     public function loadDropdownData()
     {
-        $this->jenisPengaduanList = Combo::where('kelompok', 'jenis')
+         $this->jenisPengaduanList = Combo::where('kelompok', 'jenis')
+            ->select('data_id', 'data_en', 'data', 'id')
+            ->where('is_active', true)
+            ->orderBy('data_id')
+            ->get();
+            
+        $this->stsPengaduanList = Combo::where('kelompok', 'sts-aduan')
             ->select('data_id', 'data_en', 'data', 'id')
             ->where('is_active', true)
             ->orderBy('data_id')
@@ -884,18 +891,18 @@ private function downloadExcelFile($response, $filename)
             ->select('id', 'data_id', 'data_en', 'data')
             ->where('is_active', true)
             ->orderBy('data_id')
-            ->get();
+            ->get()->toArray();
 
         $this->fwdList = Combo::where('kelompok', 'wbs-forward')
             ->select('id', 'data_id', 'data_en', 'data')
             ->where('is_active', true)
             ->orderBy('data_id')
-            ->get();
+            ->get()->toArray();
 
         $this->direktoratList = Owner::where('is_active', 1)
             ->select('id', 'owner_name', 'owner_name_1', 'parent_id')
             ->orderBy('owner_name')
-            ->get();
+            ->get()->toArray();
     }
 
  

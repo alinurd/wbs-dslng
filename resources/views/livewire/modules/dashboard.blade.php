@@ -19,13 +19,6 @@
                         </p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <select wire:model.live="tahunFilter" 
-                                class="border border-blue-300 bg-white/10 backdrop-blur-sm text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white">
-                            <option value="" class="text-gray-800">Pilih Tahun</option>
-                            @foreach($this->getTahunOptions() as $tahun)
-                                <option value="{{ $tahun }}" class="text-gray-800">Tahun {{ $tahun }}</option>
-                            @endforeach
-                        </select>
                         <button wire:click="refreshDashboard" 
                                 class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center border border-white/30">
                             <i class="fas fa-refresh mr-2"></i>Refresh
@@ -39,6 +32,9 @@
             </div>
         </div>
 
+
+        <!-- Filter -->
+             @include('livewire.components.filter-dashboard') 
         <!-- Email Verification Alert -->
         @if (!$isVerif)
             @include('livewire.components.email-verification', [ 
@@ -49,7 +45,7 @@
 
         @if ($isVerif)
         <!-- Quick Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
             @php
                 $statCards = [
                     [
@@ -57,7 +53,7 @@
                         'value' => $stats['total_pengaduan'] ?? 0,
                         'icon' => 'file-alt',
                         'color' => 'blue',
-                        'description' => 'Tahun ' . ($tahunFilter ?? date('Y'))
+                        'description' => 'pengaduan yang diajukan'
                     ],
                     [
                         'title' => 'Menunggu',
@@ -99,82 +95,16 @@
             @endforeach
         </div>
 
-        <!-- Charts Section -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Analytics & Charts 📊</h2>
-                    <p class="text-gray-600">Visualisasi data pengaduan untuk analisis yang lebih baik</p>
-                </div>
-                <div class="flex items-center space-x-2 text-sm text-gray-500">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Data tahun {{ $tahunFilter ?? date('Y') }}</span>
-                </div>
-            </div>
-            
-            <!-- Charts Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Status Aduan -->
-                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-chart-pie mr-2 text-blue-600"></i>
-                        Status Aduan
-                    </h3>
-                    <div class="h-72">
-                        <canvas wire:ignore id="statusAduanChart" 
-                                data-chart-data='@json($chartData['status_aduan'] ?? [])'></canvas>
-                    </div>
-                </div>
+          @if(!empty($progress_bulanan) && $isRole3)
+           <div class="mb-5">
 
-                <!-- Jenis Pelanggaran -->
-                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-chart-bar mr-2 text-green-600"></i>
-                        Jenis Pelanggaran
-                    </h3>
-                    <div class="h-72">
-                        <canvas wire:ignore id="jenisPelanggaranChart" 
-                                data-chart-data='@json($chartData['jenis_pelanggaran'] ?? [])'></canvas>
-                    </div>
-                </div>
-
-                <!-- Pergerakan Tahunan -->
-                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 lg:col-span-2">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-chart-line mr-2 text-purple-600"></i>
-                        Trend Bulanan Tahun {{ $tahunFilter ?? date('Y') }}
-                    </h3>
-                    <div class="h-72">
-                        <canvas wire:ignore id="pergerakanTahunanChart" 
-                                data-chart-data='@json($chartData['pergerakan_tahunan'] ?? [])'></canvas>
-                    </div>
-                </div>
-
-                <!-- Saluran Aduan -->
-                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-inbox mr-2 text-orange-600"></i>
-                        Saluran Aduan
-                    </h3>
-                    <div class="h-72">
-                        <canvas wire:ignore id="saluranAduanChart" 
-                                data-chart-data='@json($chartData['saluran_aduan'] ?? [])'></canvas>
-                    </div>
-                </div>
-
-                <!-- Direktorat -->
-                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-building mr-2 text-red-600"></i>
-                        Per Direktorat
-                    </h3>
-                    <div class="h-72">
-                        <canvas wire:ignore id="direktoratChart" 
-                                data-chart-data='@json($chartData['direktorat'] ?? [])'></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        @include('livewire.components.chart-progress')
+                        </div>
+                        @else
+                        @include('livewire.components.chart-admin')
+                @endif
+        
+         <!-- Charts Section -->
 
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -226,40 +156,13 @@
                         </a>
                     </div>
                 </div>
-
                 <!-- Progress Bulanan -->
-                @if(!empty($progress_bulanan))
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-tasks mr-2 text-purple-500"></i>
-                        Progress Bulan Ini
-                    </h2>
-                    <div class="space-y-4">
-                        @foreach($progress_bulanan as $progress)
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-3 h-3 rounded-full bg-{{ $progress['color'] }}-500"></div>
-                                    <span class="text-sm font-medium text-gray-700">{{ $progress['label'] }}</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600">{{ $progress['jumlah'] }} aduan</span>
-                                    <span class="text-sm font-bold text-{{ $progress['color'] }}-600">{{ $progress['persentase'] }}%</span>
-                                </div>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-{{ $progress['color'] }}-500 h-2 rounded-full transition-all duration-1000 ease-out" 
-                                     style="width: {{ $progress['persentase'] }}%"></div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
+                @if(!empty($progress_bulanan) && !$isRole3)
+                        @include('livewire.components.chart-progress')
                 @endif
             </div>
 
-            <!-- Middle Column - Recent Pengaduan -->
-            <div class="lg:col-span-2 space-y-6">
+             <div class="lg:col-span-2 space-y-6">
                 <!-- Aktivitas Terbaru -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <div class="flex items-center justify-between mb-6">
@@ -393,60 +296,6 @@
     </div>
 </div>
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('livewire:init', function() {
-        let charts = {};
-
-        function initializeCharts() {
-            destroyExistingCharts();
-            
-            // Initialize all charts
-            const chartIds = [
-                'statusAduanChart', 'jenisPelanggaranChart', 
-                'pergerakanTahunanChart', 'saluranAduanChart', 'direktoratChart'
-            ];
-
-            chartIds.forEach(chartId => {
-                const canvas = document.getElementById(chartId);
-                if (canvas) {
-                    const chartData = JSON.parse(canvas.getAttribute('data-chart-data'));
-                    if (chartData.data) {
-                        charts[chartId] = new Chart(canvas, chartData);
-                    }
-                }
-            });
-        }
-
-        function destroyExistingCharts() {
-            Object.values(charts).forEach(chart => {
-                if (chart) chart.destroy();
-            });
-            charts = {};
-        }
-
-        // Initialize on load
-        initializeCharts();
-
-        // Refresh on Livewire updates
-        Livewire.hook('commit', ({ component, succeed }) => {
-            succeed(() => {
-                if (component.name === 'modules.dashboard-index') {
-                    setTimeout(initializeCharts, 100);
-                }
-            });
-        });
-
-        // Handle resize
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(initializeCharts, 250);
-        });
-    });
-</script>
-@endpush
 
 @push('styles')
 <style>
@@ -461,35 +310,5 @@
             height: 240px;
         }
     }
-    
-    /* Smooth hover effects */
-    .hover-lift:hover {
-        transform: translateY(-2px);
-        transition: all 0.3s ease;
-    }
-    
-    /* Custom scrollbar for activity feed */
-    .activity-feed {
-        max-height: 400px;
-        overflow-y: auto;
-    }
-    
-    .activity-feed::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .activity-feed::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-    }
-    
-    .activity-feed::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 10px;
-    }
-    
-    .activity-feed::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
 </style>
-@endpush
+@endpush>
