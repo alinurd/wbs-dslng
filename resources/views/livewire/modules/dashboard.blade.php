@@ -182,29 +182,39 @@
                                 <h3 class="font-semibold text-gray-800 text-sm">
                                     Code: {{ $log['code'] ?? $log['judul'] ?? 'Aktivitas Sistem' }}
                                 </h3>
-                                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{{ $log['waktu'] }}</span>
-                            </div>
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 border border-{{ $log['status_color'] }}-200">
+                                    {{ $log['status'] }}
+                                </span>                             </div>
                             <p class="text-sm text-gray-600 mb-3 leading-relaxed">
                                 {{ $log['catatan'] ?? $log['deskripsi'] ?? 'Tidak ada catatan' }}
                             </p>
-                            <div class="flex items-center justify-between text-xs text-gray-500">
-                                <span class="flex items-center">
-                                    <i class="fas fa-user mr-2 text-gray-400"></i>
-                                    {{ $log['user_name'] }}
-                                </span>
-                                <div class="flex items-center space-x-3">
-                                    @if(isset($log['countComment']))
-                                    <span class="text-blue-600 flex items-center">
-                                        <i class="fas fa-comment mr-1"></i>
-                                        {{ $log['countComment'] }}
+                            <div class="flex items-center justify-between text-sm text-gray-600">
+                                <div class="flex items-center space-x-4">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user mr-2 text-gray-400"></i>
+                                        {{ $log['user'] }}
                                     </span>
-                                    @endif
-                                    @if(isset($log['countFile']) && $log['countFile'])
-                                    <span class="text-green-600 flex items-center">
-                                        <i class="fas fa-file mr-1"></i>
-                                        {{ $log['countFile'] }}
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-2 text-gray-400"></i>
+                                        {{ $log['waktu'] }}
                                     </span>
-                                    @endif
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <a href="{{ route('log_detail', ['code_pengaduan' => $log['code']]) }}"
+                                       class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center group">
+                                        Log Aktivitas
+                                        <i class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
+                                    </a>
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-blue-600 flex items-center">
+                                            <i class="fas fa-comment mr-1"></i>
+                                            {{ $log['countComment'] }}
+                                        </span>
+                                        <span class="text-green-600 flex items-center">
+                                            <i class="fas fa-file mr-1"></i>
+                                            {{ $log['countFile'] }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

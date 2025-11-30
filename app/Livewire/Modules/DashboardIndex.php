@@ -202,17 +202,22 @@ class DashboardIndex extends Root
 
         $this->log_approval = $recentPengaduan->map(function($item) {
             $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
-            
+                    $counts = $this->countComentFileByPengaduan($item->pengaduan_id);
+
             return [
                 'id' => $item->id,
                 'pengaduan_id' => $item->id,
+                'code' => $item->code_pengaduan,
                 'judul' => 'Update ' . ($item->jenisPengaduan->data_id ?? 'Pengaduan') . ' #' . $item->code_pengaduan,
                 'waktu' => $this->getTimeAgo($item->updated_at),
                 'deskripsi' =>  ($item->perihal ?? ''),
-                'komentar' => '0 komentar',
+                
+                'countComment' => $counts['comments'] . ' komentar',
+                'countFile' => $counts['files'] . ' file',
                 'file' => !empty($item->lampiran) && $item->lampiran != '[]',
                 'status_color' => $statusInfo['color'],
-                'user_name' => 'System',
+                'user' => ($item->user->name ?? $item->pelapor->name ),
+                // 'user_name' => 'System',
                 'status' => $statusInfo['text']
             ];
         })->toArray();
