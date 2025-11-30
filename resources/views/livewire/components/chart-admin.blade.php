@@ -14,7 +14,7 @@
                      x-data="chartContainer('statusAduanChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-chart-pie mr-2 text-blue-600"></i>
-                        Status Aduan
+                        Status Progress
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
@@ -24,14 +24,14 @@
 
                 <!-- Saluran Aduan -->
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200"
-                     x-data="chartContainer('saluranAduanChart')">
+                     x-data="chartContainer('statusDetailChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-inbox mr-2 text-orange-600"></i>
-                        Saluran Aduan
+                        <i class="fas fa-chart-pie mr-2 text-orange-600"></i>
+                        Semua Status
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
-                                data-chart-data='@json($chartData['saluran_aduan'] ?? [])'></canvas>
+                                data-chart-data='@json($chartData['status_aduan_detail'] ?? [])'></canvas>
                     </div>
                 </div>
 
@@ -168,7 +168,8 @@ function chartContainer(chartId) {
         
         getChartName() {
             const chartNames = {
-                'statusAduanChart': 'Status Aduan',
+                'statusAduanChart': 'Status Progress',
+                'statusDetailChart': 'Status Aduan',
                 'jenisPelanggaranChart': 'Jenis Pelanggaran',
                 'pergerakanTahunanChart': 'Pergerakan Tahunan',
                 'saluranAduanChart': 'Saluran Aduan',

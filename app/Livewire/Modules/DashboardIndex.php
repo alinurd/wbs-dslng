@@ -266,6 +266,7 @@ class DashboardIndex extends Root
 protected function loadChartData()
 {
     $this->chartData = [
+        'status_aduan_detail' => $this->getStatusDetailChart(),
         'status_aduan' => $this->getStatusAduanChart(),
         'jenis_pelanggaran' => $this->getJenisPelanggaranChart(),
         'pergerakan_tahunan' => $this->getPergerakanTahunanChart(),
@@ -285,7 +286,7 @@ protected function getStatusAduanChart()
         COUNT(*) as total,
         CASE 
             WHEN status = 0 AND sts_final = 0 THEN "Menunggu"
-            WHEN status > 1 AND sts_final = 0 THEN "Dalam Proses" 
+            WHEN status > 0 AND sts_final = 0 THEN "Dalam Proses" 
             WHEN sts_final = 1 THEN "Selesai"
             ELSE "Status Lain"
         END as status_label
@@ -333,7 +334,7 @@ protected function getStatusAduanChart()
                 ],
                 'title' => [
                     'display' => true,
-                    'text' => 'Status Aduan ',
+                    // 'text' => 'Status Aduan ',
                     'font' => ['size' => 16]
                 ]
             ]
@@ -341,7 +342,91 @@ protected function getStatusAduanChart()
     ];
 }
 
+protected function getStatusDetailChart()
+{
+    $query = $this->buildBaseQuery();
+
+    if ($this->statusFilter) {
+        $query->where('status', $this->statusFilter);
+    }
  
+    $allStatuses = DB::table('combos')
+        ->where('kelompok', 'sts-aduan')
+        ->where('is_active', 1)
+        ->orderBy('param_int')
+        ->get();
+ 
+    $statusCounts = $query->select('status', DB::raw('COUNT(*) as total'))
+        ->groupBy('status')
+        ->get()
+        ->keyBy('status');
+
+    $labels = [];
+    $values = [];
+    $colors = [];
+ 
+    $colorPalette = [
+       '#FFCE56',
+    '#10B981', '#a556ff', '#4b87c0', '#9966FF',
+        '#FF9F40', '#8B5CF6', '#36A2EB', '#F59E0B', '#EF4444',
+        '#3B82F6', '#f65cd2'
+    ];
+
+    $colorIndex = 0;
+
+    foreach ($allStatuses as $status) {
+        $statusId = $status->param_int;
+        $statusName = $status->data_id;
+         
+        if (isset($statusCounts[$statusId]) && $statusCounts[$statusId]->total > 0) { 
+            $labels[] = $statusName;
+            $values[] = $statusCounts[$statusId]->total;
+            $colors[] = $colorPalette[$colorIndex % count($colorPalette)];
+            $colorIndex++;
+        } else {
+             $labels[] =  $statusName;
+            $values[] = 0;
+            $colors[] = '#E5E7EB'; 
+        }
+    }
+ 
+    return [
+        'type' => 'pie',
+        'data' => [
+            'labels' => $labels,
+            'datasets' => [[
+                'data' => $values,
+                'backgroundColor' => $colors,
+                'hoverBackgroundColor' => $colors,
+                'borderWidth' => 2,
+                'borderColor' => '#fff'
+            ]]
+        ],
+        'options' => [
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'plugins' => [
+                'legend' => [
+                    'position' => 'bottom',
+                    'labels' => [
+                        'usePointStyle' => true,
+                        'padding' => 20,
+                        'boxWidth' => 12,
+                        'font' => [
+                            'size' => 11
+                        ]
+                    ]
+                ],
+                'title' => [
+                    'display' => true,
+                    // 'text' => 'Detail Status Aduan',
+                    'font' => ['size' => 16]
+                ],
+                 
+            ]
+        ]
+    ];
+}
  
  
 /**
@@ -472,7 +557,7 @@ protected function getJenisPelanggaranChart()
                 ],
                 'title' => [
                     'display' => true,
-                    'text' => 'Jenis Pelanggaran ',
+                    // 'text' => 'Jenis Pelanggaran ',
                     'font' => ['size' => 16]
                 ]
             ],
@@ -549,11 +634,11 @@ protected function getPergerakanTahunanChart()
             'maintainAspectRatio' => false,
             'plugins' => [
                 'legend' => [
-                    'display' => true,
+                    'display' => false,
                     'position' => 'top'
                 ],
                 'title' => [
-                    'display' => true,
+                    'display' => false,
                     'text' => $title,
                     'font' => ['size' => 16]
                 ]
@@ -622,7 +707,7 @@ protected function getSaluranAduanChart()
                     ]
                 ],
                 'title' => [
-                    'display' => true,
+                    'display' => false,
                     'text' => 'Saluran Aduan ',
                     'font' => ['size' => 16]
                 ]
@@ -683,7 +768,7 @@ protected function getDirektoratChart()
                     'display' => false
                 ],
                 'title' => [
-                    'display' => true,
+                    'display' => false,
                     'text' => 'Aduan per Direktorat ',
                     'font' => ['size' => 16]
                 ]
