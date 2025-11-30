@@ -1,7 +1,7 @@
 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-tasks mr-2 text-purple-500"></i>
-                        Progress Bulan Ini
+                        Progress Pengaduan
                     </h2>
                     <div class="space-y-4">
                         @foreach($progress_bulanan as $progress)

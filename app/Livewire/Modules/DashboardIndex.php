@@ -196,8 +196,7 @@ class DashboardIndex extends Root
     {
         $query = $this->buildBaseQuery()
             ->with(['jenisPengaduan', 'pelapor', 'logApprovals'])
-            ->orderBy('created_at', 'desc')
-            ->limit(3);
+            ->orderBy('created_at', 'desc');
 
         $recentPengaduan = $query->get();
 
@@ -221,19 +220,17 @@ class DashboardIndex extends Root
 
     protected function loadProgressBulanan()
     {
-        $currentMonth = date('m');
-        $currentYear = $this->tahunFilter ?: date('Y');
+        // $currentMonth = date('m');
+        // $currentYear = $this->tahunFilter ?: date('Y');
         
-        $query = $this->buildBaseQuery()
-            ->whereYear('tanggal_pengaduan', $currentYear)
-            ->whereMonth('tanggal_pengaduan', $currentMonth);
+        $query = $this->buildBaseQuery();
 
         $menunggu = (clone $query)->where('status', 0)->where('sts_final', 0)->count();
-        $dalamProses = (clone $query)->where('status', 1)->where('sts_final', 0)->count();
+        $dalamProses = (clone $query)->where('status','>', 0)->where('sts_final', 0)->count();
         $selesai = (clone $query)->where('sts_final', 1)->count();
 
         $totalBulanan = $menunggu + $dalamProses + $selesai;
-
+// dd($totalBulanan);
         if ($totalBulanan > 0) {
             $this->progress_bulanan = [
                 [
@@ -288,7 +285,7 @@ protected function getStatusAduanChart()
         COUNT(*) as total,
         CASE 
             WHEN status = 0 AND sts_final = 0 THEN "Menunggu"
-            WHEN status = 1 AND sts_final = 0 THEN "Dalam Proses" 
+            WHEN status > 1 AND sts_final = 0 THEN "Dalam Proses" 
             WHEN sts_final = 1 THEN "Selesai"
             ELSE "Status Lain"
         END as status_label
@@ -377,7 +374,7 @@ protected function buildBaseQuery()
                 $query->where('status', 0)->where('sts_final', 0);
                 break;
             case 'dalam_proses':
-                $query->where('status', 1)->where('sts_final', 0);
+                $query->where('status', '>', 0)->where('sts_final', 0);
                 break;
             case 'selesai':
                 $query->where('sts_final', 1);
@@ -424,8 +421,7 @@ protected function getJenisPelanggaranChart()
         ->with('jenisPengaduan')
         ->select('jenis_pengaduan_id', DB::raw('COUNT(*) as total'))
         ->groupBy('jenis_pengaduan_id')
-        ->orderBy('total', 'desc')
-        ->limit(8);
+        ->orderBy('total', 'desc');
 
     $data = $query->get();
     //  \Log::info('Dashboard Query: ', [
@@ -643,8 +639,7 @@ protected function getDirektoratChart()
     $query = $this->buildBaseQuery()
         ->select('direktorat', DB::raw('COUNT(*) as total'))
         ->groupBy('direktorat')
-        ->orderBy('total', 'desc')
-        ->limit(10);
+        ->orderBy('total', 'desc');
 
     $data = $query->get();
 
@@ -848,6 +843,7 @@ protected function getDirektoratChart()
     public function refreshDashboard()
     {
         $this->loadDashboardData();
-        $this->dispatch('show-toast', type: 'success', message: 'Dashboard data diperbarui');
+        $this->notify('success', 'Dashboard data diperbarui');
+ 
     }
 }
