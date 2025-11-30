@@ -192,7 +192,7 @@
                                 <div class="flex items-center space-x-4">
                                     <span class="flex items-center">
                                         <i class="fas fa-user mr-2 text-gray-400"></i>
-                                        {{ $log['user'] }}
+                                        {{ $log['user_name'] }}
                                     </span>
                                     <span class="flex items-center">
                                         <i class="fas fa-calendar mr-2 text-gray-400"></i>

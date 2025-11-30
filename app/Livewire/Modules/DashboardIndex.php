@@ -216,7 +216,7 @@ class DashboardIndex extends Root
                 'countFile' => $counts['files'] . ' file',
                 'file' => !empty($item->lampiran) && $item->lampiran != '[]',
                 'status_color' => $statusInfo['color'],
-                'user' => ($item->user->name ?? $item->pelapor->name ),
+                'user_name' => ($item->user->name ?? $item->pelapor->name ),
                 // 'user_name' => 'System',
                 'status' => $statusInfo['text']
             ];
