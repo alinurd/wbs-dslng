@@ -109,13 +109,12 @@ protected function isValidFilterValue($value): bool
         $record = $this->model::findOrFail($id);
 
         $this->detailData = [
-            'Kelompok' => $record->kelompok,
-            'Data Indonesia' => $record->data_id,
-            'Data English' => $record->data_en, 
-            'Waktu' => $record->param_int. ' Jam '.' - '. $record->param_int_1. ' Hari',
-            'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
-            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
-            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+            'Action' => $record->action,
+            'tbl/module' => $record->table_name,
+            'created_at' => $record->created_at->format('d/m/Y H:i'),
+            'Data New' =>$record->new_values, 
+            'Data Old' => $record->old_values, 
+            'Ip' => $record->ip_address,  
         ];
         
         $this->detailTitle = "Detail " . $this->title;
