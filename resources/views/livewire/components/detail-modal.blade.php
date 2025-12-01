@@ -224,63 +224,103 @@
                                                 <span class="px-3 py-1 text-sm font-semibold rounded-full">
                                                     {!! $value !!}
                                                 </span>
-                                                @elseif ($label === 'Status' || $label === 'Status Lapor' || $label === 'Status Lapor Kerja')
-                                                    <span
-                                                        class="px-3 py-1 text-sm font-semibold rounded-full {{ $value === 'Aktif' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200' }}">
-                                                        <i
-                                                            class="fas fa-circle text-xs mr-1 {{ $value === 'Aktif' ? 'text-green-500' : 'text-red-500' }}"></i>
-                                                        {{ $value }}
-                                                    </span>
-                                                @elseif($label === 'Deskripsi' || $label === 'Description')
-                                                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                                                        <p class="text-gray-700 whitespace-pre-line leading-relaxed">
-                                                            {{ $value ?? 'Tidak ada deskripsi' }}</p>
-                                                    </div>
-                                                     @elseif ($label === 'Files')
-                                            @forelse ($value as $file)
-                                <div
-                                    class="flex items-center justify-between bg-white rounded-xl p-4 border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 group">
-                                    <div class="flex items-center space-x-3 min-w-0 flex-1">
-                                        <div
-                                            class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-file text-white text-sm"></i>
-                                        </div>
-                                        <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-medium text-gray-900 truncate">
-                                                {{ $file['original_name'] }}
-                                            </p>
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                {{ strtoupper($file['extension'] ?? 'FILE') }} •
-                                                {{ $this->formatFileSize($file['size'] ?? 0) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        wire:click="downloadFile('{{ $file['path'] }}', '{{ $file['original_name'] }}')"
-                                        class="flex items-center space-x-2 text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-3 py-2 rounded-lg transition-colors duration-200 text-sm font-medium"
-                                        title="Download {{ $file['original_name'] }}">
-                                        <i class="fas fa-download text-xs"></i>
-                                        <span>Download</span>
-                                    </button>
-                                </div>
-                                @empty
-                            @endforelse
-                                                @elseif(is_array($value))
-                                                    <div class="space-y-2">
-                                                        @foreach ($value as $item)
-                                                            <div class="flex items-center space-x-2">
-                                                                <i class="fas user text-blue-400 text-sm"></i>
-                                                                <span
-                                                                    class="text-gray-700">{{ is_array($item) ? json_encode($item) : $item }}</span>
+                                            @elseif ($label === 'Status' || $label === 'Status Lapor' || $label === 'Status Lapor Kerja')
+                                                <span
+                                                    class="px-3 py-1 text-sm font-semibold rounded-full {{ $value === 'Aktif' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200' }}">
+                                                    <i
+                                                        class="fas fa-circle text-xs mr-1 {{ $value === 'Aktif' ? 'text-green-500' : 'text-red-500' }}"></i>
+                                                    {{ $value }}
+                                                </span>
+                                            @elseif($label === 'Deskripsi' || $label === 'Description')
+                                                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                                                    <p class="text-gray-700 whitespace-pre-line leading-relaxed">
+                                                        {{ $value ?? 'Tidak ada deskripsi' }}</p>
+                                                </div>
+                                            @elseif ($label === 'Files')
+                                                @forelse ($value as $file)
+                                                    <div
+                                                        class="flex items-center justify-between bg-white rounded-xl p-4 border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 group">
+                                                        <div class="flex items-center space-x-3 min-w-0 flex-1">
+                                                            <div
+                                                                class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                                                <i class="fas fa-file text-white text-sm"></i>
                                                             </div>
-                                                        @endforeach
+                                                            <div class="min-w-0 flex-1">
+                                                                <p class="text-sm font-medium text-gray-900 truncate">
+                                                                    {{ $file['original_name'] }}
+                                                                </p>
+                                                                <p class="text-xs text-gray-500 mt-1">
+                                                                    {{ strtoupper($file['extension'] ?? 'FILE') }} •
+                                                                    {{ $this->formatFileSize($file['size'] ?? 0) }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            wire:click="downloadFile('{{ $file['path'] }}', '{{ $file['original_name'] }}')"
+                                                            class="flex items-center space-x-2 text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-3 py-2 rounded-lg transition-colors duration-200 text-sm font-medium"
+                                                            title="Download {{ $file['original_name'] }}">
+                                                            <i class="fas fa-download text-xs"></i>
+                                                            <span>Download</span>
+                                                        </button>
                                                     </div>
-                                                    
-                                                 
-                                                            
-                                                        @else
-                                                            <span class="text-gray-900">{{ $value ?? '-' }}</span>
-                                                @endif
+                                                @empty
+                                                @endforelse
+                                            @elseif(is_array($value))
+                                                <div class="space-y-2">
+                                                    @foreach ($value as $item)
+                                                        <div class="flex items-center space-x-2">
+                                                            <i class="fas user text-blue-400 text-sm"></i>
+                                                            <span
+                                                                class="text-gray-700">{{ is_array($item) ? json_encode($item) : $item }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @elseif($label === 'Tes Connect')
+                                                <div
+                                                    class="space-y-4 p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+                                                    <h6 class="font-semibold text-base text-gray-800">Test Email
+                                                        Connection</h6>
+                                                    <div class="space-y-2">
+                                                        <label class="block text-sm font-medium text-gray-700">
+                                                            Email Tujuan <span class="text-red-500">*</span>
+                                                        </label>
+                                                        <div class="relative">
+                                                            <input type="email" wire:model="testEmail"
+                                                                class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 border-gray-300"
+                                                                placeholder="Masukan Email Tujuan"
+                                                                {{ $isTesting ? 'disabled' : '' }}>
+                                                            @error('testEmail')
+                                                                <p class="text-red-500 text-xs mt-1">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <!-- Test Buttons -->
+                                                    <div class="flex flex-col space-y-2 pt-2">
+                                                        <!-- Test Current Form Configuration -->
+                                                        <button wire:click="testConnect({{ $value }})"
+                                                            wire:loading.attr="disabled"
+                                                            wire:loading.class="opacity-50 cursor-not-allowed"
+                                                            class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md hover:bg-blue-700 focus:z-10 focus:ring-1 focus:ring-blue-600 transition-all duration-200">
+                                                            <span wire:loading wire:target="testConnect"
+                                                                class="inline-flex items-center">
+                                                                <i class="fas fa-spinner fa-spin mr-2"></i>
+                                                                Testing Config...
+                                                            </span>
+                                                            <span wire:loading.remove wire:target="testConnect"
+                                                                class="inline-flex items-center">
+                                                                <i class="fas fa-envelope mr-2"></i>
+                                                                Test Configuration
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+
+                                                <!-- add custom actoin -->
+                                            @else
+                                                <span class="text-gray-900">{{ $value ?? '-' }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach

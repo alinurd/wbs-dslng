@@ -19,6 +19,84 @@ class EmailService
         return $this;
     }
 
+     public function sendTestEmailWithConfig(string $to, string $subject, array $config): bool
+    {
+        try {
+            $this->setCustomConfig($config);
+
+            $view = 'emails.test-connection';
+            $data = [
+                'subject' => $subject,
+                'testTime' => now()->format('d/m/Y H:i:s'),
+                'recipient' => $to,
+                'config' => $config
+            ];
+
+            Mail::send($view, $data, function ($message) use ($to, $subject, $config) {
+                $message->to($to)
+                        ->subject($subject)
+                        ->from($config['from_address'], $config['from_name']);
+            });
+
+            // Log audit
+            $this->createAuditLog(
+                $to, 
+                $subject, 
+                'test_connection', 
+                true, 
+                'Config ID: ' . ($config['id'] ?? 'custom')
+            );
+
+            Log::info("Test email sent successfully to: {$to} using custom config");
+            return true;
+            
+        } catch (\Exception $e) {
+            Log::error("Failed to send test email to {$to}: " . $e->getMessage());
+            
+            // Log audit error
+            $this->createAuditLog(
+                $to, 
+                $subject, 
+                'test_connection', 
+                false, 
+                $e->getMessage() . ' | Config: ' . ($config['host'] ?? 'unknown')
+            );
+            
+            return false;
+        }
+    }
+    
+    public function testEmailConnectionWithConfig(array $config): array
+    {
+        try {
+            $this->setCustomConfig($config);
+            
+            Mail::raw('Test connection email', function ($message) use ($config) {
+                $message->to('test@example.com')
+                        ->subject('Test Connection')
+                        ->from($config['from_address'], $config['from_name']);
+            });
+            
+            return ['status' => true, 'message' => 'Koneksi email berhasil'];
+        } catch (\Exception $e) {
+            return ['status' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    private function setCustomConfig(array $config)
+    {
+        Config::set('mail.default', $config['mailer'] ?? 'smtp');
+        Config::set('mail.mailers.smtp.host', $config['host']);
+        Config::set('mail.mailers.smtp.port', $config['port']);
+        Config::set('mail.mailers.smtp.encryption', $config['encryption']);
+        Config::set('mail.mailers.smtp.username', $config['username']);
+        Config::set('mail.mailers.smtp.password', $config['password']);
+        Config::set('mail.from.address', $config['from_address']);
+        Config::set('mail.from.name', $config['from_name']);
+
+        app()->forgetInstance('mail.manager');
+    }
+    
       private function getEmailConfig()
     {
         if ($this->emailConfig) {
