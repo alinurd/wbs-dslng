@@ -103,18 +103,8 @@ class Tracking extends Root
 
     public function view($id)
     {
-        can_any([strtolower($this->modul) . '.view']);
-
-        $record = $this->model::findOrFail($id);
-
-        $this->detailData = [
-            'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
-            'Jenis Pelanggaran' => $record->jenis_pengaduan_id,
-            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status' => $record->status ? 'Aktif' : 'Nonaktif',
-        ];
-
+        can_any([strtolower($this->modul) . '.view']); 
+            $this->getPengaduanById($id);
         $this->detailTitle = "Detail " . $this->title;
         $this->showDetailModal = true;
     }
