@@ -2,13 +2,16 @@
 namespace App\Services;
 
 use App\Models\Audit as AuditLog;
-use App\Models\User;
+use App\Models\EmailConfig;
+use Illuminate\Support\Facades\Config;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class EmailService
 {
     private $userId;
+    private $emailConfig;
 
     public function setUserId($userId)
     {
@@ -16,13 +19,59 @@ class EmailService
         return $this;
     }
 
+      private function getEmailConfig()
+    {
+        if ($this->emailConfig) {
+            return $this->emailConfig;
+        }
+
+        try {
+            $this->emailConfig = EmailConfig::where('active', true)->first();
+            
+            if (!$this->emailConfig) {
+                throw new \Exception('Tidak ada konfigurasi email aktif yang ditemukan');
+            }
+            
+            return $this->emailConfig;
+        } catch (\Exception $e) {
+            Log::error('Gagal mengambil konfigurasi email dari database: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+      private function setMailConfig()
+    {
+        try {
+            $config = $this->getEmailConfig();
+            
+            // Set konfigurasi mail
+            Config::set('mail.default', $config->mailer);
+            Config::set('mail.mailers.smtp.host', $config->host);
+            Config::set('mail.mailers.smtp.port', $config->port);
+            Config::set('mail.mailers.smtp.encryption', $config->encryption);
+            Config::set('mail.mailers.smtp.username', $config->username);
+            Config::set('mail.mailers.smtp.password', $config->password);
+            Config::set('mail.from.address', $config->from_address);
+            Config::set('mail.from.name', $config->from_name);
+
+            // Reset mail instance untuk memastikan konfigurasi baru diterapkan
+            app()->forgetInstance('mail.manager');
+            
+        } catch (\Exception $e) {
+            Log::error('Gagal mengatur konfigurasi email: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    
     /**
      * Test koneksi email sederhana
      */
     public function testEmailConnection()
     {
+                    $this->setMailConfig();
+
         try {
             Mail::raw('Test connection email', function ($message) {
+                 $config = $this->getEmailConfig();
                 $message->to('test@example.com')
                         ->subject('Test Connection');
             });
@@ -40,7 +89,8 @@ class EmailService
     {
         $status = false;
         $error = '';
-
+        $this->setMailConfig();
+            $config = $this->getEmailConfig();
         // Check jika view exists
         if (!view()->exists($view)) {
             $error = "View {$view} tidak ditemukan";
@@ -50,9 +100,10 @@ class EmailService
         }
 
         try {
-            Mail::send($view, $data, function ($message) use ($to, $subject, $attachments) {
+           Mail::send($view, $data, function ($message) use ($to, $subject, $attachments, $config) {
                 $message->to($to)
-                        ->subject($subject);
+                        ->subject($subject)
+                        ->from($config->from_address, $config->from_name);
                 
                 $message->from(
                     config('mail.from.address'), 
