@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Services\EmailService;
+use Spatie\Permission\Models\Role;
 
 class PengaduanEmailService 
 {
@@ -147,7 +148,7 @@ class PengaduanEmailService
      */
     private function getRoleNameById($roleId)
     {
-        $role = \App\Models\Role::where('id', $roleId)->where('is_active', 1)->first();
+        $role = Role::where('id', $roleId)->where('is_active', 1)->first();
         return $role ? $role->name : 'Unknown Role';
     }
 
