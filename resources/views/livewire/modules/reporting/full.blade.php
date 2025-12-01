@@ -97,7 +97,7 @@
                     'model' => 'filters.jenis_pengaduan_id',
                     'options' => collect($jenisPengaduanList)->mapWithKeys(function ($p) {
                             return [
-                                $p->id => $p->data ?? ($p->data_id ?? ($p->data_en ?? 'No Data')),
+                                $p['id'] => $p['data'] ?? ($p['data_id'] ?? ($p['data_en'] ?? 'No Data')),
                             ];
                         })->toArray(),
                     'placeholder' => 'Semua Jenis Pelanggaran',
@@ -108,7 +108,7 @@
                     'model' => 'filters.saluran_id',
                     'options' => collect($saluranList)->mapWithKeys(function ($p) {
                             return [
-                                $p->id => $p->data ?? ($p->data_id ?? ($p->data_en ?? 'No Data')),
+                                $p['id'] => $p['data'] ?? ($p['data_id'] ?? ($p['data_en'] ?? 'No Data')),
                             ];
                         })->toArray(),
                     'placeholder' => 'Semua Saluran Aduan',
@@ -119,7 +119,7 @@
                     'model' => 'filters.fwd_id',
                     'options' => collect($fwdList)->mapWithKeys(function ($p) {
                             return [
-                                $p->id => $p->data ?? ($p->data_en ?? ($p->data_in ?? 'No Data')),
+                                $p['id'] => $p['data'] ?? ($p['data_id'] ?? ($p['data_en'] ?? 'No Data')),
                             ];
                         })->toArray(),
                     'placeholder' => 'Semua WBS Forward (Optional)',
