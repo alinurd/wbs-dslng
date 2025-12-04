@@ -38,9 +38,19 @@ class Tracking extends Root
 
     public function filterDefault()
     {
-        return [
-            ['f' => 'user_id', 'v' => auth()->id()],
-        ];
+        
+        // \dd($this->userInfo['role']['id']);
+        $filterArray = [];
+if ($this->userInfo['role']['id'] === 3) {
+    $filterArray[] = ['f' => 'user_id', 'v' => auth()->id()];
+}
+
+return $filterArray;
+
+        // // dd($this->pelapor); == true maka jalankan filter user_id
+        //  return [
+        //     ['f' => 'user_id', 'v' => auth()->id()],
+        // ];
     }
     public function query()
     {
