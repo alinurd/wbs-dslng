@@ -87,8 +87,8 @@ public $selectedPengaduanId = "";
         $query = $this->buildBaseQuery();
         
         $totalPengaduan = $query->count();
-        $dalamProses = (clone $query)->where('status','!=', 0)->where('sts_final', 0)->count();
-        $selesai = (clone $query)->where('sts_final', 1)->count();
+        $dalamProses = (clone $query)->where('status','!=', 0)->Where('status', '!=', 3)->where('sts_final', 0)->count();
+        $selesai = (clone $query)->where('sts_final', 1)->orWhere('status', 3)->count();
         $menunggu = (clone $query)->where('status', 0)->where('sts_final', 0)->count();
 
         $this->stats = [
@@ -294,8 +294,8 @@ protected function getStatusAduanChart()
         COUNT(*) as total,
         CASE 
             WHEN status = 0 AND sts_final = 0 THEN "Menunggu"
-            WHEN status > 0 AND sts_final = 0 THEN "Dalam Proses" 
-            WHEN sts_final = 1 THEN "Selesai"
+            WHEN status > 0 AND sts_final = 0 AND status !=3 THEN "Dalam Proses" 
+            WHEN sts_final = 1 OR status=3 THEN "Selesai"
             ELSE "Status Lain"
         END as status_label
     ')
