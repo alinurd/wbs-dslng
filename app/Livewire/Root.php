@@ -1127,10 +1127,14 @@ protected function getAcceptAttribute($allowedFormats)
     }
     public function getComplienProgress($record)
     {
-        $progress = $this->calculateProgress($record);
-        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500'>
+        // \dd($record);
+        // $progress = $this->calculateProgress($record);
+        if($record['status']!=0){
+            return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500'>
                  <i class='fas fa-check' ></i>
             </span>";
+        }
+        
     }
 
     public function getAprvCco($record)
