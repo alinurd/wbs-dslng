@@ -52,6 +52,8 @@ return [
         'feature_1' => 'End-to-end data encryption',
         'feature_2' => 'Two-factor verification',
         'feature_3' => 'Privacy guaranteed',
+                'detail' => 'Contact Details',
+
     ],
 
  

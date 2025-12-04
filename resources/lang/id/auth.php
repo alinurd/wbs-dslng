@@ -43,6 +43,7 @@ return [
         'already_registered' => 'Sudah terdaftar?',
         'login_here' => 'Masuk di sini',
         'note' => 'Catatan: Form Bertanda Tangan (*) Wajib Diisi',
+        'detail' => 'Kontak Detail',
     ],
 
     'verification_code' => 'Kode Verifikasi',
