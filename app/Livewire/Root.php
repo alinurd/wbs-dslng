@@ -66,6 +66,7 @@ abstract class Root extends Component
     public $direktoratList = []; // child dapat override dengan property
     public $tahunPengaduanList = []; // child dapat override dengan property
     public $bulanList = []; // child dapat override dengan property
+    public $pengaduanAll = []; // child dapat override dengan property
 
 
 
@@ -886,6 +887,9 @@ private function downloadExcelFile($response, $filename)
             ->orderBy('tahun', 'desc')
             ->pluck('tahun', 'tahun') // Konversi ke array [tahun => tahun]
             ->toArray();
+
+                $this->pengaduanAll = Pengaduan::get()->toArray();
+
 
         $this->saluranList = Combo::where('kelompok', 'aduan')
             ->select('id', 'data_id', 'data_en', 'data')
