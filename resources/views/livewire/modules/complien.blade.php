@@ -13,7 +13,7 @@
                 // Override kolom relationship dengan data yang sudah diformat
                 'user_id' => $this->getNamaUser($record),
                 'jenis_pengaduan_id' => $this->getJenisPelanggaran($record),
-                'perihal' =>strlen($record->perihal) > 40 ? substr($record->perihal, 0, 40) . '...' : '-',
+                'perihal' =>strlen($record->perihal) > 40 ? substr($record->perihal, 0, 40) . '...' : $record->perihal,
              
                 'tanggal_pengaduan' => $record->tanggal_pengaduan ? $record->tanggal_pengaduan->format('d/m/Y H:i') : '-',
                 // Tambahkan kolom custom sebagai property
