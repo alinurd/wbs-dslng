@@ -88,7 +88,8 @@ public $selectedPengaduanId = "";
         
         $totalPengaduan = $query->count();
         $dalamProses = (clone $query)->where('status','!=', 0)->Where('status', '!=', 3)->where('sts_final', 0)->count();
-        $selesai = (clone $query)->where('sts_final', 1)->orWhere('status', 3)->count();
+        $selesai = (clone $query)->where('status', 3)->count();
+        // $selesai = (clone $query)->where('sts_final', 1)->orWhere('status', 3)->count();
         $menunggu = (clone $query)->where('status', 0)->where('sts_final', 0)->count();
 
         $this->stats = [
@@ -462,22 +463,27 @@ protected function buildBaseQuery()
 
     // Filter status
     if ($this->statusFilter) {
-        switch ($this->statusFilter) {
-            case 'menunggu':
-                $query->where('status', 0)->where('sts_final', 0);
-                break;
-            case 'dalam_proses':
-                $query->where('status', '>', 0)->where('sts_final', 0);
-                break;
-            case 'selesai':
-                $query->where('sts_final', 1);
-                break;
-            default: 
-                if (is_numeric($this->statusFilter)) {
-                    $query->where('status', $this->statusFilter);
-                }
-                break;
-        }
+        // \dd($this->statusFilter);
+        $s=Combo::where('kelompok', 'sts-aduan')
+            ->where('id', $this->statusFilter)
+            ->first();
+            $query->where('status', $s['param_int']);
+        // switch ($this->statusFilter) {
+        //     case 'menunggu':
+        //         $query->where('status', 0)->where('sts_final', 0);
+        //         break;
+        //     case 'dalam_proses':
+        //         $query->where('status', '>', 0)->where('sts_final', 0);
+        //         break;
+        //     case 'selesai':
+        //         $query->where('sts_final', 1);
+        //         break;
+        //   default: 
+        //        if (is_numeric($this->statusFilter)) {
+        //             $query->where('status', $this->statusFilter);
+        //         }
+        //         break;
+        // }
     }
  
     if ($this->fwdToFilter) {
