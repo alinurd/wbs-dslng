@@ -38,24 +38,31 @@
                 <div class="relative bg-white border rounded-md w-32 h-12 flex items-center justify-center select-none overflow-hidden">
                     <!-- Garis silang -->
                     <div class="absolute inset-0">
-                        <div class="absolute w-full h-0.5 bg-gray-300 rotate-12 top-1/2"></div>
-                        <div class="absolute w-full h-0.5 bg-gray-300 -rotate-12 top-1/2"></div>
+                        <div class="absolute w-full h-0.5 bg-gray-300 rotate-12 top-1/2" style="z-index: 999"></div>
+                        <div class="absolute w-full h-0.5 bg-gray-300 -rotate-10 top-1/2" style="z-index: 999"></div>
+                        <div class="absolute w-full h-0.5 bg-gray-300 -rotate-12 top-1/3"></div>
+                        <div class="absolute w-full h-0.5 bg-gray-300 -rotate-9 top-1/4"></div>
                     </div>
 
                     <!-- Noise titik -->
                     <div class="absolute inset-0">
                         @for($i = 0; $i < 50; $i++)
                             <span class="absolute text-blue-500 opacity-70"
-                                style="font-size:4px; top:{{ rand(5, 95) }}%; left:{{ rand(5, 95) }}%;">
+                                style="font-size:10px; top:{{ rand(10, 95) }}%; left:{{ rand(15, 95) }}%;">
                                 •
                             </span>
                         @endfor
                     </div>
 
                     <!-- Angka -->
-                    <span class="text-2xl font-bold text-gray-900 tracking-widest z-10">
-                        {{ $captchaText }}
-                    </span>
+                    <span class="text-3xl font-extrabold text-gray-800 z-10"
+      style="
+          font-family: 'Courier New', monospace;
+          letter-spacing: 5px;
+       ">
+    {{ $captchaText }}
+</span>
+
                 </div>
 
                 <!-- INPUT + REFRESH -->
