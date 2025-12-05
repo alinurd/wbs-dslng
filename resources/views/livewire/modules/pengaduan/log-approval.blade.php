@@ -41,10 +41,10 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Detail Pengaduan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-3">
-                            <div>
+                            {{-- <div>
                                 <label class="text-sm font-medium text-gray-500">Perihal</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['perihal'] }}</p>
-                            </div>
+                            </div> --}}
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Nama Terlapor</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['nama_terlapor'] }}</p>
