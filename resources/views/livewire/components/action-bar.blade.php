@@ -71,7 +71,7 @@
     </button>
 
     <!-- PDF Button -->
-    <button wire:click="export('pdf')" 
+    {{-- <button wire:click="export('pdf')" 
             wire:loading.attr="disabled"
             wire:loading.class="opacity-50 cursor-not-allowed"
             class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-red-600 border border-red-600 rounded-md hover:bg-red-700 focus:z-10 focus:ring-1 focus:ring-red-600 focus:text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
@@ -84,7 +84,7 @@
             </span>
             PDF
         </span>
-    </button>
+    </button> --}}
 
     <!-- Preview Button -->
     <button wire:click="{{$onPreview}}" 
