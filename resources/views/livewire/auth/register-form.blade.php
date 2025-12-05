@@ -89,7 +89,7 @@
                                     </div>
 
                                     <!-- Detail -->
-                                    <div>
+                                    {{-- <div>
                                         <label for="detail" class="block text-sm font-medium text-gray-700 mb-2 required">
                                             {{ __('auth.register.detail') }}
                                         </label>
@@ -99,7 +99,7 @@
                                         @error('detail')
                                             <p class="mt-1 text-sm text-red-600">{{ __($message) }}</p>
                                         @enderror
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <!-- Right Column Fields -->

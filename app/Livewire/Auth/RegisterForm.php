@@ -24,7 +24,7 @@ class RegisterForm extends Component
     public $email;
     public $id_number;
     public $phone;
-    public $detail;
+    // public $detail;
     public $reporter_type = 'employee';
     public $verification_code;
     public $confirmation = false;
@@ -114,7 +114,7 @@ public function register()
     'no_identitas' => $this->id_number,
     'telepon' => $this->phone,
     'reporter_type' => $this->reporter_type === 'employee' ? 1 : 0,
-    'alamat' => $this->detail,
+    // 'alamat' => $this->detail,
     'code_verif' => $codeVerif,
     'active' => 1,
     'status' => 0,
@@ -141,7 +141,7 @@ AuditLog::create([
             'no_identitas' => $this->id_number,
             'telepon' => $this->phone,
             'reporter_type' => $this->reporter_type,
-            'alamat' => $this->detail,
+            // 'alamat' => $this->detail,
             'active' => 1,
             'status' => 0,
             'code_verif' => $codeVerif,
