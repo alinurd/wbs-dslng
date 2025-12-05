@@ -71,7 +71,7 @@ trait HasChat
     {
         $this->validate([
             'newMessage' => 'required_without:attachFile|string|max:1000',
-            'attachFile' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,zip,rar',
+            'attachFile' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,',
         ]);
 
         if (!$this->trackingId) return;

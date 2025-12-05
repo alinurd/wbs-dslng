@@ -178,7 +178,7 @@
                         <p class="text-lg font-medium text-gray-700">Klik untuk memilih file</p>
                         <p class="text-sm text-gray-500 max-w-2xl">
                             Maksimal 100MB per file. Format yang didukung:
-                            ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF,
+                             DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF,
                             JPG, JPEG, PNG, AVI, MP4, 3GP, MP3
                         </p>
                     </div>
@@ -291,7 +291,7 @@
                         <p class="font-medium">CATATAN PENTING:</p>
                         <ul class="list-disc list-inside mt-1 space-y-1">
                             <li>Maksimal kapasitas file yang diperkenankan adalah 100MB per file</li>
-                            <li>Tipe file yang diizinkan: ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG,
+                            <li>Tipe file yang diizinkan:  DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG,
                                 PNG, AVI, MP4, 3GP, MP3</li>
                             <li>Data yang Anda berikan akan terjamin kerahasiaannya</li>
                         </ul>

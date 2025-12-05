@@ -71,7 +71,7 @@ class Report extends Root
             'uraian.required' => 'Uraian pengaduan harus diisi.',
             'alamat_kejadian.required' => 'Alamat tempat kejadian harus diisi.',
             'lampiran.*.max' => 'Ukuran file maksimal 100MB.',
-            'lampiran.*.mimes' => 'Format file harus: ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.',
+            'lampiran.*.mimes' => 'Format file harus:  DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.',
             'confirmation.required' => 'Anda harus menyetujui pernyataan sebelum mengirim pengaduan.',
             'confirmation.accepted' => 'Anda harus menyetujui pernyataan sebelum mengirim pengaduan.'
         ];

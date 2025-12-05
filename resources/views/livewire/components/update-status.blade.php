@@ -122,7 +122,7 @@
                                                 <p class="text-lg font-medium text-gray-700">Klik untuk memilih file</p>
                                                 <p class="text-sm text-gray-500 max-w-2xl">
                                                     Maksimal 100MB per file. Format yang didukung:
-                                                    ZIP, RAR, DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF,
+                                                    DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF,
                                                     JPG, JPEG, PNG, AVI, MP4, 3GP, MP3
                                                 </p>
                                             </div>

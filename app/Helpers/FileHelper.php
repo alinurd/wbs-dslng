@@ -148,8 +148,8 @@ class FileHelper
             'txt' => ['icon' => 'fas fa-file-alt', 'color' => 'text-gray-500'],
             
             // Archives
-            'zip' => ['icon' => 'fas fa-file-archive', 'color' => 'text-yellow-500'],
-            'rar' => ['icon' => 'fas fa-file-archive', 'color' => 'text-yellow-500'],
+            // 'zip' => ['icon' => 'fas fa-file-archive', 'color' => 'text-yellow-500'],
+            // 'rar' => ['icon' => 'fas fa-file-archive', 'color' => 'text-yellow-500'],
             '7z' => ['icon' => 'fas fa-file-archive', 'color' => 'text-yellow-500'],
             'tar' => ['icon' => 'fas fa-file-archive', 'color' => 'text-yellow-500'],
             

@@ -623,7 +623,7 @@
     @php
         // Konfigurasi default
         $maxSize = $field['size'] ?? '100';
-        $formats = $field['format'] ?? 'ZIP,RAR,DOC,DOCX,XLS,XLSX,PPT,PPTX,PDF,JPG,JPEG,PNG,AVI,MP4,3GP,MP3';
+        $formats = $field['format'] ?? 'DOC,DOCX,XLS,XLSX,PPT,PPTX,PDF,JPG,JPEG,PNG,AVI,MP4,3GP,MP3';
         $isMultiple = $field['multiple'] ?? true;
         $fileModel = $field['model'];
         

@@ -264,8 +264,8 @@ public function getAcceptAttribute($allowedFormats)
     });
 
     $mimeTypes = [
-        'zip' => '.zip',
-        'rar' => '.rar',
+        // 'zip' => '.zip',
+        // 'rar' => '.rar',
         'doc' => '.doc',
         'docx' => '.docx,.doc',
         'xls' => '.xls',
