@@ -41,12 +41,12 @@ class Report extends Root
         return [
             'waktu_kejadian' => 'required|date',
             'nama_terlapor' => 'required|min:3|max:100',
-            'email_pelapor' => 'required|email',
-            'telepon_pelapor' => 'numeric|required|min:12',
+            // 'email_pelapor' => 'required|email',
+            // 'telepon_pelapor' => 'numeric|required|min:12',
             'jenis_pengaduan_id' => 'required|exists:combos,id',
-            'saluran_aduan_id' => 'required|exists:combos,id',
+            // 'saluran_aduan_id' => 'required|exists:combos,id',
             'direktorat' => 'required|exists:owners,id',
-            'perihal' => 'required|min:5|max:200',
+            // 'perihal' => 'required|min:5|max:200',
             'uraian' => 'required|min:10|max:1000',
             'alamat_kejadian' => 'required|min:10|max:500',
             
@@ -106,6 +106,7 @@ class Report extends Root
     {
         if ($this->userInfo) {
             $this->email_pelapor = $this->userInfo['user']['email'] ?? '';
+            $this->telepon_pelapor = $this->userInfo['user']['telepon'] ?? '';
         }
     }
 
@@ -115,6 +116,8 @@ class Report extends Root
     protected function saving($payload)
     {
         // Upload lampiran
+        //  dd($this->userInfo);
+
        $lampiranPaths = [];
         if ($this->lampiran && count($this->lampiran) > 0) {
             $lampiranPaths = FileHelper::uploadMultiple(
@@ -124,7 +127,6 @@ class Report extends Root
             );
         }
 
- 
         $codePengaduan =  Str::random(8);
 
         // Build payload dari individual properties
@@ -134,9 +136,9 @@ class Report extends Root
             'email_pelapor' => $this->email_pelapor,
             'telepon_pelapor' => $this->telepon_pelapor,
             'jenis_pengaduan_id' => $this->jenis_pengaduan_id,
-            'saluran_aduan_id' => $this->saluran_aduan_id,
+            // 'saluran_aduan_id' => $this->saluran_aduan_id,
             'direktorat' => $this->direktorat,
-            'perihal' => $this->perihal,
+            // 'perihal' => $this->perihal,
             'uraian' => $this->uraian,
             'alamat_kejadian' => $this->alamat_kejadian,
         ];
@@ -150,7 +152,7 @@ class Report extends Root
 
 
 $emailService = new PengaduanEmailService();
-$emailService->sendNewPengaduanNotifications($payload, auth()->id());
+// $emailService->sendNewPengaduanNotifications($payload, auth()->id());
  
 
         return $payload;

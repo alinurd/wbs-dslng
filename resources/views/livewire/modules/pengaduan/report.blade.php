@@ -40,7 +40,7 @@
                 <!-- Nama Terlapor -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Nama Terlapor <span class="text-red-500">*</span>
+                        Terlapor <span class="text-red-500">*</span>
                     </label>
                     <input type="text" wire:model="nama_terlapor" placeholder="Masukkan nama lengkap"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('nama_terlapor') border-red-500 @enderror">
@@ -50,7 +50,7 @@
                 </div>
 {{-- {{dd($saluranList)}} --}}
                 <!-- Saluran Aduan -->
-                <div>
+                {{-- <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Saluran Aduan <span class="text-red-500">*</span>
                     </label>
@@ -64,7 +64,7 @@
                     @error('saluran_aduan_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div>
+                </div> --}}
 
                 <!-- Direktorat -->
                 <div>
@@ -84,7 +84,7 @@
                 </div>
 
                 <!-- Perihal -->
-                <div>
+                {{-- <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Perihal <span class="text-red-500">*</span>
                     </label>
@@ -93,22 +93,22 @@
                     @error('perihal')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div>
+                </div> --}}
 
                 <!-- Tanggal Pengaduan -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Perkiraan Waktu Kejadian <span class="text-red-500">*</span>
                     </label>
-                    <input type="date" wire:model="tanggal_pengaduan"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('tanggal_pengaduan') border-red-500 @enderror">
-                    @error('tanggal_pengaduan')
+                    <input type="date" wire:model="waktu_kejadian"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('waktu_kejadian') border-red-500 @enderror">
+                    @error('waktu_kejadian')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Email -->
-                <div>
+                {{-- <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Email <span class="text-red-500">*</span>
                     </label>
@@ -117,10 +117,10 @@
                     @error('email_pelapor')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div>
+                </div> --}}
 
                 <!-- Telepon -->
-                <div>
+                {{-- <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Telepon <span class="text-red-500">*</span>
                     </label>
@@ -129,7 +129,7 @@
                     @error('telepon_pelapor')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div>
+                </div> --}}
 
                 <!-- Uraian -->
                 <div>

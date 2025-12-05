@@ -123,7 +123,7 @@ class PengaduanEmailService
         return [
             'code_pengaduan' => $pengaduan->code_pengaduan,
             'tanggal_pengaduan' => $pengaduan->tanggal_pengaduan,
-            'perihal' => $pengaduan->perihal,
+            // 'perihal' => $pengaduan->perihal,
             'email_pelapor' => $pengaduan->pelapor->email ?? $pengaduan->email_pelapor,
             'telepon_pelapor' => $pengaduan->telepon_pelapor,
             'waktu_kejadian' => $pengaduan->waktu_kejadian,
@@ -179,8 +179,7 @@ class PengaduanEmailService
             <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Tanggal Pengaduan:</strong> {$pengaduanData['tanggal_pengaduan']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}<br>
-                <strong>Status:</strong> Menunggu review WBS Eksternal
+                 <strong>Status:</strong> Menunggu review WBS Eksternal
             </div>
 
             <p>Silakan cek secara berkala untuk melihat pembaruan status pengaduan Anda.</p>
@@ -202,8 +201,7 @@ class PengaduanEmailService
             <div style='background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}<br>
+                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br> 
                 <strong>Waktu Kejadian:</strong> {$pengaduanData['waktu_kejadian']}<br>
                 <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
             </div>
@@ -265,8 +263,7 @@ class PengaduanEmailService
             
             <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Alasan Penolakan:</strong> {$alasanReject}<br>
-                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}
+                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br> 
             </div>
 
             <p><em>Pengaduan ini telah ditutup.</em></p>
@@ -318,7 +315,7 @@ class PengaduanEmailService
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
                 <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}<br>
+                
                 <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
             </div>
 
@@ -379,8 +376,7 @@ class PengaduanEmailService
             
             <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Alasan Penolakan:</strong> {$alasanReject}<br>
-                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}
+                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br> 
             </div>
 
             <p><em>Pengaduan ini telah ditutup.</em></p>
@@ -432,7 +428,7 @@ class PengaduanEmailService
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
                 <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}<br>
+                
                 <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
             </div>
 
@@ -490,8 +486,7 @@ class PengaduanEmailService
             <div style='background: #e2e3e5; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}<br>
+                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br> 
                 <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
             </div>
 
@@ -549,8 +544,7 @@ class PengaduanEmailService
             <div style='background: #e2e3e5; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}<br>
+                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br> 
                 <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
             </div>
 
@@ -590,8 +584,7 @@ class PengaduanEmailService
             
             <div style='background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
-                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}<br>
+                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br> 
                 <strong>Status:</strong> READ oleh Forward
             </div>
 
@@ -656,8 +649,7 @@ class PengaduanEmailService
             
             <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Alasan Penolakan:</strong> {$alasanReject}<br>
-                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}
+                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br> 
             </div>
 
             <p><em>Pengaduan ini telah ditutup.</em></p>
@@ -684,8 +676,7 @@ class PengaduanEmailService
             <p>Pengaduan Anda dengan kode <strong>{$pengaduanData['code_pengaduan']}</strong> telah diselesaikan dan disetujui.</p>
             
             <div style='background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0;'>
-                <strong>Status:</strong> <span style='color: #28a745;'>Selesai dan Disetujui</span><br>
-                <strong>Perihal:</strong> {$pengaduanData['perihal']}
+                <strong>Status:</strong> <span style='color: #28a745;'>Selesai dan Disetujui</span><br> 
             </div>
 
             " . (!empty($catatan) ? "
