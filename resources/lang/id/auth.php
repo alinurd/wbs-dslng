@@ -86,4 +86,16 @@ return [
     
     'failed' => 'Kredensial ini tidak cocok dengan data kami.',
     'throttle' => 'Terlalu banyak percobaan login. Silakan coba lagi dalam :seconds detik.',
+
+
+      'validation' => [
+        'required' => ':attribute wajib diisi.',
+        'min' => ':attribute minimal :min karakter.',
+        'unique' => ':attribute sudah digunakan.',
+        'email' => 'Format :attribute tidak valid.',
+        'confirmed' => 'Konfirmasi :attribute tidak cocok.',
+        'accepted' => 'Anda harus menyetujui :attribute.',
+        'invalid_option' => 'Pilihan :attribute tidak valid.',
+    ],
+    
 ];

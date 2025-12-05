@@ -88,6 +88,35 @@
                                         @enderror
                                     </div>
 
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2 required">
+                                        {{ __('auth.register.type_of_reporter') }}
+                                        </label>
+                                         <div class="flex space-x-8">
+                                        <div class="flex items-center">
+                                            <input wire:model="reporter_type" id="employee" name="reporter_type"
+                                                type="radio" value="employee"
+                                                class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                            <label for="employee"
+                                                class="ml-3 block text-sm font-medium text-gray-700">
+                                                {{ __('auth.register.employee') }}
+                                            </label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input wire:model="reporter_type" id="non_employee" name="reporter_type"
+                                                type="radio" value="non_employee"
+                                                class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                            <label for="non_employee"
+                                                class="ml-3 block text-sm font-medium text-gray-700">
+                                                {{ __('auth.register.non_employee') }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                        @error('reporter_type')
+                                            <p class="mt-1 text-sm text-red-600">{{ __($message) }}</p>
+                                        @enderror
+                                    </div>
+
                                     <!-- Detail -->
                                     {{-- <div>
                                         <label for="detail" class="block text-sm font-medium text-gray-700 mb-2 required">
@@ -165,7 +194,7 @@
  
 
                             <!-- Reporter Type -->
-                             <livewire:innovative-captcha :patternLength="4" :gridSize="9" />
+                             <livewire:innovative-captcha />
                                      
 
                             <!-- Confirmation Checkbox -->
@@ -189,8 +218,10 @@
                                 </div>
                             </div>
 
+                            @if ($captchaVerified)
+
                             <!-- Submit Button -->
-                            <button type="submit" wire:loading.attr="disabled"
+                            <button type="submit" 
                                 class="verif-btn w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[rgb(0,95,160)] hover:bg-[rgb(0,110,160)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                                 <span wire:loading.remove wire:target="login">
         {{ __('auth.register.submit') }}
@@ -210,6 +241,7 @@
                                 
                             </button>
 
+                            @endif
                             <!-- Login Link -->
                             <div class="text-center">
                                 <p class="text-sm text-gray-600">

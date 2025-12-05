@@ -29,6 +29,7 @@ class RegisterForm extends Component
     public $verification_code;
     public $confirmation = false;
     public $question = [];
+    public $captchaVerified = false;
 
     protected $rules = [
         'username' => 'required|min:3|unique:users',
@@ -45,23 +46,26 @@ class RegisterForm extends Component
         'confirmation' => 'accepted'
     ];
 
-    protected $messages = [
-        'username.required' => 'auth.validation.required',
-        'username.min' => 'auth.validation.min',
-        'username.unique' => 'auth.validation.unique',
-        'security_question.required' => 'auth.validation.required',
-        'answer.required' => 'auth.validation.required',
-        'answer.min' => 'auth.validation.min',
-        'password.required' => 'auth.validation.required',
-        'password.min' => 'auth.validation.min',
-        'password.confirmed' => 'auth.validation.confirmed',
-        'email.required' => 'auth.validation.required',
-        'email.email' => 'auth.validation.email',
-        'email.unique' => 'auth.validation.unique',
-        'verification_code.required' => 'auth.validation.required',
-        'confirmation.accepted' => 'auth.validation.required',
-    ];
+    protected $validationAttributes = [
+    'username' => 'Username',
+    'security_question' => 'Pertanyaan keamanan',
+    'answer' => 'Jawaban',
+    'password' => 'Kata sandi',
+    'password_confirmation' => 'Konfirmasi kata sandi',
+    'full_name' => 'Nama lengkap',
+    'email' => 'Email',
+    'id_number' => 'Nomor identitas',
+    'phone' => 'Nomor telepon',
+    'reporter_type' => 'Tipe pelapor',
+    'verification_code' => 'Kode verifikasi',
+    'confirmation' => 'Konfirmasi data',
+];
 
+
+    protected $listeners = [
+        'captchaVerified' => 'handleCaptchaVerified',
+        'captchaReset' => 'handleCaptchaReset'
+    ];
     public $currentLocale = 'en';
 
         public $locale;
@@ -77,6 +81,22 @@ class RegisterForm extends Component
         ->get();
     }
 
+    public function handleCaptchaVerified()
+    {
+        // \Log::info('CAPTCHA VERIFIED - Login component received event');
+        $this->captchaVerified = true;
+        $this->resetErrorBag('captcha');
+        
+        // Dispatch event untuk JavaScript
+        $this->dispatch('enable-login-button');
+    }
+
+      public function handleCaptchaReset()
+    {
+        // \Log::info('CAPTCHA RESET - Login component received event');
+        $this->captchaVerified = false;
+        $this->dispatch('disable-login-button');
+    }
       public function changeLanguage($lang)
     {
         $this->locale = $lang;
