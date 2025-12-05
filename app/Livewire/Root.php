@@ -1339,7 +1339,7 @@ public function getPengaduanById($id){
         $record = Pengaduan::where('id',$id)->first(); 
         $this->detailData = [
             'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
+            // 'Perihal' => $record->perihal,
             'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status Pengaduan' => $this->getStatusBadge($record->status) ?? 'Open', 

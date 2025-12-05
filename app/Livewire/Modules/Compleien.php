@@ -270,7 +270,7 @@ $emailService->handleStatusChange(
         $this->detailData = [
             'id' => $id,
             'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
+            // 'Perihal' => $record->perihal,
             'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status Saat Ini' => $currentStatusInfo->data_id ?? 'Menunggu Review',
@@ -496,7 +496,7 @@ $emailService->handleStatusChange(
 
         $detailData = [
             'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
+            // 'Perihal' => $record->perihal,
             'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status' => $statusInfo->data_id ?? 'Menunggu Review',

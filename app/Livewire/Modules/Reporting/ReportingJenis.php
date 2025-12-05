@@ -118,7 +118,7 @@ class ReportingJenis extends Root
 
         $this->detailData = [
             'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
+            // 'Perihal' => $record->perihal,
             'Jenis Pelanggaran' => $record->jenis_pengaduan_id,
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status' => $record->status ? 'Aktif' : 'Nonaktif',

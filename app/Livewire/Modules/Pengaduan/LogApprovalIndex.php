@@ -59,7 +59,7 @@ class LogApprovalIndex extends Root
         $this->detailPengaduan = [
             'id' => $pengaduan->id,
             'code_pengaduan' => $pengaduan->code_pengaduan,
-            'perihal' => $pengaduan->perihal,
+            // 'perihal' => $pengaduan->perihal,
             'nama_terlapor' => $pengaduan->nama_terlapor,
             'jenis_pengaduan' => $pengaduan->jenisPengaduan->data_id ?? 'Tidak diketahui',
             'saluran_aduan' => $pengaduan->saluranAduan->data_id ?? 'Tidak diketahui',
@@ -169,7 +169,7 @@ class LogApprovalIndex extends Root
 
         $detailData = [
             'Kode Tracking' => $record->code_pengaduan,
-            'Perihal' => $record->perihal,
+            // 'Perihal' => $record->perihal,
             'Jenis Pelanggaran' => $record->jenisPengaduan->name ?? 'Tidak diketahui',
             'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status' => $record->status ? 'Aktif' : 'Nonaktif',
