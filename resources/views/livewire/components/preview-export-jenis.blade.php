@@ -57,11 +57,11 @@
                                     Excel
                                 </button>
 
-                                <button wire:click="{{ $onExportPdf }}" wire:loading.attr="disabled"
+                                {{-- <button wire:click="{{ $onExportPdf }}" wire:loading.attr="disabled"
                                     class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-white rounded-lg hover:bg-red-50 border border-red-200 transition-colors">
                                     <i class="fas fa-file-pdf mr-2 text-red-600"></i>
                                     PDF
-                                </button>
+                                </button> --}}
 
                                 <button wire:click="{{ $onClose }}"
                                     class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
