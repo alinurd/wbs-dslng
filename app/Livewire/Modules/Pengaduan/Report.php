@@ -16,7 +16,8 @@ class Report extends Root
     public $modul = 'p_report'; // Ubah ke 'pengaduan'
     public $model = Pengaduan::class;
     public $views = 'modules.pengaduan.report';
-    
+        public $updateMode = false;
+
     // Individual properties untuk form fields
     public $waktu_kejadian;
     public $nama_terlapor;
@@ -126,8 +127,20 @@ class Report extends Root
                 'public'
             );
         }
+ 
+       $year = date('Y');
+ 
+$shortYear = substr($year, -2);
+ 
+$countThisYear = pengaduan::whereYear('created_at', $year)->count() + 1;
+ 
+$countAll = pengaduan::count() + 1;
+ 
+$countThisYearFormatted = str_pad($countThisYear, 4, '0', STR_PAD_LEFT); // 
+$countAllFormatted = str_pad($countAll, 4, '0', STR_PAD_LEFT); // contoh 0013
 
-        $codePengaduan =  Str::random(8);
+$codePengaduan = $shortYear . '-' . $countThisYearFormatted . '-' . $countAllFormatted;
+
 
         // Build payload dari individual properties
         $payload = [
