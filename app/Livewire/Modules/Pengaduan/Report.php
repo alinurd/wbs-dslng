@@ -3,6 +3,7 @@
 namespace App\Livewire\Modules\Pengaduan;
 
 use App\Helpers\FileHelper;
+use App\Helpers\NotificationHelper;
 use App\Livewire\Root; 
 use App\Models\Pengaduan;
 use App\Services\PengaduanEmailService;
@@ -163,6 +164,20 @@ $codePengaduan = $shortYear . '-' . $countThisYearFormatted . '-' . $countAllFor
         $payload['user_id'] = auth()->id();
         $payload['tanggal_pengaduan'] = now();
 
+
+        NotificationHelper::sendToRole(
+    2, // role ID
+    'Laporan Baru ID:' . $codePengaduan,
+    auth()->user()->name . ' membuat laporan baru',
+    auth()->id() // sender (optional)
+);
+
+// NotificationHelper::sendToUser(
+//     123, // user ID penerima
+//     'Pesan Baru',
+//     'Anda memiliki pesan baru',
+//     auth()->id() // sender (optional)
+// );
 
 $emailService = new PengaduanEmailService();
 // $emailService->sendNewPengaduanNotifications($payload, auth()->id());

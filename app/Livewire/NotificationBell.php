@@ -23,6 +23,7 @@ class NotificationBell extends Component
     {
         try {
             $dbNotifications = Notification::where('to', Auth::id())
+            ->where('is_read', 0)
                 ->orderBy('created_at', 'desc')
                 ->limit(50)
                 ->get();
@@ -109,45 +110,7 @@ class NotificationBell extends Component
             default => 'gray',
         };
     }
-
-    private function loadSampleNotifications()
-    {
-        $this->notifications = [
-            [
-                'id' => 1,
-                'type' => 'chat',
-                'type_class' => 'bg-blue-100 text-blue-800 border-blue-300',
-                'title' => 'Pesan Baru',
-                'message' => 'Anda memiliki pesan baru dari Budi di grup "Project Team"',
-                'time' => now()->subMinutes(5),
-                'read' => false,
-                'icon' => 'fas fa-comment-alt',
-                'badge_color' => 'blue'
-            ],
-            [
-                'id' => 2,
-                'type' => 'approval',
-                'type_class' => 'bg-green-100 text-green-800 border-green-300',
-                'title' => 'Pengajuan Cuti Disetujui',
-                'message' => 'Pengajuan cuti tanggal 15-17 Desember telah disetujui',
-                'time' => now()->subMinutes(30),
-                'read' => false,
-                'icon' => 'fas fa-clipboard-check',
-                'badge_color' => 'green'
-            ],
-            [
-                'id' => 3,
-                'type' => 'other',
-                'type_class' => 'bg-gray-100 text-gray-800 border-gray-300',
-                'title' => 'System Maintenance',
-                'message' => 'System akan maintenance hari ini pukul 22:00 - 02:00',
-                'time' => now()->subMinutes(15),
-                'read' => false,
-                'icon' => 'fas fa-tools',
-                'badge_color' => 'gray'
-            ],
-        ];
-    }
+ 
 
     public function filterNotifications($filter)
     {
@@ -191,55 +154,65 @@ class NotificationBell extends Component
         return collect($this->notifications)->where('read', true)->values();
     }
 
-    public function toggleNotifications()
-    {
-        $this->isOpen = !$this->isOpen;
+public function toggleNotifications()
+{
+    $this->isOpen = !$this->isOpen;
+    // Tidak perlu loadNotifications() di sini karena sudah di handle Alpine.js
+}
+
+public function markAsRead($notificationId)
+{
+    try {
+        // Update database
+        \DB::table('notifications')
+            ->where('id', $notificationId)
+            ->where('to', Auth::id())
+            ->update(['is_read' => 1]);
         
-        if ($this->isOpen) {
-            $this->loadNotifications();
-        }
+        // Update local state
+        $this->notifications = collect($this->notifications)
+            ->reject(fn($notification) => $notification['id'] == $notificationId)
+            ->values()
+            ->toArray();
+        
+        $this->unreadCount = collect($this->notifications)->where('read', false)->count();
+        
+        // Dispatch event untuk animasi
+        $this->dispatch('notification-marked-read', ['id' => $notificationId]);
+        
+    } catch (\Exception $e) {
+        Log::error('Error marking notification as read: ' . $e->getMessage());
     }
+}
 
-    public function markAsRead($notificationId)
-    {
-        try {
-            $notification = Notification::where('id', $notificationId)
-                ->where('to', Auth::id())
-                ->first();
-            
-            if ($notification) {
-                $notification->update(['is_read' => 1]);
-                
-                foreach ($this->notifications as &$notification) {
-                    if ($notification['id'] == $notificationId) {
-                        $notification['read'] = true;
-                        break;
-                    }
-                }
-                $this->unreadCount = collect($this->notifications)->where('read', false)->count();
-            }
-            
-        } catch (\Exception $e) {
-            Log::error('Error marking notification as read: ' . $e->getMessage());
-        }
-    }
-
-    public function markAllAsRead()
-    {
-        try {
-            Notification::where('to', Auth::id())
-                ->where('is_read', 0)
-                ->update(['is_read' => 1]);
-            
-            foreach ($this->notifications as &$notification) {
+public function markAllAsRead()
+{
+    try {
+        // Update semua di database
+        Notification::where('to', Auth::id())
+            ->where('is_read', 0)
+            ->update(['is_read' => 1]);
+        
+        // Hapus semua dari array notifications
+        $this->notifications = collect($this->notifications)
+            ->map(function ($notification) {
                 $notification['read'] = true;
-            }
-            $this->unreadCount = 0;
-            
-        } catch (\Exception $e) {
-            Log::error('Error marking all notifications as read: ' . $e->getMessage());
-        }
+                return $notification;
+            })
+            ->toArray();
+        
+        $this->unreadCount = 0;
+        
+        // Dispatch event untuk refresh
+        $this->dispatch('notifications-updated');
+        
+        Log::info('All notifications marked as read', ['user_id' => Auth::id()]);
+        
+    } catch (\Exception $e) {
+        Log::error('Error marking all notifications as read: ' . $e->getMessage());
     }
+}
+ 
 
     public function deleteNotification($notificationId)
     {

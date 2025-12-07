@@ -6,17 +6,34 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
+    protected $table = 'notifications';
     
-    protected $fillable = [];
-
-   
-
-    public function for()
+    // Tambahkan semua kolom yang bisa diisi
+    protected $fillable = [
+        'sender_id',
+        'to', 
+        'type',
+        'type_text',
+        'is_read',   
+        'title',
+        'message',
+        'created_at',
+        'updated_at'
+    ]; 
+    // Cast is_read ke boolean
+    protected $casts = [ 
+        'type' => 'integer'
+    ];
+    
+    // Relationship ke user pengirim
+    public function sender()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'for');
     }
-    public function to()
+    
+    // Relationship ke user penerima
+    public function receiver()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'to');
     }
 }
