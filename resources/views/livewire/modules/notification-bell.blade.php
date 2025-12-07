@@ -52,9 +52,9 @@
                     class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'chat' ? 'bg-blue-100 text-blue-800' : 'text-gray-600 hover:bg-gray-100' }}">
                     Chat ({{ $counts['chat'] ?? 0 }})
                 </button>
-                <button wire:click="filterNotifications('approval')" @click.stop
-                    class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'approval' ? 'bg-green-100 text-green-800' : 'text-gray-600 hover:bg-gray-100' }}">
-                    Approval ({{ $counts['approval'] ?? 0 }})
+                <button wire:click="filterNotifications('complien')" @click.stop
+                    class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'complien' ? 'bg-green-100 text-green-800' : 'text-gray-600 hover:bg-gray-100' }}">
+                    complien ({{ $counts['complien'] ?? 0 }})
                 </button>
                 <button wire:click="filterNotifications('other')" @click.stop
                     class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'other' ? 'bg-gray-100 text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
@@ -90,8 +90,8 @@
                                     class="text-xs font-medium px-2 py-0.5 rounded-full {{ $notification['type_class'] }}">
                                     @if ($notification['type'] == 'chat')
                                         <i class="fas fa-comment-alt mr-1 text-xs"></i> Chat
-                                    @elseif($notification['type'] == 'approval')
-                                        <i class="fas fa-clipboard-check mr-1 text-xs"></i> Approval
+                                    @elseif($notification['type'] == 'complien')
+                                        <i class="fas fa-clipboard-check mr-1 text-xs"></i> Complien
                                     @else
                                         <i class="fas fa-bell mr-1 text-xs"></i> Other
                                     @endif

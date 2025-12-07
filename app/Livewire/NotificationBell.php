@@ -61,9 +61,9 @@ class NotificationBell extends Component
             
             if (str_contains($typeText, 'chat') || str_contains($typeText, 'pesan') || str_contains($typeText, 'message')) {
                 return 'chat';
-            } elseif (str_contains($typeText, 'approval') || str_contains($typeText, 'persetujuan') || 
+            } elseif (str_contains($typeText, 'complien') || str_contains($typeText, 'persetujuan') || 
                      str_contains($typeText, 'approve') || str_contains($typeText, 'disetujui')) {
-                return 'approval';
+                return 'complien';
             } else {
                 return 'other';
             }
@@ -71,7 +71,7 @@ class NotificationBell extends Component
         
         return match($type) {
             1 => 'chat',
-            2 => 'approval',
+            2 => 'complien',
             default => 'other',
         };
     }
@@ -82,7 +82,7 @@ class NotificationBell extends Component
         
         return match($notificationType) {
             'chat' => 'fas fa-comment-alt',
-            'approval' => 'fas fa-clipboard-check',
+            'complien' => 'fas fa-clipboard-check',
             'other' => 'fas fa-bell',
             default => 'fas fa-bell',
         };
@@ -94,7 +94,7 @@ class NotificationBell extends Component
         
         return match($notificationType) {
             'chat' => 'bg-blue-100 text-blue-800 border-blue-300',
-            'approval' => 'bg-green-100 text-green-800 border-green-300',
+            'complien' => 'bg-green-100 text-green-800 border-green-300',
             'other' => 'bg-gray-100 text-gray-800 border-gray-300',
             default => 'bg-gray-100 text-gray-800 border-gray-300',
         };
@@ -105,7 +105,7 @@ class NotificationBell extends Component
         
         return match($notificationType) {
             'chat' => 'blue',
-            'approval' => 'green',
+            'complien' => 'green',
             'other' => 'gray',
             default => 'gray',
         };
@@ -124,7 +124,7 @@ class NotificationBell extends Component
         return match($this->activeFilter) {
             'unread' => $notifications->where('read', false)->values()->toArray(),
             'chat' => $notifications->where('type', 'chat')->values()->toArray(),
-            'approval' => $notifications->where('type', 'approval')->values()->toArray(),
+            'complien' => $notifications->where('type', 'complien')->values()->toArray(),
             'other' => $notifications->where('type', 'other')->values()->toArray(),
             default => $notifications->values()->toArray(),
         };
@@ -138,7 +138,7 @@ class NotificationBell extends Component
             'all' => $notifications->count(),
             'unread' => $notifications->where('read', false)->count(),
             'chat' => $notifications->where('type', 'chat')->count(),
-            'approval' => $notifications->where('type', 'approval')->count(),
+            'complien' => $notifications->where('type', 'complien')->count(),
             'other' => $notifications->where('type', 'other')->count(),
         ];
     }

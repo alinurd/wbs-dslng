@@ -36,8 +36,8 @@ class NotificationHelper
                 $notifications[] = [
                     'sender_id' => $senderId,
                     'to' => $user->id,
-                    'type' => 2, // approval
-                    'type_text' => 'approval',
+                    'type' => 2, // complien
+                    'type_text' => 'complien',
                     'is_read' => 0,
                     'title' => $title,
                     'message' => substr($message, 0, 97) . (strlen($message) > 97 ? '...' : ''),
@@ -91,7 +91,7 @@ class NotificationHelper
     }
     
     /**
-     * Kirim notifikasi ke role 2 (approval team)
+     * Kirim notifikasi ke role 2 (complien team)
      */
     public static function notifyApprovers(string $title, string $message, ?int $senderId = null): bool
     {
