@@ -131,7 +131,7 @@
 
                         <!-- File Attachment in Message -->
                         @if (isset($message['file']) && $message['file'])
-                            <div class="mt-2 p-2 bg-gray-100 rounded border border-gray-300">
+                            <div class="mt-2 p-2 bg-gray-100 rounded border border-sky-950">
                                 <div class="flex items-center space-x-2">
                                     <i class="fas fa-paperclip text-gray-500 text-xs"></i>
                                     <span class="text-xs truncate flex-1">
