@@ -133,18 +133,18 @@
                         @if (isset($message['file']) && $message['file'])
                             <div class="mt-2 p-2 bg-gray-100 rounded border border-sky-950">
                                 <div class="flex items-center space-x-2">
-                                    <i class="fas fa-paperclip text-gray-500 text-xs"></i>
+                                    <i class="fas fa-paperclip text-sky-950 text-xs"></i>
                                     <span class="text-xs truncate flex-1">
                                         {{ $message['file']['original_name'] ?? 'Unknown File' }}
                                     </span>
                                     <button
                                         wire:click="downloadMessageFile('{{ $message['id'] }}')"
-                                        class="text-xs text-blue-600 hover:underline hover:text-blue-800">
+                                        class="text-xs text-sky-900 hover:underline hover:text-sky-800">
                                         Download
                                     </button>
                                 </div>
                                 @if (isset($message['file']['formatted_size']))
-                                    <p class="text-xs text-gray-500 mt-1">
+                                    <p class="text-xs text-sky-950 mt-1">
                                         {{ $message['file']['formatted_size'] }}
                                     </p>
                                 @endif
