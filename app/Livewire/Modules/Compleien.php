@@ -182,14 +182,15 @@ class Compleien extends Root
                         'created_at' => now()
                     ]);
 
-                    
+                    // dd($pengaduan);
 $emailService = new PengaduanEmailService();
 $emailService->handleStatusChange(
     $pengaduan,                    // Object pengaduan
     $this->submission_action,      // Status action (6, 10, 7, dll)
     $roleId,                       // Role ID user yang melakukan aksi
     $this->catatan,                // Catatan (opsional)
-    ($this->forwardDestination??0)      // Forward destination (opsional)
+    ($this->forwardDestination??0),      // Forward destination (opsional),
+    auth()->id() //user yang melakukan action
 );
                     // Create log approval
                     $this->createLogApproval($pengaduan, $statusInfo, $filePath);

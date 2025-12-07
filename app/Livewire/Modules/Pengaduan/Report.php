@@ -165,12 +165,12 @@ $codePengaduan = $shortYear . '-' . $countThisYearFormatted . '-' . $countAllFor
         $payload['tanggal_pengaduan'] = now();
 
 
-        NotificationHelper::sendToRole(
-    2, // role ID
-    'Laporan Baru ID:' . $codePengaduan,
-    auth()->user()->name . ' membuat laporan baru',
-    auth()->id() // sender (optional)
-);
+//         NotificationHelper::sendToRole(
+//     2, // role ID
+//     'Laporan Baru ID:' . $codePengaduan,
+//     auth()->user()->name . ' membuat laporan baru',
+//     auth()->id() // sender (optional)
+// );
 
 // NotificationHelper::sendToUser(
 //     123, // user ID penerima
@@ -180,7 +180,7 @@ $codePengaduan = $shortYear . '-' . $countThisYearFormatted . '-' . $countAllFor
 // );
 
 $emailService = new PengaduanEmailService();
-// $emailService->sendNewPengaduanNotifications($payload, auth()->id());
+$emailService->sendNewPengaduanNotifications($payload, auth()->id());
  
 
         return $payload;

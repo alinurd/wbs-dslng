@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Helpers\NotificationHelper;
 use App\Models\User;
 use App\Services\EmailService;
 use Spatie\Permission\Models\Role;
@@ -35,17 +36,17 @@ class PengaduanEmailService
     /**
      * MAIN METHOD: Handle semua email flow berdasarkan status change
      */
-    public function handleStatusChange($pengaduan, $statusAction, $roleId, $catatan = '', $forwardDestination = null)
+    public function handleStatusChange($pengaduan, $statusAction, $roleId, $catatan = '', $forwardDestination = null, $userId=null)
     {
-        \Log::info('PengaduanEmailService: Handling status change', [
-            'pengaduan_id' => $pengaduan->id,
-            'status_action' => $statusAction,
-            'role_id' => $roleId,
-            'forward_destination' => $forwardDestination
-        ]);
+        // \Log::info('PengaduanEmailService: Handling status change', [
+        //     'pengaduan_id' => $pengaduan->id,
+        //     'status_action' => $statusAction,
+        //     'role_id' => $roleId,
+        //     'forward_destination' => $forwardDestination
+        // ]);
 
         // Format data untuk email
-        $pengaduanData = $this->formatPengaduanData($pengaduan);
+        $pengaduanData = $this->formatPengaduanData($pengaduan, $userId);
 
         // REJECT BY WBS EKSTERNAL
         if (in_array($statusAction, self::STATUS_REJECT_EKS) && $roleId == self::ROLE_WBS_EKSTERNAL) {
@@ -118,10 +119,11 @@ class PengaduanEmailService
     /**
      * Format pengaduan data for email
      */
-    private function formatPengaduanData($pengaduan)
+    private function formatPengaduanData($pengaduan, $userId)
     {
         return [
             'code_pengaduan' => $pengaduan->code_pengaduan,
+            'pelapor_id' => $pengaduan->user_id,
             'tanggal_pengaduan' => $pengaduan->tanggal_pengaduan,
             // 'perihal' => $pengaduan->perihal,
             'email_pelapor' => $pengaduan->pelapor->email ?? $pengaduan->email_pelapor,
@@ -130,6 +132,7 @@ class PengaduanEmailService
             'direktorat' => $pengaduan->direktorat,
             'uraian' => $pengaduan->uraian,
             'catatan' => $pengaduan->catatan,
+            'userId' => $userId,
         ];
     }
 
@@ -141,6 +144,16 @@ class PengaduanEmailService
         return User::whereHas('roles', function($query) use ($roleId) {
             $query->where('id', $roleId)->where('is_active', 1);
         })->pluck('email')->toArray();
+    }
+
+    /**
+     * Get all active users by role ID
+     */
+    private function getUsersByRoleId($roleId)
+    {
+        return User::whereHas('roles', function($query) use ($roleId) {
+            $query->where('id', $roleId)->where('is_active', 1);
+        })->select('id', 'email', 'name')->get();
     }
 
     /**
@@ -193,7 +206,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA WBS EKSTERNAL
-        $wbsEksEmails = $this->getEmailsByRoleId(self::ROLE_WBS_EKSTERNAL);
+        $wbsEksUsers = $this->getUsersByRoleId(self::ROLE_WBS_EKSTERNAL);
         $contentToWbsEks = "
             <h3>TUGAS BARU - Pengaduan Masuk</h3>
             <p>Ada pengaduan baru yang membutuhkan review segera:</p>
@@ -213,14 +226,40 @@ class PengaduanEmailService
             </div>
         ";
 
-        foreach ($wbsEksEmails as $email) {
+                $pelaporUser = User::where('id', $pengaduanData['user_id'])->first();
+
+
+        foreach ($wbsEksUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas Baru: Pengaduan {$pengaduanData['code_pengaduan']}",
                 $contentToWbsEks,
                 'urgent'
             );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Baru | ID: {$pengaduanData['code_pengaduan']}",
+                "{$pelaporUser->name} telah membuat pengaduan pengaduan baru yang perlu ditinjau",
+                $pelaporUser->id,
+                'complien',
+                2
+            );
         }
+
+        // Send notification to pelapor if they have user account
+        // if ($pelaporUser) {
+            NotificationHelper::sendToUser(
+                $pelaporUser->id,
+                "Pengaduan Diterima",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah diterima dan sedang ditinjau",
+                $pelaporUser->id,
+                'complien',
+                2
+            );
+        // }
     }
 
     /**
@@ -256,7 +295,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA WBS EKSTERNAL (Notifikasi tugas selesai)
-        $wbsEksEmails = $this->getEmailsByRoleId(self::ROLE_WBS_EKSTERNAL);
+        $wbsEksUsers = $this->getUsersByRoleId(self::ROLE_WBS_EKSTERNAL);
         $contentToWbsEksTeam = "
             <h3>Tugas Selesai - Pengaduan Ditolak</h3>
             <p>Pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditolak oleh kolega Anda.</p>
@@ -268,15 +307,40 @@ class PengaduanEmailService
 
             <p><em>Pengaduan ini telah ditutup.</em></p>
         ";
+                        $pelaporUser = User::where('id', $pengaduanData['user_id'])->first();
 
-        foreach ($wbsEksEmails as $email) {
+                        
+
+        foreach ($wbsEksUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas Selesai: Pengaduan {$pengaduanData['code_pengaduan']} Ditolak",
                 $contentToWbsEksTeam,
                 'info'
             );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                'Tugas Selesai',
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh WBS Eksternal",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
         }
+
+        // Send notification to pelapor if they have user account
+  
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                'Pengaduan Ditolak',
+                "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh WBS Eksternal. Alasan: {$alasanReject}",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
     }
 
     /**
@@ -306,7 +370,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA WBS INTERNAL (Tugas Baru)
-        $wbsIntEmails = $this->getEmailsByRoleId(self::ROLE_WBS_INTERNAL);
+        $wbsIntUsers = $this->getUsersByRoleId(self::ROLE_WBS_INTERNAL);
         $contentToWbsInt = "
             <h3>🎯 TUGAS BARU - Pengaduan dari WBS Eksternal</h3>
             <p>WBS Eksternal telah mengirimkan pengaduan untuk ditindaklanjuti:</p>
@@ -326,14 +390,33 @@ class PengaduanEmailService
             </div>
         ";
 
-        foreach ($wbsIntEmails as $email) {
+        foreach ($wbsIntUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas Baru: Pengaduan {$pengaduanData['code_pengaduan']}",
                 $contentToWbsInt,
                 'urgent'
             );
-        }
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Baru: Pengaduan {$pengaduanData['code_pengaduan']}",
+                "Ada pengaduan baru yang perlu ditindaklanjuti dari WBS Eksternal",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
+        } 
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Pengaduan Diproses",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah disetujui WBS Eksternal dan diproses ke WBS Internal",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
     }
 
     /**
@@ -369,7 +452,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA WBS INTERNAL (Notifikasi tugas selesai)
-        $wbsIntEmails = $this->getEmailsByRoleId(self::ROLE_WBS_INTERNAL);
+        $wbsIntUsers = $this->getUsersByRoleId(self::ROLE_WBS_INTERNAL);
         $contentToWbsIntTeam = "
             <h3>Tugas Selesai - Pengaduan Ditolak</h3>
             <p>Pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditolak oleh kolega Anda.</p>
@@ -382,14 +465,36 @@ class PengaduanEmailService
             <p><em>Pengaduan ini telah ditutup.</em></p>
         ";
 
-        foreach ($wbsIntEmails as $email) {
+        foreach ($wbsIntUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas Selesai: Pengaduan {$pengaduanData['code_pengaduan']} Ditolak",
                 $contentToWbsIntTeam,
                 'info'
             );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Selesai: Pengaduan Ditolak",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh WBS Internal",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
         }
+
+        // Send notification to pelapor if they have user account
+       
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Pengaduan Ditolak",
+                "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh WBS Internal. Alasan: {$alasanReject}",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
     }
 
     /**
@@ -419,7 +524,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA WBS CC (Tugas Baru)
-        $wbsCcEmails = $this->getEmailsByRoleId(self::ROLE_WBS_CC);
+        $wbsCcUsers = $this->getUsersByRoleId(self::ROLE_WBS_CC);
         $contentToWbsCc = "
             <h3>📎 TUGAS BARU - Pengaduan dari WBS Internal</h3>
             <p>Anda ditugaskan sebagai CC untuk menangani pengaduan berikut:</p>
@@ -441,14 +546,36 @@ class PengaduanEmailService
             <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
         ";
 
-        foreach ($wbsCcEmails as $email) {
+        foreach ($wbsCcUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas CC: Pengaduan {$pengaduanData['code_pengaduan']}",
                 $contentToWbsCc,
                 'info'
             );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Baru: {$pengaduanData['code_pengaduan']}",
+                "Anda ditugaskan sebagai CC untuk pengaduan {$pengaduanData['code_pengaduan']}",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
         }
+
+        // Send notification to pelapor if they have user account
+      
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Pengaduan Ditugaskan ke CC",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditugaskan ke tim CC",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
     }
 
     /**
@@ -478,7 +605,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA WBS CCO (Tugas Baru)
-        $wbsCcoEmails = $this->getEmailsByRoleId(self::ROLE_WBS_CCO);
+        $wbsCcoUsers = $this->getUsersByRoleId(self::ROLE_WBS_CCO);
         $contentToWbsCco = "
             <h3>🔍 TUGAS BARU - Pengaduan dari WBS Internal</h3>
             <p>Anda ditugaskan sebagai CCO untuk menangani pengaduan berikut:</p>
@@ -499,14 +626,35 @@ class PengaduanEmailService
             <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
         ";
 
-        foreach ($wbsCcoEmails as $email) {
+        foreach ($wbsCcoUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas CCO: Pengaduan {$pengaduanData['code_pengaduan']}",
                 $contentToWbsCco,
                 'info'
             );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Baru: {$pengaduanData['code_pengaduan']}",
+                "Anda ditugaskan sebagai CCO untuk pengaduan {$pengaduanData['code_pengaduan']}",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
         }
+
+        
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Pengaduan Ditugaskan ke CCO",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditugaskan ke tim CCO",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
     }
 
     /**
@@ -536,7 +684,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA WBS FORWARD (Tugas Baru)
-        $wbsFwdEmails = $this->getEmailsByRoleId(self::ROLE_WBS_FORWARD);
+        $wbsFwdUsers = $this->getUsersByRoleId(self::ROLE_WBS_FORWARD);
         $contentToWbsFwd = "
             <h3>↪️ TUGAS BARU - Pengaduan Diteruskan dari WBS Internal</h3>
             <p>Anda ditugaskan untuk menangani pengaduan yang diteruskan berikut:</p>
@@ -561,12 +709,36 @@ class PengaduanEmailService
             </div>
         ";
 
-        foreach ($wbsFwdEmails as $email) {
+        foreach ($wbsFwdUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas Forward: Pengaduan {$pengaduanData['code_pengaduan']}",
                 $contentToWbsFwd,
                 'info'
+            );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Baru: {$pengaduanData['code_pengaduan']}",
+                "Anda ditugaskan untuk menangani pengaduan {$pengaduanData['code_pengaduan']}",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
+        }
+
+        // Send notification to pelapor if they have user account
+        $pelaporUser = User::where('email', $pengaduanData['email_pelapor'])->first();
+        if ($pelaporUser) {
+            NotificationHelper::sendToUser(
+                $pelaporUser->id,
+                "Pengaduan Diteruskan ke Forward",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah diteruskan ke tim Forward",
+                $pengaduanData['userId'],
+                'complien',
+                2
             );
         }
     }
@@ -577,7 +749,7 @@ class PengaduanEmailService
      */
     public function sendForwardCompleted($pengaduanData, $catatanDariForward = '')
     {
-        $wbsIntEmails = $this->getEmailsByRoleId(self::ROLE_WBS_INTERNAL);
+        $wbsIntUsers = $this->getUsersByRoleId(self::ROLE_WBS_INTERNAL);
         $contentToWbsInt = "
             <h3>Tugas Forward Selesai</h3>
             <p>Tim Forward telah menyelesaikan tugas untuk pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong>.</p>
@@ -597,14 +769,36 @@ class PengaduanEmailService
             <p><strong>Data telah kembali ke WBS Internal untuk tindakan selanjutnya.</strong></p>
         ";
 
-        foreach ($wbsIntEmails as $email) {
+        foreach ($wbsIntUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Forward Selesai: Pengaduan {$pengaduanData['code_pengaduan']}",
                 $contentToWbsInt,
                 'info'
             );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Forward Selesai",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah selesai diproses oleh Forward",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
         }
+
+        // Send notification to pelapor if they have user account
+        
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Update Pengaduan",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah selesai diproses oleh tim Forward",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
     }
 
     /**
@@ -642,7 +836,7 @@ class PengaduanEmailService
         );
 
         // 2. EMAIL KE SEMUA USER ROLE TERSEBUT (Notifikasi tugas selesai)
-        $roleEmails = $this->getEmailsByRoleId($roleId);
+        $roleUsers = $this->getUsersByRoleId($roleId);
         $contentToRoleTeam = "
             <h3>Tugas Selesai - Pengaduan Ditolak</h3>
             <p>Pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditolak oleh kolega Anda di tim {$roleName}.</p>
@@ -655,14 +849,36 @@ class PengaduanEmailService
             <p><em>Pengaduan ini telah ditutup.</em></p>
         ";
 
-        foreach ($roleEmails as $email) {
+        foreach ($roleUsers as $user) {
+            // Send email
             $this->sendNotification(
-                $email,
+                $user->email,
                 "Tugas Selesai: Pengaduan {$pengaduanData['code_pengaduan']} Ditolak",
                 $contentToRoleTeam,
                 'info'
             );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Selesai: Pengaduan Ditolak",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh tim {$roleName}",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            );
         }
+
+        // Send notification to pelapor if they have user account
+     
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Pengaduan Ditolak",
+                "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh tim {$roleName}. Alasan: {$alasanReject}",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
     }
 
     /**
@@ -688,11 +904,25 @@ class PengaduanEmailService
             <p><em>Terima kasih telah menggunakan layanan pengaduan kami.</em></p>
         ";
 
-        return $this->sendNotification(
+        // Send email
+        $emailResult = $this->sendNotification(
             $pengaduanData['email_pelapor'], 
             'Pengaduan Selesai - ' . $pengaduanData['code_pengaduan'],
             $contentToPelapor, 
             'success'
         );
+
+        // Send push notification to pelapor if they have user account
+      
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Pengaduan Selesai",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah diselesaikan dan disetujui",
+                $pengaduanData['userId'],
+                'complien',
+                2
+            ); 
+
+        return $emailResult;
     }
 }
