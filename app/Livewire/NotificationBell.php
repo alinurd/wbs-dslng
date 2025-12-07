@@ -41,15 +41,15 @@ class NotificationBell extends Component
                 ];
             })->toArray();
 
-            if (empty($this->notifications)) {
-                $this->loadSampleNotifications();
-            }
+            // if (empty($this->notifications)) {
+            //     $this->loadSampleNotifications();
+            // }
 
             $this->unreadCount = collect($this->notifications)->where('read', false)->count();
             
         } catch (\Exception $e) {
             Log::error('Error loading notifications: ' . $e->getMessage());
-            $this->loadSampleNotifications();
+            // $this->loadSampleNotifications();
         }
     }
 
