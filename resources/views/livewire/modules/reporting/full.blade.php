@@ -34,7 +34,7 @@
                 'columns' => [
                     'code_pengaduan' => 'Kode Tracking',
                     'user_id' => 'Username/Nama',
-                    'perihal' => 'Perihal',
+                    // 'perihal' => 'Perihal',
                     'jenis_pengaduan_id' => 'Jenis Pelanggaran',
                     'tanggal_pengaduan' => 'Tanggal Aduan',
                     'complien_progress' => 'Progress Status',
@@ -102,17 +102,17 @@
                         })->toArray(),
                     'placeholder' => 'Semua Jenis Pelanggaran',
                 ],
-                [
-                    'type' => 'select',
-                    'label' => 'Saluran Aduan',
-                    'model' => 'filters.saluran_id',
-                    'options' => collect($saluranList)->mapWithKeys(function ($p) {
-                            return [
-                                $p['id'] => $p['data'] ?? ($p['data_id'] ?? ($p['data_en'] ?? 'No Data')),
-                            ];
-                        })->toArray(),
-                    'placeholder' => 'Semua Saluran Aduan',
-                ],
+                // [
+                //     'type' => 'select',
+                //     'label' => 'Saluran Aduan',
+                //     'model' => 'filters.saluran_id',
+                //     'options' => collect($saluranList)->mapWithKeys(function ($p) {
+                //             return [
+                //                 $p['id'] => $p['data'] ?? ($p['data_id'] ?? ($p['data_en'] ?? 'No Data')),
+                //             ];
+                //         })->toArray(),
+                //     'placeholder' => 'Semua Saluran Aduan',
+                // ],
                 [
                     'type' => 'select',
                     'label' => 'WBS Forward (Optional)',

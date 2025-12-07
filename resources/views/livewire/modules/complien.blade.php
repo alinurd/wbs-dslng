@@ -38,7 +38,7 @@
     'columns' => [
         'code_pengaduan' => 'Kode Tracking',
         'user_id' => 'Username/Nama',
-        'perihal' => 'Perihal',
+        // 'perihal' => 'Perihal',
         'jenis_pengaduan_id' => 'Jenis Pelanggaran',
         'tanggal_pengaduan' => 'Tanggal Aduan',
         'complien_progress' => 'Progress Status',
@@ -83,12 +83,7 @@
                     'model' => 'filters.code_pengaduan',
                     'placeholder' => 'Cari Kode Tracking...',
                 ],
-                [
-                    'type' => 'text',
-                    'label' => 'Perihal',
-                    'model' => 'filters.perihal',
-                    'placeholder' => 'Cari Perihal Tracking...',
-                ],
+                 
                 [
                     'type' => 'select',
                     'label' => 'Jenis Pelanggaran',

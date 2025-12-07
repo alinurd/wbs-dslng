@@ -29,7 +29,7 @@
                 <th  width="80">Username</th>
                 <th  width="90">Nama</th>
                 <th  width="90">Jenis Pelanggaran</th>  
-                <th  width="90">Perihal</th> 
+                {{-- <th  width="90">Perihal</th>  --}}
                 <th  width="90">Uraian</th> 
                 <th  width="90">Kontak Detail</th> 
                 <th  width="90">Perkiraan Waktu Kejadian</th> 
@@ -46,7 +46,7 @@
                 <td class="bg-blue">{{ ($item->pelapor->username ?? '-') }}</td>
                 <td class="bg-blue">{{ ($item->pelapor->name ?? '-') }}</td>
                 <td>{{ $getJenisPelanggaran($item) }}</td>
-                <td>{{ $item->perihal ?? '-' }}</td>
+                {{-- <td>{{ $item->perihal ?? '-' }}</td> --}}
                 <td>{{ $item->uraian ?? '-' }}</td>
                  <td>{{ $item->alamat_kejadian ?? '-' }}</td>
                 <td class="text-center">

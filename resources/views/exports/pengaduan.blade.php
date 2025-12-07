@@ -37,8 +37,8 @@
                 
                 <th rowspan="2" width="70">STATUS</th>
                 <th rowspan="2" width="100">JENIS PELANGGARAN</th>
-                <th rowspan="2" width="150">PERIHAL & URAIAN</th>
-                <th rowspan="2" width="80">ADMIN</th>
+                <th rowspan="2" width="150">URAIAN</th>
+                {{-- <th rowspan="2" width="80">ADMIN</th> --}}
                 <th rowspan="2" width="90">TANGGAL DIBUAT</th>
             </tr>
             <tr>
@@ -104,14 +104,13 @@
                 
                 <!-- Perihal & Uraian -->
                 <td class="wrap-text">
-                    <strong>Perihal:</strong> {{ $item->perihal ?? '-' }}<br>
-                    @if($item->uraian)
+                     @if($item->uraian)
                     <strong>Uraian:</strong> {{ Str::limit($item->uraian, 100) }}
                     @endif
                 </td>
                 
                 <!-- Admin -->
-                <td class="text-center">{{ $item->admin->name ?? 'System' }}</td>
+                {{-- <td class="text-center">{{ $item->admin->name ?? 'System' }}</td> --}}
                 
                 <!-- Tanggal Dibuat -->
                 <td class="text-center">

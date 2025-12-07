@@ -34,7 +34,7 @@
                 'columns' => [
                     'code_pengaduan' => 'Kode Tracking',
                     'user_id' => 'Username/Nama',
-                    'perihal' => 'Perihal',
+                    // 'perihal' => 'Perihal',
                     'jenis_pengaduan_id' => 'Jenis Pelanggaran',
                     'tanggal_pengaduan' => 'Tanggal Aduan',
                     'complien_progress' => 'Progress Status',

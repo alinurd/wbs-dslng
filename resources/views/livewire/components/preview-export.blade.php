@@ -159,9 +159,9 @@
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r"
                                             rowspan="2">Jenis</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r"
-                                            rowspan="2">Perihal</th>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase"
-                                            rowspan="2">Admin</th>
+                                            rowspan="2">Uraian</th>
+                                        {{-- <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase"
+                                            rowspan="2">Admin</th> --}}
                                     </tr>
 
                                     <!-- Baris kedua header (sub-header) -->
@@ -187,7 +187,7 @@
                                         <tr class="hover:bg-blue-50 transition-colors group"
                                             x-show="search === '' || 
                                                     '{{ strtolower($item->code_pengaduan ?? '') }}'.includes(search.toLowerCase()) ||
-                                                    '{{ strtolower($item->perihal ?? '') }}'.includes(search.toLowerCase()) ||
+                                                    '{{ strtolower($item->uraian ?? '') }}'.includes(search.toLowerCase()) ||
                                                     '{{ strtolower($this->getNamaUser($item)) }}'.includes(search.toLowerCase())">
 
                                             <!-- No - Sticky Column -->
@@ -259,20 +259,18 @@
                                                 {{ $this->getJenisPelanggaran($item) }}
                                             </td>
 
-                                            <!-- Perihal -->
+                                            <!-- Uraian -->
                                             <td class="px-4 py-3 text-sm text-gray-900 border-r max-w-xs">
                                                 <div class="space-y-1">
-                                                    <div class="font-medium line-clamp-1 text-gray-900">{{ $item->perihal ?? '-' }}</div>
-                                                    @if ($item->uraian)
-                                                        <div class="text-xs text-gray-600 line-clamp-2">{{ $item->uraian }}</div>
-                                                    @endif
+                                                    <div class="font-medium line-clamp-1 text-gray-900">{{ $item->uraian ?? '-' }}</div>
+                                                     
                                                 </div>
                                             </td>
 
                                             <!-- Admin -->
-                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                            {{-- <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                                                 {{ $item->admin->name ?? 'System' }}
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @empty
                                         <!-- Empty State untuk tidak ada data -->
