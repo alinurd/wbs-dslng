@@ -134,7 +134,7 @@
                             <div class="mt-2 p-2 bg-gray-100 rounded border border-sky-950">
                                 <div class="flex items-center space-x-2">
                                     <i class="fas fa-paperclip text-sky-950 text-xs"></i>
-                                    <span class="text-xs truncate flex-1">
+                                    <span class="text-xs text-sky-950  truncate flex-1">
                                         {{ $message['file']['original_name'] ?? 'Unknown File' }}
                                     </span>
                                     <button
