@@ -38,12 +38,12 @@ class PengaduanEmailService
      */
     public function handleStatusChange($pengaduan, $statusAction, $roleId, $catatan = '', $forwardDestination = null, $userId=null)
     {
-        \Log::info('PengaduanEmailService: Handling status change', [
-            'pengaduan_id' => $pengaduan->id,
-            'status_action' => $statusAction,
-            'role_id' => $roleId,
-            'forward_destination' => $forwardDestination
-        ]);
+        // \Log::info('PengaduanEmailService: Handling status change', [
+        //     'pengaduan_id' => $pengaduan->id,
+        //     'status_action' => $statusAction,
+        //     'role_id' => $roleId,
+        //     'forward_destination' => $forwardDestination
+        // ]);
 
         // Format data untuk email
         $pengaduanData = $this->formatPengaduanData($pengaduan, $userId);

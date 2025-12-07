@@ -459,7 +459,7 @@
 @endif
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('✅ Chat script loaded');
+        // console.log('✅ Chat script loaded');
 
         // Auto scroll ke bottom chat
         function scrollToBottom() {
@@ -483,7 +483,7 @@
             if (chatContainer && chatContainer.hasAttribute('wire:poll') && !pollingPaused) {
                 chatContainer.removeAttribute('wire:poll');
                 pollingPaused = true;
-                console.log('⏸️ Polling paused for mention');
+                // console.log('⏸️ Polling paused for mention');
             }
         }
 
@@ -493,7 +493,7 @@
             if (chatContainer && pollingPaused && !chatContainer.hasAttribute('wire:poll')) {
                 chatContainer.setAttribute('wire:poll.1s', 'loadMessages');
                 pollingPaused = false;
-                console.log('▶️ Polling resumed');
+                // console.log('▶️ Polling resumed');
             }
         }
 
@@ -530,13 +530,13 @@
 
         // Event untuk mention dropdown updated
         Livewire.on('mention-dropdown-updated', () => {
-            console.log('📋 Mention dropdown updated');
+            // console.log('📋 Mention dropdown updated');
             pausePolling();
         });
 
         // Event untuk mention dropdown reset
         Livewire.on('mention-dropdown-reset', () => {
-            console.log('🗑️ Mention dropdown reset');
+            // console.log('🗑️ Mention dropdown reset');
             // Delay sebelum resume polling
             setTimeout(() => {
                 resumePolling();
@@ -545,7 +545,7 @@
 
         // Event untuk set cursor position
         Livewire.on('set-cursor-position', (data) => {
-            console.log('📍 Setting cursor position:', data.position);
+            // console.log('📍 Setting cursor position:', data.position);
             const textarea = document.getElementById('messageInput');
             if (textarea) {
                 setTimeout(() => {
@@ -592,7 +592,7 @@
 
                 if (!isClickInDropdown && !isClickInInput) {
                     // Dispatch event untuk reset mention dropdown
-                    console.log('👆 Click outside, resetting mention');
+                    // console.log('👆 Click outside, resetting mention');
                     Livewire.dispatch('reset-mention-dropdown');
                 }
             }
@@ -603,7 +603,7 @@
             if (e.key === 'Escape') {
                 const mentionDropdown = document.querySelector('.mention-dropdown');
                 if (mentionDropdown && window.getComputedStyle(mentionDropdown).display !== 'none') {
-                    console.log('⎋ Escape pressed, resetting mention');
+                    // console.log('⎋ Escape pressed, resetting mention');
                     Livewire.dispatch('reset-mention-dropdown');
 
                     // Focus ke input
@@ -660,7 +660,7 @@
                         mutation.addedNodes.forEach(function(node) {
                             if (node.classList && node.classList.contains(
                                     'mention-dropdown')) {
-                                console.log('📋 Mention dropdown added');
+                                // console.log('📋 Mention dropdown added');
                                 pausePolling();
                             }
                         });
@@ -671,7 +671,7 @@
                         mutation.removedNodes.forEach(function(node) {
                             if (node.classList && node.classList.contains(
                                     'mention-dropdown')) {
-                                console.log('🗑️ Mention dropdown removed');
+                                // console.log('🗑️ Mention dropdown removed');
                                 setTimeout(() => {
                                     resumePolling();
                                 }, 200);

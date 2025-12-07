@@ -154,7 +154,7 @@
                     pollingTimeDisplay: 10,
 
                     init() {
-                        console.log('Notification bell initialized');
+                        // console.log('Notification bell initialized');
                         this.startPolling(10000);
 
                         this.setupEventListeners();
@@ -172,14 +172,14 @@
                         });
 
                         Livewire.on('notifications-updated', () => {
-                            console.log('Notifications updated event received');
+                            // console.log('Notifications updated event received');
                         });
                     },
 
                     setupTabVisibility() {
                         document.addEventListener('visibilitychange', () => {
                             if (!document.hidden) {
-                                console.log('Tab became visible - refreshing notifications');
+                                // console.log('Tab became visible - refreshing notifications');
                                 @this.loadNotifications();
                             }
                         });
@@ -209,7 +209,7 @@
                     },
 
                     updatePollingBasedOnState() {
-                        console.log('Dropdown state:', this.isOpen ? 'OPEN' : 'CLOSED');
+                        // console.log('Dropdown state:', this.isOpen ? 'OPEN' : 'CLOSED');
 
                         if (this.isOpen) {
                             this.stopAllPolling();
@@ -226,10 +226,10 @@
                         }
 
                         this.pollingTimeDisplay = interval / 1000;
-                        console.log('Starting normal polling:', interval + 'ms');
+                        // console.log('Starting normal polling:', interval + 'ms');
 
                         this.pollingInterval = setInterval(() => {
-                            console.log('Polling (normal) - Loading notifications...');
+                            // console.log('Polling (normal) - Loading notifications...');
                             @this.loadNotifications();
                         }, interval);
                     },
@@ -240,10 +240,10 @@
                         }
 
                         this.pollingTimeDisplay = 5;
-                        console.log('Starting fast polling: 5000ms');
+                        // console.log('Starting fast polling: 5000ms');
 
                         this.fastPollingInterval = setInterval(() => {
-                            console.log('Polling (fast) - Loading notifications...');
+                            // console.log('Polling (fast) - Loading notifications...');
                             @this.loadNotifications();
                         }, 5000);
                     },
@@ -257,7 +257,7 @@
                             clearInterval(this.fastPollingInterval);
                             this.fastPollingInterval = null;
                         }
-                        console.log('All polling stopped');
+                        // console.log('All polling stopped');
                     },
 
                     fadeOutNotification(notificationId) {
@@ -282,12 +282,12 @@
                                 }
                             }, 300);
 
-                            console.log('Notification faded out:', notificationId);
+                            // console.log('Notification faded out:', notificationId);
                         }
                     },
 
                     markAsReadHandler(notificationId) {
-                        console.log('Mark as read handler called:', notificationId);
+                        // console.log('Mark as read handler called:', notificationId);
                         @this.markAsRead(notificationId);
                         this.fadeOutNotification(notificationId);
                     }
@@ -305,7 +305,7 @@
                     const alpineComponent = Alpine.$data(document.querySelector(
                         '[x-data="notificationBell()"]'));
                     if (!alpineComponent || !alpineComponent.pollingInterval) {
-                        console.log('Starting fallback polling...');
+                        // console.log('Starting fallback polling...');
 
                         let pollingInterval = setInterval(() => {
                             if (window.Livewire && window.Livewire.find('notification-bell')) {

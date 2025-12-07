@@ -47,7 +47,7 @@ class EmailService
                 'Config ID: ' . ($config['id'] ?? 'custom')
             );
 
-            Log::info("Test email sent successfully to: {$to} using custom config");
+            // Log::info("Test email sent successfully to: {$to} using custom config");
             return true;
             
         } catch (\Exception $e) {
