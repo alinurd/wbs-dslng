@@ -179,7 +179,7 @@ class LogApprovalIndex extends Root
 
         $detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
 
-        $this->openChat($id, $detailData, $detailTitle);
+        $this->openChat($id, $detailData, $detailTitle, $record->code_pengaduan);
         $this->loadUploadedFiles();
     }
 

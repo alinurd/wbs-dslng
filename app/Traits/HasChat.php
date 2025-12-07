@@ -10,6 +10,7 @@ trait HasChat
 {
     // Properties untuk chat
     public $trackingId = null;
+    public $codePengaduan = null;
     public $newMessage = '';
     public $messages = [];
     public $showComment = false;
@@ -34,9 +35,10 @@ trait HasChat
     /**
      * Open chat modal
      */
-    public function openChat($id, $detailData = [], $detailTitle = '')
+    public function openChat($id, $detailData = [], $detailTitle = '', $codePengaduan='')
     {
         $this->trackingId = $id;
+        $this->codePengaduan = $codePengaduan;
         $this->showComment = true;
         
         if (!empty($detailData)) {
@@ -497,17 +499,11 @@ trait HasChat
             $notificationData = [
                 'sender_id' => auth()->id(),
                 'to' => $mention['user_id'],
-                'type' => 'chat_mention',
-                'type_text' => 'Mention in Chat',
+                'type' => 1,
+                'type_text' => 'chat',
                 'is_read' => 0,
                 'title' => 'Anda disebutkan dalam chat',
-                'message' => auth()->user()->name . ' menyebutkan Anda dalam chat pengaduan #' . $trackingId,
-                'metadata' => json_encode([
-                    'tracking_id' => $trackingId,
-                    'message_id' => $messageId,
-                    'mentioned_email' => $mention['email'],
-                    'original_message' => substr($message, 0, 200)
-                ]),
+                'message' => auth()->user()->name . ' menyebutkan Anda dalam chat pengaduan #' . $this->codePengaduan,
                 'created_at' => now(),
                 'updated_at' => now()
             ];
