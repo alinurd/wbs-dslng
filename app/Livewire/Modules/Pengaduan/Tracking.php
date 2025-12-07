@@ -133,14 +133,14 @@ return $filterArray;
             'Status' => $record->status ? 'Aktif' : 'Nonaktif',
             'Lokasi' => $record->alamat_kejadian ?? 'Tidak diketahui',
             'Deskripsi' => $record->uraian ?? 'Tidak ada deskripsi',
-             'status_ex' => [
-                'name' => $statusInfo->data_id ?? 'Menunggu Review',
-                'color' => $statusInfo->param_str ?? 'yellow',
-            ],
-             'sts_fwd' => [
-                'id' => $record->sts_fwd,
-                'data' => $this->getStatusInfo(2, 0)
-            ],
+            //  'status_ex' => [
+            //     'name' => $statusInfo->data_id ?? 'Menunggu Review',
+            //     'color' => $statusInfo->param_str ?? 'yellow',
+            // ],
+            //  'sts_fwd' => [
+            //     'id' => $record->sts_fwd,
+            //     'data' => $this->getStatusInfo(2, 0)
+            // ],
         ];
 
         

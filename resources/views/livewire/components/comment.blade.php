@@ -92,81 +92,86 @@
                         </div>
 
                         <!-- Messages Container -->
-                        <div class="flex-1 p-6 overflow-y-auto bg-gray-50" id="chatMessages"
-                            @if (!$showMentionDropdown) wire:poll.1s="loadMessages" @endif
+                        <!-- Ganti bagian chat messages dengan kode berikut: -->
+<div class="flex-1 p-6 overflow-y-auto bg-gray-50" id="chatMessages"
+    @if (!$showMentionDropdown) wire:poll.1s="loadMessages" @endif
                             style="max-height: 400px;">
-
-                            @if (isset($messages) && count($messages) > 0)
-                                <div class="space-y-4">
-                                    @foreach ($messages as $message)
-                                        <div class="flex {{ $message['is_own'] ? 'justify-end' : 'justify-start' }}">
-                                            <div
-                                                class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg 
-                        {{ $message['is_own']
-                            ? 'bg-sky-950 text-white rounded-br-none'
+    
+    @if (isset($messages) && count($messages) > 0)
+        <div class="space-y-4">
+            @foreach ($messages as $message)
+                <div class="flex {{ $message['is_own'] ? 'justify-end' : 'justify-start' }}">
+                    <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg
+                        {{ $message['is_own'] 
+                            ? 'bg-sky-950 text-white rounded-br-none' 
                             : 'bg-white border border-gray-200 rounded-bl-none' }}">
+                        
+                        @if (!$message['is_own'])
+                            <p class="text-xs font-semibold text-gray-600 mb-1">
+                                #{{ $message['sender'] }}
+                            </p>
+                        @endif
 
-                                                @if (!$message['is_own'])
-                                                    <p class="text-xs font-semibold text-gray-600 mb-1">
-                                                        {{ $message['sender'] }}
-                                                    </p>
-                                                @endif
+                        <p class="text-sm text-wrap break-words ">
+                            @php
+                                $messageText = $message['message'];
+                                // Highlight mentions
+                                $messageText = preg_replace_callback(
+                                    '/@([a-zA-Z0-9_]+)/',
+                                    function ($matches) {
+                                        return '<span class="text-blue-600 font-medium bg-blue-50 px-1 py-0.5 rounded">@' .
+                                            $matches[1] .
+                                            '</span>';
+                                    },
+                                    htmlspecialchars($messageText),
+                                );
+                            @endphp
+                            {!! nl2br($messageText) !!}
+                        </p>
 
-                                                <p class="text-sm">
-                                                    @php
-                                                        $messageText = $message['message'];
-                                                        // Highlight mentions
-                                                        $messageText = preg_replace_callback(
-                                                            '/@([a-zA-Z0-9_]+)/',
-                                                            function ($matches) {
-                                                                return '<span class=" text-blue-300 rounded underline underline-offset-1">@' .
-                                                                    $matches[1] .
-                                                                    '</span>';
-                                                            },
-                                                            htmlspecialchars($messageText),
-                                                        );
-                                                    @endphp
-                                                    {!! nl2br($messageText) !!}
-                                                </p>
-
-                                                <!-- File Attachment in Message -->
-                                                @if (isset($message['file']) && $message['file'])
-                                                    <div class="mt-2 p-2 bg-white/20 rounded border border-white/30">
-                                                        <div class="flex items-center space-x-2">
-                                                            <i class="fas fa-paperclip text-xs"></i>
-                                                            <span class="text-xs truncate flex-1">
-                                                                {{ $message['file']['original_name'] ?? 'Unknown File' }}
-                                                            </span>
-                                                            <button
-                                                                wire:click="downloadMessageFile('{{ $message['id'] }}')"
-                                                                class="text-xs hover:underline">
-                                                                Download
-                                                            </button>
-                                                        </div>
-                                                        @if (isset($message['file']['formatted_size']))
-                                                            <p class="text-xs opacity-70 mt-1">
-                                                                {{ $message['file']['formatted_size'] }}
-                                                            </p>
-                                                        @endif
-                                                    </div>
-                                                @endif
-
-                                                <p
-                                                    class="text-xs mt-1 opacity-70 {{ $message['is_own'] ? 'text-blue-100' : 'text-gray-500' }}">
-                                                    {{ $message['time'] }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    @endforeach
+                        <!-- File Attachment in Message -->
+                        @if (isset($message['file']) && $message['file'])
+                            <div class="mt-2 p-2 bg-gray-100 rounded border border-gray-300">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-paperclip text-gray-500 text-xs"></i>
+                                    <span class="text-xs truncate flex-1">
+                                        {{ $message['file']['original_name'] ?? 'Unknown File' }}
+                                    </span>
+                                    <button
+                                        wire:click="downloadMessageFile('{{ $message['id'] }}')"
+                                        class="text-xs text-blue-600 hover:underline hover:text-blue-800">
+                                        Download
+                                    </button>
                                 </div>
-                            @else
-                                <div class="text-center text-gray-500 py-8">
-                                    <i class="fas fa-comments text-4xl mb-3 opacity-30"></i>
-                                    <p>Belum ada pesan</p>
-                                    <p class="text-sm">Mulai percakapan...</p>
-                                </div>
-                            @endif
-                        </div>
+                                @if (isset($message['file']['formatted_size']))
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        {{ $message['file']['formatted_size'] }}
+                                    </p>
+                                @endif
+                            </div>
+                        @endif
+
+                        <p class="text-xs mt-1 {{ $message['is_own'] ? 'text-blue-200' : 'text-gray-500' }}">
+                            {{ $message['time'] }}
+                        </p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="flex flex-col items-center justify-center h-full text-gray-400">
+            <div class="mb-4">
+                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                    </path>
+                </svg>
+            </div>
+            <p class="text-lg font-medium text-gray-500">Belum ada pesan</p>
+            <p class="text-sm text-gray-400 mt-1">Mulai percakapan...</p>
+        </div>
+    @endif
+</div>
 
                         <!-- Mention Dropdown -->
                         @if ($showMentionDropdown && count($mentionUsers) > 0)
