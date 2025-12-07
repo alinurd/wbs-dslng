@@ -178,7 +178,7 @@
 
                     <div class="flex items-center gap-4">
                         {{-- Notification Bell --}}
-                        {{-- <livewire:notification-bell /> --}}
+                        <livewire:notification-bell />
 
                         {{-- User Info & Logout --}}
                         <div class="flex items-center gap-3 border-l border-gray-200 pl-4">

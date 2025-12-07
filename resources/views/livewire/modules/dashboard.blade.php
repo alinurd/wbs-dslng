@@ -17,7 +17,7 @@
         <!-- Welcome Banner dengan Filter -->
         <div
             class="bg-gradient-to-r from-[#0077C8] to-[#003B73] rounded-2xl p-8 text-white mb-6 shadow-lg relative overflow-hidden">
-            <div class="relative z-10">
+            <div class="relative z-100">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                     <div class="flex-1">
                         <h1 class="text-3xl font-bold mb-2">Selamat Datang, {{ $user->name }}! 👋</h1>
