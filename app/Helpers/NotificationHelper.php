@@ -63,7 +63,7 @@ class NotificationHelper
     /**
      * Kirim notifikasi ke user tertentu
      */
-    public static function sendToUser(int $to, string $title, string $message, ?int $sender = null, $type_text='chat', $type=1): bool
+    public static function sendToUser(int $to, string $title, string $message, ?int $sender = null, $type_text='chat', $type=1 , $trackingId=0): bool
     {
         try {
             $sender = $sender ?? auth()->id(); 
@@ -72,6 +72,7 @@ class NotificationHelper
 $notificationId = DB::table('notifications')->insertGetId([
     'sender_id' => $sender,
     'to' => $to,
+    'ref_id' => $trackingId,
     'type' => $type, // chat
     'type_text' => $type_text,
     'is_read' => 0,

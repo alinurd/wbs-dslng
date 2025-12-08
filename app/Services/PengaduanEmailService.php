@@ -125,8 +125,9 @@ class PengaduanEmailService
      * Format pengaduan data for email
      */
     private function formatPengaduanData($pengaduan, $userId)
-    {
+    { 
         return [
+            'id' => $pengaduan->id,
             'code_pengaduan' => $pengaduan->code_pengaduan,
             'pelapor_id' => $pengaduan->user_id,
             'tanggal_pengaduan' => $pengaduan->tanggal_pengaduan,
@@ -231,7 +232,7 @@ class PengaduanEmailService
             </div>
         ";
 
-                $pelaporUser = User::where('id', $pengaduanData['user_id'])->first();
+                $pelaporUser = User::where('id', $pengaduanData['pelapor_id'])->first();
 
 
         foreach ($wbsEksUsers as $user) {
@@ -250,7 +251,8 @@ class PengaduanEmailService
                 "{$pelaporUser->name} telah membuat pengaduan pengaduan baru yang perlu ditinjau",
                 $pelaporUser->id,
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -262,7 +264,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah diterima dan sedang ditinjau",
                 $pelaporUser->id,
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         // }
     }
@@ -312,7 +315,7 @@ class PengaduanEmailService
 
             <p><em>Pengaduan ini telah ditutup.</em></p>
         ";
-                        $pelaporUser = User::where('id', $pengaduanData['user_id'])->first();
+                        $pelaporUser = User::where('id', $pengaduanData['pelapor_id'])->first();
 
                         
 
@@ -332,7 +335,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh WBS Eksternal",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -344,7 +348,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh WBS Eksternal. Alasan: {$alasanReject}",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
     }
 
@@ -411,7 +416,8 @@ class PengaduanEmailService
                 "Ada pengaduan baru yang perlu ditindaklanjuti dari WBS Eksternal",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         } 
             NotificationHelper::sendToUser(
@@ -420,7 +426,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah disetujui WBS Eksternal dan diproses ke WBS Internal",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
     }
 
@@ -486,7 +493,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh WBS Internal",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -498,7 +506,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh WBS Internal. Alasan: {$alasanReject}",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
     }
 
@@ -567,7 +576,8 @@ class PengaduanEmailService
                 "Anda ditugaskan sebagai CC untuk pengaduan {$pengaduanData['code_pengaduan']}",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -579,7 +589,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah ditugaskan ke tim CC",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
     }
 
@@ -647,7 +658,8 @@ class PengaduanEmailService
                 "Anda ditugaskan sebagai CCO untuk pengaduan {$pengaduanData['code_pengaduan']}",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -658,7 +670,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah ditugaskan ke tim CCO",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
     }
 
@@ -730,7 +743,8 @@ class PengaduanEmailService
                 "Anda ditugaskan untuk menangani pengaduan {$pengaduanData['code_pengaduan']}",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -743,7 +757,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah diteruskan ke tim Forward",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
     }
@@ -790,7 +805,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah selesai diproses oleh Forward",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -802,7 +818,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah selesai diproses oleh tim Forward",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
     }
 
@@ -870,7 +887,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh tim {$roleName}",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             );
         }
 
@@ -882,7 +900,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh tim {$roleName}. Alasan: {$alasanReject}",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
     }
 
@@ -925,7 +944,8 @@ class PengaduanEmailService
                 "Pengaduan {$pengaduanData['code_pengaduan']} telah diselesaikan dan disetujui",
                 $pengaduanData['userId'],
                 'complien',
-                2
+                2,
+                $pengaduanData['id']
             ); 
 
         return $emailResult;

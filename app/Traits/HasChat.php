@@ -498,6 +498,7 @@ trait HasChat
         foreach ($mentions as $mention) {
             $notificationData = [
                 'sender_id' => auth()->id(),
+                'ref_id' => $trackingId,
                 'to' => $mention['user_id'],
                 'type' => 1,
                 'type_text' => 'chat',

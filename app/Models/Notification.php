@@ -13,6 +13,7 @@ class Notification extends Model
         'sender_id',
         'to', 
         'type',
+        'ref_id',
         'type_text',
         'is_read',   
         'title',

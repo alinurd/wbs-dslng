@@ -248,10 +248,24 @@ public function markAllAsRead()
 
 public function runComment($notificationId)
 { 
+    $n=Notification::where('id', $notificationId)->first();
+    // $p=Pengaduan::where('id', $notificationId)->first();
+    //  $this->markAsRead($notificationId);
+    if($n->type==1){
+        $this->comment($n->ref_id);
+    }
+    if($n->type==2){
+                $this->comment($n->ref_id);
+
+        $this->notify('info', 'form approve');
+    }
+    if($n->type==3){
+        $this->notify('info', 'Notification berhasil ditandai sudah dibaca');
+    }
         // $this->notify('error', 'this coment:'. $notificationId);
-$this->markAsRead($notificationId);
+
           
-             $this->comment(50);
+             
 }
 
 public function comment($id)
@@ -427,6 +441,17 @@ public function closeDetailModal()
         ];
     }
     
+
+
+     public function notify($type, $message, $errMessage = '')
+    {
+        // \dd($errMessage);
+        $this->dispatch('notify', [
+            'type' => $type,
+            'message' => $message,
+            'errMessage' => $errMessage
+        ]);
+    }
     public function render()
     {
         return view('livewire.modules.notification-bell');
