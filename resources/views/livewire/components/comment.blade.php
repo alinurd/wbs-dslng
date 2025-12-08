@@ -119,7 +119,7 @@
                                 $messageText = preg_replace_callback(
                                     '/@([a-zA-Z0-9_]+)/',
                                     function ($matches) {
-                                        return '<span class="text-blue-600 font-medium bg-blue-50 px-1 py-0.5 rounded">@' .
+                                        return '<span class="text-blue-600 font-mediumpx-1 py-0.5 rounded">@' .
                                             $matches[1] .
                                             '</span>';
                                     },
