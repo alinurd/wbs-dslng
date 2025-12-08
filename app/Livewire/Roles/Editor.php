@@ -1,6 +1,7 @@
 <?php 
 namespace App\Livewire\Roles;
 
+use App\Models\Menu;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Spatie\Permission\Models\Permission;
@@ -36,6 +37,12 @@ class Editor extends Component
 
         $this->selectedPermissions = $this->role->permissions->pluck('name')->toArray();
         $this->groupPermissions();
+    }
+
+    public function getMenuName($slug)
+    {
+        $m = Menu::where('slug', $slug)->get()->first();
+        return ($m['name'] ?? $slug);
     }
 
     public function groupPermissions()

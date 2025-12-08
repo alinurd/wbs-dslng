@@ -1,38 +1,41 @@
 <div>
     <div class="bg-white shadow rounded p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-semibold">Edit Role: {{ $role->name }}</h2>
+            <h2 class="text-2xl font-semibold"></h2>
             
             <div class="w-64">
-                <input 
-                    type="text" 
-                    wire:model.live="search"
-                    placeholder="Search permissions..." 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
+                
             </div>
         </div>
 
         <!-- Statistics -->
         <div class="grid grid-cols-4 gap-4 mb-6">
-            <div class="bg-blue-50 p-4 rounded-lg">
-                <div class="text-blue-600 font-semibold">Total Permissions</div>
-                <div class="text-2xl font-bold">{{ count($permissions) }}</div>
+            <div class="">
+                <div class="text-blue-600 font-semibold">Cari</div>
+                <input 
+                    type="text" 
+                    wire:model.live="search"
+                    placeholder="Search..." 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+
             </div>
+            <div class="">
+                <div class="text-blue-600 font-semibold">Edit Role:</div>
+                <div class="text-2xl font-bold">
+                    {{ $role->name }}
+                </div>
+            </div>
+
             <div class="bg-green-50 p-4 rounded-lg">
                 <div class="text-green-600 font-semibold">Selected</div>
                 <div class="text-2xl font-bold">{{ count($selectedPermissions) }}</div>
             </div>
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <div class="text-gray-600 font-semibold">Modules</div>
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <div class="text-blue-600 font-semibold">Modules</div>
                 <div class="text-2xl font-bold">{{ count($groupedPermissions) }}</div>
             </div>
-            <div class="bg-purple-50 p-4 rounded-lg">
-                <div class="text-purple-600 font-semibold">Coverage</div>
-                <div class="text-2xl font-bold">
-                    {{ count($permissions) > 0 ? round((count($selectedPermissions) / count($permissions)) * 100) : 0 }}%
-                </div>
-            </div>
+            
         </div>
 
         <div class="overflow-x-auto">
@@ -44,13 +47,14 @@
                         <th class="border border-gray-200 px-4 py-3 text-center">CREATE</th>
                         <th class="border border-gray-200 px-4 py-3 text-center">EDIT</th>
                         <th class="border border-gray-200 px-4 py-3 text-center">DELETE</th>
-                        <th class="border border-gray-200 px-4 py-3 text-center">INDEX</th>
+                        {{-- <th class="border border-gray-200 px-4 py-3 text-center">INDEX</th> --}}
                         <th class="border border-gray-200 px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($groupedPermissions as $group)
-                        @php
+                        @php 
+                        
                             $module = $group['module'];
                             $modulePermissions = $group['permission_names'];
                             $selectedCount = count(array_intersect($modulePermissions, $selectedPermissions));
@@ -58,18 +62,17 @@
                             $isAllSelected = $selectedCount === $totalCount;
                             $isPartialSelected = $selectedCount > 0 && $selectedCount < $totalCount;
                         @endphp
-                        
                         <tr class="hover:bg-gray-50 {{ $isAllSelected ? 'bg-green-50' : '' }}">
                             <td class="border border-gray-200 px-4 py-3 font-semibold text-gray-700">
                                 <div class="flex items-center justify-between">
-                                    <span>{{ ucfirst(str_replace('-', ' ', $module)) }}</span>
+                                    <span>{{ ucfirst(str_replace('-', ' ', $this->getMenuName($group['module']))) }}</span>
                                     @if($isPartialSelected)
                                         <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Partial</span>
                                     @endif
-                                </div>
+                                </div> 
                             </td>
 
-                            @foreach (['view', 'create', 'edit', 'delete', 'index'] as $action)
+                            @foreach (['view', 'create', 'edit', 'delete'] as $action)
                                 @php
                                     $permName = $module . '.' . $action;
                                     $permissionExists = in_array($permName, $modulePermissions);
@@ -126,9 +129,9 @@
             </a>
             
             <div class="flex space-x-3">
-                <button wire:click="$refresh" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded">
+                {{-- <button wire:click="$refresh" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded">
                     Refresh
-                </button>
+                </button> --}}
                 
                 <a href="{{ route('roles.index') }}" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded">
                     Selesai
