@@ -266,26 +266,25 @@ class NotificationBell extends Root
     public function runComment($notificationId)
     {
         $n = Notification::where('id', $notificationId)->first();
+        if (!is_numeric($n->ref_id)) {
+            $p = Pengaduan::where('code_pengaduan', $n->ref_id)->first();
+            $n->ref_id = $p->id;
+        }
         $this->markAsRead($notificationId);
         if ($n->type == 1) {
             $this->comment($n->ref_id);
         }
         if ($n->type == 2) {
-                                $roleId = (int)($this->userInfo['role']['id'] ?? 0);
- if($roleId ==3){
-    $this->viewPengaduan($n->ref_id);
-}else{
-    $this->updateStatus($n->ref_id);
-}
-
-         }
+            $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+            if ($roleId == 3) {
+                $this->viewPengaduan($n->ref_id);
+            } else {
+                $this->updateStatus($n->ref_id);
+            }
+        }
         if ($n->type == 3) {
             $this->notify('info', 'Notification berhasil ditandai sudah dibaca');
         }
-        // $this->notify('error', 'this coment:'. $notificationId);
-
-
-
     }
     public function setAction($action, $id = null)
     {
@@ -705,13 +704,13 @@ class NotificationBell extends Root
 
 
 
-      public function viewPengaduan($id)
+    public function viewPengaduan($id)
     {
-             $this->getPengaduanById($id);
+        $this->getPengaduanById($id);
         $this->detailTitle = "Detail " . $this->title;
         $this->showDetailModal = true;
     }
-    
+
     public function closeChat()
     {
         parent::closeChat(); // Panggil parent dari HasChat

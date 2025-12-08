@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Helpers\NotificationHelper;
+use App\Models\Pengaduan;
 use App\Models\User;
 use App\Services\EmailService;
 use Spatie\Permission\Models\Role;
@@ -185,6 +186,7 @@ class PengaduanEmailService
      */
     public function sendNewPengaduanNotifications($pengaduanData, $userId = null)
     {
+        // dd($pengaduanData);
         // Set user ID untuk audit log jika ada
         if ($userId) {
             $this->emailService->setUserId($userId);
@@ -233,8 +235,9 @@ class PengaduanEmailService
         ";
 
                 $pelaporUser = User::where('id', $userId)->first();
+//                 $pId = Pengaduan::where('code_pengaduan', $pengaduanData['code_pengaduan'])->first();
 
-
+// dd($pId);
         foreach ($wbsEksUsers as $user) {
             // Send email
             $this->sendNotification(
@@ -247,12 +250,12 @@ class PengaduanEmailService
             // Send push notification
             NotificationHelper::sendToUser(
                 $user->id,
-                "Tugas Baru | ID: {$pengaduanData['code_pengaduan']}",
+                "Tugas Baru ID: {$pengaduanData['code_pengaduan']}",
                 "{$pelaporUser->name} telah membuat pengaduan pengaduan baru yang perlu ditinjau",
                 $pelaporUser->id,
                 'complien',
                 2,
-                $pengaduanData['id']
+                $pengaduanData['code_pengaduan']
             );
         }
 
@@ -265,7 +268,7 @@ class PengaduanEmailService
                 $pelaporUser->id,
                 'complien',
                 2,
-                $pengaduanData['id']
+                $pengaduanData['code_pengaduan']            
             );
         // }
     }
