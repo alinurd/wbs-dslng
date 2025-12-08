@@ -1372,6 +1372,7 @@ public function getPengaduanById($id){
             $user->update([
                 'email_verified_at' => now(),
                 'status' => 1,
+                'is_active' => 1,
                 'code_verif' => null
             ]);
 
@@ -1389,7 +1390,8 @@ public function getPengaduanById($id){
                 'old_values' => json_encode(['email_verified_at' => null]),
                 'new_values' => json_encode([
                     'email_verified_at' => now()->toDateTimeString(),
-                    'status' => 1
+                    'status' => 1,
+                    'is_active' => 1
                 ]),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
