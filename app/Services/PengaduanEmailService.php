@@ -232,7 +232,7 @@ class PengaduanEmailService
             </div>
         ";
 
-                $pelaporUser = User::where('id', $pengaduanData['pelapor_id'])->first();
+                $pelaporUser = User::where('id', $userId)->first();
 
 
         foreach ($wbsEksUsers as $user) {
