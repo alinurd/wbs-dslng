@@ -33,8 +33,8 @@
                     'action' => 'Action',
                     'ip_address' => 'Ip Address',
                     'created_at' => 'Access Time',
-                     'new_values' => 'New values',
-                     'old_values' => 'Old Values',
+                    //  'new_values' => 'New values',
+                    //  'old_values' => 'Old Values',
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -80,7 +80,7 @@
         ])
 
         <!-- Detail Modal -->
-        @include('livewire.components.detail-modal', [
+        @include('livewire.components.detail-modal-trail', [
             'show' => $showDetailModal,
             'title' => $detailTitle,
             'data' => $detailData,

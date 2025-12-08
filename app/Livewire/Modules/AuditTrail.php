@@ -102,24 +102,146 @@ protected function isValidFilterValue($value): bool
         return $record->user->name ?? $record->user->name ?? 'N/A';
     }
     
-    public function view($id)
-    {
-        can_any([strtolower($this->modul).'.view']);
-        
-        $record = $this->model::findOrFail($id);
+   public function view($id)
+{
+    can_any([strtolower($this->modul) . '.view']);
+    
+    $record = $this->model::findOrFail($id);
 
-        $this->detailData = [
-            'Action' => $record->action,
-            'tbl/module' => $record->table_name,
-            'created_at' => $record->created_at->format('d/m/Y H:i'),
-            'Data New' =>$record->new_values, 
-            'Data Old' => $record->old_values, 
-            'Ip' => $record->ip_address,  
-        ];
-        
-        $this->detailTitle = "Detail " . $this->title;
-        $this->showDetailModal = true;
+    // Format action labels
+    $actionMap = [
+        'created' => ['label' => 'Dibuat', 'color' => 'success', 'icon' => 'plus'],
+        'updated' => ['label' => 'Diperbarui', 'color' => 'primary', 'icon' => 'edit'],
+        'deleted' => ['label' => 'Dihapus', 'color' => 'danger', 'icon' => 'trash'],
+    ];
+    
+    $actionInfo = $actionMap[$record->action] ?? 
+                 ['label' => ucfirst($record->action), 'color' => 'secondary', 'icon' => 'history'];
+
+    $this->detailData = [
+        'common' => [
+            'Action' => [
+                'value' => $record->action,
+                'label' => $actionInfo['label'],
+                'color' => $actionInfo['color'],
+                'icon' => $actionInfo['icon'],
+            ],
+            'Tabel/Module' => $record->table_name,
+            'User' => [
+                'value' => $record->user ? $record->user->name : 'System',
+                'email' => $record->user ? $record->user->email : null,
+            ],
+            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i:s'),
+            'IP Address' => $record->ip_address,
+            'User Agent' => $this->formatUserAgent($record->user_agent),
+        ],
+        'Data Baru' => $this->processJsonForDisplay($record->new_values),
+        'Data Lama' => $this->processJsonForDisplay($record->old_values),
+    ];
+    
+    $this->detailTitle = "Detail Audit Log #{$record->id}";
+    $this->showDetailModal = true;
+}
+
+protected function processJsonForDisplay($data)
+{
+    if (empty($data)) {
+        return ['_empty' => true, 'message' => 'Tidak ada data'];
     }
+
+    $decoded = is_string($data) ? json_decode($data, true) : $data;
+    
+    if (!is_array($decoded)) {
+        return ['_raw' => true, 'content' => $data];
+    }
+
+    $processed = [];
+    foreach ($decoded as $key => $value) {
+        $processed[$key] = [
+            'value' => $value,
+            'formatted' => $this->formatFieldValue($value),
+            'type' => gettype($value),
+        ];
+    }
+    
+    return $processed;
+}
+
+protected function formatFieldValue($value)
+{
+    // \dd($value);
+    if (is_null($value)) {
+        return '<span class="text-gray-400 italic">NULL</span>';
+    }
+    
+    if (is_bool($value)) {
+        $color = $value ? 'text-green-600' : 'text-red-600';
+        $icon = $value ? 'fa-check' : 'fa-times';
+        $text = $value ? 'Ya' : 'Tidak';
+        return "<i class='fas $icon mr-1 $color'></i><span class='$color'>$text</span>";
+    }
+    
+    if (is_array($value)) {
+        if (empty($value)) {
+            return '<span class="text-gray-400">[]</span>';
+        }
+        return '<pre class="text-xs">' . htmlspecialchars(json_encode($value, JSON_PRETTY_PRINT)) . '</pre>';
+    }
+    
+    if (is_object($value)) {
+        return '<pre class="text-xs">' . htmlspecialchars(json_encode($value, JSON_PRETTY_PRINT)) . '</pre>';
+    }
+    
+    // Check for email
+    if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        return "<a href='mailto:$value' class='text-blue-600 hover:underline'>$value</a>";
+    }
+    
+    // Check for URL
+    if (filter_var($value, FILTER_VALIDATE_URL)) {
+        $display = parse_url($value, PHP_URL_HOST) ?: $value;
+        return "<a href='$value' target='_blank' class='text-blue-600 hover:underline truncate'>$display</a>";
+    }
+    
+    try {
+               return "<span class=''>" . $value . "</span>";
+
+    } catch (\Exception $e) {
+        // Not a date
+    }
+    
+    return htmlspecialchars($value);
+}
+
+protected function formatUserAgent($userAgent)
+{
+    if (empty($userAgent)) {
+        return '-';
+    }
+    
+    // Extract browser and OS info
+    $browser = 'Unknown';
+    $os = 'Unknown';
+    
+    // Simple detection (you can expand this)
+    if (strpos($userAgent, 'Chrome') !== false) $browser = 'Chrome';
+    elseif (strpos($userAgent, 'Firefox') !== false) $browser = 'Firefox';
+    elseif (strpos($userAgent, 'Safari') !== false) $browser = 'Safari';
+    elseif (strpos($userAgent, 'Edge') !== false) $browser = 'Edge';
+    
+    if (strpos($userAgent, 'Windows') !== false) $os = 'Windows';
+    elseif (strpos($userAgent, 'Mac') !== false) $os = 'macOS';
+    elseif (strpos($userAgent, 'Linux') !== false) $os = 'Linux';
+    elseif (strpos($userAgent, 'Android') !== false) $os = 'Android';
+    elseif (strpos($userAgent, 'iOS') !== false) $os = 'iOS';
+    
+    return [
+        'full' => $userAgent,
+        'browser' => $browser,
+        'os' => $os,
+        'short' => "$browser on $os"
+    ];
+}
 
     // METHOD UNTUK TUTUP DETAIL MODAL
     public function closeDetailModal()
