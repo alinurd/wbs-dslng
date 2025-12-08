@@ -42,7 +42,7 @@ class Report extends Root
     {
         return [
             'waktu_kejadian' => 'required|date',
-            'nama_terlapor' => 'required|min:3|max:100',
+            'nama_terlapor' => 'required|min:3',
             // 'email_pelapor' => 'required|email',
             // 'telepon_pelapor' => 'numeric|required|min:12',
             'jenis_pengaduan_id' => 'required|exists:combos,id',
