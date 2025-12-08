@@ -22,6 +22,13 @@
             'data' => $detailData,
             'onClose' => 'closeDetailModal',
         ])
+          @include('livewire.components.update-status', [
+            'show' => $showuUdateStatus,
+            'title' => $detailTitle,
+            'data' => $detailData,
+            'onClose' => 'closeDetailModal',
+        ])
+        
         {{-- Header --}}
         <div class="p-4 border-b border-gray-200 bg-gray-50 sticky top-0">
             <div class="flex justify-between items-center">
