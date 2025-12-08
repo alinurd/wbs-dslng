@@ -16,7 +16,12 @@
         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100"
         x-transition:leave-end="opacity-0 transform scale-95"
         class="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-y-auto">
-
+@include('livewire.components.comment', [
+            'show' => $showComment,
+            'title' => $detailTitle,
+            'data' => $detailData,
+            'onClose' => 'closeDetailModal',
+        ])
         {{-- Header --}}
         <div class="p-4 border-b border-gray-200 bg-gray-50 sticky top-0">
             <div class="flex justify-between items-center">
@@ -288,8 +293,8 @@
 
                     markAsReadHandler(notificationId) {
                         // console.log('Mark as read handler called:', notificationId);
-                        @this.markAsRead(notificationId);
-                        this.fadeOutNotification(notificationId);
+                        @this.runComment(notificationId);
+                        // this.fadeOutNotification(notificationId);
                     }
                 };
             }
@@ -397,4 +402,7 @@
             }
         </style>
     </div>
+    
 </div>
+
+

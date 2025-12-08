@@ -985,9 +985,28 @@ protected function getDirektoratChart()
 
         $detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
 
-        $this->openChat($id, $detailData, $detailTitle);
+      $this->trackingId = $id;
+        $this->codePengaduan = $codePengaduan;
+        $this->showComment = true;
+        
+        if (!empty($detailData)) {
+            $this->detailData = $detailData;
+        }
+        
+        if (!empty($detailTitle)) {
+            $this->detailTitle = $detailTitle;
+        }
+
+        $this->loadChatData();
+
         $this->uploadFile();
     }
+    public function loadChatData()
+    {
+        if (!$this->trackingId) return;
 
+        $this->loadMessages();
+        $this->loadChatStats();
+    }
  
 }

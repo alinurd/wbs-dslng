@@ -2,17 +2,30 @@
 
 namespace App\Livewire;
 
+use App\Helpers\FileHelper;
+use App\Models\Combo;
+use App\Models\Comment;
 use App\Models\Notification;
+use App\Models\Pengaduan;
+use App\Traits\HasChat;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class NotificationBell extends Component
 {
     public $isOpen = false;
     public $unreadCount = 0;
     public $notifications = [];
-    public $activeFilter = 'all';
+     public $activeFilter = 'all';
+    public $detailData = [];
+    public $detailTitle = '';
+      public $fileUpload = null;
+    public $fileDescription = '';
+    public $uploadedFiles = [];
+    
+    use WithFileUploads, HasChat;
 
     public function mount()
     {
@@ -233,6 +246,187 @@ public function markAllAsRead()
         }
     }
 
+public function runComment($notificationId)
+{ 
+        // $this->notify('error', 'this coment:'. $notificationId);
+$this->markAsRead($notificationId);
+          
+             $this->comment(50);
+}
+
+public function comment($id)
+    {
+        
+    
+        $record = Pengaduan::with(['comments.user'])->findOrFail($id);
+        $statusInfo = Combo::where('kelompok', 'sts-aduan')
+            ->where('param_int', $record->status)
+            ->first();
+
+        $detailData = [
+            'Kode Tracking' => $record->code_pengaduan,
+            // 'Perihal' => $record->perihal,
+            'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
+            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
+            'Status' => $statusInfo->data_id ?? 'Menunggu Review',
+            'Lokasi' => $record->alamat_kejadian ?? 'Tidak diketahui',
+            'Deskripsi' => $record->uraian ?? 'Tidak ada deskripsi',
+        ];
+
+        $detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
+
+      $this->trackingId = $id;
+        $this->codePengaduan = $record->code_pengaduan;
+        $this->showComment = true;
+        
+        if (!empty($detailData)) {
+            $this->detailData = $detailData;
+        }
+        
+        if (!empty($detailTitle)) {
+            $this->detailTitle = $detailTitle;
+        }
+
+        $this->loadChatData();
+
+        $this->uploadFile();
+    }
+    
+     public function getJenisPelanggaran($record)
+    {
+        return $record->jenisPengaduan->data_id ?? 'Tidak diketahui';
+    }
+    
+public function closeDetailModal()
+    { 
+        $this->showComment = false; 
+        $this->detailData = [];
+        $this->detailTitle = '';
+    }
+
+
+    public function uploadFile()
+    {
+        $this->validate([
+            'fileUpload' => 'required|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,zip,rar',
+            'fileDescription' => 'nullable|string|max:255',
+        ]);
+
+        if (!$this->trackingId) return;
+
+        $uploadedFile = FileHelper::upload(
+            $this->fileUpload,
+            'pengaduan/attachments',
+            'public'
+        );
+
+        // PERBAIKAN: Pastikan struktur data konsisten
+        $fileInfo = [
+            'id' => uniqid(),
+            'name' => $uploadedFile['original_name'], // Pastikan key 'name' ada
+            'path' => $uploadedFile['path'],
+            'size' => $uploadedFile['size'],
+            'type' => $uploadedFile['mime_type'],
+            'description' => $this->fileDescription,
+            'uploaded_at' => now()->format('d/m/Y H:i'),
+            'uploaded_by' => auth()->user()->name,
+            'formatted_size' => FileHelper::formatSize($uploadedFile['size']), // Tambahkan formatted_size
+            'icon' => FileHelper::getFileIcon(pathinfo($uploadedFile['original_name'], PATHINFO_EXTENSION)), // Tambahkan icon
+        ];
+
+        // Tambahkan ke list uploaded files
+        $this->uploadedFiles[] = $fileInfo;
+
+        // Reset form
+        $this->fileUpload = null;
+        $this->fileDescription = '';
+
+        // Tampilkan notifikasi sukses
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'File berhasil diupload'
+        ]);
+    }
+
+    public function loadUploadedFiles()
+    {
+        if (!$this->trackingId) return;
+
+        $this->uploadedFiles = [];
+    }
+
+    public function downloadFile($filePath, $originName)
+    {
+        if ($filePath && FileHelper::exists($filePath)) {
+            return response()->download( storage_path('app/public/' . $filePath), $originName);
+        }
+        $this->dispatch('notify', ['type' => 'error', 'message' => 'File tidak ditemukan: ' . $originName, 'errMessage'=> 'patchFile:'.$filePath ]);
+        return back();
+    }
+
+    public function deleteFile($fileId)
+    {
+        $file = collect($this->uploadedFiles)->firstWhere('id', $fileId);
+
+        if ($file) {
+            // Hapus dari storage
+            FileHelper::delete($file['path']);
+
+            // Hapus dari list
+            $this->uploadedFiles = collect($this->uploadedFiles)
+                ->reject(function ($item) use ($fileId) {
+                    return $item['id'] === $fileId;
+                })
+                ->values()
+                ->toArray();
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'File berhasil dihapus'
+            ]);
+        }
+    }
+
+
+
+    public function closeChat()
+    {
+        parent::closeChat(); // Panggil parent dari HasChat
+        $this->uploadedFiles = []; // Reset uploaded files spesifik untuk Tracking
+    }
+
+
+    public function downloadMessageFile($messageId)
+    {
+        $message = Comment::find($messageId);
+
+        if ($message && $message->file_data) {
+            $fileData = json_decode($message->file_data, true);
+
+            if ($fileData && FileHelper::exists($fileData['path'])) {
+                return response()->download(
+                    storage_path('app/public/' . $fileData['path']),
+                    $fileData['original_name'] // Pastikan key 'original_name' ada
+                );
+            }
+        }
+
+        $this->dispatch('notify', [
+            'type' => 'error',
+            'message' => 'File tidak ditemukan'
+        ]);
+    }
+
+    public function getFileInfo($file)
+    {
+        return [
+            'name' => $file['name'] ?? $file['original_name'] ?? 'Unknown File',
+            'size' => $file['formatted_size'] ?? FileHelper::formatSize($file['size'] ?? 0),
+            'icon' => $file['icon'] ?? FileHelper::getFileIcon(pathinfo($file['name'] ?? $file['original_name'] ?? '', PATHINFO_EXTENSION)),
+            'description' => $file['description'] ?? '',
+        ];
+    }
+    
     public function render()
     {
         return view('livewire.modules.notification-bell');
