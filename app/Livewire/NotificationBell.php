@@ -271,10 +271,14 @@ class NotificationBell extends Root
             $this->comment($n->ref_id);
         }
         if ($n->type == 2) {
-            $this->updateStatus($n->ref_id);
+                                $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+ if($roleId ==3){
+    $this->viewPengaduan($n->ref_id);
+}else{
+    $this->updateStatus($n->ref_id);
+}
 
-            $this->notify('info', 'form approve');
-        }
+         }
         if ($n->type == 3) {
             $this->notify('info', 'Notification berhasil ditandai sudah dibaca');
         }
@@ -610,6 +614,7 @@ class NotificationBell extends Root
     public function closeDetailModal()
     {
         $this->showComment = false;
+        $this->showDetailModal = false;
         $this->showuUdateStatus = false;
         $this->detailData = [];
         $this->detailTitle = '';
@@ -700,6 +705,13 @@ class NotificationBell extends Root
 
 
 
+      public function viewPengaduan($id)
+    {
+             $this->getPengaduanById($id);
+        $this->detailTitle = "Detail " . $this->title;
+        $this->showDetailModal = true;
+    }
+    
     public function closeChat()
     {
         parent::closeChat(); // Panggil parent dari HasChat
