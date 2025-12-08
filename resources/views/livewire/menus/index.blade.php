@@ -9,6 +9,7 @@
             <thead class="bg-gray-100 text-gray-700 uppercase text-sm">
                 <tr>
                     <th class="py-2 px-3 border">Nama Menu</th>
+                    <th class="py-2 px-1 border">Status</th>
                     <th class="py-2 px-3 border">Slug</th>
                     <th class="py-2 px-3 border">Route</th>
                     <th class="py-2 px-3 border">Parent</th>
@@ -19,9 +20,14 @@
                 {{-- {{dd($menus->toarray())}} --}}
                 @foreach($menus as $menu)
                 <tr class="border-b hover:bg-gray-50">
-                    <td class="py-2 px-3 border font-semibold">{{ $menu->name }}</td>
+                    <td class="py-2 px-3 border font-semibold">{{ $menu->name }}  </td>
+                     <td class="py-2 px-3 border pl-8">
+                                 @if ($menu->is_active)
+                                <i class="fas fa-check ml-auto text-green-600"></i>
+                            @endif
+                            </td>
                     <td class="py-2 px-3 border text-gray-600">{{ $menu->slug }}</td>
-                    <td class="py-2 px-3 border text-gray-600">{{ $menu->route ?? '-' }}</td>
+                    <td class="py-2 px-3 border text-gray-600">{{ $menu->route  }}</td>
                     <td class="py-2 px-3 border text-gray-600">{{ $menu->parent?->name ?? '-' }}</td>
                     <td class="py-2 px-3 border text-center">
                             @if($menu->default!=1)
@@ -34,6 +40,11 @@
                     
                         <tr class="border-b hover:bg-gray-50 bg-gray-50">
                             <td class="py-2 px-3 border pl-8">↳ {{ $child->name }}</td>
+                            <td class="py-2 px-3 border pl-8">
+                                 @if ($menu->is_active)
+                                <i class="fas fa-check ml-auto text-green-600"></i>
+                            @endif
+                            </td>
                             <td class="py-2 px-3 border">{{ $child->slug }}</td>
                             <td class="py-2 px-3 border">{{ $child->route ?? '-' }}</td>
                             <td class="py-2 px-3 border">{{ $child->parent?->name }}</td>
