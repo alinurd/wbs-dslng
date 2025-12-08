@@ -13,22 +13,22 @@
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
-                'extraActions' => [
-                    [
-                        'label' => 'Reset Password',
-                        'method' => 'resetPassword',
-                        'icon' => 'fas fa-key',
-                        'permission' => 'users.edit',
-                        'class' => 'text-orange-600 hover:text-orange-900'
-                    ],
-                    [
-                        'label' => 'Toggle Status',
-                        'method' => 'toggleStatus',
-                        'icon' => 'fas fa-power-off',
-                        'permission' => 'users.edit',
-                        'class' => 'text-purple-600 hover:text-purple-900'
-                    ]
-                ],
+                // 'extraActions' => [
+                //     [
+                //         'label' => 'Reset Password',
+                //         'method' => 'resetPassword',
+                //         'icon' => 'fas fa-key',
+                //         'permission' => 'users.edit',
+                //         'class' => 'text-orange-600 hover:text-orange-900'
+                //     ],
+                //     [
+                //         'label' => 'Toggle Status',
+                //         'method' => 'toggleStatus',
+                //         'icon' => 'fas fa-power-off',
+                //         'permission' => 'users.edit',
+                //         'class' => 'text-purple-600 hover:text-purple-900'
+                //     ]
+                // ],
             
                 // State
                 'perPage' => $perPage,
