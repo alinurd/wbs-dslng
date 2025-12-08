@@ -37,7 +37,7 @@ class User extends Authenticatable
         'telepon',
         'jenis_pelapor',
         'alamat',
-        'active',
+        'is_active',
         'status',
         'fwd_id',
         'must_change_password',
