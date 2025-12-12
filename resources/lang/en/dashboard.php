@@ -5,16 +5,7 @@ return [
         'title' => 'Welcome, :name! 👋',
         'subtitle' => 'A secure, confidential, and reliable reporting system to create a transparent and integrity work culture',
     ],
-    'stats' => [
-        'total_reports' => 'Total Reports',
-        'total_description' => 'reports submitted',
-        'waiting' => 'Waiting',
-        'waiting_description' => 'Not processed yet',
-        'in_progress' => 'In Progress',
-        'in_progress_description' => 'Being processed',
-        'completed' => 'Completed',
-        'completed_description' => 'Have been resolved',
-    ],
+   
     'quick_actions' => [
         'title' => 'Quick Actions',
         'new_report' => 'Create New Report',

@@ -47,32 +47,32 @@
         @php
             $statCards = [
                 [
-                    'title' => __('dashboard.stats.total_reports'),
+                    'title' => __('root.stats.total_reports'),
                     'value' => $stats['total_pengaduan'] ?? 0,
                     'icon' => 'file-alt',
                     'color' => 'blue',
-                    'description' => __('dashboard.stats.total_description'),
+                    'description' => __('root.stats.total_description'),
                 ],
                 [
-                    'title' => __('dashboard.stats.waiting'),
+                    'title' => __('root.stats.waiting'),
                     'value' => $stats['menunggu'] ?? 0,
                     'icon' => 'clock',
                     'color' => 'gray',
-                    'description' => __('dashboard.stats.waiting_description'),
+                    'description' => __('root.stats.waiting_description'),
                 ],
                 [
-                    'title' => __('dashboard.stats.in_progress'),
+                    'title' => __('root.stats.in_progress'),
                     'value' => $stats['dalam_proses'] ?? 0,
                     'icon' => 'spinner',
                     'color' => 'yellow',
-                    'description' => __('dashboard.stats.in_progress_description'),
+                    'description' => __('root.stats.in_progress_description'),
                 ],
                 [
-                    'title' => __('dashboard.stats.completed'),
+                    'title' => __('root.stats.completed'),
                     'value' => $stats['selesai'] ?? 0,
                     'icon' => 'check-circle',
                     'color' => 'green',
-                    'description' => __('dashboard.stats.completed_description'),
+                    'description' => __('root.stats.completed_description'),
                 ],
             ];
         @endphp

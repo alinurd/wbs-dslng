@@ -6,16 +6,6 @@ return [
         'title' => 'Selamat Datang, :name! 👋',
         'subtitle' => 'Sistem pelaporan yang aman, rahasia, dan terpercaya untuk menciptakan budaya kerja transparan dan berintegritas',
     ],
-    'stats' => [
-        'total_reports' => 'Total Pengaduan',
-        'total_description' => 'pengaduan yang diajukan',
-        'waiting' => 'Menunggu',
-        'waiting_description' => 'Belum diproses',
-        'in_progress' => 'Dalam Proses',
-        'in_progress_description' => 'Sedang diproses',
-        'completed' => 'Selesai',
-        'completed_description' => 'Telah diselesaikan',
-    ],
     'quick_actions' => [
         'title' => 'Quick Actions',
         'new_report' => 'Buat Pengaduan Baru',
