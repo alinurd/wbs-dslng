@@ -1,0 +1,305 @@
+ :root {
+            --color-start: #003B73;
+            --color-mid: #0077C8;
+            --color-end: #6EC1E4;
+        }
+
+        .sidebar-gradient {
+            background: linear-gradient(180deg, var(--color-start), var(--color-mid), var(--color-end));
+        }
+        table th {
+            background: var(--color-end);
+        }
+        .modal-header{
+                        background: var(--color-start);
+
+        }
+
+        .active-link {
+            background-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .sidebar-collapsed .menu-text {
+            display: none;
+        }
+
+        .sidebar-collapsed .sidebar {
+            width: 5rem;
+        }
+
+        .sidebar-collapsed .sidebar-logo h1 {
+            display: none;
+        }
+
+        .sidebar-collapsed .sidebar-logo img {
+            margin: 0 auto;
+        }
+
+        /* Perbaikan untuk layout yang seimbang */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        /* Sidebar tetap di posisinya */
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        /* Header tetap di atas */
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Untuk tampilan mobile */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                width: 100%;
+            }
+        }
+
+    /* Switch Toggle Styles */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* Animation untuk switch */
+    .dot {
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Hover effects untuk switch */
+    label:hover .block {
+        transform: scale(1.05);
+    }
+
+    /* Helper tooltip animation */
+    .group:hover .group-hover\:block {
+        animation: fadeInUp 0.2s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Shake animation untuk error */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .animate-shake {
+        animation: shake 0.5s ease-in-out;
+    }
+
+    /* Styling untuk error messages */
+    .text-red-600 {
+        color: #dc2626;
+    }
+    
+    .border-red-500 {
+        border-color: #ef4444;
+    }
+    
+    .focus\:border-red-500:focus {
+        border-color: #ef4444;
+    }
+    
+    .focus\:ring-red-500:focus {
+        --tw-ring-color: rgb(239 68 68 / 0.2);
+    }
+
+    /* Improved styling untuk input fields */
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 111, 188, 0.1);
+    }
+
+    /* Better padding untuk input */
+    input, select, textarea {
+        padding: 12px;
+    }
+
+
+
+
+    /* Custom Pagination Styles */
+.custom-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+}
+
+.custom-pagination .pagination-info {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.custom-pagination .pagination-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.custom-pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: white;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.custom-pagination .page-link:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+.custom-pagination .page-link.active {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    color: white;
+}
+
+.custom-pagination .page-link.disabled {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.custom-pagination .page-link svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
+
+/* Hide elements with x-cloak until Alpine is loaded */
+[x-cloak] { 
+    display: none !important; 
+}
+
+/* Smooth transitions */
+.transition-all {
+    transition: all 0.3s ease;
+}
+ 
+/* Notification dropdown scroll */
+.notification-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.notification-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-scroll::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 3px;
+}
+
+.notification-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.notification-scroll::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+
+ .animate-fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .animate-scale-in {
+        animation: scaleIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }

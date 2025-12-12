@@ -1,179 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>{{ $title ?? 'PT DONGGI-SENORO LNG' }}</title>
     <link rel="Shortcut Icon" href="{{ asset('assets/images/logo_donggi.ico') }}">
-
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.tailwindcss.css" />
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}">
-
+    
     @livewireStyles
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    {{-- Lucide Icons --}}
-        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .truncated-text {
+            display: none;
+        }
+        .sidebar-collapsed nav a:hover .truncated-text {
+            display: block;
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            margin-left: 8px;
+            z-index: 1000;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 text-gray-800 font-sans">
-
-
-
     <div class="flex min-h-screen">
-
-
-
         {{-- SIDEBAR --}}
         <aside id="sidebar"
-       class="sidebar sidebar-gradient w-72 text-white shadow-2xl flex flex-col transition-all duration-300">
-
-    {{-- Logo & Title --}}
-    <div class="sidebar-logo flex flex-col items-center px-5 py-4 border-b border-white/20">
-        <div class="flex flex-col items-center gap-2">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo"
-                 class="max-w-[90%] p-1 filter brightness-0 invert">
-
-            {{-- Nama user dan role --}}
-            <div class="text-center mt-2">
-                <p class="text-white text-base font-semibold">{{ $user->name }}</p>
-
-                {{-- Roles --}}
-                @php
-                    $roles = $user->getRoleNames()->implode(', ');
-                @endphp
-                <p class="text-xs text-white/70 italic">{{ $roles ?: 'No Role' }}</p>
-            </div>
-        </div>
-
-        <button id="closeSidebar" class="md:hidden text-white text-2xl font-bold mt-3">&times;</button>
-    </div>
-
-    {{-- Navigation --}}
-    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2" x-data="sidebarNavigation()">
-        @foreach ($menus as $menu)
-            @php
-                $hasAccessibleChildren = $menu->children->count() > 0;
-                $isActiveParent = request()->routeIs($menu->route) || 
-                                 $menu->children->contains(function($child) {
-                                     return request()->routeIs($child->route);
-                                 });
-                $menuId = 'menu-' . Str::slug($menu->name);
-            @endphp
-
-            <div>
-                <a href="{{ $menu->route ? route($menu->route) : '#' }}"
-                   @if($hasAccessibleChildren)
-                       @click.prevent="toggleMenu('{{ $menuId }}')"
-                   @endif
-                   class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-white/10
-                   {{ $isActiveParent ? 'active-link' : '' }}
-                   {{ !$menu->route && !$hasAccessibleChildren ? 'cursor-not-allowed opacity-50' : '' }}">
-                    
-                    @if($menu->icon)
-                        <i class="{{ $menu->icon }} w-5 h-5 text-center"></i>
-                    @else
-                        <i class="w-5 h-5 text-center text-white/60"></i>
-                    @endif
-                    
-                    <span class="menu-text flex-1">{{ $menu->name }}</span>
-                    
-                    {{-- Indicator untuk menu dengan children --}}
-                    @if($hasAccessibleChildren)
-                        <i :class="isOpen('{{ $menuId }}') ? 'rotate-180 transform' : ''" 
-                            class="fas fa-chevron-down w-4 h-4 transition-transform duration-200 ml-auto"></i>
-                    @endif
-                </a>
-
-                @if ($hasAccessibleChildren)
-                    <div x-show="isOpen('{{ $menuId }}')" 
-                         x-collapse
-                         class="ml-6 mt-1 border-l border-white/20 pl-3 space-y-1">
-                        @foreach ($menu->children as $child)
-                            <a href="{{ $child->route ? route($child->route) : '#' }}"
-                               class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition hover:bg-white/10
-                               {{ request()->routeIs($child->route) ? 'active-link' : '' }}">
-                                <i class="fas fa-circle text-xs text-white/70"></i>
-                                <span class="menu-text">{{ $child->name }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        @endforeach
-
-        {{-- Fallback jika tidak ada menu yang accessible --}}
-        @if ($menus->count() == 0)
-            <div class="text-center text-white/60 py-8">
-                <i class="fas fa-lock text-2xl mb-2"></i>
-                <p class="text-sm">No accessible menus</p>
-            </div>
-        @endif
-    </nav>
-
-    {{-- Footer --}}
-    <div class="text-center text-sm text-white border-t border-white/20 py-3">
-        © {{ date('Y') }} {{ env('APP_NAME') }}
-    </div>
-</aside>
-
-{{-- Overlay for mobile --}}
- <script>
-    function sidebarNavigation() {
-        return {
-            openMenus: {},
+            class="sidebar-gradient text-white shadow-2xl flex flex-col h-screen z-40">
             
-            init() {
-                // Set menu yang aktif secara default terbuka
+            {{-- Logo & Title --}}
+            <div class="sidebar-logo flex flex-col items-center px-5 py-4 border-b border-white/20">
+                <div class="flex flex-col items-center gap-2 w-full">
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="Logo"
+                        class="max-w-[90%] p-1 filter brightness-0 invert transition-all duration-300 sidebar-logo-img">
+                    
+                    {{-- Nama user dan role --}}
+                    <div class="text-center mt-2 w-full transition-all duration-300">
+                        <p class="text-white text-base font-semibold">{{ $user->name }}</p>
+                        @php
+                            $roles = $user->getRoleNames()->implode(', ');
+                        @endphp
+                        <p class="text-xs text-white/70 italic">{{ $roles ?: 'No Role' }}</p>
+                    </div>
+                </div>
+
+                {{-- Close button for mobile --}}
+                <button id="closeSidebar" 
+                        class="md:hidden text-white text-2xl font-bold hover:bg-white/10 w-8 h-8 flex items-center justify-center rounded-full transition-colors mt-2">
+                    &times;
+                </button>
+            </div>
+
+            {{-- Navigation --}}
+            <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2 sticky top-0" x-data="sidebarNavigation()">
                 @foreach ($menus as $menu)
                     @php
                         $hasAccessibleChildren = $menu->children->count() > 0;
-                        $isActiveParent = request()->routeIs($menu->route) || 
-                                         $menu->children->contains(function($child) {
-                                             return request()->routeIs($child->route);
-                                         });
+                        $isActiveParent =
+                            request()->routeIs($menu->route) ||
+                            $menu->children->contains(function ($child) {
+                                return request()->routeIs($child->route);
+                            });
                         $menuId = 'menu-' . Str::slug($menu->name);
+                        // Ambil 3 huruf pertama untuk mode collapsed
+                        $truncatedName = substr($menu->name, 0, 3);
                     @endphp
-                    @if($hasAccessibleChildren && $isActiveParent)
-                        this.openMenus['{{ $menuId }}'] = true;
-                    @endif
-                @endforeach
-            },
-            
-            toggleMenu(menuId) {
-                this.openMenus[menuId] = !this.openMenus[menuId];
-            },
-            
-            isOpen(menuId) {
-                return this.openMenus[menuId] || false;
-            }
-        }
-    }
-</script>
 
+                    <div class="menu-item">
+                        <a href="{{ $menu->route ? route($menu->route) : '#' }}"
+                            @if ($hasAccessibleChildren) @click.prevent="toggleMenu('{{ $menuId }}')" @endif
+                            class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 hover:bg-white/10
+                                   {{ $isActiveParent ? 'active-link bg-white/20' : '' }}
+                                   {{ !$menu->route && !$hasAccessibleChildren ? 'cursor-not-allowed opacity-50' : '' }}">
+                            
+                            @if ($menu->icon)
+                                <i class="{{ $menu->icon }} w-5 h-5 text-center"></i>
+                            @else
+                                <i class="w-5 h-5 text-center text-white/60"></i>
+                            @endif
+
+                            <span class="menu-text flex-1 transition-all duration-300">{{ $menu->name }}</span>
+                            
+                            {{-- Truncated text for collapsed mode --}}
+                            <span class="truncated-text">{{ $truncatedName }} xxxxx</span>
+
+                            @if ($hasAccessibleChildren)
+                                <i :class="isOpen('{{ $menuId }}') ? 'rotate-180 transform' : ''"
+                                    class="fas fa-chevron-down w-4 h-4 transition-transform duration-200 ml-auto menu-text"></i>
+                            @endif
+                        </a>
+
+                        @if ($hasAccessibleChildren)
+                            <div x-show="isOpen('{{ $menuId }}')" x-collapse
+                                class="ml-6 mt-1 border-l border-white/20 pl-3 space-y-1 menu-text">
+                                @foreach ($menu->children as $child)
+                                    <a href="{{ $child->route ? route($child->route) : '#' }}"
+                                        class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition hover:bg-white/10
+                                               {{ request()->routeIs($child->route) ? 'active-link bg-white/15' : '' }}"
+                                        @click="closeOnMobile()">
+                                        <i class="fas fa-circle text-xs text-white/70"></i>
+                                        <span class="menu-text">{{ $child->name }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+
+                @if ($menus->count() == 0)
+                    <div class="text-center text-white/60 py-8 menu-text">
+                        <i class="fas fa-lock text-2xl mb-2"></i>
+                        <p class="text-sm">No accessible menus</p>
+                    </div>
+                @endif
+            </nav>
+
+            {{-- Footer --}}
+            <div class="text-center text-sm text-white border-t border-white/20 py-3 px-3 menu-text">
+                © {{ date('Y') }} {{ env('APP_NAME', 'PT DONGGI-SENORO LNG') }}
+            </div>
+        </aside>
 
         {{-- Overlay for mobile --}}
-        <div id="sidebarBackdrop" class="fixed inset-0 bg-black/40 hidden md:hidden z-30"></div>
+        <div id="sidebarBackdrop" 
+             class="hidden fixed inset-0 bg-black/50 z-35 transition-opacity duration-300">
+        </div>
 
         {{-- MAIN CONTENT --}}
-        <div class="main-content">
+        <div class="main-content flex-1 min-h-screen flex flex-col transition-all duration-300">
             {{-- Header --}}
             <header class="header-sticky sticky top-0 bg-white shadow-sm border-b z-20">
-                <div class="flex items-center justify-between px-6 py-3">
+                <div class="flex items-center justify-between px-4 md:px-6 py-3">
                     <div class="flex items-center gap-3">
+                        {{-- Hamburger menu for mobile --}}
                         <button id="sidebarToggle"
-                            class="md:hidden p-2 rounded hover:bg-gray-100 text-gray-700 text-xl">
-                            ☰
+                            class="md:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-700 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-colors"
+                            aria-label="Toggle sidebar">
+                            <i class="fas fa-bars"></i>
                         </button>
-                        <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? 'Dashboard' }}</h2>
+                        
+                        {{-- Desktop toggle button --}}
+                        <button id="desktopToggle" 
+                                class="desktop-toggle-btn items-center justify-center p-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors hidden"
+                                title="Toggle Sidebar">
+                            <i class="fas fa-chevron-left" id="toggleIcon"></i>
+                        </button>
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 truncate">{{ $title ?? 'Dashboard' }}</h2>
                     </div>
 
                     <div class="flex items-center gap-4">
@@ -182,7 +172,7 @@
 
                         {{-- User Info & Logout --}}
                         <div class="flex items-center gap-3 border-l border-gray-200 pl-4">
-                            <span class="font-medium text-gray-700">{{ auth()->user()->name ?? 'Guest' }}</span>
+                            <span class="font-medium text-gray-700 hidden sm:inline">{{ auth()->user()->name ?? 'Guest' }}</span>
                             @auth
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
@@ -199,14 +189,15 @@
             </header>
 
             {{-- Page Content --}}
-            <main class="content-area">
-                <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+            <main class="content-area flex-1 p-4 md:p-6">
+                <div class="bg-white shadow-sm rounded-xl p-4 md:p-6 border border-gray-100 h-full">
                     {{ $slot }}
                 </div>
             </main>
         </div>
     </div>
 
+    {{-- Notification Component --}}
     <div x-data="notificationHandler()" x-show="show" x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 transform translate-y-2"
         x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -242,59 +233,209 @@
 
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     @livewireScripts
+    
     <script>
-        window.AppConfig = {
-            routes: {
-                languageChange: '{{ route('language.change') }}'
-            },
-            csrfToken: '{{ csrf_token() }}',
-        };
-    </script>
-    <script src="{{ asset('assets/js/admin.js') }}"></script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+            const mobileToggle = document.getElementById('sidebarToggle');
+            const closeBtn = document.getElementById('closeSidebar');
+            const desktopToggle = document.getElementById('desktopToggle');
+            const toggleIcon = document.getElementById('toggleIcon');
+            const mainContent = document.querySelector('.main-content');
+            const sidebarLogoImg = document.querySelector('.sidebar-logo-img');
+            
+            // Load saved state from localStorage
+            const savedCollapsed = localStorage.getItem('sidebarCollapsed');
+            if (savedCollapsed === 'true' && window.innerWidth >= 768) {
+                sidebar.classList.add('sidebar-collapsed');
+                updateToggleIcon(true);
+            } else {
+                updateToggleIcon(false);
+            }
+            
+            // Update logo based on sidebar state
+            function updateLogo(isCollapsed) {
+                if (sidebarLogoImg) {
+                    if (isCollapsed) {
+                        // Use favicon when collapsed
+                        sidebarLogoImg.src = "{{ asset('assets/images/logo_donggi.ico') }}";
+                        sidebarLogoImg.style.maxWidth = '40px';
+                    } else {
+                        // Use normal logo when expanded
+                        sidebarLogoImg.src = "{{ asset('assets/images/logo.png') }}";
+                        sidebarLogoImg.style.maxWidth = '90%';
+                    }
+                }
+            }
+            
+            // Update toggle icon
+            function updateToggleIcon(isCollapsed) {
+                if (toggleIcon) {
+                    if (isCollapsed) {
+                        toggleIcon.classList.remove('fa-chevron-left');
+                        toggleIcon.classList.add('fa-chevron-right');
+                    } else {
+                        toggleIcon.classList.remove('fa-chevron-right');
+                        toggleIcon.classList.add('fa-chevron-left');
+                    }
+                }
+            }
+            
+            // Mobile sidebar functions
+            function showMobileSidebar() {
+                sidebar.classList.add('open');
+                sidebarBackdrop.classList.remove('hidden');
+                sidebarBackdrop.classList.add('show');
+                document.body.classList.add('sidebar-open');
+            }
+            
+            function hideMobileSidebar() {
+                sidebar.classList.remove('open');
+                sidebarBackdrop.classList.remove('show');
+                sidebarBackdrop.classList.add('hidden');
+                document.body.classList.remove('sidebar-open');
+            }
+            
+            // Desktop toggle function
+            function toggleDesktopSidebar() {
+                const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+                
+                if (isCollapsed) {
+                    // Expand sidebar
+                    sidebar.classList.remove('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                    updateToggleIcon(false);
+                    updateLogo(false);
+                } else {
+                    // Collapse sidebar
+                    sidebar.classList.add('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                    updateToggleIcon(true);
+                    updateLogo(true);
+                }
+            }
+            
+            // Event listeners
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', showMobileSidebar);
+            }
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', hideMobileSidebar);
+            }
+            
+            if (sidebarBackdrop) {
+                sidebarBackdrop.addEventListener('click', hideMobileSidebar);
+            }
+            
+            if (desktopToggle) {
+                desktopToggle.addEventListener('click', toggleDesktopSidebar);
+            }
+            
+            // Handle window resize
+            function handleResize() {
+                if (window.innerWidth >= 768) {
+                    // On desktop/tablet, ensure sidebar is visible
+                    hideMobileSidebar();
+                } else {
+                    // On mobile, ensure sidebar is hidden by default
+                    if (!sidebar.classList.contains('open')) {
+                        sidebar.classList.remove('open');
+                    }
+                    // Remove collapsed state on mobile
+                    sidebar.classList.remove('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                    updateToggleIcon(false);
+                    updateLogo(false);
+                }
+            }
+            
+            window.addEventListener('resize', handleResize);
+            handleResize(); // Initial check
+            
+            // Close sidebar when clicking on mobile links
+            const mobileLinks = document.querySelectorAll('#sidebar a[href]');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (window.innerWidth < 768) {
+                        hideMobileSidebar();
+                    }
+                });
+            });
+            
+            // Close with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && window.innerWidth < 768) {
+                    hideMobileSidebar();
+                }
+            });
+            
+            // Initial logo setup
+            updateLogo(sidebar.classList.contains('sidebar-collapsed'));
+        });
 
-    <script>
+        // Sidebar Navigation Alpine Component
+        function sidebarNavigation() {
+            return {
+                openMenus: {},
+                isMobile: window.innerWidth < 768,
+
+                init() {
+                    // Cek ukuran layar
+                    this.checkScreenSize();
+                    window.addEventListener('resize', () => this.checkScreenSize());
+                },
+                
+                checkScreenSize() {
+                    this.isMobile = window.innerWidth < 768;
+                },
+
+                toggleMenu(menuId) {
+                    this.openMenus[menuId] = !this.openMenus[menuId];
+                },
+
+                isOpen(menuId) {
+                    return this.openMenus[menuId] || false;
+                },
+                
+                closeOnMobile() {
+                    if (this.isMobile) {
+                        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+                        const sidebar = document.getElementById('sidebar');
+                        if (sidebarBackdrop && sidebar) {
+                            sidebarBackdrop.classList.remove('show');
+                            sidebarBackdrop.classList.add('hidden');
+                            sidebar.classList.remove('open');
+                            document.body.classList.remove('sidebar-open');
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Notification Handler
         function notificationHandler() {
             return {
                 show: false,
                 type: '',
                 message: '',
                 timer: null,
-
+                
                 showNotification(detail) {
-                    // console.log('Detail received:', detail); // Debug log
-
-                    // Handle both object and array formats
-                    let notificationData;
-                    if (Array.isArray(detail)) {
-                        // Jika detail adalah array, ambil element pertama
-                        notificationData = detail[0];
-                    } else {
-                        // Jika detail adalah object langsung
-                        notificationData = detail;
-                    }
-
-                    // console.log('Processed data:', notificationData); // Debug log
-
+                    let notificationData = Array.isArray(detail) ? detail[0] : detail;
                     this.type = notificationData.type;
                     this.message = notificationData.message;
                     this.show = true;
-
-                    // Clear existing timer
-                    if (this.timer) {
-                        clearTimeout(this.timer);
-                    }
-
-                    // Auto hide after 5 seconds
-                    this.timer = setTimeout(() => {
-                        this.show = false;
-                    }, 5000);
+                    
+                    if (this.timer) clearTimeout(this.timer);
+                    this.timer = setTimeout(() => this.show = false, 5000);
                 }
             }
         }
 
         // Handle session flash messages
         document.addEventListener('DOMContentLoaded', function() {
-            // Check for existing flash messages in session
             @if (session()->has('success'))
                 Livewire.dispatch('notify', {
                     type: 'success',
@@ -304,9 +445,8 @@
 
             @if (session()->has('error'))
                 Livewire.dispatch('notify', {
-                    type: 'error',
+                    type: 'error', 
                     message: '{{ session('error') }}'
-                    console.log(errMessage)
                 });
             @endif
 
@@ -326,82 +466,14 @@
         });
     </script>
 
-    {{-- Di layout utama atau component view --}}
     @if (env('CHAT_REALTIME', false))
         <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
         <script>
             document.addEventListener('livewire:init', () => {
                 Livewire.dispatch('initialize-echo');
             });
-
-            // Atau menggunakan Alpine.js
-            document.addEventListener('alpine:init', () => {
-                Alpine.data('chat', () => ({
-                    init() {
-                        if (@json(env('CHAT_REALTIME', false))) {
-                            this.initializeEcho();
-                        }
-                    },
-
-                    initializeEcho() {
-                        // Initialize Pusher
-                        window.Echo = new Echo({
-                            broadcaster: 'pusher',
-                            key: @json(env('PUSHER_APP_KEY')),
-                            cluster: @json(env('PUSHER_APP_CLUSTER')),
-                            encrypted: true
-                        });
-                    }
-                }));
-            });
-
-            function toggleAnswer(index) {
-  const answer = document.querySelectorAll('.faq-answer')[index];
-  const icon = document.querySelectorAll('.faq-icon')[index];
-  
-  if (answer.classList.contains('hidden')) {
-    answer.classList.remove('hidden');
-    icon.textContent = '−';
-    icon.style.transform = 'rotate(180deg)';
-  } else {
-    answer.classList.add('hidden');
-    icon.textContent = '+';
-    icon.style.transform = 'rotate(0deg)';
-  }
-}
         </script>
-
-        <script>
-document.addEventListener('livewire:load', function () {
-    Livewire.on('start-countdown', (data) => {
-        let countdown = data.duration;
-        const interval = setInterval(() => {
-            countdown--;
-            
-            // Update Livewire property
-            Livewire.emit('updateCountdown', countdown);
-            
-            if (countdown <= 0) {
-                clearInterval(interval);
-                Livewire.emit('enableResend');
-            }
-        }, 1000);
-    });
-    
-    Livewire.on('updateCountdown', (countdown) => {
-        // This will be handled by Livewire
-    });
-    
-    Livewire.on('enableResend', () => {
-        // This will be handled by Livewire
-    });
-});
-</script>
     @endif
 
-
-
-    
 </body>
-
 </html>

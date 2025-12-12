@@ -1,171 +1,324 @@
- :root {
-            --color-start: #003B73;
-            --color-mid: #0077C8;
-            --color-end: #6EC1E4;
-        }
+:root {
+    --color-start: #003B73;
+    --color-mid: #0077C8;
+    --color-end: #6EC1E4;
+}
 
-        .sidebar-gradient {
-            background: linear-gradient(180deg, var(--color-start), var(--color-mid), var(--color-end));
-        }
-        table th {
-            background: var(--color-end);
-        }
-        .modal-header{
-                        background: var(--color-start);
+.sidebar-gradient {
+    background: linear-gradient(180deg, var(--color-start), var(--color-mid), var(--color-end));
+}
 
-        }
+/* Sidebar Responsive Styles */
+#sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 40;
+    transition: transform 0.3s ease, width 0.3s ease;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
 
-        .active-link {
-            background-color: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
+/* Default state untuk sidebar collapsed */
+.sidebar-collapsed {
+    width: 5rem !important;
+}
 
-        .sidebar-collapsed .menu-text {
-            display: none;
-        }
+/* Logo changes when collapsed */
+.sidebar:not(.sidebar-collapsed) .sidebar-logo img {
+    content: url("{{ asset('assets/images/logo.png') }}");
+    max-width: 90% !important;
+}
 
-        .sidebar-collapsed .sidebar {
-            width: 5rem;
-        }
+.sidebar.sidebar-collapsed .sidebar-logo img {
+    content: url("{{ asset('assets/images/logo_donggi.ico') }}") !important;
+    max-width: 40px !important;
+    filter: brightness(0) invert(1);
+}
 
-        .sidebar-collapsed .sidebar-logo h1 {
-            display: none;
-        }
+/* Hide elements when collapsed */
+.sidebar-collapsed .menu-text,
+.sidebar-collapsed .sidebar-logo > div:not(:first-child),
+.sidebar-collapsed .text-center:not(:first-child),
+.sidebar-collapsed .fas.fa-chevron-down,
+.sidebar-collapsed .sidebar-logo .text-center:not(:first-child) {
+    display: none !important;
+}
 
-        .sidebar-collapsed .sidebar-logo img {
-            margin: 0 auto;
-        }
+.sidebar-collapsed .sidebar-logo {
+    padding: 1rem 0.5rem !important;
+    justify-content: center !important;
+}
 
-        /* Perbaikan untuk layout yang seimbang */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow: hidden;
-        }
+.sidebar-collapsed nav {
+    padding: 1rem 0.5rem !important;
+}
 
-        .content-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-        }
+.sidebar-collapsed nav a {
+    padding: 0.75rem !important;
+    justify-content: center !important;
+    position: relative;
+}
 
-        /* Sidebar tetap di posisinya */
-        .sidebar {
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            overflow-y: auto;
-        }
+.sidebar-collapsed nav a i:first-child {
+    margin: 0 !important;
+}
 
-        /* Header tetap di atas */
-        .header-sticky {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
+/* Truncated menu text for collapsed state */
+.sidebar-collapsed nav a .truncated-text {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    margin-left: 8px;
+    z-index: 1000;
+}
 
-        /* Untuk tampilan mobile */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                width: 100%;
-            }
-        }
+.sidebar-collapsed nav a:hover .truncated-text {
+    display: block;
+}
 
-    /* Switch Toggle Styles */
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-    }
+/* Menu styling with truncated text */
+.menu-item {
+    position: relative;
+}
 
-    /* Animation untuk switch */
-    .dot {
-        transition: all 0.3s ease-in-out;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
-    /* Hover effects untuk switch */
-    label:hover .block {
-        transform: scale(1.05);
-    }
+.menu-text {
+    transition: all 0.3s ease;
+}
 
-    /* Helper tooltip animation */
-    .group:hover .group-hover\:block {
-        animation: fadeInUp 0.2s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(5px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+.truncated-text {
+    display: none;
+}
 
-    /* Shake animation untuk error */
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-    
-    .animate-shake {
-        animation: shake 0.5s ease-in-out;
-    }
+/* Active Link Styling */
+.active-link {
+    background-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+    position: relative;
+}
 
-    /* Styling untuk error messages */
-    .text-red-600 {
-        color: #dc2626;
+.active-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 0 2px 2px 0;
+}
+
+/* Navigation sticky */
+#sidebar nav {
+    flex: 1;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+    #sidebar {
+        transform: translateX(-100%);
     }
     
-    .border-red-500 {
-        border-color: #ef4444;
+    #sidebar.open {
+        transform: translateX(0);
     }
     
-    .focus\:border-red-500:focus {
-        border-color: #ef4444;
+    #sidebarBackdrop {
+        display: block !important;
+    }
+}
+
+/* Tablet & Desktop Styles */
+@media (min-width: 768px) {
+    #sidebar {
+        transform: translateX(0) !important;
+        position: sticky !important;
+        top: 0;
     }
     
-    .focus\:ring-red-500:focus {
-        --tw-ring-color: rgb(239 68 68 / 0.2);
+    .main-content {
+        /* margin-left: 280px; */
+        transition: margin-left 0.3s ease;
+        width: calc(100% - 280px);
     }
-
-    /* Improved styling untuk input fields */
-    input:focus, select:focus, textarea:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(0, 111, 188, 0.1);
+    
+    .sidebar-collapsed ~ .main-content {
+        /* margin-left: 5rem !important; */
+        width: calc(100% - 5rem) !important;
     }
-
-    /* Better padding untuk input */
-    input, select, textarea {
-        padding: 12px;
+    
+    #sidebarBackdrop {
+        display: none !important;
     }
+}
+
+/* Desktop toggle button */
+.desktop-toggle-btn {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .desktop-toggle-btn {
+        display: flex !important;
+    }
+}
+
+/* Sidebar backdrop */
+#sidebarBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 35;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+#sidebarBackdrop.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Prevent body scroll when sidebar is open on mobile */
+body.sidebar-open {
+    overflow: hidden;
+}
+
+/* Table styles */
+table th {
+    background: var(--color-end);
+}
+
+.modal-header {
+    background: var(--color-start);
+}
+
+/* Perbaikan untuk layout yang seimbang */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+/* Header tetap di atas */
+.header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Untuk tampilan mobile */
+@media (max-width: 768px) {
+    .main-content {
+        width: 100%;
+    }
+}
+
+/* Switch Toggle Styles */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Animation untuk switch */
+.dot {
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Hover effects untuk switch */
+label:hover .block {
+    transform: scale(1.05);
+}
+
+/* Helper tooltip animation */
+.group:hover .group-hover\:block {
+    animation: fadeInUp 0.2s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Shake animation untuk error */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.animate-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Styling untuk error messages */
+.text-red-600 {
+    color: #dc2626;
+}
+
+.border-red-500 {
+    border-color: #ef4444;
+}
+
+.focus\:border-red-500:focus {
+    border-color: #ef4444;
+}
+
+.focus\:ring-red-500:focus {
+    --tw-ring-color: rgb(239 68 68 / 0.2);
+}
+
+/* Improved styling untuk input fields */
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 111, 188, 0.1);
+}
+
+/* Better padding untuk input */
+input, select, textarea {
+    padding: 12px;
+}
 
 
-
-
-    /* Custom Pagination Styles */
+/* Custom Pagination Styles */
 .custom-pagination {
     display: flex;
     justify-content: space-between;
@@ -237,8 +390,6 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
-
-
 /* Hide elements with x-cloak until Alpine is loaded */
 [x-cloak] { 
     display: none !important; 
@@ -248,7 +399,7 @@ input[type="number"] {
 .transition-all {
     transition: all 0.3s ease;
 }
- 
+
 /* Notification dropdown scroll */
 .notification-scroll {
     scrollbar-width: thin;
@@ -273,33 +424,30 @@ input[type="number"] {
     background: #a0aec0;
 }
 
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
 
- .animate-fade-in {
-        animation: fadeIn 0.3s ease-in-out;
+.animate-scale-in {
+    animation: scaleIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
     }
-
-    .animate-scale-in {
-        animation: scaleIn 0.3s ease-in-out;
+    to {
+        opacity: 1;
     }
+}
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
+@keyframes scaleIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
     }
-
-    @keyframes scaleIn {
-        from {
-            transform: scale(0.95);
-            opacity: 0;
-        }
-
-        to {
-            transform: scale(1);
-            opacity: 1;
-        }
+    to {
+        transform: scale(1);
+        opacity: 1;
     }
+}
