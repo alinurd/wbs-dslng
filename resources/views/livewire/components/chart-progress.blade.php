@@ -1,7 +1,7 @@
 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-tasks mr-2 text-purple-500"></i>
-                        Progress Pengaduan
+                        {{ __('dashboard.charts.progress') }}
                     </h2>
                     <div class="space-y-4">
                         @foreach($progress_bulanan as $progress)
@@ -12,7 +12,8 @@
                                     <span class="text-sm font-medium text-gray-700">{{ $progress['label'] }}</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600">{{ $progress['jumlah'] }} aduan</span>
+                                    <span class="text-sm text-gray-600">{{ $progress['jumlah'] }}                         
+                                        {{ __('root.complain') }}</span>
                                     <span class="text-sm font-bold text-{{ $progress['color'] }}-600">{{ $progress['persentase'] }}%</span>
                                 </div>
                             </div>
