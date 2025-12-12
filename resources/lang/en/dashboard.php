@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'welcome' => [
+     'welcome' => [
         'title' => 'Welcome, :name! 👋',
         'subtitle' => 'A secure, confidential, and reliable reporting system to create a transparent and integrity work culture',
     ],
@@ -55,6 +55,8 @@ return [
     ],
    // Tambahkan array ini di file dashboard.php
 'charts' => [
+      'progress' => 'Complaint Progress',
+
     'analytics_title' => 'Analytics & Charts',
     'analytics_subtitle' => 'Complaint data visualization for better analysis',
     'status_progress' => 'Status Progress',

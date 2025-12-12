@@ -1,6 +1,7 @@
 <?php
 
-return [
+return [ 
+
     'welcome' => [
         'title' => 'Selamat Datang, :name! 👋',
         'subtitle' => 'Sistem pelaporan yang aman, rahasia, dan terpercaya untuk menciptakan budaya kerja transparan dan berintegritas',
@@ -54,6 +55,7 @@ return [
         'hours' => 'Jam Kerja:',
     ],
     'charts' => [
+    'progress' => 'Progress Aduan',
     'analytics_title' => 'Analitik & Grafik',
     'analytics_subtitle' => 'Visualisasi data pengaduan untuk analisis yang lebih baik',
     'status_progress' => 'Status Progress',
