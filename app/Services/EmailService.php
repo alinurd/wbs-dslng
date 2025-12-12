@@ -166,44 +166,45 @@ class EmailService
    public function sendEmail(string $to, string $subject, string $view, array $data = [], array $attachments = [], string $purpose = ''): bool
     {
         $status = false;
-        $error = '';
-        $this->setMailConfig();
-            $config = $this->getEmailConfig();
-        // Check jika view exists
-        if (!view()->exists($view)) {
-            $error = "View {$view} tidak ditemukan";
-            Log::error($error);
-            $this->createAuditLog($to, $subject, $purpose, false, $error);
-            return false;
-        }
+        // $error = '';
+        // $this->setMailConfig();
+        //     $config = $this->getEmailConfig();
+        // // Check jika view exists
+        // if (!view()->exists($view)) {
+        //     $error = "View {$view} tidak ditemukan";
+        //     Log::error($error);
+        //     $this->createAuditLog($to, $subject, $purpose, false, $error);
+        //     return false;
+        // }
 
-        try {
-           Mail::send($view, $data, function ($message) use ($to, $subject, $attachments, $config) {
-                $message->to($to)
-                        ->subject($subject)
-                        ->from($config->from_address, $config->from_name);
+        // try {
+        //    Mail::send($view, $data, function ($message) use ($to, $subject, $attachments, $config) {
+        //         $message->to($to)
+        //                 ->subject($subject)
+        //                 ->from($config->from_address, $config->from_name);
                 
-                $message->from(
-                    config('mail.from.address'), 
-                    config('mail.from.name')
-                );
+        //         $message->from(
+        //             config('mail.from.address'), 
+        //             config('mail.from.name')
+        //         );
                 
-                foreach ($attachments as $attachment) {
-                    if (isset($attachment['path'])) {
-                        $message->attach($attachment['path'], $attachment['options'] ?? []);
-                    }
-                }
-            });
+        //         foreach ($attachments as $attachment) {
+        //             if (isset($attachment['path'])) {
+        //                 $message->attach($attachment['path'], $attachment['options'] ?? []);
+        //             }
+        //         }
+        //     });
 
-            $status = true;
+        //     $status = true;
             
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-            Log::error("Email error to {$to}: {$error}");
-        }
+        // } catch (\Exception $e) {
+        //     $error = $e->getMessage();
+        //     Log::error("Email error to {$to}: {$error}");
+        // }
 
-        $this->createAuditLog($to, $subject, $purpose, $status, $error);
-        return $status;
+        // $this->createAuditLog($to, $subject, $purpose, $status, $error);
+        return true;
+        // return $status;
     }
 
 
