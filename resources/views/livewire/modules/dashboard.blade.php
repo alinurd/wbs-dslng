@@ -20,17 +20,11 @@
             <div class="relative z-100">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                     <div class="flex-1">
-                        <h1 class="text-3xl font-bold mb-2">Selamat Datang, {{ $user->name }}! 👋</h1>
+                        <h1 class="text-3xl font-bold mb-2">
+                            {{ __('dashboard.welcome.title', ['name' => $user->name]) }}</h1>
                         <p class="text-blue-100 text-lg mb-4 max-w-2xl">
-                            Sistem pelaporan yang aman, rahasia, dan terpercaya untuk menciptakan budaya kerja
-                            transparan dan berintegritas
+                    {{ __('dashboard.welcome.subtitle') }}
                         </p>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button wire:click="refreshDashboard"
-                            class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center border border-white/30">
-                            <i class="fas fa-refresh mr-2"></i>Refresh
-                        </button>
                     </div>
                 </div>
             </div>
@@ -50,55 +44,55 @@
 
             <!-- Quick Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-                @php
-                    $statCards = [
-                        [
-                            'title' => 'Total Pengaduan',
-                            'value' => $stats['total_pengaduan'] ?? 0,
-                            'icon' => 'file-alt',
-                            'color' => 'blue',
-                            'description' => 'pengaduan yang diajukan',
-                        ],
-                        [
-                            'title' => 'Menunggu',
-                            'value' => $stats['menunggu'] ?? 0,
-                            'icon' => 'clock',
-                            'color' => 'gray',
-                            'description' => 'Belum diproses',
-                        ],
-                        [
-                            'title' => 'Dalam Proses',
-                            'value' => $stats['dalam_proses'] ?? 0,
-                            'icon' => 'spinner',
-                            'color' => 'yellow',
-                            'description' => 'Sedang diproses',
-                        ],
-                        [
-                            'title' => 'Selesai',
-                            'value' => $stats['selesai'] ?? 0,
-                            'icon' => 'check-circle',
-                            'color' => 'green',
-                            'description' => 'Telah diselesaikan',
-                        ],
-                    ];
-                @endphp
+        @php
+            $statCards = [
+                [
+                    'title' => __('dashboard.stats.total_reports'),
+                    'value' => $stats['total_pengaduan'] ?? 0,
+                    'icon' => 'file-alt',
+                    'color' => 'blue',
+                    'description' => __('dashboard.stats.total_description'),
+                ],
+                [
+                    'title' => __('dashboard.stats.waiting'),
+                    'value' => $stats['menunggu'] ?? 0,
+                    'icon' => 'clock',
+                    'color' => 'gray',
+                    'description' => __('dashboard.stats.waiting_description'),
+                ],
+                [
+                    'title' => __('dashboard.stats.in_progress'),
+                    'value' => $stats['dalam_proses'] ?? 0,
+                    'icon' => 'spinner',
+                    'color' => 'yellow',
+                    'description' => __('dashboard.stats.in_progress_description'),
+                ],
+                [
+                    'title' => __('dashboard.stats.completed'),
+                    'value' => $stats['selesai'] ?? 0,
+                    'icon' => 'check-circle',
+                    'color' => 'green',
+                    'description' => __('dashboard.stats.completed_description'),
+                ],
+            ];
+        @endphp
 
-                @foreach ($statCards as $card)
-                    <div
-                        class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-{{ $card['color'] }}-500 hover:shadow-xl transition-shadow duration-300">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-600">{{ $card['title'] }}</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">{{ $card['value'] }}</p>
-                                <p class="text-xs text-gray-500 mt-2">{{ $card['description'] }}</p>
-                            </div>
-                            <div class="p-3 bg-{{ $card['color'] }}-100 rounded-full">
-                                <i class="fas fa-{{ $card['icon'] }} text-{{ $card['color'] }}-600 text-xl"></i>
-                            </div>
-                        </div>
+        @foreach ($statCards as $card)
+            <div
+                class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-{{ $card['color'] }}-500 hover:shadow-xl transition-shadow duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">{{ $card['title'] }}</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ $card['value'] }}</p>
+                        <p class="text-xs text-gray-500 mt-2">{{ $card['description'] }}</p>
                     </div>
-                @endforeach
+                    <div class="p-3 bg-{{ $card['color'] }}-100 rounded-full">
+                        <i class="fas fa-{{ $card['icon'] }} text-{{ $card['color'] }}-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
+        @endforeach
+    </div>
 
             @if (!empty($progress_bulanan) && $isRole3)
                 <div class="mb-5">
@@ -117,56 +111,56 @@
                 <div class="lg:col-span-1 space-y-6">
                     <!-- Quick Actions -->
                     <div class="bg-white rounded-2xl shadow-lg p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-bolt mr-2 text-yellow-500"></i>
-                            Quick Actions
-                        </h2>
-                        <div class="space-y-4">
-                            @if ($isRole3)
-                                <a href="{{ route('p_report') }}"
-                                    class="flex items-center p-4 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl hover:shadow-md transition-all duration-300 group">
-                                    <div
-                                        class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                                        <i class="fas fa-plus-circle text-white text-xl"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h3 class="font-semibold text-gray-900">Buat Pengaduan Baru</h3>
-                                        <p class="text-sm text-gray-600">Laporkan pelanggaran dengan mudah</p>
-                                    </div>
-                                    <i
-                                        class="fas fa-chevron-right text-gray-400 group-hover:text-green-600 transition-colors"></i>
-                                </a>
-                            @endif
-
-                            <a href="{{ route($reportRoute) }}"
-                                class="flex items-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl hover:shadow-md transition-all duration-300 group">
-                                <div
-                                    class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                                    <i class="fas fa-search text-white text-xl"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900">Tracking Pengaduan</h3>
-                                    <p class="text-sm text-gray-600">Pantau status laporan Anda</p>
-                                </div>
-                                <i
-                                    class="fas fa-chevron-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
-                            </a>
-
-                            <a href="{{ route('faq') }}"
-                                class="flex items-center p-4 bg-gradient-to-r from-cyan-50 to-cyan-100 border border-cyan-200 rounded-xl hover:shadow-md transition-all duration-300 group">
-                                <div
-                                    class="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                                    <i class="fas fa-question text-white text-xl"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900">FAQ & Bantuan</h3>
-                                    <p class="text-sm text-gray-600">Jawaban untuk pertanyaan umum</p>
-                                </div>
-                                <i
-                                    class="fas fa-chevron-right text-gray-400 group-hover:text-cyan-600 transition-colors"></i>
-                            </a>
-                        </div>
+        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-bolt mr-2 text-yellow-500"></i>
+            {{ __('dashboard.quick_actions.title') }}
+        </h2>
+        <div class="space-y-4">
+            @if ($isRole3)
+                <a href="{{ route('p_report') }}"
+                    class="flex items-center p-4 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl hover:shadow-md transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-plus-circle text-white text-xl"></i>
                     </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-900">{{ __('dashboard.quick_actions.new_report') }}</h3>
+                        <p class="text-sm text-gray-600">{{ __('dashboard.quick_actions.new_report_desc') }}</p>
+                    </div>
+                    <i
+                        class="fas fa-chevron-right text-gray-400 group-hover:text-green-600 transition-colors"></i>
+                </a>
+            @endif
+
+            <a href="{{ route($reportRoute) }}"
+                class="flex items-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl hover:shadow-md transition-all duration-300 group">
+                <div
+                    class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-search text-white text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900">{{ __('dashboard.quick_actions.track_report') }}</h3>
+                    <p class="text-sm text-gray-600">{{ __('dashboard.quick_actions.track_report_desc') }}</p>
+                </div>
+                <i
+                    class="fas fa-chevron-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
+            </a>
+
+            <a href="{{ route('faq') }}"
+                class="flex items-center p-4 bg-gradient-to-r from-cyan-50 to-cyan-100 border border-cyan-200 rounded-xl hover:shadow-md transition-all duration-300 group">
+                <div
+                    class="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-question text-white text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900">{{ __('dashboard.quick_actions.faq') }}</h3>
+                    <p class="text-sm text-gray-600">{{ __('dashboard.quick_actions.faq_desc') }}</p>
+                </div>
+                <i
+                    class="fas fa-chevron-right text-gray-400 group-hover:text-cyan-600 transition-colors"></i>
+            </a>
+        </div>
+    </div>
                     <!-- Progress Bulanan -->
                     @if (!empty($progress_bulanan) && !$isRole3)
                         @include('livewire.components.chart-progress')
@@ -179,10 +173,10 @@
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-xl font-bold text-gray-800 flex items-center">
                                 <i class="fas fa-stream mr-2 text-green-500"></i>
-                                Aktivitas Terbaru
+                {{ __('dashboard.recent_activity.title') }}
                             </h2>
                             <span class="text-gray-500 text-sm bg-gray-100 px-3 py-1 rounded-full">
-                                {{ count($log_approval) }} aktivitas
+                {{ count($log_approval) }} {{ __('dashboard.recent_activity.activities') }}
                             </span>
                         </div>
 
@@ -195,7 +189,7 @@
                                     class="border-l-4 border-{{ $log['status_color'] }}-500 pl-4 py-3 hover:bg-gray-50 rounded-r-lg transition-colors">
                                     <div class="flex justify-between items-start mb-2">
                                         <h3 class="font-semibold text-gray-800 text-sm">
-                                            Code: #{{ $cleanCode }}
+                            {{ __('dashboard.recent_activity.code', ['code' => $cleanCode]) }}
                                         </h3>
                                         <span
                                             class="px-3 py-1 text-xs font-medium rounded-full bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 border border-{{ $log['status_color'] }}-200">
@@ -239,7 +233,7 @@
                             @empty
                                 <div class="text-center py-8 text-gray-500">
                                     <i class="fas fa-history text-4xl mb-2 opacity-50"></i>
-                                    <p>Belum ada aktivitas terbaru</p>
+                    <p>{{ __('dashboard.recent_activity.no_activity') }}</p>
                                 </div>
                             @endforelse
                         </div>

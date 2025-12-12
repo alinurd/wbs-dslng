@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -112,7 +112,7 @@
                                 class="ml-6 mt-1 border-l border-white/20 pl-3 space-y-1 menu-text">
                                 @foreach ($menu->children as $child)
                                     <a href="{{ $child->route ? route($child->route) : '#' }}"
-                                        class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-md transition hover:bg-white/10
+                                        class="flex items-center gap-2 text-sm px-3 py 1.5 rounded-md transition hover:bg-white/10
                                                {{ request()->routeIs($child->route) ? 'active-link bg-white/15' : '' }}"
                                         @click="closeOnMobile()">
                                         <i class="fas fa-circle text-xs text-white/70"></i>
@@ -169,6 +169,59 @@
                     <div class="flex items-center gap-4">
                         {{-- Notification Bell --}}
                         <livewire:notification-bell />
+
+                        {{-- Language Switcher --}}
+                        <div x-data="{ open: false }" class="relative">
+                            <button @click="open = !open" @click.outside="open = false"
+                                class="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                @if(app()->getLocale() === 'en')
+                                    <span class="text-lg">🇺🇸</span>
+                                    <span class="text-sm font-medium">EN</span>
+                                @else
+                                    <span class="text-lg">🇮🇩</span>
+                                    <span class="text-sm font-medium">ID</span>
+                                @endif
+                                <i class="fas fa-chevron-down text-xs transition-transform duration-200"
+                                    :class="{ 'rotate-180': open }"></i>
+                            </button>
+
+                            <div x-show="open" x-transition 
+                                class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                                {{-- English --}}
+                                <form action="{{ route('language.change') }}" method="POST" class="w-full">
+                                    @csrf
+                                    <input type="hidden" name="locale" value="en">
+                                    <button type="submit"
+                                        class="w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-gray-50
+                                            {{ app()->getLocale() === 'en' ? 'text-blue-600 font-semibold bg-blue-50' : 'text-gray-700' }}">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-lg">🇺🇸</span>
+                                            <span>English</span>
+                                        </div>
+                                        @if(app()->getLocale() === 'en')
+                                            <i class="fas fa-check text-blue-600"></i>
+                                        @endif
+                                    </button>
+                                </form>
+
+                                {{-- Indonesia --}}
+                                <form action="{{ route('language.change') }}" method="POST" class="w-full">
+                                    @csrf
+                                    <input type="hidden" name="locale" value="id">
+                                    <button type="submit"
+                                        class="w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-gray-50
+                                            {{ app()->getLocale() === 'id' ? 'text-blue-600 font-semibold bg-blue-50' : 'text-gray-700' }}">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-lg">🇮🇩</span>
+                                            <span>Bahasa Indonesia</span>
+                                        </div>
+                                        @if(app()->getLocale() === 'id')
+                                            <i class="fas fa-check text-blue-600"></i>
+                                        @endif
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
 
                         {{-- User Info & Logout --}}
                         <div class="flex items-center gap-3 border-l border-gray-200 pl-4">
@@ -474,6 +527,5 @@
             });
         </script>
     @endif
-
 </body>
 </html>

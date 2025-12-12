@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Models\Menu;
 use App\Services\EmailService;
 use App\Services\MenuService;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(MenuService::class, function ($app) {
             return new MenuService();
         });
+        
         $this->app->singleton(EmailService::class, function ($app) {
             return new EmailService();
         });
@@ -23,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
     
     public function boot()
     {
+        // Set locale at boot time
+        $this->setLocale();
+        
         // Blade directive untuk cek menu access
         Blade::if('canmenu', function ($routeName) {
             if (auth()->guest()) return false;
@@ -38,8 +44,8 @@ class AppServiceProvider extends ServiceProvider
             $hasMenuAccess = function ($menu) use ($user) {
                 if (!$user) return false;
                 if (!$user->email_verified_at ) {
-                            return false;
-                        }
+                    return false;
+                }
  
                 // Menu default 2 selalu tampil untuk semua role
                 if ($menu->default == 2) {
@@ -53,7 +59,6 @@ class AppServiceProvider extends ServiceProvider
 
                 // Menu dengan route: cek permission
                 $permissionBase = str_replace('.', '-', $menu->slug);
-                // dd($permissionBase);
                 if ($menu->route) {
                     return $user->can($permissionBase . '.view');
                 }
@@ -71,19 +76,44 @@ class AppServiceProvider extends ServiceProvider
                 ->get()
                 ->map(function ($menu) use ($hasMenuAccess) {
                     // Filter children
-                    $menu->children = $menu ->children->filter(fn($child) => $hasMenuAccess($child));
+                    $menu->children = $menu->children->filter(fn($child) => $hasMenuAccess($child));
                     return $menu;
                 })
                 // Filter parent menu sesuai akses
                 ->filter(fn($menu) => $hasMenuAccess($menu));
-// dd($menus);
+
             // Bagikan ke semua view
             $view->with([
                 'menus' => $menus,
-               'user' => $user,
-               'userRole' => $user?$user->roles()->get()->pluck('name', 'id')->toArray():[],
+                'user' => $user,
+                'userRole' => $user ? $user->roles()->get()->pluck('name', 'id')->toArray() : [],
                 'module_permissions' => module_permissions('dashboard'),
+                'currentLocale' => App::getLocale(),
             ]);
         });
+    }
+    
+    /**
+     * Set application locale
+     */
+    protected function setLocale()
+    {
+        // Use middleware for locale instead, or handle in boot method
+        // This is a safer approach
+        if (Session::has('locale')) {
+            App::setLocale(Session::get('locale'));
+        }
+    }
+    
+    /**
+     * Change language method (should be in a controller or middleware)
+     * This method shouldn't be in service provider
+     */
+    public function changeLanguage($lang)
+    {
+        // This method should be moved to a controller or middleware
+        // Service providers are not meant for request handling
+        Session::put('locale', $lang);
+        App::setLocale($lang);
     }
 }

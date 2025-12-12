@@ -217,6 +217,7 @@ public $showPreviewModal = false;
 
         return view($this->viewPath(), [
             '_records'    => $this->_records,
+                'currentLocale' => app()->getLocale(),
 
             'title'       => $this->title,
             'permissions' => module_permissions(strtolower($this->modul))['can'] ?? []
