@@ -88,7 +88,7 @@
         'type' => 'text',
         'model' => 'form.encryption',
         'label' => 'Encryption',
-        'required' => true,
+        'required' => false,
         'placeholder' => 'Masukan Encryption....',
         'error' => 'form.encryption',
         'messages' => [
