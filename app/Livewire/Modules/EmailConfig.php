@@ -109,59 +109,13 @@ class EmailConfig extends Root
     $record = $this->model::findOrFail($id);
     $this->testingConfigId = $id;
     $this->isTesting = true;
+            \Log::info('email Config: ' . $record);
 
     try {
         // Set konfigurasi yang akan di-test
         $emailService = app(EmailService::class);
         
-        // Test koneksi SMTP dengan konfigurasi spesifik
-        $connectionTest = $emailService->testEmailConnectionWithConfig([
-            'mailer' => $record->mailer,
-            'host' => $record->host,
-            'port' => $record->port,
-            'encryption' => $record->encryption,
-            'username' => $record->username,
-            'password' => $record->password,
-            'from_address' => $record->from_address,
-            'from_name' => $record->from_name,
-        ]);
-
-        if (!$connectionTest['status']) {
-            // Audit Log untuk TEST CONNECTION GAGAL
-            AuditLog::create([
-                'user_id' => auth()->id() ?? $this->userInfo['user']['id'] ?? null,
-                'action' => 'test_email_connection',
-                'table_name' => 'email_configs',
-                'record_id' => $record->id,
-                'old_values' => null,
-                'new_values' => json_encode([
-                    'status' => 'failed',
-                    'test_type' => 'smtp_connection',
-                    'recipient_email' => $this->maskEmail($this->testEmail),
-                    'config_id' => $record->id,
-                    'config_name' => $record->from_name,
-                    'error_message' => $connectionTest['message'],
-                    'test_details' => [
-                        'mailer' => $this->maskString($record->mailer),
-                        'host' => $this->maskString($record->host, 8),
-                        'port' => '***',
-                        'encryption' => $this->maskString($record->encryption),
-                        'username' => $this->maskEmail($record->username),
-                        'from_address' => $this->maskEmail($record->from_address),
-                        'from_name' => $record->from_name
-                    ],
-                    'test_time' => now()->format('d/m/Y H:i:s'),
-                    'ip_address' => request()->ip()
-                ]),
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'created_at' => now()
-            ]);
-
-            $this->notify('error', 'Koneksi SMTP gagal: ' . $connectionTest['message']);
-            $this->isTesting = false;
-            return;
-        }
+    
 
         // Kirim email test dengan konfigurasi spesifik
         $sendTest = $emailService->sendTestEmailWithConfig(
@@ -262,6 +216,8 @@ class EmailConfig extends Root
 
     } catch (\Exception $e) {
         // Audit Log untuk ERROR
+                    \Log::error('email Config err: ' . $e);
+
         AuditLog::create([
             'user_id' => auth()->id() ?? $this->userInfo['user']['id'] ?? null,
             'action' => 'test_email_connection',
