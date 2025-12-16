@@ -32,11 +32,13 @@ class EmailService
                 'config' => $config
             ];
 
-            Mail::send($view, $data, function ($message) use ($to, $subject, $config) {
-                $message->to($to)
-                        ->subject($subject)
-                        ->from($config['from_address'], $config['from_name']);
-            });
+            $mailer = app('mailer');
+$mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
+    $message->to($to)
+            ->subject($subject)
+            ->from($config['from_address'], $config['from_name']);
+});
+ 
 
             // Log audit
             $this->createAuditLog(
