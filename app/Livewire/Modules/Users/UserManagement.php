@@ -40,11 +40,11 @@ class UserManagement extends Root
         'is_active' => true
     ];
 
-    public $filters = [
-        'search' => '',
-        'role_id' => '',
-        'is_active' => ''
-    ];
+    // public $filters = [
+    //     'search' => '',
+    //     'role_id' => '',
+    //     'is_active' => ''
+    // ];
 
     // Rules untuk validasi form - UBAH KE SINGLE ROLE
     public function rules()
@@ -102,35 +102,51 @@ class UserManagement extends Root
     }
 
     public function columns()
-    {
-        return [
-            'name' => 'Name', 
-            'email' => 'Email',
-            'roles' => 'Roles',
-            'is_active' => 'Status', 
-        ];
-    }
+{
+    return [
+        'name' => 'Name', 
+        'email' => 'Email',
+        'roles' => 'Roles',
+        'is_active' => 'Status', 
+    ];
+}
 
-    // Override query untuk load data dengan roles
-    public function query()
-    {
-        return $this->model::with('roles')
-            ->select(['id', 'name', 'email', 'fwd_id', 'is_active', 'created_at', 'updated_at'])
-            ->when($this->filters['search'], function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('email', 'like', '%' . $search . '%');
-                });
-            })
-            ->when($this->filters['role_id'], function ($query, $roleId) {
-                $query->whereHas('roles', function ($q) use ($roleId) {
-                    $q->where('id', $roleId);
-                });
-            })
-            ->when($this->filters['is_active'] !== '', function ($query) {
-                $query->where('is_active', $this->filters['is_active']);
+public function query()
+{
+     $query = $this->model::with('roles')
+        ->select(['id', 'name', 'email', 'fwd_id', 'is_active', 'created_at', 'updated_at']);
+    
+     if ($this->search && method_exists($this, 'columns')) {
+        $columns = $this->columns();
+        if (is_array($columns) && count($columns)) {
+            $query->where(function ($q) use ($columns) {
+                foreach (array_keys($columns) as $columnKey) {
+                     if ($columnKey === 'roles') {
+                         $q->orWhereHas('roles', function ($roleQuery) {
+                            $roleQuery->where('name', 'like', "%{$this->search}%");
+                        });
+                    } else {
+                         $q->orWhere($columnKey, 'like', "%{$this->search}%");
+                    }
+                }
             });
+        }
     }
+    
+    // Filter role
+    if ($this->filters['role_id'] ?? null) {
+        $query->whereHas('roles', function ($q) {
+            $q->where('id', $this->filters['role_id']);
+        });
+    }
+    
+    // Filter status
+    if (isset($this->filters['is_active']) && $this->filters['is_active'] !== '') {
+        $query->where('is_active', $this->filters['is_active']);
+    }
+    
+    return $query;
+}
 
     
     // Override method saving untuk handle password dan fwd_id
