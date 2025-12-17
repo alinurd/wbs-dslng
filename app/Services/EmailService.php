@@ -40,15 +40,15 @@ $data = [
         if (!view()->exists($view)) {
             $error = "View {$view} tidak ditemukan";
             Log::error($error);
-            $this->createAuditLog($to, $subject, $purpose, false, $error);
+            $this->createAuditLog($to, $subject, 'testMail', false, $error);
             return false;
         }
 
         try {
-           Mail::send($view, $data, function ($message) use ($to, $subject, $attachments, $config) {
+           Mail::send($view, $data, function ($message) use ($to, $subject, $config) {
                 $message->to($to)
                         ->subject($subject)
-                        ->from($config->from_address, $config->from_name);
+                        ->from($config['from_address'], $config['from_name']);
                 
                 $message->from(
                     config('mail.from.address'), 
