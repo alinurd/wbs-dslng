@@ -24,11 +24,9 @@ class EmailService
  
     
     // File: app/Services/EmailService.php
-
-
-public function sendTestEmailWithConfig($toEmail, $subject, array $config)
+ public function sendTestEmailWithConfig($toEmail, $subject, array $config)
     {
-        Log::info('Testing email config DSLNG', [
+        Log::info('Testing email config DSLNG with Laravel Mail', [
             'to' => $toEmail,
             'host' => $config['host'],
             'port' => $config['port'],
@@ -36,85 +34,102 @@ public function sendTestEmailWithConfig($toEmail, $subject, array $config)
         ]);
 
         try {
-            // Langsung implementasi seperti yang berhasil di test-email.php
-            $mail = new PHPMailer(true);
+
+            // SET CONFIG CUSTOM untuk DSLNG Exchange
+            $this->setDSLNGMailConfig($config);
             
-            // Server settings - SAMA PERSIS dengan yang berhasil
-            $mail->isSMTP();
-            $mail->Host = $config['host'];
-            $mail->Port = (int)$config['port'];
-            $mail->Timeout = 30;
-            
-            // INI YANG BERHASIL: NO AUTHENTICATION untuk port 25 DSLNG
-            $mail->SMTPAuth = false; // FALSE seperti di test-email.php
-            $mail->SMTPSecure = false; // NO encryption
-            $mail->SMTPAutoTLS = false; // NO auto TLS
-            
-            // SSL options (sama seperti test-email.php)
-            $mail->SMTPOptions = [
-                'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                ]
+              $view = 'emails.test-connection';
+            $data = [
+                'subject' => $subject,
+                'testTime' => now()->format('d/m/Y H:i:s'),
+                'recipient' => $toEmail,
+                'config' => $config
             ];
-            
-            // Encoding
-            $mail->CharSet = 'UTF-8';
-            
-            // Recipients - SAMA dengan test-email.php
-            $fromEmail = $config['from_address'] ?? 'wbs@dslng.com';
-            $fromName = $config['from_name'] ?? 'WBS System';
-            
-            $mail->setFrom($fromEmail, $fromName);
-            $mail->addAddress($toEmail);
-            
-            // Content
-            $mail->isHTML(true);
-            $mail->Subject = $subject;
-            
-            // Email content - sama seperti yang berhasil
-            $message = "<h3>Test Email dari Whistleblowing System DSLNG</h3>";
-            $message .= "<p>Waktu: " . now()->format('Y-m-d H:i:s') . "</p>";
-            $message .= "<p>Host: " . $config['host'] . "</p>";
-            $message .= "<p>Port: " . $config['port'] . "</p>";
-            $message .= "<p>Config ID: " . ($config['id'] ?? 'N/A') . "</p>";
-            $message .= "<p><strong>Status: Test Connection Successful</strong></p>";
-            $message .= "<p>Ini adalah email test dari sistem Whistleblowing DSLNG.</p>";
-            
-            $mail->Body = $message;
-            $mail->AltBody = strip_tags($message);
-            
-            // Kirim email
-            $mail->send();
-            
-            Log::info('Email test berhasil dikirim', [
+
+            // Kirim email menggunakan Laravel Mail
+            Mail::send($$view, $data, function ($message) use ($toEmail, $subject, $config) {
+                $message->to($toEmail)
+                        ->subject($subject)
+                        ->from(
+                            $config['from_address'] ?? 'wbs@dslng.com',
+                            $config['from_name'] ?? 'WBS System'
+                        );
+            });
+
+            // Kembalikan config asli
+            // $this->restoreMailConfig($originalConfig);
+
+            Log::info('Email test berhasil dikirim via Laravel Mail', [
                 'to' => $toEmail,
-                'from' => $fromEmail,
+                'from' => $config['from_address'],
                 'host' => $config['host']
             ]);
-            
+
             return true;
             
-        } catch (PHPMailerException $e) {
-            Log::error('PHPMailer Error: ' . $e->getMessage(), [
-                'to' => $toEmail,
-                'config' => [
-                    'host' => $config['host'],
-                    'port' => $config['port']
-                ]
-            ]);
-            
-            throw new \Exception('PHPMailer Error: ' . $e->getMessage());
-            
         } catch (\Exception $e) {
-            Log::error('General Error sending test email: ' . $e->getMessage(), [
+            Log::error('Laravel Mail Error: ' . $e->getMessage(), [
                 'to' => $toEmail,
-                'config' => $config
+                'config' => $config,
+                'trace' => $e->getTraceAsString()
             ]);
             
             throw $e;
         }
+    }
+
+    /**
+     * Set custom mail config for DSLNG Exchange
+     * - NO AUTHENTICATION untuk port 25
+     */
+    private function setDSLNGMailConfig(array $config)
+    {
+        // Gunakan PHPMailer sebagai transport dengan setting khusus
+        $mailer = new PHPMailer(true);
+        
+        // Setup untuk DSLNG Exchange (tanpa auth)
+        $mailer->isSMTP();
+        $mailer->Host = $config['host'];
+        $mailer->Port = (int)$config['port'];
+        $mailer->Timeout = 30;
+        $mailer->SMTPAuth = false; // NO AUTHENTICATION
+        $mailer->SMTPSecure = false; // NO encryption
+        $mailer->SMTPAutoTLS = false; // NO auto TLS
+        
+        // SSL options
+        $mailer->SMTPOptions = [
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            ]
+        ];
+
+        // Set Laravel mail config
+        Config::set('mail.default', 'smtp');
+        Config::set('mail.mailers.smtp', [
+            'transport' => 'smtp',
+            'host' => $config['host'],
+            'port' => $config['port'],
+            'encryption' => null, // No encryption
+            'username' => null, // No auth
+            'password' => null, // No auth
+            'timeout' => 30,
+            'auth_mode' => null,
+            'verify_peer' => false,
+        ]);
+
+        // Set from address
+        Config::set('mail.from', [
+            'address' => $config['from_address'] ?? 'wbs@dslng.com',
+            'name' => $config['from_name'] ?? 'WBS System'
+        ]);
+
+        Log::debug('DSLNG Mail config set', [
+            'host' => $config['host'],
+            'port' => $config['port'],
+            'auth' => 'disabled'
+        ]);
     }
 
 
