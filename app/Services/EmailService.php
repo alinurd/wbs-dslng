@@ -23,6 +23,105 @@ class EmailService
     
     // File: app/Services/EmailService.php
 
+
+// File: app/Services/EmailService.php
+public function testExchangeConnectionDirectly(array $config = null)
+{
+    // Gunakan config dari parameter atau default
+    if ($config === null) {
+        $host = 'exchange.dslng.com';
+        $port = 25;
+        $username = 'wbs@dslng.com';
+        $password = 'dslng.1740';
+    } else {
+        $host = $config['host'];
+        $port = $config['port'];
+        $username = $config['username'];
+        $password = $config['password'];
+    }
+    
+    try {
+        // Log informasi koneksi
+        \Log::info("Testing SMTP connection to {$host}:{$port}");
+        
+        // Coba koneksi langsung ke socket dengan error handling lebih baik
+        $socket = @fsockopen($host, $port, $errno, $errstr, 10);
+        
+        if (!$socket) {
+            \Log::error("SMTP Connection failed: {$errstr} ({$errno})");
+            return [
+                'status' => false,
+                'message' => "Gagal koneksi ke server: $errstr ($errno)"
+            ];
+        }
+        
+        // Set timeout untuk reading
+        stream_set_timeout($socket, 5);
+        
+        // Baca response awal (banner server)
+        $response = fgets($socket, 4096);
+        \Log::info("SMTP Banner: " . trim($response));
+        
+        // Kirim EHLO
+        fputs($socket, "EHLO localhost\r\n");
+        
+        // Baca semua response dari EHLO
+        $ehloResponse = '';
+        while ($line = fgets($socket, 4096)) {
+            $ehloResponse .= $line;
+            \Log::info("SMTP Line: " . trim($line));
+            
+            // Periksa apakah ini akhir dari response EHLO
+            if (strlen(trim($line)) < 4 || substr($line, 3, 1) == ' ') {
+                break;
+            }
+        }
+        
+        \Log::info("EHLO Response: " . $ehloResponse);
+        
+        // Coba login jika ada username/password
+        if ($username && $password) {
+            \Log::info("Attempting authentication...");
+            
+            // Kirim AUTH LOGIN
+            fputs($socket, "AUTH LOGIN\r\n");
+            $authResponse = fgets($socket, 4096);
+            \Log::info("AUTH Response: " . trim($authResponse));
+            
+            // Kirim username (base64 encoded)
+            fputs($socket, base64_encode($username) . "\r\n");
+            $userResponse = fgets($socket, 4096);
+            \Log::info("Username Response: " . trim($userResponse));
+            
+            // Kirim password (base64 encoded)
+            fputs($socket, base64_encode($password) . "\r\n");
+            $passResponse = fgets($socket, 4096);
+            \Log::info("Password Response: " . trim($passResponse));
+        }
+        
+        // QUIT
+        fputs($socket, "QUIT\r\n");
+        fgets($socket, 4096);
+        
+        fclose($socket);
+        
+        return [
+            'status' => true,
+            'message' => 'Koneksi SMTP berhasil',
+            'banner' => trim($response),
+            'ehlo_response' => $ehloResponse
+        ];
+        
+    } catch (\Exception $e) {
+        \Log::error("SMTP Test Exception: " . $e->getMessage());
+        return [
+            'status' => false,
+            'message' => 'Exception: ' . $e->getMessage()
+        ];
+    }
+}
+
+
 public function sendTestEmailWithConfig(string $to, string $subject, array $config): bool
 {
     $status = false;
