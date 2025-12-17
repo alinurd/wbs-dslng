@@ -41,13 +41,16 @@ public function sendTestEmailWithConfig(string $to, string $subject, array $conf
             'recipient' => $to,
             'config' => $config
         ];
+$mailer = app('mailer');
+$mailer->getSwiftMailer()->registerPlugin(new \Swift_Plugins_LoggerPlugin(new \Swift_Plugins_Loggers_ArrayLogger()));
+$mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
+    $message->to($to)
+            ->subject($subject)
+            ->from($config['from_address'], $config['from_name']);
+});
+$logger = $mailer->getSwiftMailer()->getPlugins()[0]->getLogs();
+\Log::info("SMTP Logs: \n" . $logger);
 
-        $mailer = app('mailer');
-        $mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
-            $message->to($to)
-                    ->subject($subject)
-                    ->from($config['from_address'], $config['from_name']);
-        });
 
         \Log::info("Test email berhasil dikirim ke: {$to}");
         return true;
