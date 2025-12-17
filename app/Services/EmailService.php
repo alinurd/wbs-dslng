@@ -25,42 +25,50 @@ class EmailService
 
 public function sendTestEmailWithConfig(string $to, string $subject, array $config): bool
 {
-    try {
-        // 🔴 1. OVERRIDE UNTUK EXCHANGE DSLNG
-        if ($config['host'] === 'exchange.dslng.com') {
-            $config['encryption'] = null; // Matikan encryption
-        }
-        
-        // 🔴 2. SET CONFIG DENGAN BYPASS SSL
+    $status = false;
+        $error = '';
+        $this->setMailConfig();
         $this->setCustomConfig($config);
-        
-        $view = 'emails.test-connection';
-        $data = [
+                $view = 'emails.test-connection';
+$data = [
             'subject' => $subject,
             'testTime' => now()->format('d/m/Y H:i:s'),
             'recipient' => $to,
             'config' => $config
         ];
-$mailer = app('mailer');
-$mailer->getSwiftMailer()->registerPlugin(new \Swift_Plugins_LoggerPlugin(new \Swift_Plugins_Loggers_ArrayLogger()));
-$mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
-    $message->to($to)
-            ->subject($subject)
-            ->from($config['from_address'], $config['from_name']);
-});
-$logger = $mailer->getSwiftMailer()->getPlugins()[0]->getLogs();
-\Log::info("SMTP Logs: \n" . $logger);
 
+        if (!view()->exists($view)) {
+            $error = "View {$view} tidak ditemukan";
+            Log::error($error);
+            $this->createAuditLog($to, $subject, $purpose, false, $error);
+            return false;
+        }
 
+        try {
+           Mail::send($view, $data, function ($message) use ($to, $subject, $attachments, $config) {
+                $message->to($to)
+                        ->subject($subject)
+                        ->from($config->from_address, $config->from_name);
+                
+                $message->from(
+                    config('mail.from.address'), 
+                    config('mail.from.name')
+                );
+                 
+            });
         \Log::info("Test email berhasil dikirim ke: {$to}");
-        return true;
-        
-    } catch (\Exception $e) {
-        \Log::error("Gagal kirim test email ke {$to}: " . $e->getMessage());
-        return false;
-    }
-}
 
+            $status = true;
+            
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+        \Log::error("Gagal kirim test email ke {$to}: " . $e->getMessage());
+        }
+
+        $this->createAuditLog($to, $subject, 'tes-email', $status, $error);
+        // return true;
+        return $status;
+}
 private function setCustomConfig(array $config)
 {
     // 🔴 KONFIGURASI FINAL DENGAN BYPASS CERTIFICATE
