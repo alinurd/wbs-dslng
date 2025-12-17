@@ -255,8 +255,8 @@ private function setCustomConfig(array $config)
             $this->createAuditLog($to, $subject, $purpose, false, $error);
             return false;
         }
-$this->setDSLNGMailConfig($config);
         try {
+            $this->setDSLNGMailConfig($config);
            Mail::send($view, $data, function ($message) use ($to, $subject, $attachments, $config) {
                 $message->to($to)
                         ->subject($subject)
