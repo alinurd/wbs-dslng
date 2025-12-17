@@ -609,6 +609,14 @@ class NotificationBell extends Root
     {
         return $record->jenisPengaduan->data_id ?? 'Tidak diketahui';
     }
+    
+       public function viewDetail($id)
+    {
+         $this->getPengaduanById($id);
+        $this->showDetailModal = true;
+        $this->showuUdateStatus = false;
+    }
+    
 
     public function closeDetailModal()
     {
