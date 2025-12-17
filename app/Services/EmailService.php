@@ -47,7 +47,7 @@ class EmailService
             ];
 
             // Kirim email menggunakan Laravel Mail
-            Mail::send($$view, $data, function ($message) use ($toEmail, $subject, $config) {
+            Mail::send($view, $data, function ($message) use ($toEmail, $subject, $config) {
                 $message->to($toEmail)
                         ->subject($subject)
                         ->from(
