@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Config;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class EmailService
 {
@@ -24,144 +26,96 @@ class EmailService
     // File: app/Services/EmailService.php
 
 
-// File: app/Services/EmailService.php
-public function testExchangeConnectionDirectly(array $config = null)
-{
-    // Gunakan config dari parameter atau default
-    if ($config === null) {
-        $host = 'exchange.dslng.com';
-        $port = 25;
-        $username = 'wbs@dslng.com';
-        $password = 'dslng.1740';
-    } else {
-        $host = $config['host'];
-        $port = $config['port'];
-        $username = $config['username'];
-        $password = $config['password'];
-    }
-    
-    try {
-        // Log informasi koneksi
-        \Log::info("Testing SMTP connection to {$host}:{$port}");
-        
-        // Coba koneksi langsung ke socket dengan error handling lebih baik
-        $socket = @fsockopen($host, $port, $errno, $errstr, 10);
-        
-        if (!$socket) {
-            \Log::error("SMTP Connection failed: {$errstr} ({$errno})");
-            return [
-                'status' => false,
-                'message' => "Gagal koneksi ke server: $errstr ($errno)"
-            ];
-        }
-        
-        // Set timeout untuk reading
-        stream_set_timeout($socket, 5);
-        
-        // Baca response awal (banner server)
-        $response = fgets($socket, 4096);
-        \Log::info("SMTP Banner: " . trim($response));
-        
-        // Kirim EHLO
-        fputs($socket, "EHLO localhost\r\n");
-        
-        // Baca semua response dari EHLO
-        $ehloResponse = '';
-        while ($line = fgets($socket, 4096)) {
-            $ehloResponse .= $line;
-            \Log::info("SMTP Line: " . trim($line));
-            
-            // Periksa apakah ini akhir dari response EHLO
-            if (strlen(trim($line)) < 4 || substr($line, 3, 1) == ' ') {
-                break;
-            }
-        }
-        
-        \Log::info("EHLO Response: " . $ehloResponse);
-        
-        // Coba login jika ada username/password
-        if ($username && $password) {
-            \Log::info("Attempting authentication...");
-            
-            // Kirim AUTH LOGIN
-            fputs($socket, "AUTH LOGIN\r\n");
-            $authResponse = fgets($socket, 4096);
-            \Log::info("AUTH Response: " . trim($authResponse));
-            
-            // Kirim username (base64 encoded)
-            fputs($socket, base64_encode($username) . "\r\n");
-            $userResponse = fgets($socket, 4096);
-            \Log::info("Username Response: " . trim($userResponse));
-            
-            // Kirim password (base64 encoded)
-            fputs($socket, base64_encode($password) . "\r\n");
-            $passResponse = fgets($socket, 4096);
-            \Log::info("Password Response: " . trim($passResponse));
-        }
-        
-        // QUIT
-        fputs($socket, "QUIT\r\n");
-        fgets($socket, 4096);
-        
-        fclose($socket);
-        
-        return [
-            'status' => true,
-            'message' => 'Koneksi SMTP berhasil',
-            'banner' => trim($response),
-            'ehlo_response' => $ehloResponse
-        ];
-        
-    } catch (\Exception $e) {
-        \Log::error("SMTP Test Exception: " . $e->getMessage());
-        return [
-            'status' => false,
-            'message' => 'Exception: ' . $e->getMessage()
-        ];
-    }
-}
-
-
-public function sendTestEmailWithConfig(string $to, string $subject, array $config): bool
-{
-    $status = false;
-        $error = '';
-        $this->setMailConfig();
-        $this->setCustomConfig($config);
-                $view = 'emails.test-connection';
-$data = [
-            'subject' => $subject,
-            'testTime' => now()->format('d/m/Y H:i:s'),
-            'recipient' => $to,
-            'config' => $config
-        ];
-
-        if (!view()->exists($view)) {
-            $error = "View {$view} tidak ditemukan";
-            Log::error($error);
-            $this->createAuditLog($to, $subject, 'testMail', false, $error);
-            return false;
-        }
+public function sendTestEmailWithConfig($toEmail, $subject, array $config)
+    {
+        Log::info('Testing email config DSLNG', [
+            'to' => $toEmail,
+            'host' => $config['host'],
+            'port' => $config['port'],
+            'config_id' => $config['id'] ?? 'unknown'
+        ]);
 
         try {
-           Mail::send($view, $data, function ($message) use ($to, $subject, $config) {
-    $message->to($to)
-            ->subject($subject)
-            ->from($config['from_address'], $config['from_name']);
-});
-        \Log::info("Test email berhasil dikirim ke: {$to}");
-
-            $status = true;
+            // Langsung implementasi seperti yang berhasil di test-email.php
+            $mail = new PHPMailer(true);
+            
+            // Server settings - SAMA PERSIS dengan yang berhasil
+            $mail->isSMTP();
+            $mail->Host = $config['host'];
+            $mail->Port = (int)$config['port'];
+            $mail->Timeout = 30;
+            
+            // INI YANG BERHASIL: NO AUTHENTICATION untuk port 25 DSLNG
+            $mail->SMTPAuth = false; // FALSE seperti di test-email.php
+            $mail->SMTPSecure = false; // NO encryption
+            $mail->SMTPAutoTLS = false; // NO auto TLS
+            
+            // SSL options (sama seperti test-email.php)
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ];
+            
+            // Encoding
+            $mail->CharSet = 'UTF-8';
+            
+            // Recipients - SAMA dengan test-email.php
+            $fromEmail = $config['from_address'] ?? 'wbs@dslng.com';
+            $fromName = $config['from_name'] ?? 'WBS System';
+            
+            $mail->setFrom($fromEmail, $fromName);
+            $mail->addAddress($toEmail);
+            
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            
+            // Email content - sama seperti yang berhasil
+            $message = "<h3>Test Email dari Whistleblowing System DSLNG</h3>";
+            $message .= "<p>Waktu: " . now()->format('Y-m-d H:i:s') . "</p>";
+            $message .= "<p>Host: " . $config['host'] . "</p>";
+            $message .= "<p>Port: " . $config['port'] . "</p>";
+            $message .= "<p>Config ID: " . ($config['id'] ?? 'N/A') . "</p>";
+            $message .= "<p><strong>Status: Test Connection Successful</strong></p>";
+            $message .= "<p>Ini adalah email test dari sistem Whistleblowing DSLNG.</p>";
+            
+            $mail->Body = $message;
+            $mail->AltBody = strip_tags($message);
+            
+            // Kirim email
+            $mail->send();
+            
+            Log::info('Email test berhasil dikirim', [
+                'to' => $toEmail,
+                'from' => $fromEmail,
+                'host' => $config['host']
+            ]);
+            
+            return true;
+            
+        } catch (PHPMailerException $e) {
+            Log::error('PHPMailer Error: ' . $e->getMessage(), [
+                'to' => $toEmail,
+                'config' => [
+                    'host' => $config['host'],
+                    'port' => $config['port']
+                ]
+            ]);
+            
+            throw new \Exception('PHPMailer Error: ' . $e->getMessage());
             
         } catch (\Exception $e) {
-            $error = $e->getMessage();
-        \Log::error("Gagal kirim test email ke {$to}: " . $e->getMessage());
+            Log::error('General Error sending test email: ' . $e->getMessage(), [
+                'to' => $toEmail,
+                'config' => $config
+            ]);
+            
+            throw $e;
         }
-
-        $this->createAuditLog($to, $subject, 'tes-email', $status, $error);
-        // return true;
-        return $status;
-}
+    }
 
 
 private function setCustomConfig(array $config)

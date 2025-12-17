@@ -99,39 +99,29 @@ class EmailConfig extends Root
 }
 
     
-// Di Livewire component atau controller
-public function testConnect($id)
-{
-    $this->validate([
-        'testEmail' => 'required|email',
-    ]);
 
-    $record = $this->model::findOrFail($id);
-    $this->testingConfigId = $id;
-    $this->isTesting = true;
-    
-    \Log::info('Testing email config ID: ' . $id);
-
-    try {
-        $emailService = app(EmailService::class);
+ public function testConnect($id)
+    {
+        $this->validate();
         
-        // Test koneksi terlebih dahulu
-        $connectionTest = $emailService->testExchangeConnectionDirectly([
-            'host' => $record->host,
-            'port' => $record->port,
-            'username' => $record->username,
-            'password' => $record->password,
-            'encryption' => $record->encryption,
+        $record = EmailConfig::findOrFail($id);
+        $this->testingConfigId = $id;
+        $this->isTesting = true;
+        
+        Log::info('Testing email config ID: ' . $id, [
+            'record' => $record->toArray(),
+            'test_email' => $this->testEmail
         ]);
-        
-        \Log::info('Connection test result: ', $connectionTest);
-        
-        if ($connectionTest['status']) {
-            // Jika koneksi berhasil, coba kirim email
+
+        try {
+            // Kirim email test dengan konfigurasi spesifik
+            $emailService = app(EmailService::class);
+            
             $sendTest = $emailService->sendTestEmailWithConfig(
                 $this->testEmail,
                 'Test Koneksi Email - Whistleblowing System DSLNG',
                 [
+                    'id' => $record->id, // Tambahkan ID untuk logging
                     'mailer' => $record->mailer,
                     'host' => $record->host,
                     'port' => $record->port,
@@ -144,73 +134,27 @@ public function testConnect($id)
             );
             
             if ($sendTest) {
-                // Audit Log untuk berhasil
-                $this->createSuccessAuditLog($record, 'Test koneksi dan email berhasil dikirim');
-                $this->notify('success', 'Test email berhasil dikirim ke: ' . $this->testEmail);
+                // Audit Log untuk TEST CONNECTION BERHASIL
+                $this->createSuccessAuditLog($record);
+                $this->notify('success', '✅ Test email berhasil dikirim ke: ' . $this->testEmail);
             } else {
-                // Koneksi OK tapi email gagal
-                $this->createFailureAuditLog($record, 'Koneksi OK tapi email gagal dikirim');
-                $this->notify('warning', 'Koneksi berhasil tapi email gagal dikirim');
+                $this->createFailedAuditLog($record, 'Gagal mengirim test email');
+                $this->notify('error', '❌ Gagal mengirim test email ke: ' . $this->testEmail);
             }
-        } else {
-            // Koneksi gagal
-            $this->createFailureAuditLog($record, $connectionTest['message']);
-            $this->notify('error', 'Koneksi gagal: ' . $connectionTest['message']);
+
+        } catch (\Exception $e) {
+            Log::error('Email test error: ' . $e->getMessage(), [
+                'config_id' => $id,
+                'error' => $e->getTraceAsString()
+            ]);
+            
+            $this->createErrorAuditLog($record, $e);
+            $this->notify('error', '❌ Error testing connection: ' . $e->getMessage());
         }
 
-    } catch (\Exception $e) {
-        \Log::error('Email test error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
-        
-        $this->createErrorAuditLog($record, $e->getMessage());
-        $this->notify('error', 'Error testing connection: ' . $e->getMessage());
+        $this->isTesting = false;
+        $this->testingConfigId = null;
     }
-
-    $this->isTesting = false;
-    $this->testingConfigId = null;
-}
-
-// Helper methods untuk audit log
-private function createSuccessAuditLog($record, $message)
-{
-    AuditLog::create([
-        'user_id' => auth()->id() ?? $this->userInfo['user']['id'] ?? null,
-        'action' => 'test_email_connection',
-        'table_name' => 'email_configs',
-        'record_id' => $record->id,
-        'old_values' => null,
-        'new_values' => json_encode([
-            'status' => 'success',
-            'message' => $message,
-            'config_id' => $record->id,
-            'recipient_email' => $this->maskEmail($this->testEmail),
-            'test_time' => now()->format('d/m/Y H:i:s'),
-        ]),
-        'ip_address' => request()->ip(),
-        'user_agent' => request()->userAgent(),
-        'created_at' => now()
-    ]);
-}
-
-private function createFailureAuditLog($record, $error)
-{
-    AuditLog::create([
-        'user_id' => auth()->id() ?? $this->userInfo['user']['id'] ?? null,
-        'action' => 'test_email_connection',
-        'table_name' => 'email_configs',
-        'record_id' => $record->id,
-        'old_values' => null,
-        'new_values' => json_encode([
-            'status' => 'failed',
-            'error' => $error,
-            'config_id' => $record->id,
-            'recipient_email' => $this->maskEmail($this->testEmail),
-            'test_time' => now()->format('d/m/Y H:i:s'),
-        ]),
-        'ip_address' => request()->ip(),
-        'user_agent' => request()->userAgent(),
-        'created_at' => now()
-    ]);
-}
 
 /**
  * Helper method untuk menyamarkan email
