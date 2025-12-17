@@ -69,26 +69,18 @@ $data = [
         // return true;
         return $status;
 }
+
+
 private function setCustomConfig(array $config)
 {
-    // 🔴 KONFIGURASI FINAL DENGAN BYPASS CERTIFICATE
     Config::set('mail.mailers.smtp', [
         'transport' => 'smtp',
         'host' => $config['host'],
-        'port' => $config['port'],
-        'encryption' => $config['encryption'], // null untuk no encryption
+        'port' => $config['port'],      // biasanya 25
+        'encryption' => null,            // plain SMTP
         'username' => $config['username'],
         'password' => $config['password'],
         'timeout' => 30,
-        
-        // 🔴 INI YANG BYPASS SSL VERIFICATION
-        'stream' => [
-            'ssl' => [
-                'verify_peer' => false,       // Tidak verifikasi certificate
-                'verify_peer_name' => false,  // Tidak cek nama certificate
-                'allow_self_signed' => true,  // Izinkan self-signed cert
-            ],
-        ],
     ]);
 
     Config::set('mail.from.address', $config['from_address']);
@@ -98,6 +90,7 @@ private function setCustomConfig(array $config)
     app()->forgetInstance('mail.manager');
     app()->forgetInstance('mailer');
 }
+
 
 
     public function testEmailConnectionWithConfig(array $config): array
