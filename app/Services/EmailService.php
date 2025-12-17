@@ -19,55 +19,76 @@ class EmailService
         return $this;
     }
 
-     public function sendTestEmailWithConfig(string $to, string $subject, array $config): bool
-    {
-        try {
-            $this->setCustomConfig($config);
-
-            $view = 'emails.test-connection';
-            $data = [
-                'subject' => $subject,
-                'testTime' => now()->format('d/m/Y H:i:s'),
-                'recipient' => $to,
-                'config' => $config
-            ];
-
-            $mailer = app('mailer');
-$mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
-    $message->to($to)
-            ->subject($subject)
-            ->from($config['from_address'], $config['from_name']);
-});
  
-
-            // Log audit
-            $this->createAuditLog(
-                $to, 
-                $subject, 
-                'test_connection', 
-                true, 
-                'Config ID: ' . ($config['id'] ?? 'custom')
-            );
-
-            // Log::info("Test email sent successfully to: {$to} using custom config");
-            return true;
-            
-        } catch (\Exception $e) {
-            Log::error("Failed to send test email to {$to}: " . $e->getMessage());
-            
-            // Log audit error
-            $this->createAuditLog(
-                $to, 
-                $subject, 
-                'test_connection', 
-                false, 
-                $e->getMessage() . ' | Config: ' . ($config['host'] ?? 'unknown')
-            );
-            
-            return false;
-        }
-    }
     
+    // File: app/Services/EmailService.php
+
+public function sendTestEmailWithConfig(string $to, string $subject, array $config): bool
+{
+    try {
+        // 🔴 1. OVERRIDE UNTUK EXCHANGE DSLNG
+        if ($config['host'] === 'exchange.dslng.com') {
+            $config['encryption'] = null; // Matikan encryption
+        }
+        
+        // 🔴 2. SET CONFIG DENGAN BYPASS SSL
+        $this->setCustomConfig($config);
+        
+        $view = 'emails.test-connection';
+        $data = [
+            'subject' => $subject,
+            'testTime' => now()->format('d/m/Y H:i:s'),
+            'recipient' => $to,
+            'config' => $config
+        ];
+
+        $mailer = app('mailer');
+        $mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
+            $message->to($to)
+                    ->subject($subject)
+                    ->from($config['from_address'], $config['from_name']);
+        });
+
+        \Log::info("Test email berhasil dikirim ke: {$to}");
+        return true;
+        
+    } catch (\Exception $e) {
+        \Log::error("Gagal kirim test email ke {$to}: " . $e->getMessage());
+        return false;
+    }
+}
+
+private function setCustomConfig(array $config)
+{
+    // 🔴 KONFIGURASI FINAL DENGAN BYPASS CERTIFICATE
+    Config::set('mail.mailers.smtp', [
+        'transport' => 'smtp',
+        'host' => $config['host'],
+        'port' => $config['port'],
+        'encryption' => $config['encryption'], // null untuk no encryption
+        'username' => $config['username'],
+        'password' => $config['password'],
+        'timeout' => 30,
+        
+        // 🔴 INI YANG BYPASS SSL VERIFICATION
+        'stream' => [
+            'ssl' => [
+                'verify_peer' => false,       // Tidak verifikasi certificate
+                'verify_peer_name' => false,  // Tidak cek nama certificate
+                'allow_self_signed' => true,  // Izinkan self-signed cert
+            ],
+        ],
+    ]);
+
+    Config::set('mail.from.address', $config['from_address']);
+    Config::set('mail.from.name', $config['from_name']);
+
+    // Reset mailer
+    app()->forgetInstance('mail.manager');
+    app()->forgetInstance('mailer');
+}
+
+
     public function testEmailConnectionWithConfig(array $config): array
     {
         try {
@@ -99,38 +120,7 @@ $mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
     //     app()->forgetInstance('mail.manager');
     // }
 
-private function setCustomConfig(array $config)
-{
-    // Pastikan encryption NULL atau string kosong
-    $encryption = null; // 🔴 INI YANG PENTING
-    
-    Config::set('mail.default', 'smtp');
-    
-    Config::set('mail.mailers.smtp', [
-        'transport' => 'smtp',
-        'host' => $config['host'],      // exchange.dslng.com
-        'port' => $config['port'],      // 25
-        'encryption' => $encryption,    // 🔴 NULL = NO TLS/SSL
-        'username' => $config['username'],
-        'password' => $config['password'],
-        'timeout' => 30,
-        
-        // 🔴 TAMBAHKAN INI untuk disable auto-TLS
-        'stream' => [
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => false, // false karena tidak pakai SSL
-            ],
-        ],
-    ]);
-
-    Config::set('mail.from.address', $config['from_address']);
-    Config::set('mail.from.name', $config['from_name']);
-
-    app()->forgetInstance('mail.manager');
-    app()->forgetInstance('mailer');
-}
+ 
 
 
 
