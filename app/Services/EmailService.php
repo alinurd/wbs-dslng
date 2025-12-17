@@ -99,33 +99,35 @@ $mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
     //     app()->forgetInstance('mail.manager');
     // }
 
-
 private function setCustomConfig(array $config)
 {
+    // Pastikan encryption NULL atau string kosong
+    $encryption = null; // 🔴 INI YANG PENTING
+    
     Config::set('mail.default', 'smtp');
-
+    
     Config::set('mail.mailers.smtp', [
         'transport' => 'smtp',
-        'host' => $config['host'],
-        'port' => $config['port'],          // 25
-        'encryption' => $config['encryption'], // 'tls'
+        'host' => $config['host'],      // exchange.dslng.com
+        'port' => $config['port'],      // 25
+        'encryption' => $encryption,    // 🔴 NULL = NO TLS/SSL
         'username' => $config['username'],
         'password' => $config['password'],
         'timeout' => 30,
-        'auth_mode' => null,
-
-        // 🔑 INI YANG DIPAKAI SYMFONY MAILER
-        'options' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true,
+        
+        // 🔴 TAMBAHKAN INI untuk disable auto-TLS
+        'stream' => [
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => false, // false karena tidak pakai SSL
+            ],
         ],
     ]);
 
     Config::set('mail.from.address', $config['from_address']);
     Config::set('mail.from.name', $config['from_name']);
 
-    // WAJIB
     app()->forgetInstance('mail.manager');
     app()->forgetInstance('mailer');
 }
