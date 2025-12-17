@@ -156,6 +156,77 @@ class EmailConfig extends Root
         $this->testingConfigId = null;
     }
 
+    /**
+     * Create failed audit log
+     */
+    private function createFailedAuditLog($record, $error)
+    {
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'test_email_connection',
+            'table_name' => 'email_configs',
+            'record_id' => $record->id,
+            'old_values' => null,
+            'new_values' => json_encode([
+                'status' => 'failed',
+                'test_type' => 'email_delivery',
+                'recipient_email' => $this->maskEmail($this->testEmail),
+                'config_id' => $record->id,
+                'config_name' => $record->from_name,
+                'error_message' => $error,
+                'test_details' => [
+                    'mailer' => $record->mailer,
+                    'host' => $this->maskString($record->host, 8),
+                    'port' => $record->port,
+                    'encryption' => $record->encryption ?? 'none',
+                    'username' => $this->maskEmail($record->username),
+                    'from_address' => $this->maskEmail($record->from_address),
+                    'from_name' => $record->from_name
+                ],
+                'test_time' => now()->format('d/m/Y H:i:s'),
+                'ip_address' => request()->ip()
+            ]),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
+    }
+
+    /**
+     * Create error audit log
+     */
+    private function createErrorAuditLog($record, $exception)
+    {
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'test_email_connection',
+            'table_name' => 'email_configs',
+            'record_id' => $record->id,
+            'old_values' => null,
+            'new_values' => json_encode([
+                'status' => 'error',
+                'test_type' => 'system_error',
+                'recipient_email' => $this->maskEmail($this->testEmail),
+                'config_id' => $record->id,
+                'config_name' => $record->from_name,
+                'error_message' => $exception->getMessage(),
+                'error_type' => get_class($exception),
+                'test_details' => [
+                    'mailer' => $record->mailer,
+                    'host' => $this->maskString($record->host, 8),
+                    'port' => $record->port,
+                    'encryption' => $record->encryption ?? 'none',
+                    'username' => $this->maskEmail($record->username),
+                    'from_address' => $this->maskEmail($record->from_address),
+                    'from_name' => $record->from_name
+                ],
+                'test_time' => now()->format('d/m/Y H:i:s'),
+                'ip_address' => request()->ip()
+            ]),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
+    }
+    
 /**
  * Helper method untuk menyamarkan email
  */
