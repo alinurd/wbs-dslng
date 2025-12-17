@@ -85,19 +85,52 @@ $mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
         }
     }
 
-    private function setCustomConfig(array $config)
-    {
-        Config::set('mail.default', $config['mailer'] ?? 'smtp');
-        Config::set('mail.mailers.smtp.host', $config['host']);
-        Config::set('mail.mailers.smtp.port', $config['port']);
-        Config::set('mail.mailers.smtp.encryption', $config['encryption']);
-        Config::set('mail.mailers.smtp.username', $config['username']);
-        Config::set('mail.mailers.smtp.password', $config['password']);
-        Config::set('mail.from.address', $config['from_address']);
-        Config::set('mail.from.name', $config['from_name']);
+    // private function setCustomConfig(array $config)
+    // {
+    //     Config::set('mail.default', $config['mailer'] ?? 'smtp');
+    //     Config::set('mail.mailers.smtp.host', $config['host']);
+    //     Config::set('mail.mailers.smtp.port', $config['port']);
+    //     Config::set('mail.mailers.smtp.encryption', $config['encryption']);
+    //     Config::set('mail.mailers.smtp.username', $config['username']);
+    //     Config::set('mail.mailers.smtp.password', $config['password']);
+    //     Config::set('mail.from.address', $config['from_address']);
+    //     Config::set('mail.from.name', $config['from_name']);
 
-        app()->forgetInstance('mail.manager');
-    }
+    //     app()->forgetInstance('mail.manager');
+    // }
+
+
+    private function setCustomConfig(array $config)
+{
+    Config::set('mail.default', 'smtp');
+
+    Config::set('mail.mailers.smtp', [
+        'transport' => 'smtp',
+        'host' => $config['host'],
+        'port' => $config['port'],
+        'encryption' => $config['encryption'], // tls
+        'username' => $config['username'],
+        'password' => $config['password'],
+        'timeout' => null,
+        'auth_mode' => null,
+ 
+        'stream' => [
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true,
+            ],
+        ],
+    ]);
+
+    Config::set('mail.from.address', $config['from_address']);
+    Config::set('mail.from.name', $config['from_name']);
+ 
+    app()->forgetInstance('mail.manager');
+    app()->forgetInstance('mailer');
+}
+
+
     
       private function getEmailConfig()
     {

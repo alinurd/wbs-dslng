@@ -131,8 +131,7 @@ class EmailConfig extends Root
                 'from_address' => $record->from_address,
                 'from_name' => $record->from_name,
             ]
-        );
-
+        ); 
         if ($sendTest) {
             // Audit Log untuk TEST CONNECTION BERHASIL
             AuditLog::create([
