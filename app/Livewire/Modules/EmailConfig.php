@@ -100,104 +100,126 @@ class EmailConfig extends Root
 
     
 
- public function testConnect($id)
-    {
-        $this->validate();
-        
-        $record = EmailConfig::findOrFail($id);
-        $this->testingConfigId = $id;
-        $this->isTesting = true;
-        
-        Log::info('Testing email config ID: ' . $id, [
-            'record' => $record->toArray(),
-            'test_email' => $this->testEmail
-        ]);
+     public function testConnect($id)
+{
+    $this->validate([
+        'testEmail' => 'required|email',
+    ]);
 
-        try {
-            // Kirim email test dengan konfigurasi spesifik
-            $emailService = app(EmailService::class);
-            
-            $sendTest = $emailService->sendTestEmailWithConfig(
-                $this->testEmail,
-                'Test Koneksi Email - Whistleblowing System DSLNG',
-                [
-                    'id' => $record->id, // Tambahkan ID untuk logging
-                    'mailer' => $record->mailer,
-                    'host' => $record->host,
-                    'port' => $record->port,
-                    'encryption' => $record->encryption,
-                    'username' => $record->username,
-                    'password' => $record->password,
-                    'from_address' => $record->from_address,
-                    'from_name' => $record->from_name,
-                ]
-            );
-            
-            if ($sendTest) {
-                // Audit Log untuk TEST CONNECTION BERHASIL
-                $this->createSuccessAuditLog($record);
-                $this->notify('success', '✅ Test email berhasil dikirim ke: ' . $this->testEmail);
-            } else {
-                $this->createFailedAuditLog($record, 'Gagal mengirim test email');
-                $this->notify('error', '❌ Gagal mengirim test email ke: ' . $this->testEmail);
-            }
+    $record = $this->model::findOrFail($id);
+    $this->testingConfigId = $id;
+    $this->isTesting = true;
+            \Log::info('email Config: ' . $record);
 
-        } catch (\Exception $e) {
-            Log::error('Email test error: ' . $e->getMessage(), [
-                'config_id' => $id,
-                'error' => $e->getTraceAsString()
+    try {
+        // Set konfigurasi yang akan di-test
+        $emailService = app(EmailService::class);
+        
+    
+
+        // Kirim email test dengan konfigurasi spesifik
+        $sendTest = $emailService->sendTestEmailWithConfig(
+            $this->testEmail,
+            'Test Koneksi Email - Whistleblowing System DSLNG',
+            [
+                'mailer' => $record->mailer,
+                'host' => $record->host,
+                'port' => $record->port,
+                'encryption' => $record->encryption,
+                'username' => $record->username,
+                'password' => $record->password,
+                'from_address' => $record->from_address,
+                'from_name' => $record->from_name,
+            ]
+        );
+
+        if ($sendTest) {
+            // Audit Log untuk TEST CONNECTION BERHASIL
+            AuditLog::create([
+                'user_id' => auth()->id() ?? $this->userInfo['user']['id'] ?? null,
+                'action' => 'test_email_connection',
+                'table_name' => 'email_configs',
+                'record_id' => $record->id,
+                'old_values' => null,
+                'new_values' => json_encode([
+                    'status' => 'success',
+                    'test_type' => 'email_delivery',
+                    'recipient_email' => $this->maskEmail($this->testEmail),
+                    'config_id' => $record->id,
+                    'config_name' => $record->from_name,
+                    'message' => 'Test email berhasil dikirim',
+                    'test_details' => [
+                        'mailer' => $this->maskString($record->mailer),
+                        'host' => $this->maskString($record->host, 8),
+                        'port' => '***',
+                        'encryption' => $this->maskString($record->encryption),
+                        'username' => $this->maskEmail($record->username),
+                        'from_address' => $this->maskEmail($record->from_address),
+                        'from_name' => $record->from_name,
+                        'authentication' => 'success',
+                        'connection' => 'established',
+                        'delivery' => 'confirmed'
+                    ],
+                    'technical_summary' => [
+                        'smtp_connection' => 'established',
+                        'authentication' => 'success',
+                        'email_delivery' => 'confirmed',
+                        'encryption' => $record->encryption ? 'active' : 'none',
+                        'sender_identity' => 'verified'
+                    ],
+                    'test_time' => now()->format('d/m/Y H:i:s'),
+                    'ip_address' => request()->ip()
+                ]),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'created_at' => now()
             ]);
-            
-            $this->createErrorAuditLog($record, $e);
-            $this->notify('error', '❌ Error testing connection: ' . $e->getMessage());
+
+            $this->notify('success', 'Test email berhasil dikirim ke: ' . $this->testEmail);
+        } else {
+            // Audit Log untuk TEST EMAIL DELIVERY GAGAL
+            AuditLog::create([
+                'user_id' => auth()->id() ?? $this->userInfo['user']['id'] ?? null,
+                'action' => 'test_email_connection',
+                'table_name' => 'email_configs',
+                'record_id' => $record->id,
+                'old_values' => null,
+                'new_values' => json_encode([
+                    'status' => 'failed',
+                    'test_type' => 'email_delivery',
+                    'recipient_email' => $this->maskEmail($this->testEmail),
+                    'config_id' => $record->id,
+                    'config_name' => $record->from_name,
+                    'error_message' => 'Gagal mengirim test email',
+                    'test_details' => [
+                        'mailer' => $this->maskString($record->mailer),
+                        'host' => $this->maskString($record->host, 8),
+                        'port' => '***',
+                        'encryption' => $this->maskString($record->encryption),
+                        'username' => $this->maskEmail($record->username),
+                        'from_address' => $this->maskEmail($record->from_address),
+                        'from_name' => $record->from_name,
+                        'authentication' => 'success',
+                        'connection' => 'established',
+                        'delivery' => 'failed'
+                    ],
+                    'test_time' => now()->format('d/m/Y H:i:s'),
+                    'ip_address' => request()->ip()
+                ]),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'created_at' => now()
+            ]);
+
+            $this->notify('error', 'Gagal mengirim test email ke: ' . $this->testEmail);
         }
 
-        $this->isTesting = false;
-        $this->testingConfigId = null;
-    }
+    } catch (\Exception $e) {
+        // Audit Log untuk ERROR
+                    \Log::error('email Config err: ' . $e);
 
-    /**
-     * Create failed audit log
-     */
-    private function createFailedAuditLog($record, $error)
-    {
         AuditLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'test_email_connection',
-            'table_name' => 'email_configs',
-            'record_id' => $record->id,
-            'old_values' => null,
-            'new_values' => json_encode([
-                'status' => 'failed',
-                'test_type' => 'email_delivery',
-                'recipient_email' => $this->maskEmail($this->testEmail),
-                'config_id' => $record->id,
-                'config_name' => $record->from_name,
-                'error_message' => $error,
-                'test_details' => [
-                    'mailer' => $record->mailer,
-                    'host' => $this->maskString($record->host, 8),
-                    'port' => $record->port,
-                    'encryption' => $record->encryption ?? 'none',
-                    'username' => $this->maskEmail($record->username),
-                    'from_address' => $this->maskEmail($record->from_address),
-                    'from_name' => $record->from_name
-                ],
-                'test_time' => now()->format('d/m/Y H:i:s'),
-                'ip_address' => request()->ip()
-            ]),
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
-        ]);
-    }
-
-    /**
-     * Create error audit log
-     */
-    private function createErrorAuditLog($record, $exception)
-    {
-        AuditLog::create([
-            'user_id' => auth()->id(),
+            'user_id' => auth()->id() ?? $this->userInfo['user']['id'] ?? null,
             'action' => 'test_email_connection',
             'table_name' => 'email_configs',
             'record_id' => $record->id,
@@ -208,13 +230,12 @@ class EmailConfig extends Root
                 'recipient_email' => $this->maskEmail($this->testEmail),
                 'config_id' => $record->id,
                 'config_name' => $record->from_name,
-                'error_message' => $exception->getMessage(),
-                'error_type' => get_class($exception),
+                'error_message' => $e->getMessage(),
                 'test_details' => [
-                    'mailer' => $record->mailer,
+                    'mailer' => $this->maskString($record->mailer),
                     'host' => $this->maskString($record->host, 8),
-                    'port' => $record->port,
-                    'encryption' => $record->encryption ?? 'none',
+                    'port' => '***',
+                    'encryption' => $this->maskString($record->encryption),
                     'username' => $this->maskEmail($record->username),
                     'from_address' => $this->maskEmail($record->from_address),
                     'from_name' => $record->from_name
@@ -223,10 +244,17 @@ class EmailConfig extends Root
                 'ip_address' => request()->ip()
             ]),
             'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
+            'user_agent' => request()->userAgent(),
+            'created_at' => now()
         ]);
+
+        $this->notify('error', 'Error testing connection: ' . $e->getMessage());
     }
-    
+
+    $this->isTesting = false;
+    $this->testingConfigId = null;
+}
+
 /**
  * Helper method untuk menyamarkan email
  */
