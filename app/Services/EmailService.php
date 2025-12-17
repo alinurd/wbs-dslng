@@ -36,7 +36,7 @@ class EmailService
         try {
 
             // SET CONFIG CUSTOM untuk DSLNG Exchange
-            $this->setDSLNGMailConfig($config);
+            $this->setDSLNGMailConfig();
             
               $view = 'emails.test-connection';
             $data = [
@@ -82,8 +82,10 @@ class EmailService
      * Set custom mail config for DSLNG Exchange
      * - NO AUTHENTICATION untuk port 25
      */
-    private function setDSLNGMailConfig(array $config)
+    private function setDSLNGMailConfig()
     {
+            $config = EmailConfig::findOrFail('active')->first();
+ 
         // Gunakan PHPMailer sebagai transport dengan setting khusus
         $mailer = new PHPMailer(true);
         
@@ -245,9 +247,9 @@ private function setCustomConfig(array $config)
     {
         $status = false;
         $error = '';
-        $this->setMailConfig();
+        // $this->setMailConfig();
         
-            $config = $this->getEmailConfig();
+            // $config = $this->getEmailConfig();
         // Check jika view exists
         if (!view()->exists($view)) {
             $error = "View {$view} tidak ditemukan";
@@ -256,11 +258,11 @@ private function setCustomConfig(array $config)
             return false;
         }
         try {
-            $this->setDSLNGMailConfig($config);
+            $config=$this->setDSLNGMailConfig();
            Mail::send($view, $data, function ($message) use ($to, $subject, $attachments, $config) {
                 $message->to($to)
                         ->subject($subject)
-                        ->from($config->from_address, $config->from_name);
+                        ->from($config['from_address'], $config['from_name']);
                 
                 $message->from(
                     config('mail.from.address'), 
