@@ -46,16 +46,10 @@ $data = [
 
         try {
            Mail::send($view, $data, function ($message) use ($to, $subject, $config) {
-                $message->to($to)
-                        ->subject($subject)
-                        ->from($config['from_address'], $config['from_name']);
-                
-                $message->from(
-                    config('mail.from.address'), 
-                    config('mail.from.name')
-                );
-                 
-            });
+    $message->to($to)
+            ->subject($subject)
+            ->from($config['from_address'], $config['from_name']);
+});
         \Log::info("Test email berhasil dikirim ke: {$to}");
 
             $status = true;
@@ -73,11 +67,12 @@ $data = [
 
 private function setCustomConfig(array $config)
 {
+    Config::set('mail.default', 'smtp'); // pastikan default mailer smtp
     Config::set('mail.mailers.smtp', [
         'transport' => 'smtp',
         'host' => $config['host'],
-        'port' => $config['port'],      // biasanya 25
-        'encryption' => null,            // plain SMTP
+        'port' => $config['port'],      // 25
+        'encryption' => null,            // PENTING: null untuk plain SMTP
         'username' => $config['username'],
         'password' => $config['password'],
         'timeout' => 30,
@@ -92,23 +87,6 @@ private function setCustomConfig(array $config)
 }
 
 
-
-    public function testEmailConnectionWithConfig(array $config): array
-    {
-        try {
-            $this->setCustomConfig($config);
-            
-            Mail::raw('Test connection email', function ($message) use ($config) {
-                $message->to('test@example.com')
-                        ->subject('Test Connection')
-                        ->from($config['from_address'], $config['from_name']);
-            });
-            
-            return ['status' => true, 'message' => 'Koneksi email berhasil'];
-        } catch (\Exception $e) {
-            return ['status' => false, 'message' => $e->getMessage()];
-        }
-    }
 
     // private function setCustomConfig(array $config)
     // {
