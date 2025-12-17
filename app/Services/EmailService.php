@@ -100,35 +100,36 @@ $mailer->send($view, $data, function ($message) use ($to, $subject, $config) {
     // }
 
 
-    private function setCustomConfig(array $config)
+private function setCustomConfig(array $config)
 {
     Config::set('mail.default', 'smtp');
 
     Config::set('mail.mailers.smtp', [
         'transport' => 'smtp',
         'host' => $config['host'],
-        'port' => $config['port'],
-        'encryption' => $config['encryption'], // tls
+        'port' => $config['port'],          // 25
+        'encryption' => $config['encryption'], // 'tls'
         'username' => $config['username'],
         'password' => $config['password'],
-        'timeout' => null,
+        'timeout' => 30,
         'auth_mode' => null,
- 
-        'stream' => [
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true,
-            ],
+
+        // 🔑 INI YANG DIPAKAI SYMFONY MAILER
+        'options' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
         ],
     ]);
 
     Config::set('mail.from.address', $config['from_address']);
     Config::set('mail.from.name', $config['from_name']);
- 
+
+    // WAJIB
     app()->forgetInstance('mail.manager');
     app()->forgetInstance('mailer');
 }
+
 
 
     
