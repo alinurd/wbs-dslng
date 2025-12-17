@@ -43,7 +43,7 @@
     <div class="flex min-h-screen">
         {{-- SIDEBAR --}}
         <aside id="sidebar"
-            class="sidebar-gradient text-white shadow-2xl flex flex-col h-screen z-40">
+            class="sidebar-gradient text-white shadow-2xl flex flex-col h-screen ">
             
             {{-- Logo & Title --}}
             <div class="sidebar-logo flex flex-col items-center px-5 py-4 border-b border-white/20">
