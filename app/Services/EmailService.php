@@ -84,9 +84,8 @@ class EmailService
      */
     private function setDSLNGMailConfig()
     {
-            $config = EmailConfig::findOrFail('active')->first();
- 
-        // Gunakan PHPMailer sebagai transport dengan setting khusus
+            $config = EmailConfig::where('active', 1)->first();
+         // Gunakan PHPMailer sebagai transport dengan setting khusus
         $mailer = new PHPMailer(true);
         
         // Setup untuk DSLNG Exchange (tanpa auth)
