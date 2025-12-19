@@ -254,11 +254,28 @@
                                 <div class="flex space-x-3">
                                     <!-- File Attachment Button -->
                                     <label
+                                            class="relative flex items-center justify-center w-12 h-12 border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 transition-all duration-200 cursor-pointer">
+                                            
+                                            <!-- Loading state -->
+                                            <div wire:loading wire:target="attachFile">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                            </div>
+                                            
+                                            <!-- Normal state -->
+                                            <div wire:loading.remove wire:target="attachFile">
+                                        
+                                                <i class="fas fa-paperclip"></i>
+                                            </div>
+                                            
+                                            <input type="file" wire:model="attachFile" class="hidden"
+                                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx">
+                                        </label>
+                                    {{-- <label
                                         class="flex items-center justify-center w-12 h-12 border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 transition-all duration-200 cursor-pointer">
                                         <i class="fas fa-paperclip"></i>
                                         <input type="file" wire:model="attachFile" class="hidden"
                                             accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx">
-                                    </label>
+                                    </label> --}}
 
                                     <!-- Message Input Container - VERSI SEDERHANA -->
                                     <div class="flex-1 relative">

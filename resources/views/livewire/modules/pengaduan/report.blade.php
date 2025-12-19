@@ -183,9 +183,24 @@
                         </p>
                     </div>
                     <button type="button" onclick="document.getElementById('file-input').click()"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
+                wire:loading.remove wire:target="lampiran">
+                <i class="fas fa-folder-open mr-2"></i>Pilih File
+            </button>
+            
+            <!-- Tombol loading state -->
+            <button type="button" disabled
+                class="px-6 py-3 bg-blue-400 text-white rounded-lg font-medium flex items-center"
+                wire:loading wire:target="lampiran">
+                            <i class="fas fa-spinner fa-spin mr-1"></i>
+
+                Mengunggah...
+            </button>
+{{--             
+                    <button type="button" onclick="document.getElementById('file-input').click()"
                         class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center">
                         <i class="fas fa-folder-open mr-2"></i>Pilih File
-                    </button>
+                    </button> --}}
                 </div>
             </div>
 
