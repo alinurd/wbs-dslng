@@ -386,6 +386,24 @@ private function setCustomConfig(array $config)
         
         return $this->sendEmail($to, $subject, $view, $data, [], $purpose);
     }
+    /**
+     * Kirim email verifikasi
+     */
+    public function sendforgotPassword(string $to, string $link, string $userName = ''): bool
+    {
+        $subject = 'forgot password - Whistleblowing System DSLNG';
+        $view = 'emails.forgot-password';
+        $purpose = 'forgot_password';
+        
+        $data = [
+            'link' => $link,
+            'userName' => $userName,
+            'expiresIn' => 30
+        ];
+        
+        return $this->sendEmail($to, $subject, $view, $data, [], $purpose);
+        // return true;
+    }
 
     /**
      * Kirim email welcome

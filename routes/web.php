@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LanguageController;
+use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\LoginFrom;
 use App\Livewire\Auth\RegisterForm; 
 use App\Livewire\Combo\IndexManual as IndexManual;
@@ -46,6 +47,8 @@ use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 // Route::get('/tes/register', TestRegister::class)->name('register.ts');
+// Route::post('/reset-password', LoginFrom::class)->name('password.email');
+Route::get('/forgot-password', ForgotPassword::class)->name('forgot.password');
 Route::get('/login', LoginFrom::class)->name('login');
 Route::get('/register', RegisterForm::class)->name('register');
  Route::get('/', LandingIndex::class)->name('landing.index');

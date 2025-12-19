@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'forgot' => [
+        'title' => 'Forgot Password',
+            'dsc'=>' Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one. ',
+    ],
     'login' => [
         'title' => 'Login',
         'dsc' => 'Sign in to your account to continue',

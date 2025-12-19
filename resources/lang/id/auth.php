@@ -97,5 +97,12 @@ return [
         'accepted' => 'Anda harus menyetujui :attribute.',
         'invalid_option' => 'Pilihan :attribute tidak valid.',
     ],
+     'forgot' => [
+        'title' => 'Lupa kata sandi ',
+            'dsc'=>' Lupa kata sandi Anda? Tidak masalah. Cukup beri tahu kami alamat email Anda dan kami akan mengirimkan email berisi tautan pengaturan ulang kata sandi yang memungkinkan Anda memilih yang baru.',
+    ],
+
     
+
+
 ];
