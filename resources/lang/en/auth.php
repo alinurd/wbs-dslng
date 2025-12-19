@@ -5,6 +5,15 @@ return [
         'title' => 'Forgot Password',
             'dsc'=>' Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one. ',
     ],
+    
+         'reset' => [
+            'title' => 'Reset Password',
+            'email' => 'Email',
+            'password' => 'New Password',
+            'confirm_password' => 'Confirm New Password',
+            'submit' => 'Reset Password',
+        ],
+
     'login' => [
         'title' => 'Login',
         'dsc' => 'Sign in to your account to continue',
@@ -70,21 +79,7 @@ return [
         'unique' => 'Data already exists',
     ],
 
-    'password' => [
-        'reset' => [
-            'title' => 'Reset Password',
-            'email' => 'Email',
-            'password' => 'New Password',
-            'confirm_password' => 'Confirm New Password',
-            'submit' => 'Reset Password',
-        ],
-        'forgot' => [
-            'title' => 'Forgot Password',
-            'email' => 'Email',
-            'submit' => 'Send Reset Link',
-            'back_to_login' => 'Back to login page',
-        ],
-    ],
+      
 
     
         'password' => 'Password',

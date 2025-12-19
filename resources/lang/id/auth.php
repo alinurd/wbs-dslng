@@ -57,11 +57,7 @@ return [
 
     'password' => [
         'reset' => [
-            'title' => 'Reset Kata Sandi',
-            'email' => 'Email',
-            'password' => 'Kata Sandi Baru',
-            'confirm_password' => 'Konfirmasi Kata Sandi Baru',
-            'submit' => 'Reset Kata Sandi',
+            
         ],
         'forgot' => [
             'title' => 'Lupa Kata Sandi',
@@ -103,6 +99,14 @@ return [
     ],
 
     
+     'reset' => [
+            'title' => 'Reset Kata Sandi',
+            'email' => 'Email',
+            'password' => 'Kata Sandi Baru',
+            'confirm_password' => 'Konfirmasi Kata Sandi Baru',
+            'submit' => 'Reset Kata Sandi',
+        ],
+
 
 
 ];
