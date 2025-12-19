@@ -42,7 +42,7 @@ class RegisterForm extends Component
         'id_number' => 'nullable|min:5',
         'phone' => 'nullable|min:10',
         'reporter_type' => 'required|in:employee,non_employee',
-        'verification_code' => 'required',
+        // 'verification_code' => 'required',
         'confirmation' => 'accepted'
     ];
 
@@ -122,7 +122,11 @@ class RegisterForm extends Component
 
 public function register()
 {
-    //  $this->validate();
+     $this->validate();
+     if(!$this->full_name){
+        $this->full_name=$this->username;
+    }
+    
     $codeVerif =  Str::random(8);
     $user = User::create([
     'username' => $this->username,
