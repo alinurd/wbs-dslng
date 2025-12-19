@@ -5,15 +5,17 @@
 </head>
 <body>
     <h2>Halo {{ $userName ?? 'User' }},</h2>
-    <p>Berikut adalah tautan verifikasi untuk akun Anda:</p>
+    <p>Kami menerima permintaan reset password untuk akun Anda:</p>
     
-    <div style="background: #f4f4f4; padding: 10px; margin: 10px 0;">
-        <h1 style="text-align: center; color: #333;">{{ $ink }}</h1>
+     <div style="background: #f4f4f4; padding: 10px; margin: 10px 0; text-align: center;">
+        <a href="{{ $link }}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            Reset Password
+        </a>
     </div>
     
-     {{-- <p>Jika Anda tidak meminta kode ini, silakan abaikan email ini.</p> --}}
-    
+     
     <br>
     <p>Terima kasih,<br>Tim Support</p>
 </body>
 </html>
+ 
