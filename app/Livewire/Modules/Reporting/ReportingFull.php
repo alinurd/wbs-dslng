@@ -112,17 +112,18 @@ class ReportingFull extends Root
     {
         can_any([strtolower($this->modul) . '.view']);
 
-        $record = $this->model::findOrFail($id);
+        // $record = $this->model::findOrFail($id);
 
-        $this->detailData = [
-            'Kode Tracking' => $record->code_pengaduan,
-            // 'Perihal' => $record->perihal,
-            'Jenis Pelanggaran' => $record->jenis_pengaduan_id,
-            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status' => $record->status ? 'Aktif' : 'Nonaktif',
-        ];
+        // $this->detailData = [
+        //     'Kode Tracking' => $record->code_pengaduan,
+        //     // 'Perihal' => $record->perihal,
+        //     'Jenis Pelanggaran' => $record->jenis_pengaduan_id,
+        //     'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
+        //     'Status' => $record->status ? 'Aktif' : 'Nonaktif',
+        // ];
+         $this->getPengaduanById($id);
 
-        $this->detailTitle = "Detail " . $this->title;
+        // $this->detailTitle = "Detail " . $this->title;
         $this->showDetailModal = true;
     }
 
