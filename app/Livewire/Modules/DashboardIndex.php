@@ -986,7 +986,7 @@ protected function getDirektoratChart()
         $detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
 
       $this->trackingId = $id;
-        $this->codePengaduan = $codePengaduan;
+        $this->codePengaduan = $record->code_pengaduan;
         $this->showComment = true;
         
         if (!empty($detailData)) {

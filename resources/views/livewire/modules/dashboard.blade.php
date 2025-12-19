@@ -152,7 +152,7 @@
                                     class="fas fa-chevron-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
                             </a>
 
-                            <a href="{{ route('faq') }}"
+                            {{-- <a href="{{ route('faq') }}"
                                 class="flex items-center p-4 bg-gradient-to-r from-cyan-50 to-cyan-100 border border-cyan-200 rounded-xl hover:shadow-md transition-all duration-300 group">
                                 <div
                                     class="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
@@ -164,7 +164,7 @@
                                 </div>
                                 <i
                                     class="fas fa-chevron-right text-gray-400 group-hover:text-cyan-600 transition-colors"></i>
-                            </a>
+                            </a> --}}
                         </div>
                     </div>
                     <!-- Progress Bulanan -->
