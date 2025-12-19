@@ -1379,7 +1379,7 @@ public function getPengaduanById($id){
             // Kirim email welcome
             $emailService = new EmailService();
             $emailService->setUserId($user->id)
-                        ->sendWelcomeEmail($user->email, $user->name);
+                        ->sendWelcomeEmail($user->email, $user->email);
 
             // Audit log
             AuditLog::create([
