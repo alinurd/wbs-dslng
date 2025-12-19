@@ -1431,7 +1431,7 @@ public function getPengaduanById($id){
         // Kirim email verifikasi baru
         $emailService = new EmailService();
         $emailSent = $emailService->setUserId($user->id)
-                                 ->sendVerificationEmail($user->email, $newCode, $user->name);
+                                 ->sendVerificationEmail($user->email, $newCode, $user->email);
 
         // Set cooldown
         $this->canResend = false;
