@@ -91,7 +91,7 @@ class ForgotPassword extends Component
     // Send email
     $emailService = new EmailService();
     $emailSent = $emailService->setUserId($user->id)
-                             ->sendforgotPassword($user->email, $link, $user->name);
+                             ->sendforgotPassword($user->email, $link, $user->email);
     
     AuditLog::create([
         'user_id' => $user->id, 
