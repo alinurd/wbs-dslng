@@ -27,7 +27,7 @@ class Tracking extends Root
 
     public function columns()
     {
-        return ['code_pengaduan', 'perihal', 'tanggal_pengaduan', 'status'];
+        return ['code_pengaduan', 'user_id', 'tanggal_pengaduan', 'jenis_pengaduan_id'];
     }
 
     public function mount()
@@ -56,7 +56,7 @@ return $filterArray;
     {
         $q = ($this->model)::query();
 
-        
+            $q->with(['pelapor', 'jenisPengaduan']);
         if ($this->search && method_exists($this, 'columns')) {
         $columns = $this->columns();
         if (is_array($columns) && count($columns)) {
@@ -69,8 +69,9 @@ return $filterArray;
                         });
                     } elseif ($col === 'jenis_pengaduan_id') {
                         $p->orWhereHas('jenisPengaduan', function ($q) {
-                            $q->where('name', 'like', "%{$this->search}%");
-                        });
+                             $q->where('data_id', 'like', "%{$this->search}%")
+                              ->orWhere('data_en', 'like', "%{$this->search}%");                        
+                            });
                     } else {
                         $p->orWhere($col, 'like', "%{$this->search}%");
                     }

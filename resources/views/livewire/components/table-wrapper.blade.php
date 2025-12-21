@@ -58,7 +58,7 @@
     </div>
 
     <!-- Active Filters Indicator -->
-    @if($filterMode)
+    {{-- @if($filterMode)
     <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2 flex-wrap">
@@ -88,7 +88,7 @@
             </div>
         </div>
     </div>
-    @endif
+    @endif --}}
     <!-- Table Section -->
     @if($records && $records->count() > 0)
     <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
