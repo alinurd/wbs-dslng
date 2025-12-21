@@ -108,7 +108,45 @@ return $filterArray;
     }
 
      
+ $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+        switch ($roleId) {
+            case 2: // WBS External
+                $stsGet = 'all';
+                break;
+            case 4: // WBS Internal  
+                $stsGet = 'all';
+                break;
+            case 5: // WBS CC
+                $stsGet = [7,    3];
 
+                // $q->where(function ($query) use ($stsGet) {
+                //     $query->where('status', 7);
+                //     // $query->orWhere(function ($subQuery) {
+                //     //     $subQuery->whereIn('status', [  9,])
+                //     //         ->where('act_cc', 1);
+                //     // });
+                // });
+                break;
+                break;
+            case 7: // WBS CCO
+                $stsGet = [1, 3, 8];
+                break;
+            case 6: // WBS FWD
+                $stsGet = [5, 2];
+                $q->where(function ($query) {
+                    $query->where('fwd_to', $this->userInfo['user']['fwd_id'])
+                        ->orWhere('sts_fwd', 1);
+                });
+                break;
+            default:
+                $stsGet = [-1]; // Tidak akan pernah match
+        }
+        // Apply status filters
+        if ($roleId == 4) {
+            $q->whereNotIn('status', [0, 10]);
+        } elseif ($stsGet !== 'all') {
+            $q->whereIn('status', $stsGet);
+        }
         return $q;
     }
 
