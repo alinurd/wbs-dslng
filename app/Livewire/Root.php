@@ -42,6 +42,7 @@ abstract class Root extends Component
     public $showDetailModal = false;
     public $showDetailModal1 = false; 
     public $showComment = false;
+    public $showCommentGeneral = false;
     public $ShowNote = false;
     public $showuUdateStatus = false;
     public $detailTitle = '-';

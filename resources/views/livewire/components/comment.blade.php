@@ -35,13 +35,13 @@
                 <!-- Body -->
                 <div class="modal-body p-0 max-h-[80vh] overflow-hidden flex">
                     <!-- Detail Informasi -->
+                    @if(!empty($data))
                     <div class="w-1/3 border-r border-gray-200 bg-gray-50">
                         <div class="p-6">
                             <h6 class="font-semibold text-gray-700 mb-4 flex items-center">
                                 <i class="fas fa-info-circle mr-2 text-blue-500"></i>
                                 Informasi Pengaduan
                             </h6>
-
                             <div class="space-y-3">
                                 @foreach ($data as $key => $value)
                                     {{-- @if ($value !== 'status_ex') --}}
@@ -54,18 +54,17 @@
                                     @endif
                                 @endforeach
                             </div>
-
                         </div>
                     </div>
-
+                    @endif
                     <!-- Area Chat -->
-                    <div class="w-2/3 flex flex-col relative"> <!-- Tambahkan class relative di sini -->
+                    <div class="w-full flex flex-col relative"> <!-- Tambahkan class relative di sini -->
                         <!-- Header Chat -->
                         <div class="border-b border-gray-200 px-6 py-4 bg-white">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                    <h6 class="font-semibold text-gray-700">Diskusi Pengaduan</h6>
+                                    <h6 class="font-semibold text-gray-700">Diskusi </h6>
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     {{-- <div

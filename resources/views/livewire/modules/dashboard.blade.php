@@ -257,9 +257,11 @@
                 @include('livewire.components.pengaduan-terbaru')
             </div>
             <!-- Support Info -->
+            @if($isRole3)
             <div class="mt-8">
                 @include('livewire.components.suport')
             </div>
+            @endif
         @endif
     </div>
 </div>
@@ -279,4 +281,4 @@
             }
         }
     </style>
-@endpush>
+@endpush

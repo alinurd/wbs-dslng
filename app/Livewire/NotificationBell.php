@@ -274,6 +274,10 @@ class NotificationBell extends Root
         if ($n->type == 1) {
             $this->comment($n->ref_id);
         }
+         if ($n->type == 4) {
+            $this->commentGeneral($n->ref_id);
+        }
+        
         if ($n->type == 2) {
             $roleId = (int)($this->userInfo['role']['id'] ?? 0);
             if ($roleId == 3) {
@@ -596,6 +600,27 @@ class NotificationBell extends Root
             $this->detailData = $detailData;
         }
 
+        if (!empty($detailTitle)) {
+            $this->detailTitle = $detailTitle;
+        }
+
+        $this->loadChatData();
+
+        $this->uploadFile();
+    }
+    public function commentGeneral($id)
+    {
+
+      $detailTitle = "General Information" ;
+
+      $this->trackingId = $id;
+        $this->codePengaduan = '';
+        $this->showComment = true;
+        
+        if (!empty($detailData)) {
+        }
+        $this->detailData =[];
+        
         if (!empty($detailTitle)) {
             $this->detailTitle = $detailTitle;
         }

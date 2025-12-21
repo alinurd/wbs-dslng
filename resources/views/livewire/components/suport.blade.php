@@ -4,10 +4,10 @@
         <h3 class="font-semibold text-blue-900">Butuh Bantuan?</h3>
     </div>
     <p class="text-blue-800 text-sm mb-4">
-        Tim support kami siap membantu 24/7 untuk pertanyaan terkait pengaduan.
+        Tim support kami siap membantu .
     </p>
 
-    <select wire:model="selectedPengaduanId"
+    {{-- <select wire:model="selectedPengaduanId"
         class="w-full border border-blue-300 rounded-lg py-2 px-3 focus:outline-none focus:ring mb-3">
 
         <option value="">-- Pilih Pengaduan --</option>
@@ -16,7 +16,7 @@
                 {{ $item['code_pengaduan'] }} — {{ $item['perihal'] }}
             </option>
         @endforeach
-    </select>
+    </select> --}}
 
     <button wire:click="runComment"
         class="w-full bg-white hover:bg-blue-100 text-blue-600 border border-blue-300 py-2 px-4 rounded-lg font-medium">

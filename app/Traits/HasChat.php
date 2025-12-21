@@ -10,6 +10,7 @@ trait HasChat
 {
     // Properties untuk chat
     public $trackingId = null;
+    public $type = 1;
     public $codePengaduan = null;
     public $newMessage = '';
     public $messages = [];
@@ -115,13 +116,15 @@ trait HasChat
                 $messageId = $result['id'] ?? null;
             }
 
+            // \dd($this->type);
             // Kirim notifikasi untuk mentions
             if (!empty($mentions) && $messageId) {
                 $this->sendMentionNotifications(
                     $this->newMessage, 
                     $this->trackingId, 
                     $messageId, 
-                    $mentions
+                    $mentions,
+                    $this->type
                 );
             }
 
@@ -493,14 +496,14 @@ trait HasChat
     /**
      * Send notification untuk mention
      */
-    protected function sendMentionNotifications($message, $trackingId, $messageId, $mentions)
+    protected function sendMentionNotifications($message, $trackingId, $messageId, $mentions, $type=1)
     {
         foreach ($mentions as $mention) {
             $notificationData = [
                 'sender_id' => auth()->id(),
                 'ref_id' => $trackingId,
                 'to' => $mention['user_id'],
-                'type' => 1,
+                'type' => $type,
                 'type_text' => 'chat',
                 'is_read' => 0,
                 'title' => 'Anda disebutkan dalam chat',

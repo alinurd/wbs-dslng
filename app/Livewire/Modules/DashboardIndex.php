@@ -949,49 +949,28 @@ protected function getDirektoratChart()
 
     public function runComment()
 {
-    if (!$this->selectedPengaduanId) {
-                    $this->notify('error', 'Silakan pilih pengaduan terlebih dahulu!');
-        return;
-    }
+     
 
-    $this->comment($this->selectedPengaduanId);
+    $this->comment(\auth()->user()->id);
 }
 
       public function comment($id)
     {
-        can_any([strtolower($this->modul) . '.view']);
+        // can_any([strtolower($this->modul) . '.view']);
         $this->selectedPengaduanId='';
-
-        if (!$id) {
-
-                    $this->notify('error', 'Silakan pilih pengaduan terlebih dahulu!');
-        return;
-    }
+ 
     
-        $record = $this->model::with(['comments.user'])->findOrFail($id);
-        $statusInfo = Combo::where('kelompok', 'sts-aduan')
-            ->where('param_int', $record->status)
-            ->first();
-
-        $detailData = [
-            'Kode Tracking' => $record->code_pengaduan,
-            // 'Perihal' => $record->perihal,
-            'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
-            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status' => $statusInfo->data_id ?? 'Menunggu Review',
-            'Lokasi' => $record->alamat_kejadian ?? 'Tidak diketahui',
-            'Deskripsi' => $record->uraian ?? 'Tidak ada deskripsi',
-        ];
-
-        $detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;
+         
+        $detailTitle = "General Information " ;
 
       $this->trackingId = $id;
-        $this->codePengaduan = $record->code_pengaduan;
+      $this->type = 4;
+        $this->codePengaduan = '';
         $this->showComment = true;
         
         if (!empty($detailData)) {
-            $this->detailData = $detailData;
         }
+        $this->detailData =[];
         
         if (!empty($detailTitle)) {
             $this->detailTitle = $detailTitle;
