@@ -16,7 +16,7 @@
     </h1>
  
     <h5 class="mt-2 text-2xl font-medium text-red-500">
-        tidak diizinkan untk akses halaman ini</strong>
+        tidak diizinkan untuk akses halaman ini</strong>
     </h5> 
     </center>
 </div>
