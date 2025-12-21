@@ -1,7 +1,8 @@
 @php
     $roleIds = array_keys($userRole);
     $isRole3 = in_array(3, $roleIds);
-    $reportRoute = $isRole3 ? 'p_tracking' : 'complien';
+    $isRole1or3 = in_array(1, $roleIds) || in_array(3, $roleIds);
+    $reportRoute = $isRole1or3 ? 'p_tracking' : 'complien';
     $isVerif = $user->email_verified_at;
 @endphp
 
