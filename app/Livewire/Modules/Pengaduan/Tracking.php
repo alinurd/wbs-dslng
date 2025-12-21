@@ -139,7 +139,7 @@ return $filterArray;
                 });
                 break;
             default:
-                $stsGet = [-1]; // Tidak akan pernah match
+                $stsGet = [-1 , 0];
         }
         // Apply status filters
         if ($roleId == 4) {
