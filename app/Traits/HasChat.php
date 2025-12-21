@@ -507,7 +507,7 @@ trait HasChat
                 'type_text' => 'chat',
                 'is_read' => 0,
                 'title' => 'Anda disebutkan dalam chat',
-                'message' => auth()->user()->name . ' menyebutkan Anda dalam chat pengaduan #' . $this->codePengaduan,
+                'message' => auth()->user()->name . ' menyebutkan Anda dalam chat  #' . $this->codePengaduan,
                 'created_at' => now(),
                 'updated_at' => now()
             ];
