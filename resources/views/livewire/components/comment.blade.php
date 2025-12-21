@@ -447,9 +447,9 @@
 
                             <!-- Info tentang mention -->
                             <!-- Info tentang mention -->
-                            <div class="mt-2 text-xs text-gray-500 flex items-center">
+                            <div class="mt-2 text-xs text-red-500 flex items-center">
                                 <i class="fas fa-info-circle mr-1"></i>
-                                Gunakan <span class="font-medium">@email</span> untuk mention user. User akan
+                                Gunakan &nbsp;<span class="font-medium">@email</span> &nbsp;untuk mention user. User akan
                                 mendapatkan notifikasi.
                             </div>
                             <!-- Error Messages -->
