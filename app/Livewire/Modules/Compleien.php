@@ -375,6 +375,24 @@ $emailService->handleStatusChange(
         $this->hideForwardDropdown();
     }
 
+     
+    public function filterDefault()
+    {
+        
+        // \dd($this->userInfo['role']['id']);
+        $filterArray = [];
+if ($this->userInfo['role']['id'] === 3) {
+    $filterArray[] = ['f' => 'user_id', 'v' => auth()->id()];
+}
+
+return $filterArray;
+
+        // // dd($this->pelapor); == true maka jalankan filter user_id
+        //  return [
+        //     ['f' => 'user_id', 'v' => auth()->id()],
+        // ];
+    }
+    
     // Columns dan query method
   public function columns()
     {
