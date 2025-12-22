@@ -21,6 +21,12 @@
             {!! $content !!}
         </div>
         <div class="footer">
+            <hr style='border: none; border-top: 1px solid #e9ecef; margin: 30px 0;'>
+        
+        <p style='color: #6c757d; font-size: 12px; text-align: center;'>
+            Email ini dikirim secara otomatis. Mohon tidak membalas email ini.
+        </p>
+        
             <p>&copy; {{ date('Y') }} Whistleblowing System</p>
         </div>
     </div>

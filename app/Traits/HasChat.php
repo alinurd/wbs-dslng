@@ -501,6 +501,7 @@ trait HasChat
      */
     protected function sendMentionNotifications($message, $trackingId, $messageId, $mentions, $type=1)
     {
+        // \dd($message);
         foreach ($mentions as $mention) {
             $notificationData = [
                 'sender_id' => auth()->id(),
@@ -518,18 +519,41 @@ trait HasChat
             // Insert ke notifications table
             DB::table('notifications')->insert($notificationData);
             //  dd($mention);
-            $content = "
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-                    <h3 style='color: #333;'>Halo {$mention['username']}</h3>
-                    <p style='color: #666; font-size: 16px;'>Anda disebutkan dalam chat oleh <strong>" . auth()->user()->username . "</strong>. Silakan masuk ke aplikasi dan cek tombol lonceng di.
-                            Pastikan Anda sudah login untuk melihat pesan lengkap.</p>
-                </div>
-            ";
+            $safeMessage = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+$formattedMessage = nl2br($safeMessage);
+
+$content = "
+    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+        <h3 style='color: #333; margin-bottom: 20px;'>Halo {$mention['username']}</h3>
+        
+        <p style='color: #666; font-size: 16px; line-height: 1.5;'>
+            Anda disebutkan dalam chat oleh <strong style='color: #007bff;'>" . auth()->user()->username . "</strong>.
+        </p>
+        
+        <div style='margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007bff;'>
+            <h4 style='color: #495057; margin-top: 0; margin-bottom: 15px;'>📨 Pesan:</h4>
+            <div style='color: #333; font-size: 15px; line-height: 1.6; padding: 10px; background: white; border-radius: 5px;'>
+                {$formattedMessage}
+            </div>
+        </div>
+        
+        <div style='background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; 
+                   padding: 15px; margin: 20px 0;'>
+            <p style='margin: 0; color: #856404; font-size: 14px;'>
+                <strong>📢 Tindakan yang diperlukan:</strong><br>
+                Silakan masuk ke aplikasi dan cek notifikasi di <strong>tombol lonceng</strong> 
+                untuk merespon atau melihat percakapan. Pastikan Anda sudah login.
+            </p>
+        </div>
+        
+        
+    </div>
+";
         
             $emailService = new EmailService();
              $emailService->sendNotificationEmail(
                 $mention['email'],
-                ' Chat Notifioction',
+                ' Chat Notifiction',
                 $content,
                 'info'
             );
