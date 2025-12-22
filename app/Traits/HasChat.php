@@ -521,22 +521,15 @@ trait HasChat
             $content = "
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
                     <h3 style='color: #333;'>Halo {$mention['username']}</h3>
-                    <p style='color: #666; font-size: 16px;'>Anda disebutkan dalam chat oleh <strong>" . auth()->user()->name . "</strong></p>
-                    
-                    <div style='margin: 25px 0; padding: 15px; background: #f8d7da; color: #721c24; border-radius: 8px; border-left: 4px solid #dc3545;'>
-                        <p style='margin: 0; font-weight: bold;'>📢 Notifikasi Penting</p>
-                        <p style='margin: 10px 0 0 0;'>
-                            Silakan masuk ke aplikasi dan cek tombol lonceng di.
-                            Pastikan Anda sudah login untuk melihat pesan lengkap.
-                        </p>
-                    </div>
+                    <p style='color: #666; font-size: 16px;'>Anda disebutkan dalam chat oleh <strong>" . auth()->user()->username . "</strong>. Silakan masuk ke aplikasi dan cek tombol lonceng di.
+                            Pastikan Anda sudah login untuk melihat pesan lengkap.</p>
                 </div>
             ";
         
             $emailService = new EmailService();
              $emailService->sendNotificationEmail(
                 $mention['email'],
-                auth()->user()->name . ' menyebutkan Anda dalam chat  #',
+                ' Chat Notifioction',
                 $content,
                 'info'
             );
