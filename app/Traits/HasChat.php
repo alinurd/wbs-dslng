@@ -553,7 +553,7 @@ $content = "
             $emailService = new EmailService();
              $emailService->sendNotificationEmail(
                 $mention['email'],
-                ' Chat Notifiction',
+                ' Chat Notification',
                 $content,
                 'info'
             );
