@@ -478,7 +478,7 @@ trait HasChat
         // Get user IDs dari emails
         $users = User::whereIn('email', $emails)
             ->where('id', '!=', auth()->id())
-            ->get(['id', 'email'])
+            ->get(['id', 'email', 'username'])
             ->keyBy('email');
         
         $mentions = [];
@@ -487,6 +487,7 @@ trait HasChat
                 $mentions[] = [
                     'user_id' => $users[$email]->id,
                     'email' => $email,
+                    'username' => $users[$email]->username ?? $email,
                     'mentioned_at' => now()
                 ];
             }
@@ -516,7 +517,7 @@ trait HasChat
 
             // Insert ke notifications table
             DB::table('notifications')->insert($notificationData);
-             
+            //  dd($mention);
             $content = "
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
                     <h3 style='color: #333;'>Halo {$mention['username']}</h3>
