@@ -80,7 +80,7 @@ return [
     'already_have_account' => 'Sudah punya akun?',
     'dont_have_account' => 'Belum punya akun?',
     
-    'failed' => 'Kredensial ini tidak cocok dengan data kami.',
+    'failed' => 'Kredensial ini tidak cocok dengan data kami. Silakan hubungi administrator',
     'throttle' => 'Terlalu banyak percobaan login. Silakan coba lagi dalam :seconds detik.',
 
 

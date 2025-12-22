@@ -75,7 +75,8 @@ class LoginFrom extends Component
 
         if (!Auth::attempt([
             'email' => $this->email,
-            'password' => $this->password
+            'password' => $this->password,
+            'is_active' => 1
         ], $this->remember)) {
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),

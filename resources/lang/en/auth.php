@@ -95,6 +95,6 @@ return [
     'already_have_account' => 'Already have an account?',
     'dont_have_account' => "Don't have an account?",
     
-    'failed' => 'These credentials do not match our records.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed' => 'These credentials do not match our records, Please contact the administrator.',
+     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 ];
