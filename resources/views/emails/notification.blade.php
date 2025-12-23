@@ -21,13 +21,10 @@
             {{-- {{dd($content)}} --}}
             {!! $content !!}
         </div>
-         
-        <div class="button-container">
+        <div class="footer">
             <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">
                 Login disini
             </a>
-        </div>
-        <div class="footer">
             <hr style='border: none; border-top: 1px solid #e9ecef; margin: 30px 0;'>
         
         <p style='color: #6c757d; font-size: 12px; text-align: center;'>
