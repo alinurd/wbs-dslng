@@ -99,7 +99,7 @@
                             <span class="menu-text flex-1 transition-all duration-300">{{ $menu->name }}</span>
                             
                             {{-- Truncated text for collapsed mode --}}
-                            <span class="truncated-text">{{ $truncatedName }} xxxxx</span>
+                            <span class="truncated-text">{{ $truncatedName }} </span>
 
                             @if ($hasAccessibleChildren)
                                 <i :class="isOpen('{{ $menuId }}') ? 'rotate-180 transform' : ''"
@@ -134,7 +134,7 @@
 
             {{-- Footer --}}
             <div class="text-center text-sm text-white border-t border-white/20 py-3 px-3 menu-text">
-                © {{ date('Y') }} {{ env('APP_NAME', 'PT DONGGI-SENORO LNG') }}
+                © {{ date('Y') }} PT Donggi Senoro LNG
             </div>
         </aside>
 

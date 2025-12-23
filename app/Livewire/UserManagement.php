@@ -1,10 +1,14 @@
 <?php 
 namespace App\Livewire;
 
+use App\Models\Audit as AuditLog;
 use App\Models\User;
+use App\Services\EmailService;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+
 
 class UserManagement extends Component
 {
@@ -36,16 +40,40 @@ class UserManagement extends Component
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
         ]);
+    $codeVerif =  str::random(8);
 
         $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
             'password' => bcrypt('password'),
+            
+    'code_verif' => $codeVerif,
         ]);
-        $user->assignRole('user');
+        $user->assignRole('user'); 
         // $user->syncRoles($this->userRoles);
         // $user->syncPermissions($this->userPermissions);
+        $emailService = new EmailService();
 
+$emailSent = $emailService->setUserId($user->id)
+                             ->sendVerificationEmail($this->email, $codeVerif, $this->full_name);
+                                                     
+AuditLog::create([
+        'user_id' => $user->id,
+        'action' => 'add',
+        'table_name' => 'users',
+        'record_id' => $user->id,
+        'old_values' => null,
+        'new_values' => json_encode([
+             'name' => $this->name,
+            'email' => $this->email,
+            'code_verif' => $codeVerif,
+            'email_verification_sent' => $emailSent,
+         ]),
+        'ip_address' => request()->ip(),
+        'user_agent' => request()->userAgent(),
+        'created_at' => now()
+    ]);
+    
         session()->flash('message', 'User berhasil dibuat!');
         $this->resetInput();
     }
