@@ -39,7 +39,7 @@
                 <x-label for="password_confirmation" value="{{ __('auth.reset.confirm_password') }}" />
                  <div class="relative">
                 <x-input id="password_confirmation" class="block mt-1 w-full pr-10" type="password" name="password_confirmation" required autocomplete="new-password" />
-                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password')">
+                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password_confirmation')">
                         <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
                     </button>
             </div>
