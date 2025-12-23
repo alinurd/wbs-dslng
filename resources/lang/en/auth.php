@@ -97,4 +97,5 @@ return [
     
     'failed' => 'These credentials do not match our records, Please contact the administrator.',
      'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+     'placeholderUsername'=>'example: example@gmail.com'
 ];

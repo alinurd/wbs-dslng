@@ -106,6 +106,7 @@ return [
             'confirm_password' => 'Konfirmasi Kata Sandi Baru',
             'submit' => 'Reset Kata Sandi',
         ],
+     'placeholderUsername'=>'example: example@gmail.com'
 
 
 
