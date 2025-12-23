@@ -476,10 +476,18 @@ trait HasChat
         $emails = array_unique($matches[1]);
         
         // Get user IDs dari emails
-        $users = User::whereIn('email', $emails)
-            ->where('id', '!=', auth()->id())
-            ->get(['id', 'email', 'username'])
-            ->keyBy('email');
+        // $users = User::whereIn('email', $emails)
+        //     ->where('id', '!=', auth()->id())
+        //     ->get(['id', 'email', 'username'])
+        //     ->keyBy('email');
+
+                    $users = User::where('id', '!=', auth()->id())
+                    ->where('is_active', 1)
+                                ->whereHas('roles', function($query) {
+                                    $query->where('id', 2);
+                                })
+                    ->get(['id', 'email', 'username'])
+                    ->keyBy('email');
         
         $mentions = [];
         foreach ($emails as $email) {

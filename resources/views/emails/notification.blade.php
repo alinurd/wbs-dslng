@@ -9,6 +9,9 @@
         .header { background: #667eea; color: white; padding: 20px; text-align: center; }
         .content { padding: 20px; background: #f8f9fa; }
         .footer { padding: 10px; text-align: center; font-size: 12px; color: #666; }
+         .button-container { background: #f4f4f4; padding: 20px; margin: 20px 0; text-align: center; }
+        .login-button { display: inline-block; padding: 12px 30px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .login-button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
@@ -19,6 +22,12 @@
         <div class="content">
             {{-- {{dd($content)}} --}}
             {!! $content !!}
+        </div>
+         
+        <div class="button-container">
+            <a href="{{ route('dashboard') }}" class="login-button">
+                Login disini
+            </a>
         </div>
         <div class="footer">
             <hr style='border: none; border-top: 1px solid #e9ecef; margin: 30px 0;'>
