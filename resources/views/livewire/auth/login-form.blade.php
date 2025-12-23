@@ -43,13 +43,16 @@
                     </div>
 
                     <!-- Password -->
-                    <div class="mt-4">
+                    <div class="mt-4 relative">
                         <label for="password" class="block text-sm font-medium text-gray-700 required">
                             {{ __('auth.password') }}
                         </label>
-                        <div class="mt-1">
+                        <div class="mt-1 relative">
                             <input wire:model="password" id="password" name="password" type="password" required
                                 class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password')">
+                        <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                    </button>
                         </div>
                         @error('password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -142,4 +145,18 @@
             cursor: not-allowed !important;
         }
     </style>
+    <script>
+    function togglePassword(fieldId) {
+        const input = document.getElementById(fieldId);
+        const icon = input.nextElementSibling.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'fas fa-eye-slash text-gray-400 hover:text-gray-600';
+        } else {
+            input.type = 'password';
+            icon.className = 'fas fa-eye text-gray-400 hover:text-gray-600';
+        }
+    }
+</script>
 </div>

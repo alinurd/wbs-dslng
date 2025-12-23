@@ -25,14 +25,24 @@
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
             </div>
 
-            <div class="mt-4">
+            <div class="mt-4 relative">
                 <x-label for="password" value="{{ __('auth.reset.password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+                 <div class="relative">
+                <x-input id="password" class="block mt-1 w-full pr-10" type="password" name="password" required autocomplete="new-password" />
+                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password')">
+                        <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                    </button>
             </div>
-
-            <div class="mt-4">
+            </div>
+            
+            <div class="mt-4 relative">
                 <x-label for="password_confirmation" value="{{ __('auth.reset.confirm_password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+                 <div class="relative">
+                <x-input id="password_confirmation" class="block mt-1 w-full pr-10" type="password" name="password_confirmation" required autocomplete="new-password" />
+                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password')">
+                        <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                    </button>
+            </div>
             </div>
 
             <div class="flex items-center justify-end mt-4">
@@ -53,3 +63,17 @@
         </form>
     </x-authentication-card>
 </x-guest-layout>
+<script>
+    function togglePassword(fieldId) {
+        const input = document.getElementById(fieldId);
+        const icon = input.nextElementSibling.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'fas fa-eye-slash text-gray-400 hover:text-gray-600';
+        } else {
+            input.type = 'password';
+            icon.className = 'fas fa-eye text-gray-400 hover:text-gray-600';
+        }
+    }
+</script>
