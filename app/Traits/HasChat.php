@@ -120,15 +120,16 @@ trait HasChat
 
             // \dd($this->type);
             // Kirim notifikasi untuk mentions
-            if (!empty($mentions) && $messageId) {
+            // if (!empty($mentions) && $messageId) {
                 $this->sendMentionNotifications(
                     $this->newMessage, 
                     $this->trackingId, 
                     $messageId, 
-                    $mentions,
+                    [],
+                    // $mentions,
                     $this->type
                 );
-            }
+            // }
 
             // Reset form
             $this->newMessage = '';
