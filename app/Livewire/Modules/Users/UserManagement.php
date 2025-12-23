@@ -27,6 +27,7 @@ class UserManagement extends Root
     public $form = [
         'name' => '', 
         'fwd_id' => null, 
+        'selectedRole' => null, 
         'email' => '', 
         'password' => '',
         'is_active' => true
@@ -35,6 +36,7 @@ class UserManagement extends Root
     public $formDefault = [
         'name' => '', 
         'fwd_id' => null, 
+        'selectedRole' => null, 
         'email' => '', 
         'password' => '',
         'is_active' => true

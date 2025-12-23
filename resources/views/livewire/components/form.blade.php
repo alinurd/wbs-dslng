@@ -405,18 +405,10 @@
 
 @elseif($field['type'] === 'checkbox-roles')
     <div class="space-y-3" wire:key="role-selection-{{ $fieldName }}">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-medium text-gray-700">
-                {{ $field['label'] }}
-                @if ($field['required'] ?? false)
-                    <span class="text-red-500">*</span>
-                @endif
-            </span>
-        </div>
+        
 
         <!-- Radio Button Container -->
-        <div class="max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-gray-50">
+        <div class="max-h-65 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-gray-50">
             @if (count($field['options'] ?? []) > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     @foreach ($field['options'] as $value => $label)

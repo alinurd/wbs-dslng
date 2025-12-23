@@ -101,8 +101,8 @@
                 [
                     'type' => 'checkbox-roles',
                     'label' => 'Roles',
-                    'model' => 'selectedRoles',
-                    'error' => 'selectedRoles',
+                    'model' => 'selectedRole',
+                    'error' => 'selectedRole',
                     'options' => collect($RolesList)->mapWithKeys(function ($role) {
                         return [
                             $role->id => $role->name
