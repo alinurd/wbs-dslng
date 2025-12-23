@@ -9,8 +9,8 @@
         .header { background: #667eea; color: white; padding: 20px; text-align: center; }
         .content { padding: 20px; background: #f8f9fa; }
         .footer { padding: 10px; text-align: center; font-size: 12px; color: #666; }
-         .button-container {  padding: 20px; margin: 20px 0; text-align: center; }
-        .login-button { display: inline-block; padding: 12px 30px; color: #ffff; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+         .button-container {  padding: 10px; margin: 10px 0; text-align: center; }
+        .login-button { display: inline-block; padding: 12px 30px; color: #ffff; background-color: #007bff;  border-radius: 5px; font-weight: bold; }
         .login-button:hover { background-color: #0056b3; }
     </style>
 </head>
