@@ -510,7 +510,16 @@ trait HasChat
     protected function sendMentionNotifications($message, $trackingId, $messageId, $mentions, $type=1)
     {
         // \dd($message);
-        foreach ($mentions as $mention) {
+           $users = User::where('id', '!=', auth()->id())
+                    ->where('is_active', 1)
+                                ->whereHas('roles', function($query) {
+                                    $query->where('id', 2);
+                                })
+                    ->get(['id', 'email', 'username'])
+                    ->keyBy('email');
+                    
+        // foreach ($mentions as $mention) {
+        foreach ($users as $mention) {
             $notificationData = [
                 'sender_id' => auth()->id(),
                 'ref_id' => $trackingId,
