@@ -21,7 +21,7 @@
             <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
             <div class="block">
-                <x-label for="email" value="{{ __('auth.reset.email') }}}" />
+                <x-label for="email" value="{{ __('auth.reset.email') }}" />
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
             </div>
 
