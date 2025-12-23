@@ -10,9 +10,7 @@
         .content { padding: 20px; background: #f8f9fa; }
         .footer { padding: 10px; text-align: center; font-size: 12px; color: #666; }
          .button-container {  padding: 10px; margin: 10px 0; text-align: center; }
-        .login-button { display: inline-block; padding: 12px 30px; color: #ffff; background-color: #007bff;  border-radius: 5px; font-weight: bold; }
-        .login-button:hover { background-color: #0056b3; }
-    </style>
+     </style>
 </head>
 <body>
     <div class="container">
@@ -25,7 +23,7 @@
         </div>
          
         <div class="button-container">
-            <a href="{{ route('dashboard') }}" class="login-button">
+            <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">
                 Login disini
             </a>
         </div>
