@@ -106,8 +106,12 @@ return [
             'confirm_password' => 'Konfirmasi Kata Sandi Baru',
             'submit' => 'Reset Kata Sandi',
         ],
-     'placeholderUsername'=>'example: example@gmail.com'
+     'placeholderUsername'=>'example: example@gmail.com',
 
+
+     'accountBlock' => 'Anda telah gagal login sebanyak :count kali. Akun Anda diblokir sementara selama 30 menit.',
+    'accountTempBlock' => 'Akun Anda diblokir sementara. Silakan coba lagi dalam :minutes menit.',
+    'remainingAttempts' => 'Sisa percobaan login: :attempts',
 
 
 ];

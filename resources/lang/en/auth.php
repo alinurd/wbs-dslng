@@ -97,5 +97,9 @@ return [
     
     'failed' => 'These credentials do not match our records, Please contact the administrator.',
      'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-     'placeholderUsername'=>'example: example@gmail.com'
+     'placeholderUsername'=>'example: example@gmail.com',
+
+    'accountBlock' => 'You have failed to log in :count times. Your account is temporarily blocked for 30 minutes.',
+    'accountTempBlock' => 'Your account is temporarily blocked. Please try again in :minutes minutes.',
+    'remainingAttempts' => 'Remaining login attempts: :attempts',
 ];

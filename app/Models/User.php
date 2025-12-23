@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -45,6 +46,8 @@ class User extends Authenticatable
         'update_datetime',
         'code_verif',
         'email_verified_at',
+        'blocked_at',
+        'count_try_login',
     ];
 
  
@@ -88,5 +91,38 @@ class User extends Authenticatable
 {
     return $this->hasMany(Notification::class, 'to');
 }
+
+   public function isBlocked(): bool
+    {
+        if (!$this->blocked_at) {
+            return false;
+        }
+        
+        $blockedAt = Carbon::parse($this->blocked_at);
+        $now = Carbon::now();
+        
+        return $now->diffInMinutes($blockedAt) < 30;
+    }
+
+public function getRemainingBlockTime(): int
+    {
+        if (!$this->blocked_at) {
+            return 0;
+        }
+        
+        $blockedAt = Carbon::parse($this->blocked_at);
+        $now = Carbon::now();
+        $minutesPassed = $now->diffInMinutes($blockedAt);
+        
+        $remaining = max(0, 30 - $minutesPassed);
+        return (int) ceil($remaining);
+    }
     
+
+    public function resetLoginAttempts(): void
+    {
+        $this->count_try_login = 0;
+        $this->blocked_at = null;
+        $this->save();
+    }
 }
