@@ -524,7 +524,7 @@ trait HasChat
             $notificationData = [
                 'sender_id' => auth()->id(),
                 'ref_id' => $trackingId,
-                'to' => $mention['user_id'],
+                'to' => $mention['id'],
                 'type' => $type,
                 'type_text' => 'chat',
                 'is_read' => 0,
@@ -578,7 +578,7 @@ $content = "
             // Dispatch event untuk realtime notification
             if (env('CHAT_REALTIME', false)) {
                 $this->dispatch('new-notification', [
-                    'user_id' => $mention['user_id'],
+                    'user_id' => $mention['id'],
                     'notification' => $notificationData
                 ]);
             }
