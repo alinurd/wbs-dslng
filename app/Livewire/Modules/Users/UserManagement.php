@@ -19,7 +19,8 @@ class UserManagement extends Root
     public $kel = 'combo';
     public $forwardDestination = '';
     public $recordId = '';
-    
+        public $originalEmail = null;
+
     // Properties untuk roles - UBAH KE SINGLE VALUE
     public $RolesList = [];
     public $selectedRole = null; // UBAH DARI selectedRoles MENJADI selectedRole (single value)
@@ -215,13 +216,14 @@ public function query()
 
         // Reset selectedRole setelah save
         $this->selectedRole = null;
+        $this->originalEmail = null;
     }
 
     // Override method create untuk reset selectedRole
     public function create()
     {
         can_any([strtolower($this->modul).'.create']);
-        $this->reset(['form', 'selectedRole']);
+        $this->reset(['form', 'selectedRole','originalEmail']);
         $this->form = $this->formDefault;
         $this->updateMode = false;
         $this->showModal = true;
@@ -234,7 +236,8 @@ public function query()
         
         $record = $this->model::findOrFail($id);
         $this->recordId = $id;
-        
+                $this->originalEmail = $record->email;
+
         // Set form data
         $this->form = [
             'id' => $record->id,
@@ -321,6 +324,8 @@ public function query()
     {
         parent::closeModal();
         $this->selectedRole = null;
+                $this->originalEmail = null;
+
         $this->form['fwd_id'] = null;
     }
 
