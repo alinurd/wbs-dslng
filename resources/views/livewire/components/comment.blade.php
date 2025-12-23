@@ -173,7 +173,7 @@
 </div>
 
                         <!-- Mention Dropdown -->
-                        @if ($showMentionDropdown && count($mentionUsers) > 0)
+                        {{-- @if ($showMentionDropdown && count($mentionUsers) > 0)
                             <div class="mention-dropdown">
                                 <div class="sticky top-0 p-2 border-b border-gray-200 bg-gray-50">
                                     <p class="text-xs font-medium text-gray-700">Mention user:</p>
@@ -212,7 +212,7 @@
                                     </div>
                                 @endif
                             </div>
-                        @endif
+                        @endif --}}
 
                         <!-- Typing Indicator -->
                         <div wire:loading wire:target="sendMessage" class="px-6 py-2">
@@ -429,7 +429,7 @@
                                                     }
                                                 }
                                         }" x-ref="textarea"
-                                            placeholder="Ketik pesan Anda... Gunakan @ untuk mention user (email akan ditampilkan)"
+                                            placeholder="Ketik pesan Anda disini... "
                                             class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm resize-none overflow-hidden"
                                             id="messageInput" autocomplete="off" rows="4" style="min-height: 48px; max-height: 250px;"
                                             {{ !$trackingId ? 'disabled' : '' }}></textarea>
@@ -446,11 +446,11 @@
 
                             <!-- Info tentang mention -->
                             <!-- Info tentang mention -->
-                            <div class="mt-2 text-xs text-red-500 flex items-center">
+                            {{-- <div class="mt-2 text-xs text-red-500 flex items-center">
                                 <i class="fas fa-info-circle mr-1"></i>
                                 Gunakan &nbsp;<span class="font-medium">@email</span> &nbsp;untuk mention user. User akan
                                 mendapatkan notifikasi.
-                            </div>
+                            </div> --}}
                             <!-- Error Messages -->
                             @error('newMessage')
                                 <p class="text-red-500 text-xs mt-2 px-2">{{ $message }}</p>
