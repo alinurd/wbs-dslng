@@ -5,9 +5,10 @@ namespace App\Livewire\Modules\Users;
 use App\Livewire\Root;
 use App\Models\Combo;
 use App\Models\User;
+use App\Services\EmailService;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
-
 class UserManagement extends Root
 {
     public $title = "User Management";   
@@ -167,18 +168,46 @@ public function query()
             $payload['fwd_id'] = null;
         }
 
+        if (!$this->updateMode) {
+            // CREATE: Selalu generate code verifikasi baru
+            $codeVerif = Str::random(8);
+            $payload['code_verif'] = $codeVerif;
+            $payload['email_verified_at'] = null; 
+        } else {
+             if (isset($this->form['email']) && $this->form['email'] != $this->originalEmail) {
+                 $codeVerif = Str::random(8);
+                $payload['code_verif'] = $codeVerif;
+                $payload['email_verified_at'] = null; 
+            }
+        }
+        
         return $payload;
     }
 
     // Override method saved untuk handle roles dengan error handling
     public function saved($record, $action)
-    {
+    { 
         try {
             // Assign single role
             if ($this->selectedRole) {
                 $record->syncRoles([$this->selectedRole]);
             }
 
+            if ($action == 'create') {
+                  $emailService = new EmailService();
+            
+            $emailSent = $emailService->setUserId($record->id)
+                                     ->sendVerificationEmail($record->email, $record->code_verif, $record->name);
+
+             } elseif ($action == 'update') {
+                 if ($this->form['email'] != $this->originalEmail) {
+                     $emailService = new EmailService();
+            
+            $emailSent = $emailService->setUserId($record->id)
+                                     ->sendVerificationEmail($record->email, $record->code_verif, $record->name);
+                }
+            }
+            
         } catch (\Exception $e) {
             \Log::error("Error syncing roles for user {$record->id}: " . $e->getMessage());
             // $this->dispatch('show-toast', type: 'error', message: 'Error assigning roles: ' . $e->getMessage());
