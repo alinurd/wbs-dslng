@@ -396,7 +396,7 @@ return $filterArray;
     // Columns dan query method
   public function columns()
     {
-        return ['code_pengaduan', 'user_id', 'tanggal_pengaduan', 'jenis_pengaduan_id'];
+        return ['code_pengaduan', 'user_id', 'tanggal_pengaduan', 'jenis_pengaduan_id', 'alamat_kejadian', 'uraian'];
     }
 
    public function query()
