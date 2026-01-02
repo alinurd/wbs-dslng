@@ -4,7 +4,7 @@ return [
     'login' => [
         'title' => 'Masuk',
         'dsc' => 'Masuk ke akun Anda untuk melanjutkan',
-        'email' => 'Alamat Email',
+        'email' => 'Email',
         'password' => 'Kata Sandi',
         'remember_me' => 'Ingat Saya',
         'forgot_password' => 'Lupa Kata Sandi?',

@@ -17,7 +17,7 @@ return [
     'login' => [
         'title' => 'Login',
         'dsc' => 'Sign in to your account to continue',
-        'email' => 'Email Address',
+        'email' => 'Email',
         'remember_me' => 'Remember Me',
         'forgot_password' => 'Forgot Your Password?',
         'submit' => 'Sign In',

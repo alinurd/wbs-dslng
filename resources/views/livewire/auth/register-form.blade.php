@@ -56,9 +56,15 @@
                                         <label for="password" class="block text-sm font-medium text-gray-700 mb-2 required">
                                             {{ __('auth.register.password') }}
                                         </label>
+                                        <div class="relative">
                                         <input wire:model="password" id="password" name="password" type="password" required
                                             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
                                             @error('password') border-red-500 @enderror">
+
+                                            <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password')">
+                        <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                    </button>
+                     </div>
                                         @error('password')
                                             <p class="mt-1 text-sm text-red-600">{{ __($message, ['min' => 8]) }}</p>
                                         @enderror
@@ -70,9 +76,14 @@
                                             class="block text-sm font-medium text-gray-700 mb-2 required">
                                             {{ __('auth.register.password_confirmation') }}
                                         </label>
+                                        <div class="relative">
                                         <input wire:model="password_confirmation" id="password_confirmation"
                                             name="password_confirmation" type="password" required
                                             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                            <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password_confirmation')">
+                        <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                    </button>
+                     </div>
                                     </div>
 
                                     <!-- Email -->
@@ -302,4 +313,21 @@
             </div>
         </div>
     </div>
-</div>
+</div> 
+
+
+<script>
+    function togglePassword(fieldId) {
+        const input = document.getElementById(fieldId);
+        const icon = input.nextElementSibling.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'fas fa-eye-slash text-gray-400 hover:text-gray-600';
+        } else {
+            input.type = 'password';
+            icon.className = 'fas fa-eye text-gray-400 hover:text-gray-600';
+        }
+    }
+</script>
+

@@ -30,7 +30,7 @@
                     <!-- Username -->
                     <div>
                         <label for="username" class="block text-sm font-medium text-gray-700 required">
-                            {{ __('auth.username') }}
+                            {{ __('auth.login.email') }}
                         </label>
                         <div class="mt-1">
                             <input wire:model="email" id="email" name="email" type="text" required
