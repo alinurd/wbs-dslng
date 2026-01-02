@@ -656,7 +656,7 @@ class NotificationBell extends Root
     public function uploadFile()
     {
         $this->validate([
-            'fileUpload' => 'required|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,zip,rar',
+            'fileUpload' => 'required|file|max:102400|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,zip,rar',
             'fileDescription' => 'nullable|string|max:255',
         ]);
 
