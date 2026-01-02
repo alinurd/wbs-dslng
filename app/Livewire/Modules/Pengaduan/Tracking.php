@@ -27,7 +27,7 @@ class Tracking extends Root
 
     public function columns()
     {
-        return ['code_pengaduan', 'user_id', 'tanggal_pengaduan', 'jenis_pengaduan_id'];
+        return ['code_pengaduan', 'user_id', 'tanggal_pengaduan', 'jenis_pengaduan_id', 'alamat_kejadian', 'uraian'];
     }
 
     public function mount()
@@ -41,11 +41,11 @@ class Tracking extends Root
         
         // \dd($this->userInfo['role']['id']);
         $filterArray = [];
-if ($this->userInfo['role']['id'] === 3 ||$this->userInfo['role']['id'] === 1) {
-    $filterArray[] = ['f' => 'user_id', 'v' => auth()->id()];
-}
+        if ($this->userInfo['role']['id'] === 3 ||$this->userInfo['role']['id'] === 1) {
+            $filterArray[] = ['f' => 'user_id', 'v' => auth()->id()];
+        }
 
-return $filterArray;
+        return $filterArray;
 
         // // dd($this->pelapor); == true maka jalankan filter user_id
         //  return [
