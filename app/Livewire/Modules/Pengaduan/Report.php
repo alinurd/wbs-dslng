@@ -32,6 +32,7 @@ class Report extends Root
     public $alamat_kejadian;
     
     public $lampiran = [];
+    public $temporaryFiles = [];
     public $confirmation = false;
     
     public $jenisPengaduanList = [];
@@ -51,8 +52,8 @@ class Report extends Root
             // 'perihal' => 'required|min:5|max:200',
             'uraian' => 'required|min:10|max:1000',
             'alamat_kejadian' => 'required|min:10|max:500',
-            
-            'lampiran.*' => 'max:' . (FileHelper::getMaxPengaduanSize() * 1024) . '|mimes:' . implode(',', FileHelper::getAllowedPengaduanExtensions()),
+            'temporaryFiles' => 'sometimes|array',
+            'temporaryFiles.*' => 'max:' . (FileHelper::getMaxPengaduanSize() * 1024) . '|mimes:' . implode(',', FileHelper::getAllowedPengaduanExtensions()),
             
             'confirmation' => 'required|accepted'
         ];
@@ -72,8 +73,8 @@ class Report extends Root
             'perihal.required' => 'Perihal harus diisi.',
             'uraian.required' => 'Uraian pengaduan harus diisi.',
             'alamat_kejadian.required' => 'Alamat tempat kejadian harus diisi.',
-            'lampiran.*.max' => 'Ukuran file maksimal 100MB.',
-            'lampiran.*.mimes' => 'Format file harus:  DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.',
+            'temporaryFiles.*.max' => 'Ukuran file maksimal 100MB.',
+            'temporaryFiles.*.mimes' => 'Format file harus:  DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.',
             'confirmation.required' => 'Anda harus menyetujui pernyataan sebelum mengirim pengaduan.',
             'confirmation.accepted' => 'Anda harus menyetujui pernyataan sebelum mengirim pengaduan.'
         ];
@@ -121,9 +122,9 @@ class Report extends Root
         //  dd($this->userInfo);
 
        $lampiranPaths = [];
-        if ($this->lampiran && count($this->lampiran) > 0) {
+        if ($this->temporaryFiles && count($this->temporaryFiles) > 0) {
             $lampiranPaths = FileHelper::uploadMultiple(
-                $this->lampiran, 
+                $this->temporaryFiles, 
                 'pengaduan/lampiran', 
                 'public'
             );
@@ -212,11 +213,26 @@ $this->dispatch('notify', [
 
   
 
-  
+  public function updatedLampiran($value)
+{
+    if ($value) {
+        // Tambahkan file baru ke array temporaryFiles
+        foreach ($value as $file) {
+            $this->temporaryFiles[] = $file;
+        }
+        
+        // Reset input file (penting!)
+        $this->lampiran = [];
+        
+        // Dispatch event untuk refresh UI jika diperlukan
+        $this->dispatch('files-added');
+    }
+}
 
     public function resetLampiran()
     {
         $this->lampiran = [];
+        $this->temporaryFiles  = [];
         $this->confirmation = false;
     }
 
@@ -233,6 +249,8 @@ $this->dispatch('notify', [
         $this->perihal = '';
         $this->uraian = '';
         $this->alamat_kejadian = '';
+        
+         
         $this->resetLampiran();
         $this->resetErrorBag();
     }
@@ -247,7 +265,11 @@ $this->dispatch('notify', [
             $this->validateOnly($propertyName);
         }
     }
-
+public function submit()
+{
+    sleep(20); 
+    
+}
     public function render()
     {
         return view($this->viewPath(), [
@@ -255,7 +277,8 @@ $this->dispatch('notify', [
             'saluranList' => $this->saluranList,
             'direktoratList' => $this->direktoratList,
             'userInfo' => $this->userInfo,
-            'permissions' => module_permissions(strtolower($this->modul))['can'] ?? []
+            'permissions' => module_permissions(strtolower($this->modul))['can'] ?? [],
+              'temporaryFiles' => $this->temporaryFiles
         ]);
     }
 
@@ -295,6 +318,27 @@ $this->dispatch('notify', [
         return FileHelper::formatSize($bytes);
     }
 
+    // Method untuk menghapus file dari temporaryFiles
+public function removeFile($index)
+{
+    if (isset($this->temporaryFiles[$index])) {
+        unset($this->temporaryFiles[$index]);
+        $this->temporaryFiles = array_values($this->temporaryFiles); // Reset array index
+    }
+}
+
+// Jika sudah ada method removeLampiran, ubah atau buat method baru
+public function removeLampiran($index)
+{
+    // Hapus dari temporaryFiles (bukan lampiran)
+    if (isset($this->temporaryFiles[$index])) {
+        unset($this->temporaryFiles[$index]);
+        $this->temporaryFiles = array_values($this->temporaryFiles);
+    }
+}
+
+    
+    
 
     public function removeLampiranByName($filename)
     {
