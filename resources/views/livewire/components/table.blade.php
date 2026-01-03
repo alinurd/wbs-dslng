@@ -16,20 +16,23 @@
     'extraActions' => [],
 ])
 
-{{-- {{dd($modul)}} --}}
 @php
     if ($modul == 'p_tracking' || $modul == 'r_full' || $modul == 'r_jenis') {
         $permissions['delete'] = false;
         $permissions['edit'] = false;
         if($modul=='p_tracking'){
+            if($userInfo['role']['id'] ==2 || $userInfo['role']['id']==3){
             $permissions['comment'] = true;
+        } 
         }
     }
 
     if ($modul == 'complien') {
         $permissions['delete'] = false;
         $permissions['edit'] = false;
-        $permissions['comment'] = true;
+        if($userInfo['role']['id'] ==2 || $userInfo['role']['id']==3){
+            $permissions['comment'] = true;
+        }
         $permissions['act_complien'] = true;
     }
 
