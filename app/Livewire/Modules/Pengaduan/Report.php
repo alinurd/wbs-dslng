@@ -267,7 +267,7 @@ $this->dispatch('notify', [
     }
 public function submit()
 {
-    sleep(20); 
+    sleep(3); 
     
 }
     public function render()
