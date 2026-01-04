@@ -539,6 +539,7 @@ $roleIds = $auth->roles->pluck('id')->toArray();
                 $senderID=$n->user_id;
 
             }
+            $cek['type']=$n->type;
              $users = User::where('id', '!=', auth()->id())
                     ->where('id', $senderID)
                                 ->whereHas('roles', function($query) {
@@ -546,10 +547,10 @@ $roleIds = $auth->roles->pluck('id')->toArray();
                                 })
                     ->get(['id', 'email', 'username'])
                     ->keyBy('email');
+                    $cek['senderID']=$senderID;
         }
         
         
-            $cek['senderID']=$senderID;
            $cek['user']=$users->toarray();
            $cek['type']=$type;
            $cek['roleIds']=$roleIds;
