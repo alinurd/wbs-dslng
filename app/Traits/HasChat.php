@@ -532,9 +532,9 @@ $roleIds = $auth->roles->pluck('id')->toArray();
                     ->keyBy('email');
         }elseif(in_array(2, $roleIds)){
             $n= Notification::select('sender_id', 'type')->where('ref_id', $trackingId)->where('type', 4)->first();
-            $cek['Notification']=$n->toarray();
-            $cek['trackingId']=$trackingId;
-            $senderID=0;
+            // $cek['Notification']=$n->toarray();
+            // $cek['trackingId']=$trackingId;
+            // $senderID=0;
             if($n){
                 $senderID=$n->sender_id;
             }else{
@@ -543,8 +543,8 @@ $roleIds = $auth->roles->pluck('id')->toArray();
                 $senderID=$n->user_id;
 
             }
-            $cek['senderID']=$senderID;
-            $cek['type']=$n->type;
+            // $cek['senderID']=$senderID;
+            // $cek['type']=$n->type;
              $users = User::where('id', '!=', auth()->id())
                     ->where('id', $senderID)
                                 ->whereHas('roles', function($query) {
@@ -556,11 +556,11 @@ $roleIds = $auth->roles->pluck('id')->toArray();
         }
         
         
-           $cek['user']=$users->toarray();
-           $cek['type']=$type;
-           $cek['roleIds']=$roleIds;
-           $cek['trackingId']=$trackingId;
-                   dd($cek); 
+        //    $cek['user']=$users->toarray();
+        //    $cek['type']=$type;
+        //    $cek['roleIds']=$roleIds;
+        //    $cek['trackingId']=$trackingId;
+        //            dd($cek); 
         // foreach ($mentions as $mention) {
         foreach ($users as $mention) {
             $notificationData = [
