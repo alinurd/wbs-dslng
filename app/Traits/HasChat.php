@@ -533,7 +533,7 @@ $roleIds = $auth->roles->pluck('id')->toArray();
             $n= Notification::select('sender_id', 'type')->where('ref_id', $trackingId)->first();
             if($n->type==4){
                 $senderID=$n->sender_id;
-            }elseif($type==1){
+            }elseif($n->type==1){
                             $n= Pengaduan::select('user_id')->where('id', $trackingId)->first();
 
                 $senderID=$n->user_id;
@@ -548,8 +548,13 @@ $roleIds = $auth->roles->pluck('id')->toArray();
                     ->keyBy('email');
         }
         
-           
-                   dd($users->toarray()); 
+        
+            $cek['senderID']=$senderID;
+           $cek['user']=$users->toarray();
+           $cek['type']=$type;
+           $cek['roleIds']=$roleIds;
+           $cek['trackingId']=$trackingId;
+                   dd($cek); 
         // foreach ($mentions as $mention) {
         foreach ($users as $mention) {
             $notificationData = [
