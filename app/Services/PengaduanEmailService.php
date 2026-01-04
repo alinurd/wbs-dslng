@@ -223,8 +223,7 @@ class PengaduanEmailService
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
                 <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br> 
-                <strong>Waktu Kejadian:</strong> {$pengaduanData['waktu_kejadian']}<br>
-                <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
+                <strong>Waktu Kejadian:</strong> {$pengaduanData['waktu_kejadian']}<br> 
             </div>
 
             <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
@@ -392,8 +391,7 @@ class PengaduanEmailService
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
                 <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>
-                
-                <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
+                 
             </div>
 
             <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
@@ -550,8 +548,7 @@ class PengaduanEmailService
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
                 <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>
-                
-                <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
+                 
             </div>
 
             " . (!empty($instruksiKhusus) ? "
@@ -632,8 +629,7 @@ class PengaduanEmailService
             <div style='background: #e2e3e5; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br> 
-                <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
+                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>  
             </div>
 
             " . (!empty($instruksiKhusus) ? "
@@ -713,8 +709,7 @@ class PengaduanEmailService
             <div style='background: #e2e3e5; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Kode Pengaduan:</strong> {$pengaduanData['code_pengaduan']}<br>
                 <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
-                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br> 
-                <strong>Direktorat:</strong> {$pengaduanData['direktorat']}
+                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br>  
             </div>
 
             " . (!empty($instruksiKhusus) ? "
