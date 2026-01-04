@@ -114,7 +114,7 @@ trait HasChat
                 $messageId = $result['id'] ?? null;
             } else {
                 // Gunakan method biasa
-                dd("tes");
+                // dd("tes");
                 $result = $this->chatService->sendMessage(
                     $this->trackingId, 
                     $this->newMessage, 
