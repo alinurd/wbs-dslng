@@ -549,7 +549,7 @@ $roleIds = $auth->roles->pluck('id')->toArray();
         }
         
            
-                    
+                   dd($users->toarray()); 
         // foreach ($mentions as $mention) {
         foreach ($users as $mention) {
             $notificationData = [
