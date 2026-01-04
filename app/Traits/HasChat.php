@@ -531,6 +531,8 @@ $roleIds = $auth->roles->pluck('id')->toArray();
                     ->keyBy('email');
         }elseif(in_array(2, $roleIds)){
             $n= Notification::select('sender_id', 'type')->where('ref_id', $trackingId)->first();
+            $cek['Notification']=$n->toarray();
+            $cek['trackingId']=$trackingId;
             $senderID=0;
             if($n->type==4){
                 $senderID=$n->sender_id;
