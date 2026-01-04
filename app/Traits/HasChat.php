@@ -114,6 +114,7 @@ trait HasChat
                 $messageId = $result['id'] ?? null;
             } else {
                 // Gunakan method biasa
+                dd("tes");
                 $result = $this->chatService->sendMessage(
                     $this->trackingId, 
                     $this->newMessage, 
@@ -530,14 +531,14 @@ $roleIds = $auth->roles->pluck('id')->toArray();
                     ->get(['id', 'email', 'username'])
                     ->keyBy('email');
         }elseif(in_array(2, $roleIds)){
-            $n= Notification::select('sender_id', 'type')->where('ref_id', $trackingId)->first();
+            $n= Notification::select('sender_id', 'type')->where('ref_id', $trackingId)->where('type', 4)->first();
             $cek['Notification']=$n->toarray();
             $cek['trackingId']=$trackingId;
             $senderID=0;
-            if($n->type==4){
+            if($n){
                 $senderID=$n->sender_id;
-            }elseif($n->type==1){
-                            $n= Pengaduan::select('user_id')->where('id', $trackingId)->first();
+            }else{
+                $n= Pengaduan::select('user_id')->where('id', $trackingId)->first();
 
                 $senderID=$n->user_id;
 
