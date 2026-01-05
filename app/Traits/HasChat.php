@@ -584,10 +584,10 @@ $formattedMessage = nl2br($safeMessage);
 
 $content = "
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-        <h3 style='color: #333; margin-bottom: 20px;'>Halo {$mention['username']}</h3>
+        <h3 style='color: #333; margin-bottom: 20px;'>Halo {$mention['email']}</h3>
         
         <p style='color: #666; font-size: 16px; line-height: 1.5;'>
-            Anda disebutkan dalam chat oleh <strong style='color: #007bff;'>" . auth()->user()->username . "</strong>.
+            Anda disebutkan dalam chat oleh <strong style='color: #007bff;'>" . auth()->user()->email . "</strong>.
         </p>
         
         <div style='margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007bff;'>
