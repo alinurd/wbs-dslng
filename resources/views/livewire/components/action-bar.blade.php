@@ -26,9 +26,9 @@
         $onPreview='export("previewJenis")';
     }
     if($modul == 'complien'){
-                $permissions['create'] = false;
-
-          $permissions['preview'] = true;
+        $permissions['create'] = false;
+        $permissions['preview'] = true;
+        $permissions['showHistory'] = true;
         $onPreview='export("preview")';
         $onExportExcel='export("excelReportComplien")';
     }
@@ -86,6 +86,7 @@
         </span>
     </button> --}}
 
+    @if($modul !== 'complien')
     <!-- Preview Button -->
     <button wire:click="{{$onPreview}}" 
             wire:loading.attr="disabled"
@@ -101,6 +102,41 @@
             Preview
         </span>
     </button>
+    @endif
+    @endif
+    @if ($permissions['showHistory'] ?? false)
+
+    @if($modul == 'complien' && $showHistory)
+<button wire:click="history(false)" 
+            wire:loading.attr="disabled"
+            wire:loading.class="opacity-50 cursor-not-allowed"
+            class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-gray-600 border border-bg-gray-600 rounded-md hover:bg-gray-700 focus:z-10 focus:ring-1 focus:ring-bg-gray-600 focus:text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
+        <span wire:loading wire:target="history" class="inline-flex items-center">
+            <i class="fas fa-spinner fa-spin mr-1"></i>
+        </span>
+        <span class="whitespace-nowrap inline-flex items-center">
+            <span wire:loading.remove wire:target="history">
+                <i class="fas fa-history mr-1.5 text-xs"></i>
+            </span>
+            Reset History
+        </span>
+    </button> 
+    @else
+      <button wire:click="history(true)" 
+            wire:loading.attr="disabled"
+            wire:loading.class="opacity-50 cursor-not-allowed"
+            class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-cyan-600 border border-bg-cyan-600 rounded-md hover:bg-cyan-700 focus:z-10 focus:ring-1 focus:ring-bg-cyan-600 focus:text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
+        <span wire:loading wire:target="history" class="inline-flex items-center">
+            <i class="fas fa-spinner fa-spin mr-1"></i>
+        </span>
+        <span class="whitespace-nowrap inline-flex items-center">
+            <span wire:loading.remove wire:target="history">
+                <i class="fas fa-history mr-1.5 text-xs"></i>
+            </span>
+            History
+        </span>
+    </button>  
+    @endif
     @endif
 </div>
 

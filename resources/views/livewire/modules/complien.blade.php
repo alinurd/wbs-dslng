@@ -142,6 +142,15 @@
             'data' => $detailData,
             'onClose' => 'closeDetailModal',
         ])
+    {{-- @include('livewire.components.preview-export', [
+            'showPreviewModal' => $showPreviewModal,
+            'previewMonth' => $previewMonth,
+            'previewTotal' => $previewTotal,
+            'previewData' => $previewData,
+            'filterData' => $this->getFilterData(), // Kirim data filter
+            'title' => 'LAPORAN PENGADUAN LENGKAP',
+            'onClose' => '$set(\'showPreviewModal\', false)',
+        ]) --}}
 
     </div>
 </div>

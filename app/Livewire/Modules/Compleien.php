@@ -39,6 +39,7 @@ class Compleien extends Root
 
     // Properties untuk forward
     public $showForwardDropdown = false;
+    public $showHistory = false;
     public $forwardDestination = '';
     public $forwardPengaduanId = '';
 
@@ -85,12 +86,12 @@ class Compleien extends Root
     {
         try {
             // Debug: cek data masuk
-            \Log::info('submitForm called', [
-                'submission_action' => $this->submission_action,
-                'selected_pengaduan_id' => $this->selected_pengaduan_id,
-                'has_catatan' => !empty($this->catatan),
-                'has_file' => !empty($this->lampiran)
-            ]);
+            // \Log::info('submitForm called', [
+            //     'submission_action' => $this->submission_action,
+            //     'selected_pengaduan_id' => $this->selected_pengaduan_id,
+            //     'has_catatan' => !empty($this->catatan),
+            //     'has_file' => !empty($this->lampiran)
+            // ]);
 
             // Validasi form
             $this->validate();
@@ -152,21 +153,35 @@ class Compleien extends Root
                     ];
 
                     $roleId = (int)($this->userInfo['role']['id'] ?? 0);
-                    if ($roleId == 5) {
-                        $updateData['act_cc'] = 1;
-                    }
-                    if ($roleId == 7) {
-                        $updateData['act_cco'] = 1;
-                    }
+                    switch ($roleId) {
+            case 2: // WBS External
+                $updateData['act_eks'] = 1;
+                break;
+            case 4: // WBS Internal 
+                $updateData['act_int'] = 1;  
+                break;
+            case 5: // WBS CC
+                $updateData['act_cc'] = 1;  
+                break;
+            case 7: // WBS CCO
+                $updateData['act_cco'] = 1;  
+                break;
+            case 6: // WBS FWD
+                $updateData['fwd_to'] = 1;  
+                break;
+            default:
+                $stsGet = [-1]; // Tidak akan pernah match
+        }
+
                     // Add catatan if provided
                     if (!empty($this->catatan)) {
                         $updateData['catatan'] = $this->catatan;
                     }
 
-                    \Log::info('Updating pengaduan', [
-                        'pengaduan_id' => $pengaduan->id,
-                        'updateData' => $updateData
-                    ]);
+                    // \Log::info('Updating pengaduan', [
+                    //     'pengaduan_id' => $pengaduan->id,
+                    //     'updateData' => $updateData
+                    // ]);
 
                     $pengaduan->update($updateData);
 
@@ -289,6 +304,7 @@ $emailService->handleStatusChange(
                 'data' => $this->getStatusInfo(2, 0)
             ],
             'user' => $this->userInfo,
+            'user' => $this->userInfo,
             'log' => [
                 [
                     'id' => $record->id,
@@ -301,6 +317,7 @@ $emailService->handleStatusChange(
 
                 ]
             ],
+            'showHistory' => $this->showHistory,
         ];
 
         $this->detailTitle = "Update Status - " . $record->code_pengaduan;
@@ -453,52 +470,75 @@ return $filterArray;
             }
         }
     }
-
-     $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+    $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+    if(!$this->showHistory){
         switch ($roleId) {
             case 2: // WBS External
-                $stsGet = 'all';
+                $q->where('status', 0);
                 break;
             case 4: // WBS Internal  
-                $stsGet = 'all';
+               $q->where('status', 6);
                 break;
             case 5: // WBS CC
-                $stsGet = [7,    3];
-
-                // $q->where(function ($query) use ($stsGet) {
-                //     $query->where('status', 7);
-                //     // $query->orWhere(function ($subQuery) {
-                //     //     $subQuery->whereIn('status', [  9,])
-                //     //         ->where('act_cc', 1);
-                //     // });
-                // });
-                break;
+                // \dd($roleId);
+               $q->whereIn('status', [7,2]);
                 break;
             case 7: // WBS CCO
-                $stsGet = [1, 3, 8];
+                $q->where('status', 3);
                 break;
             case 6: // WBS FWD
-                $stsGet = [5, 2];
-                $q->where(function ($query) {
-                    $query->where('fwd_to', $this->userInfo['user']['fwd_id'])
-                        ->orWhere('sts_fwd', 1);
-                });
+                $q->where('status', 5);
+
                 break;
             default:
                 $stsGet = [-1]; // Tidak akan pernah match
         }
-        // Apply status filters
-        if ($roleId == 4) {
-            $q->whereNotIn('status', [0, 10]);
-        } elseif ($stsGet !== 'all') {
-            $q->whereIn('status', $stsGet);
-        }
+        // // Apply status filters
+        // if ($roleId == 4) {
+        //     $q->whereNotIn('status', [0, 10]);
+        // } elseif ($stsGet !== 'all') {
+        //     $q->whereIn('status', $stsGet);
+        // }
+    }
+        if($this->showHistory){
+            switch ($roleId) {
+            case 2: // WBS External
+                 $q->where('act_eks', 1);
+                 $q->whereIn('status', [6,10]);
+                break;
+            case 4: // WBS Internal  
+                $q->where('act_int', 1);
+                $q->whereIn('status', [7,11]);
+                break;
+            case 5: // WBS CC
+                $q->where('act_cc', 1);
+                $q->whereIn('status', [9,1,5,2]);
+                break;
+            case 7: // WBS CCO
+                $q->where('act_cco', 1);
+                $q->whereIn('status', [3,8]);
+                break;
+            case 6: // WBS FWD
+                // $q->whereIn('status', [3,8]);
+                $q->where('fwd_to', 1);
+                $q->whereIn('status', [2]);
 
+                break;
+            default:
+                $stsGet = [-1]; // Tidak akan pernah match
+        }
+        }
 
         return $q;
     }
 
-
+    public function history($sts){
+        if($sts){
+            $this->showHistory=true;
+        }else{
+            $this->showHistory=false;
+        }
+    }
     public function closeViewDetail()
     {
         $this->showDetailModal1 = false;

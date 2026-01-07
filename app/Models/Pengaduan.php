@@ -30,6 +30,9 @@ class Pengaduan extends Model
         'sts_fwd',
         'act_cco',
         'act_cc',
+        'act_eks',
+        'act_int',
+        'act_cc',
         'ditutup_pada'
     ];
 
