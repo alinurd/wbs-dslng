@@ -304,11 +304,38 @@
                                                         <i class="fas fa-check-circle me-1"></i>
                                                         <span>{{ $p['data_en'] }}</span>
                                                     </button>
+                                                @endif 
+                                            @endif
+                                        </div>
+                                    @break
+
+                                    @case(6)
+                                        @if ($data['sts_fwd']['id'] !== 1)
+                                            <button type="submit"
+                                                wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
+                                                class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                <span>{{ $p['data_en'] }}</span>
+                                            </button>
+                                        @endif
+                                    @break
+
+                                    @case(5)
+                                        @if ($data['act_cco'] !== 1)
+                                            <div class="relative">
+                                            @if ($data['act_int'])
+                                                @if ($p['param_int'] !== 5)
+                                                    <button type="submit"
+                                                        wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
+                                                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                                                        <i class="fas fa-check-circle me-1"></i>
+                                                        <span>{{ $p['data_en'] }}</span>
+                                                    </button>
                                                 @endif
                                                 {{-- Tombol Forward hanya tampil jika param_int == 5 --}}
                                                 @if ($p['param_int'] == 5)
                                                     <button type="button" wire:click="ShowFWD({{ $data['id'] }})"
-                                                        class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
+                                                        class="px-6 py-2 bg-lime-500 hover:bg-lime-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
                                                         <i class="fas fa-share me-1"></i>
                                                         <span>{{ $p['data_en'] }}</span>
                                                     </button>
@@ -345,27 +372,6 @@
                                                 @endif
                                             @endif
                                         </div>
-                                    @break
-
-                                    @case(6)
-                                        @if ($data['sts_fwd']['id'] !== 1)
-                                            <button type="submit"
-                                                wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
-                                                class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
-                                                <i class="fas fa-check-circle me-1"></i>
-                                                <span>{{ $p['data_en'] }}</span>
-                                            </button>
-                                        @endif
-                                    @break
-
-                                    @case(5)
-                                        @if ($data['act_cco'] !== 1)
-                                            <button type="submit"
-                                                wire:click="setAction({{ $p['param_int'] }}, {{ $data['id'] }})"
-                                                class="px-6 py-2 bg-{{ $p['param_str'] }}-500 hover:bg-{{ $p['param_str'] }}-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-sm flex items-center">
-                                                <i class="fas fa-check-circle me-1"></i>
-                                                <span>{{ $p['data_en'] }}</span>
-                                            </button>
                                         @endif
                                     @break
 
