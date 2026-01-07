@@ -191,7 +191,8 @@ class Tracking extends Root
     }
 
      public function revisi($code=''){
-        return redirect()->intended('/pengaduan/p_report/'.$code);
+        return redirect()->route('p_report_update', ['code' => $code]);
+        // return redirect()->intended('/pengaduan/p_report/'.$code);
     }
 
 }
