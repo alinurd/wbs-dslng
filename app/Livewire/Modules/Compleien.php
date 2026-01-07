@@ -485,7 +485,7 @@ return $filterArray;
                $q->whereIn('status', [7,2]);
                 break;
             case 7: // WBS CCO
-                $q->where('status', 3);
+                $q->where('status', 1);
                 break;
             case 6: // WBS FWD
                 $q->where('status', 5);
