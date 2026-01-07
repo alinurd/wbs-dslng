@@ -290,6 +290,8 @@
 
                     {{-- {{dd($data['user']['sts'])}} --}}
                     <div class="modal-footer px-6 py-4 flex justify-end space-x-3 flex-wrap gap-2 relative">
+                        {{-- {{dd($data['status_ex']['param_str_1'])}} --}}
+                        @if($data['status_ex']['param_str_1'] !=='rejected')
                         @foreach ($data['user']['sts'] as $p)
                             @if ($p['param_int'] !== $data['status_id'])
                                 @switch($data['user']['role']['id'])
@@ -406,7 +408,8 @@
                                         </button>
                                 @endswitch
                             @endif
-                        @endforeach
+                            @endforeach
+                            @endif
 
 
                         {{-- Button Read untuk role 6 yang sudah di-forward --}}

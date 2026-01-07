@@ -293,6 +293,7 @@ $emailService->handleStatusChange(
             'status_ex' => [
                 'name' => $currentStatusInfo->data_id ?? 'Menunggu Review',
                 'color' => $currentStatusInfo->param_str ?? 'yellow',
+                'param_str_1' => $currentStatusInfo->param_str_1 ?? '',
             ],
             'status_id' => $record->status,
             'act_cc' => $record->act_cc,
