@@ -17,6 +17,7 @@ use App\Livewire\Modules\FAQ;
 use App\Livewire\Modules\News;
 use App\Livewire\Modules\Pengaduan\LogApprovalIndex;
 use App\Livewire\Modules\Pengaduan\Report as PengaduanIndex;
+use App\Livewire\Modules\Pengaduan\ReportUpdate as PengaduanUpdate;
 use App\Livewire\Modules\Pengaduan\Tracking as TrackingIndex;
 use App\Livewire\Modules\Reporting\ReportingFull;
 use App\Livewire\Modules\Reporting\ReportingJenis;
@@ -113,9 +114,10 @@ Route::middleware(['auth'])->group(function (): void {
     //pengaduan
     Route::prefix('/pengaduan')->group(function () {
                Route::get('/p_report', PengaduanIndex::class)->name('p_report');
+               Route::get('/p_report_update/{code}', PengaduanUpdate::class)->name('p_report_update');
                Route::get('/p_tracking', TrackingIndex::class)->name('p_tracking');
-    Route::get('/log-complien/{code_pengaduan}', LogApprovalIndex::class)->name('log_detail');
-        });
+               Route::get('/log-complien/{code_pengaduan}', LogApprovalIndex::class)->name('log_detail');
+            });
 
     //reporting
     Route::prefix('/reporting')->group(function () {

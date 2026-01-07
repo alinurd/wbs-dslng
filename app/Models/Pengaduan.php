@@ -29,7 +29,6 @@ class Pengaduan extends Model
         'fwd_to',
         'sts_fwd',
         'act_cco',
-        'act_cc',
         'act_eks',
         'act_int',
         'act_cc',

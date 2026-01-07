@@ -189,4 +189,9 @@ class Tracking extends Root
 
         $this->loadUploadedFiles();
     }
+
+     public function revisi($code=''){
+        return redirect()->intended('/pengaduan/p_report/'.$code);
+    }
+
 }

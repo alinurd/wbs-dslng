@@ -1142,8 +1142,11 @@ protected function getAcceptAttribute($allowedFormats)
     {
 
         $sts = $this->getStatusBadge($record->status);
-        if ($record->sts_final == 0 && $record->status !== 3) {
+        if ($record->sts_final == 0 && !in_array($record->status, [3, 8])) {
             $sts .= $this->getStatusBadge(12);
+        }
+         if ( $record->status == 8) {
+            $sts .= $this->getStatusBadge(128); //reject CCO
         }
         return $sts;
     }
@@ -1166,6 +1169,17 @@ protected function getAcceptAttribute($allowedFormats)
 
         }
 
+        if($statusId==128 ){
+            if($role->id==3){
+            $color = 'red';
+            $text = 'Perlu klarifikasi lebih lanjut';
+            }else{
+            $color = 'yellow';
+            $text = 'Menunggu Persetujuan';
+                
+            }
+    
+}
         return "
             <span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{$color}-100 text-{$color}-800'>
                 <span class='w-1.5 h-1.5 bg-{$color}-500 rounded-full mr-1.5'></span>

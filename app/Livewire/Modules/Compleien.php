@@ -513,7 +513,7 @@ return $filterArray;
                 break;
             case 5: // WBS CC
                 $q->where('act_cc', 1);
-                $q->whereIn('status', [9,1,5,2]);
+                // $q->whereIn('status', [9,1,5,2]);
                 break;
             case 7: // WBS CCO
                 $q->where('act_cco', 1);

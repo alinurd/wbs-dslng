@@ -194,6 +194,12 @@
                                             <span>Edit</span>
                                         </button>
                                     @endif
+                                    @if($modul=='p_tracking' && $record->status==8)
+                                        <a href="{{ route('p_report_update', ['code' => $record->code_pengaduan]) }}"  class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <i class="fas fa-edit w-4 h-4 text-gray-400 mr-3"></i>
+                                            <span>Perbaiki Laporan</span>
+                                        </a>
+                                    @endif
 
                                     @if (count($extraActions) > 0)
                                         <div class="border-t border-gray-100 my-1"></div>
