@@ -14,7 +14,7 @@ class ReportUpdate extends Root
 {
     use WithFileUploads;
 
-    public $modul = 'p_report_update';
+    public $modul = 'p_report';
     public $model = Pengaduan::class;
     public $views = 'modules.pengaduan.report-update';
     public $updateMode = false;
