@@ -504,11 +504,11 @@ return $filterArray;
             switch ($roleId) {
             case 2: // WBS External
                  $q->where('act_eks', 1);
-                 $q->whereIn('status', [6,10]);
+                //  $q->whereIn('status', [6,10]);
                 break;
             case 4: // WBS Internal  
                 $q->where('act_int', 1);
-                $q->whereIn('status', [7,11]);
+                // $q->whereIn('status', [7,11]);
                 break;
             case 5: // WBS CC
                 $q->where('act_cc', 1);
@@ -516,12 +516,12 @@ return $filterArray;
                 break;
             case 7: // WBS CCO
                 $q->where('act_cco', 1);
-                $q->whereIn('status', [3,8]);
+                // $q->whereIn('status', [3,8]);
                 break;
             case 6: // WBS FWD
                 // $q->whereIn('status', [3,8]);
                 $q->where('fwd_to', 1);
-                $q->whereIn('status', [2]);
+                // $q->whereIn('status', [2]);
 
                 break;
             default:
