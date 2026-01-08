@@ -525,7 +525,7 @@ class PengaduanEmailService
             
             <div style='background: #d1ecf1; padding: 15px; border-radius: 5px; margin: 15px 0;'>
                 <strong>Status Saat Ini:</strong> Dalam penanganan WBS CC<br>
-                <strong>Penanggung Jawab:</strong> Tim Carbon Copy (CC)
+                <strong>Penanggung Jawab:</strong> Tim Compliance Committee (CC)
             </div>
 
             <p>Tim CC akan menindaklanjuti pengaduan Anda sesuai dengan instruksi dari WBS Internal.</p>
