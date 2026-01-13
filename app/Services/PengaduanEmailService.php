@@ -498,7 +498,7 @@ class PengaduanEmailService
             NotificationHelper::sendToUser(
                 $user->id,
                 "Tugas Selesai: Pengaduan Ditolak",
-                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh WBS Internal",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh WBS CC",
                 $pengaduanData['userId'],
                 'complien',
                 2,
@@ -854,7 +854,7 @@ class PengaduanEmailService
      */
     public function sendForwardCompleted($pengaduanData, $catatanDariForward = '')
     {
-        $wbsIntUsers = $this->getUsersByRoleId(self::ROLE_WBS_INTERNAL);
+        $wbsIntUsers = $this->getUsersByRoleId(self::ROLE_WBS_CC);
         $contentToWbsInt = "
             <h3>Tugas Forward Selesai</h3>
             <p>Tim Forward telah menyelesaikan tugas untuk pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong>.</p>
