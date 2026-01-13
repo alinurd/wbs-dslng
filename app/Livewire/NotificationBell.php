@@ -30,7 +30,8 @@ class NotificationBell extends Root
     public $uploadedFiles = [];
     public $catatan = '';
     public $submission_action = '';
-
+     public $showHistory = false;
+     
     use WithFileUploads, HasChat;
 
     public function mount()
