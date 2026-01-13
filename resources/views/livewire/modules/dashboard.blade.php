@@ -225,11 +225,11 @@
                                                     class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
                                             </a>
                                             <div class="flex items-center space-x-3">
-                                                <span class="text-blue-600 flex items-center">
+                                                <span class="text-gray-600 flex items-center">
                                                     <i class="fas fa-comment mr-1"></i>
                                                     {{ $log['countComment'] }}
                                                 </span>
-                                                <span class="text-green-600 flex items-center">
+                                                <span class="text-gray-600 flex items-center">
                                                     <i class="fas fa-file mr-1"></i>
                                                     {{ $log['countFile'] }}
                                                 </span>
