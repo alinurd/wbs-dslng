@@ -5,6 +5,9 @@ namespace App\Livewire\Modules\Pengaduan;
 use App\Helpers\FileHelper;
 use App\Helpers\NotificationHelper;
 use App\Livewire\Root; 
+use App\Models\Audit as AuditLog;
+use App\Models\Combo;
+use App\Models\LogApproval;
 use App\Models\Pengaduan;
 use App\Services\PengaduanEmailService;
 use Illuminate\Support\Str;
@@ -276,11 +279,11 @@ class ReportUpdate extends Root
             $payload['user_id'] = auth()->id();
             $payload['tanggal_pengaduan'] = now();
             
-            // Kirim notifikasi email hanya untuk create
-            $emailService = new PengaduanEmailService();
-            $emailService->sendNewPengaduanNotifications($payload, auth()->id());
-        }
+            
         
+
+            
+        } 
         return $payload;
     }
 
@@ -296,8 +299,28 @@ class ReportUpdate extends Root
         if ($this->updateMode && $this->recordId) {
             // Update existing record
             // dd($payload);
+           
+                    
             $record = $this->model::findOrFail($this->recordId);
             $record->update($payload);
+            $statusInfo = Combo::where('kelompok', 'sts-aduan')
+                    ->where('param_int', 13)
+                    ->first();
+            $this->createLogApproval($record, $statusInfo, []);
+             AuditLog::create([
+                        'user_id' => $this->userInfo['user']['id'],
+                        'action' => 'perbaikan pengaduan',
+                        'table_name' => 'Complien',
+                        'record_id' => $this->recordId,
+                        'old_values' => json_encode([]),
+                        'new_values' =>  json_encode($payload),
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->userAgent(),
+                        'created_at' => now()
+                    ]);
+                     $emailService = new PengaduanEmailService();
+            $emailService->sendRevisiPengaduanNotifications($payload, $record->code_pengaduan, $record->code_pengaduan, auth()->id());
+            
             $this->saved($record, 'update');
         } else {
             // Create new record
@@ -477,6 +500,29 @@ public function removeLampiran($index)
                 $this->removeLampiran($index);
                 break;
             }
+        }
+    }
+    
+    protected function createLogApproval($pengaduan, $statusInfo, $filePath = [])
+    {
+        try {
+            $logData = [
+                'pengaduan_id' => $pengaduan->id,
+                'user_id' => auth()->id(),
+                'status_id' => $statusInfo->param_int,
+                'status_text' => $statusInfo->data_id,
+                'status' => $statusInfo->data_en,
+                'catatan' => $this->catatan ?? '',
+                'file' => json_encode($filePath),
+                'color' => $statusInfo->param_str ?? 'gray',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            LogApproval::create($logData);
+        } catch (\Exception $e) {
+            \Log::error('Error creating log approval: ' . $e->getMessage());
+            throw $e;
         }
     }
     

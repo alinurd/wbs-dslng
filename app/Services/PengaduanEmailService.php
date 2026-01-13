@@ -57,7 +57,7 @@ class PengaduanEmailService
         
         // APPROVE BY WBS EKSTERNAL (Submit to Internal)
         elseif (in_array($statusAction, self::STATUS_APPROVE_EKS) && $roleId == self::ROLE_WBS_EKSTERNAL) {
-            $this->sendSubmitToWbsInternal($pengaduanData);
+            $this->sendSubmitToWbsInternal($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
         }
         
         // REJECT BY WBS INTERNAL  
@@ -188,9 +188,98 @@ class PengaduanEmailService
     }
 
     /**
-     * TAHAP 1: PENGADUAN BARU DIBUAT
+     * TAHAP 1: Revisi BARU DIBUAT
      * Email ke: Pelapor + Semua WBS Eksternal
      */
+    public function sendRevisiPengaduanNotifications($pengaduanData, $kode='',$tanggal_pengaduan='', $userId = null)
+    {
+ 
+        // dd($pengaduanData);
+        // Set user ID untuk audit log jika ada
+        if ($userId) {
+            $this->emailService->setUserId($userId);
+        }
+
+        // 1. EMAIL KE PELAPOR
+        $contentToPelapor = "
+            <h3>📋 Pengaduan berhasil diperbaiki</h3>
+            <p>Terima kasih telah menyampaikan pengaduan. Berikut detail pengaduan Anda:</p>
+            
+            <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Kode Pengaduan:</strong> {$kode}<br>
+                <strong>Tanggal Pengaduan:</strong> {$tanggal_pengaduan}<br>
+                 <strong>Status:</strong> Menunggu review WBS Eksternal
+            </div>
+
+            <p>Silakan cek secara berkala untuk melihat pembaruan status pengaduan Anda.</p>
+        ";
+
+        $this->sendNotification(
+            $pengaduanData['email_pelapor'], 
+            'Konfirmasi perbaikan Pengaduan',
+            $contentToPelapor, 
+            'info'
+        );
+
+        // 2. EMAIL KE SEMUA WBS EKSTERNAL
+        $wbsEksUsers = $this->getUsersByRoleId(self::ROLE_WBS_EKSTERNAL);
+        $contentToWbsEks = "
+            <h3>TUGAS BARU - Pengaduan Masuk</h3>
+            <p> pengaduan dengan Kode {$kode} telah diperbaiki dan membutuhkan review segera:</p>
+            
+            <div style='background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Kode Pengaduan:</strong> {$kode}<br>
+                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br>
+                <strong>Telepon:</strong> {$pengaduanData['telepon_pelapor']}<br> 
+                <strong>Waktu Kejadian:</strong> {$pengaduanData['waktu_kejadian']}<br> 
+            </div>
+
+            <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
+            
+            <div style='margin-top: 20px; padding: 10px; background: #dc3545; color: white; border-radius: 5px;'>
+                <strong>Segera tinjau pengaduan ini!</strong>
+            </div>
+        ";
+
+                $pelaporUser = User::where('id', $userId)->first();
+//                 $pId = Pengaduan::where('code_pengaduan', $kode)->first();
+
+// dd($pId);
+        foreach ($wbsEksUsers as $user) {
+            // Send email
+            $this->sendNotification(
+                $user->email,
+                "Tugas Baru: Pengaduan {$kode}",
+                $contentToWbsEks,
+                'urgent'
+            );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Baru ID: {$kode}",
+                "{$pelaporUser->name} telah memperbaiki pengaduan yang perlu ditinjau",
+                $pelaporUser->id,
+                'complien',
+                2,
+                $kode
+            );
+        }
+
+        // Send notification to pelapor if they have user account
+        // if ($pelaporUser) {
+            NotificationHelper::sendToUser(
+                $pelaporUser->id,
+                "Pengaduan Diterima",
+                "Pengaduan {$kode} telah diterima dan sedang ditinjau",
+                $pelaporUser->id,
+                'complien',
+                2,
+                $kode            
+            );
+        // }
+    }
+
     public function sendNewPengaduanNotifications($pengaduanData, $userId = null)
     {
         // dd($pengaduanData);
@@ -366,7 +455,7 @@ class PengaduanEmailService
      * TAHAP 3: WBS EKSTERNAL SUBMIT KE WBS INTERNAL
      * Email ke: Pelapor + Semua WBS Internal
      */
-    public function sendSubmitToWbsInternal($pengaduanData)
+    public function sendSubmitToWbsInternal($pengaduanData, $instruksiKhusus)
     {
         // 1. EMAIL KE PELAPOR
         $contentToPelapor = "
@@ -401,11 +490,14 @@ class PengaduanEmailService
                  
             </div>
 
+             " . (!empty($instruksiKhusus) ? "
+            <div style='background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Instruksi Khusus dari WBS Eksternal:</strong><br>{$instruksiKhusus}
+            </div>
+            " : "") . "
+
             <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
             
-            <div style='margin-top: 20px; padding: 10px; background: #17a2b8; color: white; border-radius: 5px;'>
-                📋 <strong>Tentukan tindakan selanjutnya: CC, CCO, atau Forward</strong>
-            </div>
         ";
 
         foreach ($wbsIntUsers as $user) {

@@ -490,7 +490,9 @@ class NotificationBell extends Root
             'Status Saat Ini' => $currentStatusInfo->data_id ?? 'Menunggu Review',
             'status_ex' => [
                 'name' => $currentStatusInfo->data_id ?? 'Menunggu Review',
-                'color' => $currentStatusInfo->param_str ?? 'yellow',
+                'color' => $currentStatusInfo->param_str ?? 'yellow', 
+                'param_str_1' => $currentStatusInfo->param_str_1 ?? '',
+                'param_str_2' => $currentStatusInfo->param_str_2 ?? '',
             ],
             'status_id' => $record->status,
             'act_cc' => $record->act_cc,
