@@ -790,7 +790,7 @@ class PengaduanEmailService
         // 2. EMAIL KE SEMUA WBS FORWARD (Tugas Baru)
         $wbsFwdUsers = $this->getUsersByRoleId(self::ROLE_WBS_FORWARD);
         $contentToWbsFwd = "
-            <h3>↪️ TUGAS BARU - Pengaduan Diteruskan dari WBS Internal</h3>
+            <h3>↪️ TUGAS BARU - Pengaduan Diteruskan dari WBS CC</h3>
             <p>Anda ditugaskan untuk menangani pengaduan yang diteruskan berikut:</p>
             
             <div style='background: #e2e3e5; padding: 15px; border-radius: 5px; margin: 15px 0;'>
@@ -801,14 +801,14 @@ class PengaduanEmailService
 
             " . (!empty($instruksiKhusus) ? "
             <div style='background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;'>
-                <strong>Instruksi Khusus dari WBS Internal:</strong><br>{$instruksiKhusus}
+                <strong>Instruksi Khusus dari WBS CC:</strong><br>{$instruksiKhusus}
             </div>
             " : "") . "
 
             <p><strong>Uraian Pengaduan:</strong><br>{$pengaduanData['uraian']}</p>
             
             <div style='margin-top: 20px; padding: 10px; background: #6c757d; color: white; border-radius: 5px;'>
-                ℹ️ <strong>Anda dapat mengupdate status menjadi READ, kemudian data akan kembali ke WBS Internal</strong>
+                ℹ️ <strong>Anda dapat menyelesaikan pengaduan ini dengan mengupdate status menjadi READ,</strong>
             </div>
         ";
 
@@ -871,7 +871,7 @@ class PengaduanEmailService
             </div>
             " : "") . "
 
-            <p><strong>Data telah kembali ke WBS Internal untuk tindakan selanjutnya.</strong></p>
+            <p><strong>pengaduan telah diselesaikan</strong></p>
         ";
 
         foreach ($wbsIntUsers as $user) {
