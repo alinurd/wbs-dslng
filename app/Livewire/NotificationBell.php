@@ -662,6 +662,8 @@ class NotificationBell extends Root
     {
         $this->showDetailModal1 = false;
         $this->showuUdateStatus = false;
+        $this->showComment = false;
+
         $this->resetForm();
         $this->hideForwardDropdown();
     }

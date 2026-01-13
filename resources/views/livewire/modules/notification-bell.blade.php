@@ -20,7 +20,7 @@
             'show' => $showComment,
             'title' => $detailTitle,
             'data' => $detailData,
-            'onClose' => 'closeDetailModal',
+            'onClose' => 'closeModal',
         ])
           @include('livewire.components.update-status', [
             'show' => $showuUdateStatus,
