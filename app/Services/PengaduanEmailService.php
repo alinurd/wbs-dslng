@@ -511,7 +511,7 @@ class PengaduanEmailService
             NotificationHelper::sendToUser(
                 $pengaduanData['pelapor_id'],
                 "Pengaduan Ditolak",
-                "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh WBS Internal. Alasan: {$alasanReject}",
+                "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh WBS CC. Alasan: {$alasanReject}",
                 $pengaduanData['userId'],
                 'complien',
                 2,
