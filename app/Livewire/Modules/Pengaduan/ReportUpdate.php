@@ -120,7 +120,8 @@ class ReportUpdate extends Root
     {
         $record = $this->model::where('code_pengaduan', $code)->firstOrFail();
         
-        if($record->status!==8){
+        if(!in_array($record->status, [8, 10, 9, 11])){
+        // if($record->status!==8){
         //      $this->dispatch('notify', [
         //         'type' => 'success',
         //         'message' => 'Ppdate laporan tidak diizinkan, Pengaduan anda dalam proses review'

@@ -178,7 +178,7 @@
                                             role="menuitem">
                                             <i
                                                 class="fas fa-eye w-4 h-4 text-gray-400 mr-3 group-hover:text-blue-500"></i>
-                                            <span>View</span>
+                                            <span>View </span>
                                         </button>
                                     @endif
 
@@ -194,7 +194,7 @@
                                             <span>Edit</span>
                                         </button>
                                     @endif
-                                    @if($modul=='p_tracking' && $record->status==8)
+                                    @if($modul == 'p_tracking' && in_array($record->status, [8, 10, 9, 11]))
                                         <a href="{{ route('p_report_update', ['code' => $record->code_pengaduan]) }}"  class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                             <i class="fas fa-edit w-4 h-4 text-gray-400 mr-3"></i>
                                             <span>Perbaiki Laporan</span>

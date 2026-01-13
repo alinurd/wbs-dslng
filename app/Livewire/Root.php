@@ -1142,12 +1142,12 @@ protected function getAcceptAttribute($allowedFormats)
     {
 
         $sts = $this->getStatusBadge($record->status);
-        if ($record->sts_final == 0 && !in_array($record->status, [3, 8])) {
+        if ($record->sts_final == 0 && !in_array($record->status, [3, 8, 10, 9, 11])) {
             $sts .= $this->getStatusBadge(12);
         }
-         if ( $record->status == 8) {
-            $sts .= $this->getStatusBadge(128); //reject CCO
-        }
+        //  if ( $record->status == 8) {
+        //     $sts .= $this->getStatusBadge(128); //reject CCO
+        // }
         return $sts;
     }
 
@@ -1165,7 +1165,10 @@ protected function getAcceptAttribute($allowedFormats)
         } else {
             $color = $statusInfo->param_str ?? 'gray';
             // $text = $statusInfo->data_id;
-             $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
+            $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
+            if($statusInfo->param_str_1 =='rejected' && $role->id==3){
+                $text = ($role->id==3) ?$statusInfo->data_id :$statusInfo->data_id;
+            }
 
         }
 
@@ -1175,11 +1178,9 @@ protected function getAcceptAttribute($allowedFormats)
             $text = 'Perlu klarifikasi lebih lanjut';
             }else{
             $color = 'yellow';
-            $text = 'Menunggu Persetujuan';
-                
+            $text = 'Menunggu Persetujuan';  
             }
-    
-}
+            }
         return "
             <span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{$color}-100 text-{$color}-800'>
                 <span class='w-1.5 h-1.5 bg-{$color}-500 rounded-full mr-1.5'></span>
