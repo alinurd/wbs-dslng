@@ -665,7 +665,7 @@ return $filterArray;
             ->get();
 
         // Cari teks berdasarkan value
-        $option = $forwardOptions->firstWhere('data_en', $destination);
+        $option = $forwardOptions->firstWhere('id', $destination);
 
         return $option ? $option->data_id : $destination;
     }
