@@ -5,7 +5,7 @@
     <div class="bg-gradient-to-r from-[#003B73] to-[#0077C8] px-6 py-4 rounded-t-lg">
         <h2 class="text-xl font-bold text-white flex items-center">
             <i class="fas fa-exclamation-circle mr-3"></i>
-            Update Pengaduan <span class="font-bold underline"> {{$recordCode}}</span>
+            Update Pengaduan &nbsp; <span class="font-bold underline">{{$recordCode}}</span>
         </h2>
         <p class="text-blue-100 text-sm mt-1">
             Silakan isi form berikut untuk memperbaharui pengaduan anda

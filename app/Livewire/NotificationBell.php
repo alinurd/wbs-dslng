@@ -671,7 +671,10 @@ class NotificationBell extends Root
  public function closeViewDetail()
     {
         $this->showDetailModal1 = false; 
-        $this->updateStatus($this->pengaduan_id, $status = null);
+        $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+        if($roleId !== 3){
+            $this->updateStatus($this->pengaduan_id, $status = null);
+        }
     }
      
     public function view($id)
@@ -769,9 +772,25 @@ class NotificationBell extends Root
 
     public function viewPengaduan($id)
     {
-        $this->getPengaduanById($id);
+          $record = Pengaduan::select(['status', 'code_pengaduan'])->orderBy('created_at', 'desc')->findOrFail($id);
+          $currentStatusInfo = Combo::where('kelompok', 'sts-aduan')
+            ->where('param_int', $record->status)
+            ->first();
+
+            $roleId = (int)($this->userInfo['role']['id'] ?? 0);
+
+                  if($currentStatusInfo->param_str_1 =='rejected' && $roleId==3){
+                     $this->showDetailModal1 = false;
+        $this->showuUdateStatus = false;
+        $this->showComment = false;
+                    return redirect()->route('p_report_update', ['code' => $record->code_pengaduan]);
+                  }else{
+$this->getPengaduanById($id);
         $this->detailTitle = "Detail " . $this->title;
-        $this->showDetailModal = true;
+        $this->showDetailModal1 = true; 
+                  }
+                  
+        
     }
 
     public function closeChat()
