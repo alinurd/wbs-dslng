@@ -21,6 +21,10 @@ class NotificationBell extends Root
     public $isOpen = false;
     public $showuUdateStatus = false;
     public $unreadCount = 0;
+      public $selected_pengaduan_id = '';
+    public $pengaduan_id = '';
+
+    
     public $notifications = [];
     public $activeFilter = 'all';
     public $detailData = [];
@@ -640,21 +644,41 @@ class NotificationBell extends Root
     }
     
        public function viewDetail($id)
-    {
-         $this->getPengaduanById($id);
-        $this->showDetailModal = true;
+    { 
+       $this->getPengaduanById($id); 
+       $this->pengaduan_id=$id;
+        $this->showDetailModal1 = true;
         $this->showuUdateStatus = false;
+    }
+
+    public function closeDetailModal(){
+         $this->showDetailModal1 = false;
+        $this->showuUdateStatus = true;
+        
+        $this->updateStatus($this->pengaduan_id, $status = null);
     }
     
-
-    public function closeDetailModal()
+       public function closeModal()
     {
-        $this->showComment = false;
-        $this->showDetailModal = false;
+        $this->showDetailModal1 = false;
         $this->showuUdateStatus = false;
-        $this->detailData = [];
-        $this->detailTitle = '';
+        $this->resetForm();
+        $this->hideForwardDropdown();
     }
+    
+ public function closeViewDetail()
+    {
+        $this->showDetailModal1 = false; 
+        $this->updateStatus($this->pengaduan_id, $status = null);
+    }
+     
+    public function view($id)
+    {
+         $this->pengaduan_id = $id;
+        $this->getPengaduanById($id);
+        $this->showDetailModal = true;
+    }
+  
 
 
     public function uploadFile()

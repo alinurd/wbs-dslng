@@ -26,14 +26,14 @@
             'show' => $showuUdateStatus,
             'title' => $detailTitle,
             'data' => $detailData,
-            'onClose' => 'closeDetailModal',
+            'onClose' => 'closeModal',
         ])
          @include('livewire.components.detail-modal', [
-            'show' => $showDetailModal,
+            'show' => $showDetailModal1,
             'title' => $detailTitle,
             'data' => $detailData,
-            'onClose' => 'closeDetailModal',
-        ]) 
+            'onClose' => 'closeViewDetail',
+        ])  
         {{-- Header --}}
         <div class="p-4 border-b border-gray-200 bg-gray-50 sticky top-0">
             <div class="flex justify-between items-center">
