@@ -39,12 +39,12 @@ class PengaduanEmailService
      */
     public function handleStatusChange($pengaduan, $statusAction, $roleId, $catatan = '', $forwardDestination = null, $userId=null)
     {
-        // \Log::info('PengaduanEmailService: Handling status change', [
-        //     'pengaduan_id' => $pengaduan->id,
-        //     'status_action' => $statusAction,
-        //     'role_id' => $roleId,
-        //     'forward_destination' => $forwardDestination
-        // ]);
+        \Log::info('PengaduanEmailService: Handling status change', [
+            'pengaduan_id' => $pengaduan->id,
+            'status_action' => $statusAction,
+            'role_id' => $roleId,
+            'forward_destination' => $forwardDestination
+        ]);
 
         // Format data untuk email
         $pengaduanData = $this->formatPengaduanData($pengaduan, $userId);
@@ -69,8 +69,8 @@ class PengaduanEmailService
             $this->sendSubmitToCc($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
         }
         
-        // APPROVE BY WBS INTERNAL - KE FORWARD
-        elseif (in_array($statusAction, self::STATUS_APPROVE_INT_FORWARD) && $roleId == self::ROLE_WBS_INTERNAL) {
+        // APPROVE BY WBS CC - KE FORWARD
+        elseif (in_array($statusAction, self::STATUS_APPROVE_INT_FORWARD) && $roleId == self::ROLE_WBS_CC) {
             $this->sendSubmitToForward($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
         }
         
