@@ -22,6 +22,7 @@ class PengaduanEmailService
     const STATUS_REJECT_EKS = [10];                    // Reject oleh WBS Eksternal
     const STATUS_APPROVE_EKS = [6];                    // Approve oleh WBS Eksternal → Notif WBS internal dan ke pelapor
     const STATUS_REJECT_INT = [9, 11];                 // Reject oleh WBS Internal → Notif ke pelapor dan WBS EKS
+    const STATUS_REJECT_CC = [9];                 // Reject oleh WBS Internal → Notif ke pelapor dan WBS EKS
     const STATUS_APPROVE_INT_CC = [7];                 // APPROVE oleh WBS Internal → Notif ke pelapor dan CC
     const STATUS_APPROVE_INT_FORWARD = [5];            // APPROVE oleh WBS Internal → Notif ke pelapor dan Forward  
     const STATUS_APPROVE_INT_CCO = [1];                // APPROVE oleh WBS Internal → Notif ke pelapor dan CCO
@@ -39,12 +40,12 @@ class PengaduanEmailService
      */
     public function handleStatusChange($pengaduan, $statusAction, $roleId, $catatan = '', $forwardDestination = null, $userId=null)
     {
-        // \Log::info('PengaduanEmailService: Handling status change', [
-        //     'pengaduan_id' => $pengaduan->id,
-        //     'status_action' => $statusAction,
-        //     'role_id' => $roleId,
-        //     'forward_destination' => $forwardDestination
-        // ]);
+        \Log::info('PengaduanEmailService: Handling status change', [
+            'pengaduan_id' => $pengaduan->id,
+            'status_action' => $statusAction,
+            'role_id' => $roleId,
+            'forward_destination' => $forwardDestination
+        ]);
 
         // Format data untuk email
         $pengaduanData = $this->formatPengaduanData($pengaduan, $userId);
@@ -64,11 +65,17 @@ class PengaduanEmailService
             $this->sendRejectByWbsInternal($pengaduanData, $this->getRejectReason($statusAction), $catatan);
         }
         
+      
         // APPROVE BY WBS INTERNAL - KE CC
         elseif (in_array($statusAction, self::STATUS_APPROVE_INT_CC) && $roleId == self::ROLE_WBS_INTERNAL) {
             $this->sendSubmitToCc($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
         }
         
+          // REJECT BY WBS CC  
+        elseif (in_array($statusAction, self::STATUS_REJECT_CC) && $roleId == self::ROLE_WBS_CC) {
+            $this->sendRejectByWbsCC($pengaduanData, $this->getRejectReason($statusAction), $catatan);
+        }
+
         // APPROVE BY WBS CC - KE FORWARD
         elseif (in_array($statusAction, self::STATUS_APPROVE_INT_FORWARD) && $roleId == self::ROLE_WBS_CC) {
             $this->sendSubmitToForward($pengaduanData, $catatan ?: 'Mohon ditindaklanjuti');
@@ -294,7 +301,7 @@ class PengaduanEmailService
             </div>
             " : "") . "
 
-            <p><em>Pengaduan ini telah ditutup dan tidak dapat diproses lebih lanjut.</em></p>
+            <p><em>silahkan lakukan perbaikan dan lakukan submit kembali.</em></p>
         ";
 
         $this->sendNotification(
@@ -433,6 +440,86 @@ class PengaduanEmailService
     }
 
     /**
+     * TAHAP 4: WBS CC REJECT
+     * Email ke: Pelapor + Semua WBS CC (notifikasi tugas selesai)
+     */
+    public function sendRejectByWbsCC($pengaduanData, $alasanReject, $catatanKhusus = '')
+    {
+        // 1. EMAIL KE PELAPOR (FINAL - STOP)
+        $contentToPelapor = "
+            <h3>❌ Pengaduan Ditolak oleh WBS CC</h3>
+            <p>Pengaduan Anda dengan kode <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditinjau oleh tim WBS CC.</p>
+            
+            <div style='background: #f8d7da; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Status:</strong> <span style='color: #dc3545;'>Tidak Dapat Diproses Lebih Lanjut</span><br>
+                <strong>Alasan Penolakan:</strong> {$alasanReject}
+            </div>
+
+            " . (!empty($catatanKhusus) ? "
+            <div style='background: #e2e3e5; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Catatan Khusus:</strong><br>{$catatanKhusus}
+            </div>
+            " : "") . "
+
+            <p><em>silahkan lakukan perbaikan dan lakukan submit kembali.</em></p>
+        ";
+
+        $this->sendNotification(
+            $pengaduanData['email_pelapor'], 
+            'Pengaduan Ditolak - ' . $pengaduanData['code_pengaduan'],
+            $contentToPelapor, 
+            'reject'
+        );
+
+        // 2. EMAIL KE SEMUA WBS INTERNAL (Notifikasi tugas selesai)
+        $wbsIntUsers = $this->getUsersByRoleId(self::ROLE_WBS_INTERNAL);
+        $contentToWbsIntTeam = "
+            <h3>Tugas Selesai - Pengaduan Ditolak</h3>
+            <p>Pengaduan <strong>{$pengaduanData['code_pengaduan']}</strong> telah ditolak oleh kolega Anda.</p>
+            
+            <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Alasan Penolakan:</strong> {$alasanReject}<br>
+                <strong>Pelapor:</strong> {$pengaduanData['email_pelapor']}<br> 
+            </div>
+
+            <p><em>Pengaduan ini telah ditutup.</em></p>
+        ";
+
+        foreach ($wbsIntUsers as $user) {
+            // Send email
+            $this->sendNotification(
+                $user->email,
+                "Tugas Selesai: Pengaduan {$pengaduanData['code_pengaduan']} Ditolak",
+                $contentToWbsIntTeam,
+                'info'
+            );
+
+            // Send push notification
+            NotificationHelper::sendToUser(
+                $user->id,
+                "Tugas Selesai: Pengaduan Ditolak",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah ditolak oleh WBS Internal",
+                $pengaduanData['userId'],
+                'complien',
+                2,
+                $pengaduanData['id']
+            );
+        }
+
+        // Send notification to pelapor if they have user account
+       
+            NotificationHelper::sendToUser(
+                $pengaduanData['pelapor_id'],
+                "Pengaduan Ditolak",
+                "Pengaduan {$pengaduanData['code_pengaduan']} ditolak oleh WBS Internal. Alasan: {$alasanReject}",
+                $pengaduanData['userId'],
+                'complien',
+                2,
+                $pengaduanData['id']
+            ); 
+    }
+
+    /**
      * TAHAP 4: WBS INTERNAL REJECT
      * Email ke: Pelapor + Semua WBS Internal (notifikasi tugas selesai)
      */
@@ -454,7 +541,7 @@ class PengaduanEmailService
             </div>
             " : "") . "
 
-            <p><em>Pengaduan ini telah ditutup dan tidak dapat diproses lebih lanjut.</em></p>
+            <p><em>silahkan lakukan perbaikan dan lakukan submit kembali.</em></p>
         ";
 
         $this->sendNotification(
@@ -845,7 +932,7 @@ class PengaduanEmailService
             </div>
             " : "") . "
 
-            <p><em>Pengaduan ini telah ditutup dan tidak dapat diproses lebih lanjut.</em></p>
+            <p><em>silahkan lakukan perbaikan dan lakukan submit kembali.</em></p>
         ";
 
         $this->sendNotification(
