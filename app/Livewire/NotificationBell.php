@@ -516,6 +516,7 @@ class NotificationBell extends Root
 
                 ]
             ],
+            'showHistory' => $this->showHistory,
         ];
 
         $this->detailTitle = "Update Status - " . $record->code_pengaduan;
