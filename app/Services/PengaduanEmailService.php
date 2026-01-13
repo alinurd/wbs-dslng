@@ -895,17 +895,44 @@ class PengaduanEmailService
             );
         }
 
-        // Send notification to pelapor if they have user account
         
+         $contentToPelapor = "
+            <h3>Pengaduan Telah Selesai</h3>
+            <p>Pengaduan Anda dengan kode <strong>{$pengaduanData['code_pengaduan']}</strong> telah diselesaikan Oleh WBS Forward.</p>
+            
+            <div style='background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Status:</strong> <span style='color: #28a745;'>Selesai dan Disetujui Oleh WBS Forward</span><br> 
+            </div>
+
+            " . (!empty($catatan) ? "
+            <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                <strong>Catatan Penutupan:</strong><br>{$catatan}
+            </div>
+            " : "") . "
+
+            <p><em>Terima kasih telah menggunakan layanan pengaduan kami.</em></p>
+        ";
+
+        // Send email
+        $emailResult = $this->sendNotification(
+            $pengaduanData['email_pelapor'], 
+            'Pengaduan Selesai - ' . $pengaduanData['code_pengaduan'],
+            $contentToPelapor, 
+            'success'
+        );
+
+        // Send push notification to pelapor if they have user account
+      
             NotificationHelper::sendToUser(
                 $pengaduanData['pelapor_id'],
-                "Update Pengaduan",
-                "Pengaduan {$pengaduanData['code_pengaduan']} telah selesai diproses oleh tim Forward",
+                "Pengaduan Selesai",
+                "Pengaduan {$pengaduanData['code_pengaduan']} telah diselesaikan oleh wbs forward",
                 $pengaduanData['userId'],
                 'complien',
                 2,
                 $pengaduanData['id']
             ); 
+
     }
 
     /**

@@ -148,7 +148,7 @@ class Compleien extends Root
                             ? 1
                             : (($this->submission_action == 5) ? 0 : $pengaduan['sts_fwd']),
 
-                        'sts_final' => in_array($this->submission_action, [3, 6, 7]) ? 1 : 0,
+                        'sts_final' => in_array($this->submission_action, [3, 6, 7, 2]) ? 1 : 0,
                         'updated_at' => now(),
                     ];
 
@@ -294,6 +294,7 @@ $emailService->handleStatusChange(
                 'name' => $currentStatusInfo->data_id ?? 'Menunggu Review',
                 'color' => $currentStatusInfo->param_str ?? 'yellow',
                 'param_str_1' => $currentStatusInfo->param_str_1 ?? '',
+                'param_str_2' => $currentStatusInfo->param_str_2 ?? '',
             ],
             'status_id' => $record->status,
             'act_cc' => $record->act_cc,
@@ -482,7 +483,7 @@ return $filterArray;
                 break;
             case 5: // WBS CC
                 // \dd($roleId);
-               $q->whereIn('status', [7,2]);
+               $q->whereIn('status', [7]);
                 break;
             case 7: // WBS CCO
                 $q->where('status', 1);

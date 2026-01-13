@@ -1142,7 +1142,7 @@ protected function getAcceptAttribute($allowedFormats)
     {
 
         $sts = $this->getStatusBadge($record->status);
-        if ($record->sts_final == 0 && !in_array($record->status, [3, 8, 10, 9, 11])) {
+        if ($record->sts_final == 0 && !in_array($record->status, [3, 8, 10, 9, 11,2])) {
             $sts .= $this->getStatusBadge(12);
         }
         //  if ( $record->status == 8) {
@@ -1168,6 +1168,9 @@ protected function getAcceptAttribute($allowedFormats)
             $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
             if($statusInfo->param_str_1 =='rejected' && $role->id==3){
                 $text = ($role->id==3) ?$statusInfo->data_id :$statusInfo->data_id;
+            }
+            if($statusId==2){
+                $text ='Disetujui Forward';
             }
 
         }
