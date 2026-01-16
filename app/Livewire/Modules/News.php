@@ -30,9 +30,9 @@ class News extends Root
     public $content_en = '';
     
     public $form = [
-        'category' => '',
+        'category' => null,
         'title_id' => '',
-        'title_en' => '',
+        'title_en' => '', 
         'files' => [], 
         'image' => null, 
         'is_active' => true, 
@@ -65,6 +65,26 @@ class News extends Root
             $this->content_en = $content;
         }
     }
+
+ 
+     public function rules()
+        {
+            return [ 
+                'form.category' => 'required',
+                'form.image.*' => 'max:' . (FileHelper::getMaxPengaduanSize() * 1024) . '|mimes:' . implode(',', FileHelper::getAllowedPengaduanExtensions()),
+                'form.files.*' => 'max:' . (FileHelper::getMaxPengaduanSize() * 1024) . '|mimes:' . implode(',', FileHelper::getAllowedPengaduanExtensions()),
+            ];
+        }
+
+        public function messages()
+        {
+            return [ 
+                'form.category.required' => 'category wajib diisi',
+                'form.image.*.max' => 'Ukuran file maksimal 100MB.',
+                'form.files.*.max' => 'Ukuran file maksimal 100MB.',
+                'form.files.*.mimes' => 'Format file harus: DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.',
+            ];
+        }
 
     protected function saving()
 {
