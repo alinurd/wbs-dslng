@@ -700,19 +700,28 @@
                 <div class="space-y-1">
                     <p class="text-sm font-medium text-gray-700">Klik untuk memilih file</p>
                     <p class="text-xs text-gray-500 max-w-xs mx-auto">
-                        Maksimal {{ $maxSize }}MB {{ $isMultiple ? 'per file' : '' }}. Format: {{ $formats }}
+                        Maksimal {{ $maxSize }}MB . Format: {{ $formats }}
+                        <i><br>{{ $isMultiple ? '' : 'hanya satu gambar/file terbaru yang akan di unggah' }}</i>
                     </p>
                 </div>
                 {{-- <button type="button" onclick="document.getElementById('file-input-{{ $field['model'] }}').click()"
                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center text-sm">
                     <i class="fas fa-folder-open mr-2"></i>Pilih File
                 </button> --}}
+               @php
+                    if (isset($field['model']) && !empty($field['model'])) {
+                        $p = 'file-input-' . $field['model'];
+                    } else {
+                        $p = 'file-input'; // Default jika tidak ada model
+                    }
+                @endphp
 
-                <button type="button" onclick="document.getElementById('file-input').click()"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
-                wire:loading.remove wire:target="lampiran">
-                <i class="fas fa-folder-open mr-2"></i>Pilih File
-            </button>
+                <button type="button" onclick="document.getElementById('{{ $p }}').click()"
+                    class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
+                    wire:loading.remove wire:target="lampiran">
+                    <i class="fas fa-folder-open mr-2"></i>
+                    Pilih File 
+                </button>
             
             <!-- Tombol loading state -->
             <button type="button" disabled

@@ -231,7 +231,7 @@ public function isValidFileFormat($file, $allowedFormats)
     // Clean allowed formats - remove empty values
     $allowedFormats = array_filter($allowedFormats, function($format) {
         return !empty(trim($format));
-    });
+    }); 
 
     // Jika file adalah object Livewire UploadedFile (file baru)
     if (is_object($file) && method_exists($file, 'getClientOriginalExtension')) {
@@ -252,7 +252,21 @@ public function isValidFileFormat($file, $allowedFormats)
 
     return false;
 }
-
+public function updatedLampiran($value)
+{
+    if ($value) {
+        // Tambahkan file baru ke array temporaryFiles
+        foreach ($value as $file) {
+            $this->temporaryFiles[] = $file;
+        }
+        
+        // Reset input file (penting!)
+        $this->lampiran = [];
+        
+        // Dispatch event untuk refresh UI jika diperlukan
+        $this->dispatch('files-added');
+    }
+}
 /**
  * Helper method untuk generate accept attribute dengan perbaikan
  */
