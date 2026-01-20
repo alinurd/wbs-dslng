@@ -66,38 +66,53 @@
 
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-                                 
-                            
-                                
-                            @forelse ($newsDetail['files'] as $file)
-                                <div
-                                    class="flex items-center justify-between bg-white rounded-xl p-4 border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 group">
-                                    <div class="flex items-center space-x-3 min-w-0 flex-1">
-                                        <div
-                                            class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-file text-white text-sm"></i>
-                                        </div>
-                                        <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-medium text-gray-900 truncate">
-                                                {{ $file['original_name'] }}
-                                            </p>
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                {{ strtoupper($file['extension'] ?? 'FILE') }} •
-                                                {{ $this->formatFileSize($file['size'] ?? 0) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        wire:click="downloadFile('{{ $file['path'] }}', '{{ $file['original_name'] }}')"
-                                        class="flex items-center space-x-2 text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-3 py-2 rounded-lg transition-colors duration-200 text-sm font-medium"
-                                        title="Download {{ $file['original_name'] }}">
-                                        <i class="fas fa-download text-xs"></i>
-                                        <span>Download</span>
-                                    </button>
-                                </div>
-                                @empty
-                            @endforelse
-                        </div>
+    @forelse ($newsDetail['files'] as $file)
+        <div
+            class="relative flex items-center justify-between
+                   bg-white rounded-xl p-4 border border-gray-200
+                   hover:border-blue-300 hover:shadow-lg
+                   transition-all duration-300">
+
+            <!-- FILE INFO -->
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <div
+                    class="flex-shrink-0 w-10 h-10
+                           bg-gradient-to-br from-blue-500 to-blue-600
+                           rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file text-white text-sm"></i>
+                </div>
+
+                <div class="min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                        {{ $file['original_name'] }}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        {{ strtoupper($file['extension'] ?? 'FILE') }} •
+                        {{ $this->formatFileSize($file['size'] ?? 0) }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- ACTION -->
+            <button
+                type="button"
+                wire:click.prevent="downloadFile('{{ $file['path'] }}', '{{ $file['original_name'] }}')"
+                class="flex-shrink-0
+                       flex items-center gap-2
+                       text-green-600 hover:text-green-700
+                       bg-green-50 hover:bg-green-100
+                       px-3 py-2 rounded-lg
+                       transition-colors duration-200
+                       text-sm font-medium"
+                title="Download {{ $file['original_name'] }}">
+                <i class="fas fa-download text-xs"></i>
+                <span>Download</span>
+            </button>
+        </div>
+    @empty
+    @endforelse
+</div>
+
 
                     </div>
                 </div>
