@@ -130,12 +130,12 @@ class News extends Root
         'is_active' => $this->form['is_active'],
         'files' => $filesPaths,
         'image' => $imagePath, 
-        'code_news' => $codeNews,
         'updated_by' => auth()->id(),
     ];
     
     // Untuk create, set created_by
     if (!$this->updateMode) {
+        $payload['code_news'] = $codeNews;
         $payload['created_by'] = auth()->id();
     }
     
