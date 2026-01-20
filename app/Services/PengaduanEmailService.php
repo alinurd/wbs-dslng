@@ -155,7 +155,8 @@ class PengaduanEmailService
      */
     private function getEmailsByRoleId($roleId)
     {
-        return User::whereHas('roles', function($query) use ($roleId) {
+        return User::where('is_active', 1)
+        ->whereHas('roles', function($query) use ($roleId) {
             $query->where('id', $roleId)->where('is_active', 1);
         })->pluck('email')->toArray();
     }
@@ -165,7 +166,8 @@ class PengaduanEmailService
      */
     private function getUsersByRoleId($roleId)
     {
-        return User::whereHas('roles', function($query) use ($roleId) {
+        return User::where('is_active', 1)
+        ->whereHas('roles', function($query) use ($roleId) {
             $query->where('id', $roleId)->where('is_active', 1);
         })->select('id', 'email', 'name')->get();
     }
