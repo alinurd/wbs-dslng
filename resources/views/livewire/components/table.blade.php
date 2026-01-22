@@ -84,7 +84,7 @@
             <td class="px-4 py-3 whitespace-nowrap text-center border-b border-gray-100">
                 <input wire:model.live="{{ $onSelectItem }}" type="checkbox" value="{{ $record->id }}"
                     class="h-4 w-4 rounded border-gray-300 text-[rgb(0,111,188)] focus:ring-[rgb(0,111,188)] transition-all duration-200 "
-                    @disabled($record->status !== 0)>
+                    @disabled($modul == 'p_tracking' && $record->status !== 0)>
             </td>
             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-center border-b border-gray-100">
                 {{ $firstItem + $index }}
