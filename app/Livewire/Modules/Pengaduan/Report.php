@@ -134,9 +134,9 @@ class Report extends Root
  
 $shortYear = substr($year, -2);
  
-$countThisYear = pengaduan::whereYear('created_at', $year)->count() + 1;
+$countThisYear = pengaduan::withTrashed()->whereYear('created_at', $year)->count() + 1;
  
-$countAll = pengaduan::count() + 1;
+$countAll = pengaduan::withTrashed()->count() + 1;
  
 $countThisYearFormatted = str_pad($countThisYear, 4, '0', STR_PAD_LEFT); // 
 $countAllFormatted = str_pad($countAll, 4, '0', STR_PAD_LEFT); // contoh 0013
