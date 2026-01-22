@@ -3,6 +3,7 @@
 namespace App\Livewire\Modules\Pengaduan;
 
 use App\Livewire\Root;
+use App\Models\Notification;
 use App\Models\Pengaduan;
 use App\Traits\HasChat;
 use Livewire\WithFileUploads;
@@ -195,4 +196,34 @@ class Tracking extends Root
         // return redirect()->intended('/pengaduan/p_report/'.$code);
     }
 
+      public function deleteBulk()
+    {
+        can_any([strtolower($this->modul) . '.delete']);
+
+        if (count($this->selectedItems)) {
+            // Ambil data sebelum dihapus untuk audit trail
+            $records = ($this->model)::whereIn('id', $this->selectedItems)->get();
+
+            // Log audit trail untuk setiap record dengan data lengkap
+            foreach ($records as $record) {
+                Notification::where('ref_id', (string) $record->id)
+                        ->orWhere('ref_id', (string) $record->code_pengaduan)
+                        ->delete();
+
+                $oldData = $record->toArray();
+                $this->logAudit('delete', $record, ['deleted_data' => $oldData]);
+            }
+
+            // Hapus records
+            ($this->model)::whereIn('id', $this->selectedItems)->delete();
+
+            // Notifikasi untuk bulk delete
+            $this->notify('success', $this->getAuditMessage('bulk_delete', null, []));
+        }
+
+        $this->selectedItems = [];
+
+        $this->loadRecords();
+        $this->dispatch('bulkDeleteCompleted');
+    }
 }

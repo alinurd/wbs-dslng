@@ -10,6 +10,9 @@
 ])
 @php
     if ($modul == 'p_tracking') {
+        $permissions['delete'] = true;
+    }
+    if ($modul == 'complien') {
         $permissions['delete'] = false;
     }
     if ($modul == 'r_full') {
