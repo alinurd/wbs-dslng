@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+@php
+    $currentLocale = app()->getLocale()
+@endphp
+<html lang="{{$currentLocale}}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -166,9 +169,16 @@
                         <h2 class="text-lg font-semibold text-gray-800 truncate">{{ $title ?? 'Dashboard' }}</h2>
                     </div>
 
+                    
                     <div class="flex items-center gap-4">
                         {{-- Notification Bell --}}
-                        <livewire:notification-bell />
+
+                        
+<livewire:notification-bell />
+<livewire:language-switcher />
+
+                    
+                        
 
                         {{-- User Info & Logout --}}
                         <div class="flex items-center gap-3 border-l border-gray-200 pl-4">

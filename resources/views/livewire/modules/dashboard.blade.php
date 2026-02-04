@@ -21,10 +21,9 @@
             <div class="relative z-100">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                     <div class="flex-1">
-                        <h1 class="text-3xl font-bold mb-2">Selamat Datang, {{ $user->name }}! 👋</h1>
+                        <h1 class="text-3xl font-bold mb-2">{{ __('global.welcome', ['name' => $user->name]) }} 👋</h1>
                         <p class="text-blue-100 text-lg mb-4 max-w-2xl">
-                            Sistem pelaporan yang aman, rahasia, dan terpercaya untuk menciptakan budaya kerja
-                            transparan dan berintegritas
+                            {{ __('global.description') }}
                         </p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
