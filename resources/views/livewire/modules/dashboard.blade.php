@@ -51,36 +51,37 @@
             <!-- Quick Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
                 @php
-                    $statCards = [
+                   $statCards = [
                         [
-                            'title' => 'Total Pengaduan',
+                            'title' => __('global.ttlPengaduan'),
                             'value' => $stats['total_pengaduan'] ?? 0,
                             'icon' => 'file-alt',
                             'color' => 'blue',
-                            'description' => 'pengaduan yang diajukan',
+                            'description' => __('global.pengaduan_diajukan'),
                         ],
                         [
-                            'title' => 'Menunggu',
+                            'title' => __('global.menunggu'),
                             'value' => $stats['menunggu'] ?? 0,
                             'icon' => 'clock',
                             'color' => 'gray',
-                            'description' => 'Belum diproses',
+                            'description' => __('global.belum_diproses'),
                         ],
                         [
-                            'title' => 'Dalam Proses',
+                            'title' => __('global.dalam_proses'),
                             'value' => $stats['dalam_proses'] ?? 0,
                             'icon' => 'spinner',
                             'color' => 'yellow',
-                            'description' => 'Sedang diproses',
+                            'description' => __('global.sedang_diproses'),
                         ],
                         [
-                            'title' => 'Selesai',
+                            'title' => __('global.selesai'),
                             'value' => $stats['selesai'] ?? 0,
                             'icon' => 'check-circle',
                             'color' => 'green',
-                            'description' => 'Telah diselesaikan',
+                            'description' => __('global.telah_diselesaikan'),
                         ],
                     ];
+
                 @endphp
 
                 @foreach ($statCards as $card)
@@ -119,7 +120,8 @@
                     <div class="bg-white rounded-2xl shadow-lg p-6">
                         <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                             <i class="fas fa-bolt mr-2 text-yellow-500"></i>
-                            Quick Actions
+                            {{ __('global.quick_action') }}
+                            
                         </h2>
                         <div class="space-y-4">
                             @if ($isRole3)
@@ -130,8 +132,8 @@
                                         <i class="fas fa-plus-circle text-white text-xl"></i>
                                     </div>
                                     <div class="flex-1">
-                                        <h3 class="font-semibold text-gray-900">Buat Pengaduan Baru</h3>
-                                        <p class="text-sm text-gray-600">Laporkan pelanggaran dengan mudah</p>
+                                        <h3 class="font-semibold text-gray-900">{{ __('global.buat') }} {{ __('global.pengaduan') }} {{ __('global.baru') }}  </h3>
+                                        <p class="text-sm text-gray-600">{{ __('global.title_create_new_pengaduan') }}</p>
                                     </div>
                                     <i
                                         class="fas fa-chevron-right text-gray-400 group-hover:text-green-600 transition-colors"></i>
@@ -145,8 +147,8 @@
                                     <i class="fas fa-search text-white text-xl"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900">Tracking Pengaduan</h3>
-                                    <p class="text-sm text-gray-600">Pantau status laporan Anda</p>
+                                    <h3 class="font-semibold text-gray-900">{{ __('global.tracking') }} {{ __('global.pengaduan') }} </h3>
+                                    <p class="text-sm text-gray-600">{{ __('global.title_tracking') }}</p>
                                 </div>
                                 <i
                                     class="fas fa-chevron-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
@@ -179,10 +181,11 @@
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-xl font-bold text-gray-800 flex items-center">
                                 <i class="fas fa-stream mr-2 text-green-500"></i>
-                                Aktivitas Terbaru
+                                {{ __('global.activity') }} {{ __('global.terbaru') }}
+                                
                             </h2>
                             <span class="text-gray-500 text-sm bg-gray-100 px-3 py-1 rounded-full">
-                                {{ count($log_approval) }} aktivitas
+                                {{ count($log_approval) }} {{ __('global.activity') }}
                             </span>
                         </div>
 
@@ -195,7 +198,7 @@
                                     class="border-l-4 border-{{ $log['status_color'] }}-500 pl-4 py-3 hover:bg-gray-50 rounded-r-lg transition-colors">
                                     <div class="flex justify-between items-start mb-2">
                                         <h3 class="font-semibold text-gray-800 text-sm">
-                                            Code: #{{ $cleanCode }}
+                                            {{ __('global.code') }}: #{{ $cleanCode }}
                                         </h3>
                                         <span
                                             class="px-3 py-1 text-xs font-medium rounded-full bg-{{ $log['status_color'] }}-100 text-{{ $log['status_color'] }}-800 border border-{{ $log['status_color'] }}-200">
@@ -219,7 +222,7 @@
                                         <div class="flex items-center space-x-4">
                                             <a href="{{ route('log_detail', ['code_pengaduan' => $cleanCode]) }}"
                                                 class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center group">
-                                                Log Aktivitas
+                                                Log {{ __('global.activity') }}
                                                 <i
                                                     class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
                                             </a>
@@ -239,7 +242,7 @@
                             @empty
                                 <div class="text-center py-8 text-gray-500">
                                     <i class="fas fa-history text-4xl mb-2 opacity-50"></i>
-                                    <p>Belum ada aktivitas terbaru</p>
+                                    <p>{{ __('global.no_activity') }}</p>
                                 </div>
                             @endforelse
                         </div>
@@ -249,7 +252,6 @@
 
                 </div>
             </div>
-
 
             <!-- Support Info -->
             <div class="mt-8">

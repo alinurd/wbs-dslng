@@ -2,11 +2,11 @@
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold text-gray-800 flex items-center">
                             <i class="fas fa-history mr-2 text-blue-500"></i>
-                            Pengaduan Terbaru
+                           {{ __('global.pengaduan') }} {{ __('global.terbaru') }}
                         </h2>
                         <a href="{{ route($reportRoute) }}" 
                            class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                            Lihat Semua
+                           {{ __('global.view_all') }}
                             <i class="fas fa-arrow-right ml-1"></i>
                         </a>
                     </div>
@@ -40,7 +40,7 @@
                                 <div class="flex items-center space-x-4">
                                     <a href="{{ route('log_detail', ['code_pengaduan' => $pengaduan['code_pengaduan']]) }}"
                                        class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center group">
-                                        Log Aktivitas
+                                        Log {{ __('global.activity') }}
                                         <i class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
                                     </a>
                                     <div class="flex items-center space-x-3">
@@ -59,8 +59,7 @@
                         @empty
                         <div class="text-center py-12 text-gray-500">
                             <i class="fas fa-inbox text-5xl mb-4 opacity-50"></i>
-                            <p class="text-lg">Tidak ada pengaduan terbaru</p>
-                            <p class="text-sm mt-2">Pengaduan yang dibuat akan muncul di sini</p>
+                            <p class="text-lg">{{ __('global.no_activity') }}</p>
                         </div>
                         @endforelse
                     </div>

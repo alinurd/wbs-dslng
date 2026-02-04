@@ -113,20 +113,23 @@ public $selectedPengaduanId = "";
             $statusInfo = $this->getStatusInfo($item->status, $item->sts_final);
             $counts = $this->countComentFileByPengaduan($item->id);
                     
+        $field = 'data_' . $this->locale;
+        $fieldJenis = $item->jenisPengaduan->$field ?? $item->jenisPengaduan->data_id;
+        
             return [
                 'id' => $item->id,
                 'code_pengaduan' => $item->code_pengaduan,
                 'no' => $index + 1,
-                'judul' => $item->jenisPengaduan->data_id ?? 'Tidak ada judul',
+                'judul' => $fieldJenis ?? 'Tidak ada judul',
                 'progress' => $this->progressDashboard($item->status, $item->sts_final),
                 'tanggal' => $item->created_at?->format('d/m/Y H:i') ?? '-',
                 'status' => $statusInfo['text'],
                 'status_color' => $statusInfo['color'],
-                'jenis_pengaduan' => $item->jenisPengaduan->data_id ?? '-',
+                'jenis_pengaduan' => $fieldJenis ?? '-',
                 'pelapor' => $item->pelapor->name ?? 'Unknown',
-                'countComment' => $counts['aktivitas'] . ' aktivitas',
+                'countComment' => $counts['aktivitas'].' ' . trans_choice('global.activity', $counts['aktivitas']),
                 'countFile' => $counts['files'] . ' file',
-                'countAktivitas' => $counts['aktivitas'] . ' aktivitas',
+                'countAktivitas' => $counts['aktivitas'] .' ' . trans_choice('global.activity', $counts['aktivitas']),
             ];
         })->toArray();
     }
@@ -383,9 +386,13 @@ protected function getStatusDetailChart()
 
     $colorIndex = 0;
 
+    
     foreach ($allStatuses as $status) {
         $statusId = $status->param_int;
-        $statusName = $status->data_id;
+        $field = 'data_' . $this->locale;
+        $statusName = $status->$field ?? $status->data_id;
+
+        // $statusName = $status->data_en;
          
         if (isset($statusCounts[$statusId]) && $statusCounts[$statusId]->total > 0) { 
             $labels[] = $statusName;
@@ -539,7 +546,9 @@ protected function getJenisPelanggaranChart()
     ];
 
     foreach ($data as $item) {
-        $labels[] = $item->jenisPengaduan->data_id ?? 'Tidak Diketahui';
+        $field = 'data_' . $this->locale;
+        $statusName = $item->jenisPengaduan->$field ?? $item->jenisPengaduan->data_id;
+        $labels[] = $statusName ?? 'Tidak Diketahui';
         $values[] = $item->total;
     }
 
@@ -686,6 +695,9 @@ protected function getSaluranAduanChart()
     $colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
     foreach ($data as $item) {
+        
+        // $field = 'data_' . $this->locale;
+        // $fieldName = $item->saluranAduan->$field ?? $item->jenisPengaduan->data_id;
         $labels[] = $item->saluranAduan->data_id ?? 'Tidak Diketahui';
         $values[] = $item->total;
     }

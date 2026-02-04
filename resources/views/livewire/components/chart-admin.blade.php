@@ -1,8 +1,8 @@
  <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Analytics & Charts </h2>
-                    <p class="text-gray-600">Visualisasi data pengaduan untuk analisis yang lebih baik</p>
+                    <h2 class="text-2xl font-bold text-gray-800">{{ __('global.analytics') }} & {{ __('global.chart') }}</h2>
+                    <p class="text-gray-600">{{ __('global.analytics_visual') }}</p>
                 </div>
                 
             </div>
@@ -14,7 +14,7 @@
                      x-data="chartContainer('statusAduanChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-chart-pie mr-2 text-blue-600"></i>
-                        Status Progress
+                       {{ __('global.status_progress') }}
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
@@ -27,7 +27,8 @@
                      x-data="chartContainer('statusDetailChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-chart-pie mr-2 text-orange-600"></i>
-                        Semua Status
+                        {{ __('global.status_all') }}
+                        
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
@@ -40,7 +41,7 @@
                      x-data="chartContainer('pergerakanTahunanChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-chart-line mr-2 text-purple-600"></i>
-                        Trend Bulanan {{ $tahunFilter ? 'Tahun ' . $tahunFilter : 'Semua Tahun' }}
+                        {{ __('global.status_all') }} {{ $tahunFilter ? 'Tahun ' . $tahunFilter : 'Semua Tahun' }}
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
@@ -54,7 +55,8 @@
                      x-data="chartContainer('jenisPelanggaranChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-chart-bar mr-2 text-green-600"></i>
-                        Jenis Pelanggaran
+                        {{ __('global.jenis_pelanggaran') }}
+                        
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
@@ -66,7 +68,7 @@
                      x-data="chartContainer('direktoratChart')">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-building mr-2 text-red-600"></i>
-                        Per Direktorat
+                        Per {{ __('global.direktorat') }}
                     </h3>
                     <div class="h-72">
                         <canvas x-ref="canvas" 
