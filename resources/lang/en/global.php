@@ -76,4 +76,8 @@ return [
     'need_help' => 'Need Help?',
     'need_help_dsc' => 'Our support team is ready to assist you.',
     'contact_suport' => 'Contact Support',
+
+    'title_log_detail' => 'Complaint Approval Log',
+    'dsc_log_detail'   => 'Track the progress and approval status of complaints',
+
 ];

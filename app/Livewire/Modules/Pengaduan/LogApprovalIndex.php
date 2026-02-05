@@ -34,7 +34,7 @@ class LogApprovalIndex extends Root
 
     public function mount($code_pengaduan = null)
 { 
-    
+     parent::mount(); 
     if ($this->code_pengaduan) {
         $this->loadPengaduanDetail();
     }
@@ -56,12 +56,14 @@ class LogApprovalIndex extends Root
             abort(404, 'Pengaduan tidak ditemukan');
         }
        $statusInfo = $this->getStatusInfo($pengaduan->status, $pengaduan->sts_final);
+       $field = 'data_' . $this->locale;
+        $fieldJenis = $pengaduan->jenisPengaduan->$field ?? $pengaduan->jenisPengaduan->data_id;
         $this->detailPengaduan = [
             'id' => $pengaduan->id,
             'code_pengaduan' => $pengaduan->code_pengaduan,
             // 'perihal' => $pengaduan->perihal,
             'nama_terlapor' => $pengaduan->nama_terlapor,
-            'jenis_pengaduan' => $pengaduan->jenisPengaduan->data_id ?? 'Tidak diketahui',
+            'jenis_pengaduan' => $fieldJenis ?? 'Tidak diketahui',
             'saluran_aduan' => $pengaduan->saluranAduan->data_id ?? 'Tidak diketahui',
             'email_pelapor' => $pengaduan->email_pelapor,
             'telepon_pelapor' => $pengaduan->telepon_pelapor,
@@ -79,7 +81,8 @@ class LogApprovalIndex extends Root
 
  
         $this->logApprovalData = $pengaduan->logApprovals->sortByDesc('id')->map(function($item, $index) {
-
+            
+            
          $catatan = $item->catatan ?: 'Tidak ada catatan';
         
         $truncatedCatatan = strlen($catatan) > 60 
@@ -96,7 +99,7 @@ class LogApprovalIndex extends Root
             'status_color' => $item->color ?? 'blue',
             'user_name' => $item->user->name ?? 'Unknown',
             'role' => $item->user->getRoleNames()->first() ?? 'Unknown', 
-            'status' => $item->status_text,
+            'status' => ($this->locale=='id'?$item->status_text:$item->status),
             'infoSts' => $this->getStatusInfo($item->status_id, 0)
         ];
         })->toArray();

@@ -1,7 +1,7 @@
 <div class="log-detail">
     @include('livewire.components.head-card', [
-        'title' => 'Log Approval Pengaduan',
-        'dsc' => 'Tracking progress dan status approval pengaduan',
+        'title' => __('global.title_log_detail'),
+        'dsc' => __('global.dsc_log_detail'),
     ])
     <div class="faq-container">
 
@@ -38,7 +38,7 @@
 
                 <!-- Detail Pengaduan -->
                 <div class="p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Detail Pengaduan</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{__('global.pengaduan_detail')}}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-3">
                             {{-- <div>
@@ -46,39 +46,39 @@
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['perihal'] }}</p>
                             </div> --}}
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Nama Terlapor</label>
+                                <label class="text-sm font-medium text-gray-500">{{__('global.nama_terlapor')}}</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['nama_terlapor'] }}</p>
                             </div>
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Saluran Aduan</label>
+                                <label class="text-sm font-medium text-gray-500">{{__('global.saluran_aduan')}}</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['saluran_aduan'] }}</p>
                             </div>
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Email Pelapor</label>
+                                <label class="text-sm font-medium text-gray-500">{{__('global.email_pelapor')}}</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['email_pelapor'] }}</p>
                             </div>
                         </div>
                         <div class="space-y-3">
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Telepon Pelapor</label>
+                                <label class="text-sm font-medium text-gray-500">{{__('global.telepon_pelapor')}}</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['telepon_pelapor'] }}</p>
                             </div>
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Waktu Kejadian</label>
+                                <label class="text-sm font-medium text-gray-500">{{__('global.waktu_kejadian')}}</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['waktu_kejadian'] }}</p>
                             </div>
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Tanggal Pengaduan</label>
+                                <label class="text-sm font-medium text-gray-500">{{__('global.tanggal_pengaduan')}}</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['tanggal_pengaduan'] }}</p>
                             </div>
                             <div>
-                                <label class="text-sm font-medium text-gray-500">Alamat Kejadian</label>
+                                <label class="text-sm font-medium text-gray-500">{{__('global.alamat_kejadian')}}</label>
                                 <p class="text-gray-900 text-sm">{{ $detailPengaduan['alamat_kejadian'] }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="mt-4">
-                        <label class="text-sm font-medium text-gray-500">Uraian Pengaduan</label>
+                        <label class="text-sm font-medium text-gray-500">{{__('global.uraian')}}</label>
                         <p class="text-gray-900 mt-1 bg-gray-50 p-3 rounded-lg text-sm">{{ $detailPengaduan['uraian'] }}</p>
                     </div>
 

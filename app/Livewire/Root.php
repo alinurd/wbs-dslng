@@ -1349,7 +1349,9 @@ public function getStatusInfo($status, $sts_final)
             $text1 = 'in_progress';
         } else {
             $color = $statusInfo->param_str ?? 'gray';
-            $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
+            $field = 'data_' . $this->locale;
+            $stsName = $statusInfo->$field ?? $statusInfo->data_en;
+            $text = ($role->id==3) ?$statusInfo->param_str_2 :$stsName;
             $text1 = $statusInfo->param_str_1;
         }
         return ['text' =>$text , 'color' => $color, 'text1'=>$text1];

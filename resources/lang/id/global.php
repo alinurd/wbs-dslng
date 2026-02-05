@@ -68,4 +68,16 @@ return [
     'need_help' => ' Butuh Bantuan?',
     'need_help_dsc' => ' Tim support kami siap membantu.',
     'contact_suport' => ' Hubungi Support',
+    'title_log_detail' => 'Log Approval Pengaduan',
+    'dsc_log_detail' => 'Tracking progress dan status approval pengaduan',
+    'pengaduan_detail' => 'Detail Pengaduan',
+
+    'nama_terlapor' => 'Nama Terlapor',
+    'saluran_aduan' => 'Saluran Aduan',
+    'email_pelapor' => 'Email Terlapor',
+    'telepon_pelapor' => 'Telepon Terlapor',
+    'waktu_kejadian' => 'Waktu Kejadian',
+    'tanggal_pengaduan' => 'Tanggal Pengaduan',
+    'alamat_kejadian' => 'Alamat Kejadian',
+    'uraian' => 'Uraian Pengaduan',
 ];
