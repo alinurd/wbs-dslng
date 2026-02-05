@@ -80,4 +80,5 @@ return [
     'tanggal_pengaduan' => 'Tanggal Pengaduan',
     'alamat_kejadian' => 'Alamat Kejadian',
     'uraian' => 'Uraian Pengaduan',
+    'exit' => 'Kembali',
 ];

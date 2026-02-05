@@ -16,7 +16,7 @@
                     <a href="{{ route('dashboard') }}"
                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors shadow-md text-sm">
                         <i class="fas fa-arrow-left"></i>
-                        <span>Kembali</span>
+                        <span>{{__('global.exit')}}</span>
                     </a>
                 </div>
             </div>
