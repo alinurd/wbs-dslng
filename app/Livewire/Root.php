@@ -1127,7 +1127,7 @@ protected function getAcceptAttribute($allowedFormats)
         
             $field = 'data_' . $this->locale;
             // $stsName = $statusInfo->$field ?? $statusInfo->data_en;
-        return $record->jenisPengaduan->field ?? 'Tidak diketahui';
+        return $record->jenisPengaduan->$field ?? 'Tidak diketahui';
     }
     public function getComplienProgress($record)
     {
