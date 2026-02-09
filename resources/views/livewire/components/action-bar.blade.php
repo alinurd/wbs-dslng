@@ -43,13 +43,13 @@
             <a href="{{ route('p_report') }}"
                 class="inline-flex items-center px-3 py-2 text-xs font-medium text-white bg-[rgb(0,111,188)] border border-[rgb(0,111,188)] rounded-md hover:bg-[rgb(0,95,160)] focus:z-10 focus:ring-1 focus:ring-[rgb(0,111,188)] focus:text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
                 <i class="fas fa-plus mr-1.5 text-xs"></i>
-                <span class="whitespace-nowrap">Buat Pengaduan</span>
+                <span class="whitespace-nowrap">{{__('global.buat')}} {{__('global.pengaduan')}}</span>
             </a>
         @else
             <button wire:click="{{ $onCreate }}"
                 class="inline-flex items-center px-3 py-2 text-xs font-medium text-white bg-[rgb(0,111,188)] border border-[rgb(0,111,188)] rounded-md hover:bg-[rgb(0,95,160)] focus:z-10 focus:ring-1 focus:ring-[rgb(0,111,188)] focus:text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
                 <i class="fas fa-plus mr-1.5 text-xs"></i>
-                <span class="whitespace-nowrap">Tambah Data</span>
+                <span class="whitespace-nowrap">{{__('global.buat')}} {{__('global.add_data')}}</span>
             </button>
         @endif
     @endif
