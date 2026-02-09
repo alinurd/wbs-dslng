@@ -31,15 +31,15 @@
 @endphp
 
             @include('livewire.components.table-wrapper', [
-                'records' => $finalRecords, // Gunakan $finalRecords yang sudah diproses
+                'records' => $finalRecords, 
     'columns' => [
-        'code_pengaduan' => 'Kode Tracking',
-        'user_id' => 'Username/Nama',
+        'code_pengaduan' => __('global.code_pengaduan'),
+        'user_id' => __('global.username'),
         // 'perihal' => 'Perihal',
-        'jenis_pengaduan_id' => 'Jenis Pelanggaran',
-        'tanggal_pengaduan' => 'Tanggal Aduan',
-        'complien_progress' => 'Progress Status',
-        'aprv_cco' => 'Persetujuan CCO',
+        'jenis_pengaduan_id' => __('global.jenis_pelanggaran'),
+        'tanggal_pengaduan' => __('global.tanggal_aduan'),
+        'complien_progress' => __('global.status_progress'),
+        'aprv_cco' => __('global.persetujuan_cco'),
     ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -76,34 +76,34 @@
             'filters' => [
                 [
                     'type' => 'text',
-                    'label' => 'Kode',
+                    'label' => __('global.code_pengaduan'),
                     'model' => 'filters.code_pengaduan',
-                    'placeholder' => 'Cari Kode Tracking...',
+                    'placeholder' =>__('global.code_pengaduan'),
                 ],
-                [
-                    'type' => 'text',
-                    'label' => 'Perihal',
-                    'model' => 'filters.perihal',
-                    'placeholder' => 'Cari Perihal Tracking...',
-                ],
+                // [
+                //     'type' => 'text',
+                //     'label' => 'Perihal',
+                //     'model' => 'filters.perihal',
+                //     'placeholder' => 'Cari Perihal Tracking...',
+                // ],
                 [
                     'type' => 'select',
-                    'label' => 'Jenis Pelanggaran',
+                    'label' => __('global.jenis_pelanggaran'),
                     'model' => 'filters.jenis_pengaduan_id',
                      'options' => collect($jenisPengaduanList)->mapWithKeys(function ($p) {
                                  return [
                                      $p->id => $p->data ?? $p->data_id ?? $p->data_en ?? 'No Data'
                                     ];
                                 })->toArray(),
-                    'placeholder' => 'Semua Jenis Pelanggaran', 
+                    'placeholder' => __('global.semua'). ' '.__('global.jenis_pelanggaran'), 
                 ],
                 [
                 'type' => 'select',
-                'label' => 'Tahun Pengaduan',
+                'label' =>__('global.tahun') ,
                 'model' => 'filters.tahun',
                 'options' => [ 
                 ] + $this->tahunPengaduanList,
-                'placeholder' => 'Pilih Tahun',
+                'placeholder' => __('global.tahun'),
             ],
             ],
             'onClose' => 'closeFilterModal',

@@ -27,7 +27,7 @@
                                     {{ $title }}
                                 </h5>
                                 <p class="text-white/80 text-sm">
-                                Filter data
+                                {{__('global.filter')}}
                                 </p>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                     </button>
                     <button type="button" wire:click="{{ $onApply }}"
                         class="px-4 py-2 text-white bg-[rgb(0,111,188)] rounded-lg hover:bg-[rgb(0,95,160)] transition-all duration-300 transform hover:scale-105 font-medium">
-                        <i class="fas fa-check me-2"></i>Terapkan
+                        <i class="fas fa-check me-2"></i>{{__('global.teraplkan_filter')}}
                     </button>
                 </div>
             </div>

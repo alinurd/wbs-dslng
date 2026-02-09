@@ -1124,7 +1124,10 @@ protected function getAcceptAttribute($allowedFormats)
 
     public function getJenisPelanggaran($record)
     {
-        return $record->jenisPengaduan->data_id ?? 'Tidak diketahui';
+        
+            $field = 'data_' . $this->locale;
+            // $stsName = $statusInfo->$field ?? $statusInfo->data_en;
+        return $record->jenisPengaduan->field ?? 'Tidak diketahui';
     }
     public function getComplienProgress($record)
     {

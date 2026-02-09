@@ -49,6 +49,8 @@ return [
     'chart' => 'Charts',
     'analytics_visual' => 'Visualisasi data pengaduan untuk analisis yang lebih baik',
     'status_progress' => 'Status Progress',
+    'persetujuan_cco' => 'Persetujuan CCO',
+    'username' => 'Username / Nama',
     'status_all' => 'Semua Status',
     'trend_bulanan' => 'Trend Bulanan',
     'pergerakan_tahunan' => 'Pergerakan Tahunan',
@@ -81,4 +83,6 @@ return [
     'alamat_kejadian' => 'Alamat Kejadian',
     'uraian' => 'Uraian Pengaduan',
     'exit' => 'Kembali',
+    'tanggal_aduan' => 'Tanggal Aduan',
+    'teraplkan_filter' => 'Terapkan Filter', 
 ];
