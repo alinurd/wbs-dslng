@@ -5,7 +5,7 @@
 <div class="h-full flex flex-col">
     <!-- Header Compact -->
     <div class="mb-4 pb-3 border-b border-gray-200">
-        <p class="text-sm text-gray-600">Tracking progress dan status approval pengaduan</p>
+        <p class="text-sm text-gray-600">Tracking progress & status approval pengaduan</p>
     </div>
 
     @if(!$isEmpty)
@@ -20,7 +20,7 @@
                         <div class="flex-1 min-w-0">
                             <h2 class="text-sm font-semibold text-gray-900 truncate">{{ $pengaduan['jenis_pengaduan'] }}</h2>
                             <div class="flex items-center space-x-3 mt-1">
-                                <span class="text-xs text-gray-500">Code: {{ $pengaduan['code'] }}</span>
+                                <span class="text-xs text-gray-500">{{__('updatestatus.code')}}: {{ $pengaduan['code'] }}</span>
                                 @php
                                     $lastLog = end($pengaduan['log_approval']);
                                     $warna = $lastLog['status_color'];
@@ -34,7 +34,7 @@
                                 type="button"
                                 class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all duration-150 group">
                                 <i class="fas fa-eye me-1"></i>
-                                <span>Lihat Detail</span>
+                                <span>{{__('updatestatus.view_detail')}}</span>
                             </button>                   
                         </div>
                     </div>

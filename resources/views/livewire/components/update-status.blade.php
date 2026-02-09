@@ -25,7 +25,7 @@
                                         {{ $title }}
                                     </h5>
                                     <p class="text-white/80 text-sm">
-                                        Silahkan Berikan Catatan Anda
+                                        {{__('updatestatus.dsc')}}
                                     </p>
                                 </div>
                             </div>
@@ -43,7 +43,7 @@
                             <div class="p-6 flex-1 flex flex-col">
                                 <h6 class="font-semibold text-gray-700 mb-4 flex items-center">
                                     <i class="fas fa-info-circle mr-2 text-blue-500"></i>
-                                    Informasi Pengaduan
+                                    {{__('updatestatus.info')}}
                                 </h6>
 
                                 <!-- Komponen log dengan height yang sesuai -->
@@ -62,7 +62,7 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                        <h6 class="font-semibold text-gray-700">Berikan Catatan Anda</h6>
+                                        <h6 class="font-semibold text-gray-700">{{__('updatestatus.dsc')}}</h6>
                                     </div>
                                     <div class="flex items-center space-x-3">
                                         <div
@@ -100,11 +100,11 @@
                                     <div>
                                         <label for="catatan" class="block text-sm font-medium text-gray-700 mb-2">
                                             <i class="fas fa-edit mr-2 text-blue-500"></i>
-                                            Catatan / Komentar
+                                            {{__('updatestatus.note')}}
                                         </label>
                                         <textarea id="catatan" name="catatan" wire:model="catatan" rows="6"
                                             class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
-                                            placeholder="Tulis catatan atau komentar Anda di sini..."></textarea>
+                                            placeholder=" {{__('updatestatus.note_placeholder')}}"></textarea>
                                         @error('catatan')
                                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                         @enderror
@@ -119,17 +119,15 @@
                                         <div class="flex flex-col items-center justify-center space-y-4">
                                             <i class="fas fa-cloud-upload-alt text-5xl text-gray-400"></i>
                                             <div class="space-y-2">
-                                                <p class="text-lg font-medium text-gray-700">Klik untuk memilih file</p>
+                                                {{-- <p class="text-lg font-medium text-gray-700">{{Klik untuk memilih file}}</p> --}}
                                                 <p class="text-sm text-gray-500 max-w-2xl">
-                                                    Maksimal 100MB per file. Format yang didukung:
-                                                    DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF,
-                                                    JPG, JPEG, PNG, AVI, MP4, 3GP, MP3
+                                                    Maksimal 100MB per file. <br> Format:DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3
                                                 </p>
                                             </div>
                                             <button type="button" onclick="document.getElementById('file-input').click()"
                 class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
                 wire:loading.remove wire:target="lampiran">
-                <i class="fas fa-folder-open mr-2"></i>Pilih File
+                <i class="fas fa-folder-open mr-2"></i>{{ __('pengaduan.pilih_file') }}
             </button>
             
             <!-- Tombol loading state -->
@@ -137,7 +135,7 @@
                 class="px-6 py-3 bg-blue-400 text-white rounded-lg font-medium flex items-center"
                 wire:loading wire:target="lampiran">
                             <i class="fas fa-spinner fa-spin mr-1"></i>
-                Mengunggah...
+                {{ __('pengaduan.mengunggah') }}
             </button>
             
                                             {{-- <button type="button"
@@ -156,8 +154,7 @@
                                         @enderror
                                         @if ($lampiran && count($lampiran) > 0)
                                             <div class="mt-6">
-                                                <h4 class="text-md font-medium text-gray-700 mb-3">File yang akan
-                                                    diunggah:</h4>
+                                                <h4 class="text-md font-medium text-gray-700 mb-3">{{ __('pengaduan.mengunggah_file') }}:</h4>
                                                 <div class="space-y-3 max-h-60 overflow-y-auto">
                                                     @foreach ($lampiran as $index => $file)
                                                         <div
@@ -271,14 +268,15 @@
                                             </div>
                                             <div class="ml-3">
                                                 <h3 class="text-sm font-medium text-blue-800">
-                                                    Informasi Penting
+                                                    {{ __('updatestatus.info') }}
                                                 </h3>
                                                 <div class="mt-2 text-sm text-blue-700">
-                                                    <p>• Catatan yang Anda berikan akan tercatat dalam history pengaduan
-                                                    </p>
-                                                    <p>• File yang diupload akan disimpan sebagai lampiran</p>
-                                                    <p>• Pastikan informasi yang diberikan sudah benar sebelum submit
-                                                    </p>
+                                                <ul class="list-disc list-inside mt-1 space-y-1">
+                                                    @foreach (__('updatestatus.catatan_list') as $item)
+                                                     <li>{{ $item }}</li>
+                                                    @endforeach
+                                                 </ul>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
