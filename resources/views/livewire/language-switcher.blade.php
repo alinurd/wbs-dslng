@@ -1,7 +1,8 @@
 <div x-data="{ open: false }" class="relative">
     <button @click="open = !open"
         class="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-100">
-       {{ __('global.language') }}  &ensp;{{ $locale==='id'? '🇮🇩':'🇺🇸' }} 
+       <i class="fas fa-language text-xs"></i>{{ __('global.language') }} | &ensp;{{ $locale==='id'? '🇮🇩':'🇺🇸' }} 
+        
         <i class="fas fa-chevron-down text-xs"></i>
     </button>
 
