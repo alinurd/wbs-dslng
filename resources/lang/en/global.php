@@ -2,22 +2,22 @@
 
 return [
     'welcome' => 'Welcome, :name!',
-    'description' => 'A secure, confidential, and reliable reporting system to foster a transparent and integrity-driven work culture',
+    'description' => 'A secure, confidential, and reliable reporting system to foster a transparent and ethical work culture',
     'language' => 'Language',
 
     'ttlPengaduan' => 'Total Reports',
-    'pengaduan_diajukan' => 'Reports submitted',
+    'pengaduan_diajukan' => 'Submitted Reports',
 
-    'menunggu' => 'Pending',
-    'belum_diproses' => 'Not yet processed',
+    'menunggu' => 'Waiting',
+    'belum_diproses' => 'Not Processed Yet',
 
     'dalam_proses' => 'In Progress',
-    'sedang_diproses' => 'Currently being processed',
+    'sedang_diproses' => 'Being Processed',
 
     'selesai' => 'Completed',
-    'telah_diselesaikan' => 'Successfully resolved',
+    'telah_diselesaikan' => 'Resolved',
 
-    'filter' => 'Data Filter',
+    'filter' => 'Filter Data',
     'reset_filter' => 'Reset Filter',
 
     'tahun' => 'Year',
@@ -41,43 +41,62 @@ return [
     'jenis' => 'Type',
     'forward' => 'Forward',
     'code' => 'Code',
+    'semua' => 'All',
 
+    'jenis_pengaduan' => 'Report Type',
     'jenis_pelanggaran' => 'Violation Type',
+    'direktorat' => 'Directorate',
 
     'analytics' => 'Analytics',
     'chart' => 'Charts',
     'analytics_visual' => 'Complaint data visualization for better analysis',
 
-    'status_progress' => 'Status Progress',
+    'status_progress' => 'Progress Status',
+    'persetujuan_cco' => 'CCO Approval',
+    'username' => 'Username / Name',
     'status_all' => 'All Statuses',
 
     'trend_bulanan' => 'Monthly Trend',
-    'pergerakan_tahunan' => 'Annual Movement',
+    'pergerakan_tahunan' => 'Yearly Movement',
 
     'saluran_aduan' => 'Reporting Channel',
-    'aduan' => 'Report',
+    'aduan' => 'Complaint',
 
     'quick_action' => 'Quick Actions',
     'buat' => 'Create',
-    'pengaduan' => 'Report',
+    'pengaduan' => 'Complaint',
     'baru' => 'New',
 
-    'title_create_new_pengaduan' => 'Report a violation easily',
-
+    'title_create_new_pengaduan' => 'Report violations easily',
     'tracking' => 'Search',
     'title_tracking' => 'Track your report status',
 
     'activity' => 'Activity',
     'no_activity' => 'No recent activity',
-
     'terbaru' => 'Latest',
     'view_all' => 'View All',
 
     'need_help' => 'Need Help?',
-    'need_help_dsc' => 'Our support team is ready to assist you.',
+    'need_help_dsc' => 'Our support team is ready to help.',
     'contact_suport' => 'Contact Support',
 
     'title_log_detail' => 'Complaint Approval Log',
-    'dsc_log_detail'   => 'Track the progress and approval status of complaints',
+    'dsc_log_detail' => 'Tracking complaint progress and approval status',
+    'pengaduan_detail' => 'Complaint Details',
 
+    'nama_terlapor' => 'Reported Person Name',
+    'saluran_aduan' => 'Reporting Channel',
+    'email_pelapor' => 'Reporter Email',
+    'telepon_pelapor' => 'Reporter Phone',
+    'waktu_kejadian' => 'Incident Time',
+    'tanggal_pengaduan' => 'Report Date',
+    'alamat_kejadian' => 'Incident Address',
+    'uraian' => 'Complaint Description',
+
+    'exit' => 'Back',
+    'tanggal_aduan' => 'Complaint Date',
+    'teraplkan_filter' => 'Apply Filter',
+    'add_data' => 'Add Data',
+
+    'pagination_info' => 'Showing :from to :to of :total',
 ];

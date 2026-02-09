@@ -8,14 +8,13 @@
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         <!-- Pagination Info -->
         <div class="text-sm text-gray-700">
-            Menampilkan 
-            <span class="font-medium">{{ $records->firstItem() }}</span>
-            sampai 
-            <span class="font-medium">{{ $records->lastItem() }}</span>
-            dari 
-            <span class="font-medium">{{ $records->total() }}</span>
-            hasil
+            {{ __('global.pagination_info', [
+                'from' => $records->firstItem(),
+                'to' => $records->lastItem(),
+                'total' => $records->total(),
+            ]) }}
         </div>
+
 
         <!-- Pagination Links -->
         <div class="flex items-center space-x-1">

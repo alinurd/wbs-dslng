@@ -1168,9 +1168,13 @@ protected function getAcceptAttribute($allowedFormats)
         } else {
             $color = $statusInfo->param_str ?? 'gray';
             // $text = $statusInfo->data_id;
-            $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
+            $field = 'data_' . $this->locale;
+            $stsName = $statusInfo->$field ?? $statusInfo->data_en;
+            $text = ($role->id==3) ?$statusInfo->param_str_2 :$stsName;
+
+            // $text = ($role->id==3) ?$statusInfo->param_str_2 :$statusInfo->data_id;
             if($statusInfo->param_str_1 =='rejected' && $role->id==3){
-                $text = ($role->id==3) ?$statusInfo->data_id :$statusInfo->data_id;
+                $text = ($role->id==3) ?$statusInfo->$field :$statusInfo->data_en;
             }
             if($statusId==2){
                 $text ='Disetujui Forward';

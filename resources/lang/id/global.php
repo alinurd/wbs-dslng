@@ -86,4 +86,6 @@ return [
     'tanggal_aduan' => 'Tanggal Aduan',
     'teraplkan_filter' => 'Terapkan Filter', 
     'add_data' => 'Tambah Data', 
+    'pagination_info' => 'Menampilkan :from sampai :to dari :total',
+
 ];
