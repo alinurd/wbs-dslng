@@ -1366,13 +1366,13 @@ public function getStatusInfo($status, $sts_final)
 public function getPengaduanById($id){
         $record = Pengaduan::where('id',$id)->first(); 
         $this->detailData = [
-            'Kode Tracking' => $record->code_pengaduan,
+            __('global.code_pengaduan')=> $record->code_pengaduan,
             // 'Perihal' => $record->perihal,
-            'Jenis Pelanggaran' => $this->getJenisPelanggaran($record),
-            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
+            __('global.jenis_pelanggaran') => $this->getJenisPelanggaran($record),
+            __('global.tanggal_aduan') => $record->tanggal_pengaduan->format('d/m/Y H:i'),
             'Status Pengaduan' => $this->getStatusBadge($record->status) ?? 'Open', 
-            'Lokasi Kejadian' => $record->alamat_kejadian ?? '-',
-            'Deskripsi' => $record->uraian ?? '-', 
+            __('global.lokasi') => $record->alamat_kejadian ?? '-',
+            __('global.deskripsi') => $record->uraian ?? '-', 
             'Files' => json_decode($record->lampiran, true)  ?? [],
         ];
         $this->detailTitle = "Detail Pengaduan - " . $record->code_pengaduan;

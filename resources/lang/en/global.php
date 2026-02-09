@@ -99,4 +99,6 @@ return [
     'add_data' => 'Add Data',
 
     'pagination_info' => 'Showing :from to :to of :total',
+      'deskripsi' => 'Description', 
+    'lokasi' => 'Location', 
 ];

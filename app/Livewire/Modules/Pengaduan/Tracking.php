@@ -166,13 +166,13 @@ class Tracking extends Root
         $record = $this->model::with(['comments.user'])->findOrFail($id);
 
         $detailData = [
-            'Kode Tracking' => $record->code_pengaduan,
+            __('global.code_pengaduan')=> $record->code_pengaduan,
             // 'Perihal' => $record->perihal,
-            'Jenis Pelanggaran' => $record->jenisPengaduan->name ?? 'Tidak diketahui',
-            'Tanggal Aduan' => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status' => $record->status ? 'Aktif' : 'Nonaktif',
-            'Lokasi' => $record->alamat_kejadian ?? 'Tidak diketahui',
-            'Deskripsi' => $record->uraian ?? 'Tidak ada deskripsi',
+            __('global.jenis_pelanggaran') => $record->jenisPengaduan->name ?? 'Tidak diketahui',
+            __('global.tanggal_aduan') => $record->tanggal_pengaduan->format('d/m/Y H:i'),
+            __('global.status') => $record->status ? 'Aktif' : 'Nonaktif',
+            __('global.lokasi') => $record->alamat_kejadian ?? 'Tidak diketahui',
+            __('global.deskripsi')  => $record->uraian ?? 'Tidak ada deskripsi',
             //  'status_ex' => [
             //     'name' => $statusInfo->data_id ?? 'Menunggu Review',
             //     'color' => $statusInfo->param_str ?? 'yellow',
