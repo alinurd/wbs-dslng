@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+@php
+$locale = Session::get('locale', config('app.locale')); 
+@endphp
 <html lang="{{$locale}}">
 <head>
     <meta charset="UTF-8">
