@@ -4,13 +4,15 @@ namespace App\Livewire\Menus;
 
 use App\Livewire\Root;
 use App\Models\Menu;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use Spatie\Permission\Models\Permission;
-
 class Form extends Root
 {
     public $menuId;
     public $name;
+    public $name_en;
     public $slug;
     public $icon;
     public $route;
@@ -22,7 +24,8 @@ class Form extends Root
     public function mount($id = null)
     {
         $this->parents = Menu::whereNull('parent_id')->get();
-
+        $this->locale = Session::get('locale', config('app.locale'));
+        App::setLocale($this->locale);
         if ($id) {
             $menu = Menu::findOrFail($id);
             $this->menuId = $menu->id;
@@ -34,6 +37,7 @@ class Form extends Root
     {
         $rules = [
             'name' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:menus,slug',
             'icon' => 'nullable|string|max:255',
             'route' => 'nullable|string|max:255',

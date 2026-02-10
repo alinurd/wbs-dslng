@@ -6,9 +6,10 @@ use App\Models\Menu;
 use App\Services\EmailService;
 use App\Services\MenuService;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\ServiceProvider;
 
+use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     public function register()
@@ -31,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
             return auth()->user()->can($permissionBase . '.view');
         });
 
+         
+        
+        
         // Share menus data dengan semua views
         View::composer('*', function ($view) {
             $user = auth()->user();
@@ -76,10 +80,11 @@ class AppServiceProvider extends ServiceProvider
                 })
                 // Filter parent menu sesuai akses
                 ->filter(fn($menu) => $hasMenuAccess($menu));
-// dd($menus);
+                $locale = Session::get('locale', config('app.locale'));
             // Bagikan ke semua view
             $view->with([
                 'menus' => $menus,
+                'locale' => $locale,
                'user' => $user,
                'userRole' => $user?$user->roles()->get()->pluck('name', 'id')->toArray():[],
                 'module_permissions' => module_permissions('dashboard'),

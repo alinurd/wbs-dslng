@@ -1,135 +1,152 @@
 <div class="bg-white shadow rounded-lg p-6">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        {{ $menuId ? 'Edit Menu' : 'Tambah Menu Baru' }}
-    </h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6"> {{ $menuId ? __('menu.edit') : __('menu.create') }} </h2>
 
-    <form wire:submit.prevent="save" class="space-y-6">
-        <!-- Nama Menu -->
+   <form wire:submit.prevent="save" class="space-y-6">
+    <!-- Nama Menu -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-                Nama Menu <span class="text-red-500">*</span>
+                {{ __('menu.name_id') }} <span class="text-red-500">*</span>
             </label>
             <input 
                 wire:model.defer="name" 
                 type="text" 
                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                placeholder="Contoh: Risk Management"
+                placeholder="{{ __('menu.name_id_placeholder') }}"
             >
             @error('name') 
                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
-
-        <!-- Slug -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-                Slug <span class="text-red-500">*</span>
+                {{ __('menu.name_en') }} <span class="text-red-500">*</span>
             </label>
             <input 
-                wire:model.defer="slug" 
+                wire:model.defer="name_en" 
                 type="text" 
-                class="w-full border border-gray-300 rounded-lg px-4 py-3 {{ $menuId ? 'bg-gray-50' : '' }}"
-                {{ $menuId ? 'disabled' : '' }}
-                placeholder="Contoh: risk-management"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                placeholder="{{ __('menu.name_en_placeholder') }}"
             >
-            @error('slug') 
+            @error('name_en') 
                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
+    </div>
 
-        <!-- Icon & Route -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Icon (FontAwesome)
-                </label>
-                <input 
-                    wire:model.defer="icon" 
-                    type="text" 
-                    class="w-full border border-gray-300 rounded-lg px-4 py-3"
-                    placeholder="fa-solid fa-shield-alt"
-                >
-                <p class="mt-1 text-xs text-gray-500">
-                    Gunakan format FontAwesome, contoh: fa-solid fa-home
-                </p>
-            </div>
+    <!-- Slug -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            {{ __('menu.slug') }} <span class="text-red-500">*</span>
+        </label>
+        <input 
+            wire:model.defer="slug" 
+            type="text" 
+            class="w-full border border-gray-300 rounded-lg px-4 py-3 {{ $menuId ? 'bg-gray-50' : '' }}"
+            {{ $menuId ? 'disabled' : '' }}
+            placeholder="{{ __('menu.slug_placeholder') }}"
+        >
+        @error('slug') 
+            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+    </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Route
-                </label>
-                <input 
-                    wire:model.defer="route" 
-                    type="text" 
-                    class="w-full border border-gray-300 rounded-lg px-4 py-3"
-                    placeholder="/risk-management"
-                >
-            </div>
-        </div>
-
-        <!-- Parent Menu -->
+    <!-- Icon & Route -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-                Parent Menu
+                {{ __('menu.icon') }}
             </label>
-            <select 
-                wire:model.defer="parent_id" 
-                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            <input 
+                wire:model.defer="icon" 
+                type="text" 
+                {{ $menuId ? 'disabled' : '' }}
+                class="w-full border border-gray-300 rounded-lg px-4 py-3"
+                placeholder="{{ __('menu.icon_placeholder') }}"
             >
-                <option value="">— Tidak Ada (Menu Utama) —</option>
-                @foreach($parents as $parent)
-                    <option value="{{ $parent->id }}">
-                        {{ $parent->name }}
-                    </option>
-                @endforeach
-            </select>
+            <p class="mt-1 text-xs text-gray-500">
+                {{ __('menu.icon_helper') }}
+            </p>
         </div>
 
-        <!-- Status & Urutan -->
-        <div class="flex flex-wrap items-center justify-between gap-4 p-4 bg-gray-50 rounded-lg">
-            <div class="flex items-center space-x-4">
-                <label class="inline-flex items-center">
-                    <input 
-                        wire:model.defer="is_active" 
-                        type="checkbox" 
-                        class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        {{($is_active ? 'checked' : '')}}
-                        
-                    >
-                    <span class="ml-2 text-sm font-medium text-gray-700">
-                        Aktif
-                    </span>
-                </label>
-            </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ __('menu.route') }}
+            </label>
+            <input 
+                wire:model.defer="route" 
+                type="text" 
+                {{ $menuId ? 'disabled' : '' }}
+                class="w-full border border-gray-300 rounded-lg px-4 py-3"
+                placeholder="{{ __('menu.route_placeholder') }}"
+            >
+        </div>
+    </div>
 
-            <div class="flex items-center space-x-3">
-                <label class="text-sm font-medium text-gray-700">
-                    Urutan:
-                </label>
+    <!-- Parent Menu -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            {{ __('menu.parent') }}
+        </label>
+        <select 
+            wire:model.defer="parent_id" 
+            {{ $menuId ? 'disabled' : '' }}
+            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+            <option value="">— {{ __('menu.parent_none') }} —</option>
+            @foreach($parents as $parent)
+                <option value="{{ $parent->id }}">
+                    {{ $parent->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <!-- Status & Urutan -->
+    <div class="flex flex-wrap items-center justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+        <div class="flex items-center space-x-4">
+            <label class="inline-flex items-center">
                 <input 
-                    wire:model.defer="order" 
-                    type="number" 
-                    min="-1" 
-                    class="w-24 border border-gray-300 rounded-lg px-3 py-2 text-center"
+                    wire:model.defer="is_active" 
+                    type="checkbox" 
+                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    {{ ($is_active ? 'checked' : '') }}
                 >
-            </div>
+                <span class="ml-2 text-sm font-medium text-gray-700">
+                    {{ __('menu.active') }}
+                </span>
+            </label>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center justify-between pt-6 border-t border-gray-200">
-            <a 
-                href="{{ route('menus.index') }}" 
-                class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition"
+        <div class="flex items-center space-x-3">
+            <label class="text-sm font-medium text-gray-700">
+                {{ __('menu.order') }}:
+            </label>
+            <input 
+                wire:model.defer="order" 
+                type="number" 
+                {{ $menuId ? 'disabled' : '' }}
+                min="-1" 
+                class="w-24 border border-gray-300 rounded-lg px-3 py-2 text-center"
             >
-                ← Kembali
-            </a>
-            
-            <button 
-                type="submit" 
-                class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
-            >
-                {{ $menuId ? 'Perbarui' : 'Simpan' }} Menu
-            </button>
         </div>
-    </form>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+        <a 
+            href="{{ route('menus.index') }}" 
+            class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition"
+        >
+            ← {{ __('menu.back') }}
+        </a>
+        
+        <button 
+            type="submit" 
+            class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+        >
+            {{ $menuId ? __('menu.update') : __('menu.save') }}
+        </button>
+    </div>
+</form>
 </div>

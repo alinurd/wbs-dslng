@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'edit' => 'Edit Menu',
+    'create' => 'Add New Menu',
+    'name_id' => 'Menu Name (ID)',
+    'name_id_placeholder' => 'Example: Menu Name',
+    'name_en' => 'Menu Name (EN)',
+    'name_en_placeholder' => 'Example: Menu Name',
+    'slug' => 'Slug',
+    'slug_placeholder' => 'Example: name-menu',
+    'icon' => 'Icon',
+    'icon_placeholder' => 'fa-solid fa-shield-alt',
+    'icon_helper' => 'Use FontAwesome format, example: fa-solid fa-home',
+    'route' => 'Route',
+    'route_placeholder' => '/name-menu',
+    'parent' => 'Parent Menu',
+    'parent_none' => 'None (Main Menu)',
+    'active' => 'Active',
+    'order' => 'Order',
+    'back' => 'Back',
+    'update' => 'Update',
+    'save' => 'Save', 
+    'delete' => 'Delete',
+    'censel' => 'Cancelled',
+    'delete_confrm' => 'Are you sure you want to delete this menu?',
+];

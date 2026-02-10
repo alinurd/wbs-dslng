@@ -10,7 +10,7 @@ class Menu extends Model
     // HAPUS BARIS INI: use HasPermissions;
 
     protected $fillable = [
-        'name', 'slug', 'icon', 'route', 'parent_id', 'order', 'is_active', 'default'
+        'name', 'slug', 'icon', 'route', 'parent_id', 'order', 'is_active', 'default', 'name_en'
     ];
 
     public function parent()

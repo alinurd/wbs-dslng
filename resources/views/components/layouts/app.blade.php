@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-@php
-    $currentLocale = app()->getLocale()
-@endphp
-<html lang="{{$currentLocale}}">
+<html lang="{{$locale}}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,7 +53,7 @@
                     
                     {{-- Nama user dan role --}}
                     <div class="text-center mt-2 w-full transition-all duration-300">
-                        <p class="text-white text-base font-semibold">{{ $user->name }}</p>
+                        <p class="text-white text-base font-semibold">{{ $user->name }} {{$locale}}</p>
                         @php
                             $roles = $user->getRoleNames()->implode(', ');
                         @endphp
@@ -99,7 +96,7 @@
                                 <i class="w-5 h-5 text-center text-white/60"></i>
                             @endif
 
-                            <span class="menu-text flex-1 transition-all duration-300">{{ $menu->name }}</span>
+                            <span class="menu-text flex-1 transition-all duration-300">{{ ($locale=='id'?$menu->name : $menu->name_en) }}</span>
                             
                             {{-- Truncated text for collapsed mode --}}
                             <span class="truncated-text">{{ $truncatedName }} </span>
@@ -119,7 +116,9 @@
                                                {{ request()->routeIs($child->route) ? 'active-link bg-white/15' : '' }}"
                                         @click="closeOnMobile()">
                                         <i class="fas fa-circle text-xs text-white/70"></i>
-                                        <span class="menu-text">{{ $child->name }}</span>
+                                        <span class="menu-text">
+                                            {{ ($locale=='id'?$child->name : $child->name_en) }}
+                                            </span>
                                     </a>
                                 @endforeach
                             </div>

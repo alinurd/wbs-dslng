@@ -2,13 +2,14 @@
     <div class="bg-white shadow rounded p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold">Menu Management</h2>
-            <a href="{{ route('menus.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Tambah Menu</a>
+            <a href="{{ route('menus.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ {{__('menu.create')}}</a>
         </div>
 
         <table class="min-w-full border border-gray-200">
             <thead class="bg-gray-100 text-gray-700 uppercase text-sm">
                 <tr>
-                    <th class="py-2 px-3 border">Nama Menu</th>
+                    <th class="py-2 px-3 border">{{ __('menu.name_id') }}</th>
+                    <th class="py-2 px-3 border">{{ __('menu.name_en') }}</th>
                     <th class="py-2 px-1 border">Status</th>
                     <th class="py-2 px-3 border">Slug</th>
                     <th class="py-2 px-3 border">Route</th>
@@ -21,6 +22,7 @@
                 @foreach($menus as $menu)
                 <tr class="border-b hover:bg-gray-50">
                     <td class="py-2 px-3 border font-semibold">{{ $menu->name }}  </td>
+                    <td class="py-2 px-3 border font-semibold">{{ $menu->name_en }}  </td>
                      <td class="py-2 px-3 border pl-8">
                                  @if ($menu->is_active)
                                 <i class="fas fa-check ml-auto text-green-600"></i>
@@ -31,8 +33,8 @@
                     <td class="py-2 px-3 border text-gray-600">{{ $menu->parent?->name ?? '-' }}</td>
                     <td class="py-2 px-3 border text-center">
                             @if($menu->default!=1)
-                            <a href="{{ route('menus.edit', $menu->id) }}" class="text-blue-600 hover:underline">Edit</a> |
-                            <button wire:click="confirmDelete({{ $menu->id }})" class="text-red-600 hover:underline">Hapus</button>
+                            <a href="{{ route('menus.edit', $menu->id) }}" class="text-blue-600 hover:underline">{{__('menu.update')}}</a> 
+                            {{-- | <button wire:click="confirmDelete({{ $menu->id }})" class="text-red-600 hover:underline">{{__('menu.delete')}}</button> --}}
                             @endif
                         </td>
                     </tr>
@@ -40,6 +42,7 @@
                     
                         <tr class="border-b hover:bg-gray-50 bg-gray-50">
                             <td class="py-2 px-3 border pl-8">↳ {{ $child->name }}</td>
+                            <td class="py-2 px-3 border pl-8">↳ {{ $child->name_en }}</td>
                             <td class="py-2 px-3 border pl-8">
                                  @if ($menu->is_active)
                                 <i class="fas fa-check ml-auto text-green-600"></i>
@@ -50,8 +53,8 @@
                             <td class="py-2 px-3 border">{{ $child->parent?->name }}</td>
                             <td class="py-2 px-3 border text-center">
                                 @if($menu->default!=1)
-                                <a href="{{ route('menus.edit', $child->id) }}" class="text-blue-600 hover:underline">Edit</a> |
-                                <button wire:click="confirmDelete({{ $child->id }})" class="text-red-600 hover:underline">Hapus</button>
+                                <a href="{{ route('menus.edit', $child->id) }}" class="text-blue-600 hover:underline">{{__('menu.update')}}</a> 
+                                {{-- | <button wire:click="confirmDelete({{ $child->id }})" class="text-red-600 hover:underline">{{__('menu.delete')}}</button> --}}
                                 @endif
                             </td>
                         </tr>
@@ -63,9 +66,9 @@
         @if($confirmingDeleteId)
             <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
                 <div class="bg-white rounded p-6 shadow-lg text-center">
-                    <p class="text-gray-800 mb-4">Yakin ingin menghapus menu ini?</p>
+                    <p class="text-gray-800 mb-4">{{__('menu.delete_confrm')}}</p>
                     <button wire:click="delete({{ $confirmingDeleteId }})" class="bg-red-600 text-white px-4 py-2 rounded mr-2">Ya</button>
-                    <button wire:click="$set('confirmingDeleteId', null)" class="bg-gray-300 px-4 py-2 rounded">Batal</button>
+                    <button wire:click="$set('confirmingDeleteId', null)" class="bg-gray-300 px-4 py-2 rounded">{{__('menu.censel')}}</button>
                 </div>
             </div>
         @endif

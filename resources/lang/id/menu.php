@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'edit' => 'Edit Menu',
+    'create' => 'Tambah Menu Baru',
+    'name_id' => 'Nama Menu (ID)',
+    'name_id_placeholder' => 'Contoh: Nama Menu',
+    'name_en' => 'Nama Menu (EN)',
+    'name_en_placeholder' => 'Contoh: Nama Menu',
+    'slug' => 'Slug',
+    'slug_placeholder' => 'Contoh: nama-menu',
+    'icon' => 'Icon',
+    'icon_placeholder' => 'fa-solid fa-shield-alt',
+    'icon_helper' => 'Gunakan format FontAwesome, contoh: fa-solid fa-home',
+    'route' => 'Route',
+    'route_placeholder' => '/nama-menu',
+    'parent' => 'Parent Menu',
+    'parent_none' => 'Tidak Ada (Menu Utama)',
+    'active' => 'Aktif',
+    'order' => 'Urutan',
+    'back' => 'Kembali',
+    'update' => 'Perbarui',
+    'save' => 'Simpan', 
+    'delete' => 'Hapus',
+    'censel' => 'Batal',
+    'delete_confrm' => 'Yakin ingin menghapus menu ini?',
+];
