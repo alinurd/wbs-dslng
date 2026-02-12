@@ -104,5 +104,9 @@ return [
     'aksi' => 'Action', 
     'user' => 'User', 
     'info' => 'Information', 
+    'unread' => 'Unread',
+    'lainnya' => 'Other',
+    'no_notif' => 'No notifications',
+    'all_caught_up' => "You're all caught up!",
 
 ];

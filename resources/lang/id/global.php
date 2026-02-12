@@ -91,5 +91,8 @@ return [
     'lokasi' => 'Lokasi', 
     'user' => 'Pengguna', 
     'info' => 'Informasi', 
-
+    'unread' => 'Blum dibaca',
+    'lainnya' => 'Lainnya',
+    'no_notif' => 'Tidak ada notifikasi',
+    'all_caught_up' => 'Semua sudah tertangani!',
 ];

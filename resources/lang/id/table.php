@@ -13,7 +13,7 @@ return [
     'no_data' => 'Tidak ada data ditemukan',
     'show' => 'Tampilkan',
     'entries' => 'entri',
-    'entries' => 'Semua',
+    'all' => 'Semua',
     'search' => 'Cari',
     'options' => 'Opsi',
     'close' => 'Tutup',

@@ -46,7 +46,7 @@
                     </button>
                     @if ($unreadCount > 0)
                         <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                            {{ $unreadCount }} unread
+                            {{ $unreadCount }} {{__('global.unread')}}
                         </span>
                     @endif
                 </div>
@@ -59,11 +59,11 @@
                 @endphp
                 <button wire:click="filterNotifications('all')" @click.stop
                     class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'all' ? 'bg-blue-100 text-blue-800' : 'text-gray-600 hover:bg-gray-100' }}">
-                    All ({{ $counts['all'] ?? 0 }})
+                    {{__('table.all')}} ({{ $counts['all'] ?? 0 }})
                 </button>
                 <button wire:click="filterNotifications('unread')" @click.stop
                     class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'unread' ? 'bg-red-100 text-red-800' : 'text-gray-600 hover:bg-gray-100' }}">
-                    Unread ({{ $counts['unread'] ?? 0 }})
+                    {{__('global.unread')}} ({{ $counts['unread'] ?? 0 }})
                 </button>
                 <button wire:click="filterNotifications('chat')" @click.stop
                     class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'chat' ? 'bg-blue-100 text-blue-800' : 'text-gray-600 hover:bg-gray-100' }}">
@@ -71,11 +71,11 @@
                 </button>
                 <button wire:click="filterNotifications('complien')" @click.stop
                     class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'complien' ? 'bg-green-100 text-green-800' : 'text-gray-600 hover:bg-gray-100' }}">
-                    complien ({{ $counts['complien'] ?? 0 }})
+                    {{__('global.aduan')}} ({{ $counts['complien'] ?? 0 }})
                 </button>
                 <button wire:click="filterNotifications('other')" @click.stop
                     class="px-3 py-1.5 text-xs rounded-full transition-colors whitespace-nowrap {{ $activeFilter == 'other' ? 'bg-gray-100 text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
-                    Other ({{ $counts['other'] ?? 0 }})
+                    {{__('global.lainnya')}} ({{ $counts['other'] ?? 0 }})
                 </button>
             </div>
         </div>
@@ -108,9 +108,9 @@
                                     @if ($notification['type'] == 'chat')
                                         <i class="fas fa-comment-alt mr-1 text-xs"></i> Chat
                                     @elseif($notification['type'] == 'complien')
-                                        <i class="fas fa-clipboard-check mr-1 text-xs"></i> Complien
+                                        <i class="fas fa-clipboard-check mr-1 text-xs"></i> {{__('global.aduan')}}
                                     @else
-                                        <i class="fas fa-bell mr-1 text-xs"></i> Other
+                                        <i class="fas fa-bell mr-1 text-xs"></i> {{__('global.lainnya')}}
                                     @endif
                                 </span>
                                 @if (!$notification['read'])
@@ -147,8 +147,8 @@
                 {{-- Empty State --}}
                 <div class="p-8 text-center text-gray-500" @click.stop>
                     <i class="fas fa-bell-slash text-2xl mb-2"></i>
-                    <p class="text-sm">No notifications</p>
-                    <p class="text-xs text-gray-400 mt-1">You're all caught up!</p>
+                      <p class="text-sm">{{ __('global.no_notif') }}</p>
+                      <p class="text-xs text-gray-400 mt-1">{{ __('global.all_caught_up') }}</p>
                 </div>
             @endforelse
         </div>
