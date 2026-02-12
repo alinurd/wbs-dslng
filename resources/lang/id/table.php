@@ -14,7 +14,7 @@ return [
     'show' => 'Tampilkan',
     'entries' => 'entri',
     'entries' => 'Semua',
-    'search' => 'Cari...',
+    'search' => 'Cari',
     'options' => 'Opsi',
     'close' => 'Tutup',
     'user_agent' => 'user_agent',

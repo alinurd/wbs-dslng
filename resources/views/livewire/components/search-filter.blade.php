@@ -32,7 +32,7 @@
         <div class="flex-1 relative">
             <input type="text" wire:model.live="{{ $onSearch }}"
                 class="pl-9 pr-3 py-1.5 rounded-md border border-gray-300 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-1 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-200 text-xs"
-                placeholder="{{__('table.search')}}">
+                placeholder="{{__('table.search')}} ...">
             <div class="absolute inset-y-0 left-0 flex items-center pl-2.5">
                 <i class="fas fa-search h-3.5 w-3.5 text-gray-400"></i>
             </div>

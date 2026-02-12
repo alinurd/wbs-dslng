@@ -69,9 +69,9 @@
             'filters' => [
                 [
                     'type' => 'text',
-                    'label' => 'Filter Username',
+                    'label' => 'Filter '. __('table.username'),
                     'model' => 'filters.user_id',
-                    'placeholder' => 'Cari Username ID...',
+                    'placeholder' => __('table.search') .' '. __('table.username'),
                 ],
                 
             ],

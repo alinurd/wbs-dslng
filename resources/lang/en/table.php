@@ -15,7 +15,7 @@ return [
     'show' => 'Show',
     'entries' => 'entries',
     'entries' => 'All',
-    'search' => 'Search...',
+    'search' => 'Search',
     'options' => 'Option',
     'close' => 'Close',
     'user_agent' => 'user_agent',
