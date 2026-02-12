@@ -112,9 +112,11 @@
         <i class="fas fa-inbox text-gray-400 text-4xl mb-4"></i>
          <p class="text-gray-500 mb-4">
             @if($filterMode)
-                Tidak ada data yang ditemukan untuk filter saat ini.
+            {{__('table.no_data')}}
+                {{-- Tidak ada data yang ditemukan untuk filter saat ini. --}}
             @else
-                Belum ada data yang ditambahkan.
+            {{__('table.no_data')}}
+                {{-- Belum ada data yang ditambahkan. --}}
             @endif
         </p>
        
