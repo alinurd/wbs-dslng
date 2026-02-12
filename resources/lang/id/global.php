@@ -67,6 +67,7 @@ return [
     'no_activity' => 'Belum ada aktivitas terbaru',
     'terbaru' => 'Terbaru',
     'view_all' => ' Lihat Semua',
+    'view' => ' Lihat',
     'need_help' => ' Butuh Bantuan?',
     'need_help_dsc' => ' Tim support kami siap membantu.',
     'contact_suport' => ' Hubungi Support',
@@ -95,4 +96,15 @@ return [
     'lainnya' => 'Lainnya',
     'no_notif' => 'Tidak ada notifikasi',
     'all_caught_up' => 'Semua sudah tertangani!',
+    'pilih_file' => 'Klik untuk memilih file',
+     'mengunggah' => 'Mengunggah...',
+    'mengunggah_file' => 'File yang akan diunggah',
+    'file_failed' => 'File tidak valid:',
+    'file_existing' => 'File yang sudah ada:',
+            'new_file_up' => 'File baru yang akan diunggah:',
+            'err_input_form' => 'Terdapat kesalahan dalam pengisian',
+            'singgle_gambar_only' => 'hanya satu gambar/file terbaru yang akan di unggah ',
+                'censel' => 'Batal',
+
+
 ];

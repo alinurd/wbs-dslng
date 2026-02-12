@@ -10,7 +10,7 @@
                     'title_id' => 'title Indonesia',
                     'title_en' => 'title English',
                     'is_active' => 'Status',
-                    'created_at' => 'Dibuat Pada',
+                    'created_at' => __('table.data.created_at'),
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -54,10 +54,10 @@
                     'model' => 'form.title_id',
                     'label' => 'Title Indonesia',
                     'required' => true,
-                    'placeholder' => 'Masukan title....',
+                    'placeholder' => __('table.input_placeh'),
                     'error' => 'form.title_id',
                     'messages' => [
-                        'required' => 'Title Indonesia wajib diisi',
+                        'required' => __('table.input_required'),
                     ],
                 ],
                 [
@@ -66,9 +66,9 @@
                     'model' => 'form.title_en',
                     'error' => 'form.title_en',
                     'required' => true,
-                    'placeholder' => 'Masukkan nama dalam bahasa Inggris',
+                    'placeholder' => __('table.input_placeh'),
                     'messages' => [
-                        'required' => 'Title English wajib diisi',
+                        'required' => __('table.input_required'),
                     ],
                 ],
         
@@ -78,9 +78,9 @@
         'label' => 'Content Indonesia',
         'error' => 'content_id',
         'required' => true,
-        'placeholder' => 'Masukan content....',
+        'placeholder' => __('table.input_placeh'),
         'messages' => [
-            'required' => 'Content Indonesia wajib diisi',
+            'required' => __('table.input_required'),
         ],
     ],
     [
@@ -89,9 +89,9 @@
         'model' => 'content_en',
         'error' => 'content_en',
         'required' => true,
-        'placeholder' => 'Masukkan content dalam bahasa Inggris',
+        'placeholder' => __('table.input_placeh'),
         'messages' => [
-            'required' => 'Content English wajib diisi',
+            'required' => __('table.input_required'),
         ],
     ],
         
@@ -104,23 +104,23 @@
                     'multiple' => true,
                     'size' => '100', // MB
                             'format' => 'DOC,DOCX,XLS,XLSX,PPT,PPTX,PDF,JPG,JPEG,PNG,AVI,MP4,3GP,MP3', // HAPUS KOMA DI AKHIR
-                    'placeholder' => 'Pilih file...',
+                    'placeholder' => __('global.pilih_file'),
                     'messages' => [
-                        'required' => 'File wajib diisi',
+                        'required' => __('table.input_required'),
                     ],
                 ],
                 [
                     'type' => 'file',
-                    'label' => 'Gambar',
+                    'label' => 'Image',
                     'model' => 'form.image',
                     'error' => 'form.image',
                             'format' => 'JPG,JPEG,PNG,GIF,WEBP', 
                     'size' => '10',
                     'required' => false,
                     'multiple' => false,
-                    'placeholder' => 'Pilih gambar...',
+                    'placeholder' => __('global.pilih_file'),
                     'messages' => [
-                        'required' => 'Gambar wajib diisi',
+                        'required' => __('table.input_required'),
                     ],
                 ],
         
@@ -136,16 +136,16 @@
                         })->toArray(),
                     'error' => 'form.category',
                     'messages' => [
-                        'required' => 'Category wajib dipilih',
+                        'required' => __('table.input_required'),
                     ],
                 ],
                 [
                     'type' => 'switch-single',
-                    'label' => 'Status Aktif',
+                    'label' => 'Status',
                     'model' => 'form.is_active',
                     'error' => 'form.is_active',
-                    'on_label' => 'AKTIF',
-                    'off_label' => 'NONAKTIF',
+                    'on_label' => __('table.data.on'),
+                    'off_label' => __('table.data.off'),
                 ],
             ],
         ])
@@ -158,23 +158,23 @@
                     'type' => 'text',
                     'label' => 'Filter Data ID',
                     'model' => 'filters.data_id',
-                    'placeholder' => 'Cari data ID...',
+                    'placeholder' =>__('table.search'). ' data ID...',
                 ],
                 [
                     'type' => 'text',
                     'label' => 'Filter Data EN',
                     'model' => 'filters.data_en',
-                    'placeholder' => 'Cari data EN...',
+                    'placeholder' => __('table.search'). '  data EN...',
                 ],
                 [
                     'type' => 'select',
                     'label' => 'Filter Status',
                     'model' => 'filters.is_active',
                     'options' => [
-                        '1' => 'Aktif',
-                        '0' => 'Nonaktif',
+                        '1' => __('table.data.on'),
+                        '0' => __('table.data.off'),
                     ],
-                    'placeholder' => 'Semua Status',
+                    'placeholder' => __('table.all') .' Status',
                 ],
             ],
             'onClose' => 'closeFilterModal',

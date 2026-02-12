@@ -79,10 +79,10 @@ class News extends Root
         public function messages()
         {
             return [ 
-                'form.category.required' => 'category wajib diisi',
-                'form.image.*.max' => 'Ukuran file maksimal 100MB.',
-                'form.files.*.max' => 'Ukuran file maksimal 100MB.',
-                'form.files.*.mimes' => 'Format file harus: DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.',
+                // 'form.category.required' => 'category wajib diisi',
+                'form.image.*.max' => 'file maksimal 100MB.',
+                'form.files.*.max' => 'file maksimal 100MB.',
+                'form.files.*.mimes' => 'Format file: DOC, DOCX, XLS, XLSX, PPT, PPTX, PDF, JPG, JPEG, PNG, AVI, MP4, 3GP, MP3.',
             ];
         }
 
@@ -225,16 +225,16 @@ class News extends Root
         ],
         'common' => [
             // 'ID' => $news->id,
-            'Kode Berita' => $news->code_news,
+            'Kode' => $news->code_news,
             // 'Slug' => $news->code_news,
             'Kategori' => $categoryName,
             // 'Kategori Slug' => $news->categoryData->param_str_1 ?? 'general',
-            'Gambar' =>[
+            'Image' =>[
                 'imagePath'=>$imageData['path']?? null,
                 'original_name'=>$imageData['original_name']?? null,
             ],
             'File' => $formattedFilesData,
-            'Dibuat Pada' => $news->created_at,
+            __('table.data.created_at') => $news->created_at,
         ]
     ];
 

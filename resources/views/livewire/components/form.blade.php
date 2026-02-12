@@ -25,11 +25,11 @@
                             </div>
                             <div>
                                 <h5 class="modal-title text-xl font-bold tracking-tight">
-                                    {{ $updateMode ? 'Edit ' . $title : 'Tambah ' . $title }}
+                                    {{ $updateMode ? 'Edit ' . $title : __('global.add_data').' ' . $title }}
                                 </h5>
-                                <p class="text-white/80 text-sm">
-                                    {{ $updateMode ? 'Perbarui data yang sudah ada' : 'Isi form untuk menambah data baru' }}
-                                </p>
+                                {{-- <p class="text-white/80 text-sm">
+                                    {{ $updateMode ? 'Perbarui data yang sudah ada' : {{__('global.add_data')}}'Isi form untuk menambah data baru' }}
+                                </p> --}}
                             </div>
                         </div>
                         <button type="button" wire:click="{{ $onClose }}"
@@ -46,8 +46,9 @@
                             <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg animate-shake">
                                 <div class="flex items-center">
                                     <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
-                                    <span class="text-red-700 font-medium">Terdapat kesalahan dalam pengisian
-                                        form:</span>
+                                    <span class="text-red-700 font-medium">
+                                        {{__('global.err_input_form ')}}
+                                        </span>
                                 </div>
                                 <ul class="mt-2 list-disc list-inside text-sm text-red-600">
                                     @foreach ($errors->all() as $error)
@@ -248,7 +249,7 @@
                                             <select wire:model="{{ $field['model'] }}"
                                                 class="w-full rounded-lg border p-3 bg-white text-gray-900 focus:border-[rgb(0,111,188)] focus:ring-2 focus:ring-[rgb(0,111,188)] shadow-sm transition-all duration-300 {{ $hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
                                                 {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
-                                                <option value="">{{ $field['placeholder'] ?? 'Pilih...' }}
+                                                <option value="">{{ $field['placeholder'] ?? __('table.input_select_place') }}
                                                 </option>
                                                 @foreach ($field['options'] ?? [] as $value => $label)
                                                     <option value="{{ $value }}"
@@ -698,10 +699,10 @@
             <div class="flex flex-col items-center justify-center space-y-2">
                 <i class="fas fa-cloud-upload-alt text-3xl text-gray-400"></i>
                 <div class="space-y-1">
-                    <p class="text-sm font-medium text-gray-700">Klik untuk memilih file</p>
+                    {{-- <p class="text-sm font-medium text-gray-700">Klik untuk memilih file</p> --}}
                     <p class="text-xs text-gray-500 max-w-xs mx-auto">
-                        Maksimal {{ $maxSize }}MB . Format: {{ $formats }}
-                        <i><br>{{ $isMultiple ? '' : 'hanya satu gambar/file terbaru yang akan di unggah' }}</i>
+                        Maks {{ $maxSize }}MB . Format: {{ $formats }}
+                        <i><br>{{ $isMultiple ? '' : __('global.singgle_gambar_only') }}</i>
                     </p>
                 </div>
                 {{-- <button type="button" onclick="document.getElementById('file-input-{{ $field['model'] }}').click()"
@@ -720,7 +721,7 @@
                     class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
                     wire:loading.remove wire:target="lampiran">
                     <i class="fas fa-folder-open mr-2"></i>
-                    Pilih File 
+                    {{__('global.pilih_file')}}
                 </button>
             
             <!-- Tombol loading state -->
@@ -728,7 +729,7 @@
                 class="px-6 py-3 bg-blue-400 text-white rounded-lg font-medium flex items-center"
                 wire:loading wire:target="lampiran">
                             <i class="fas fa-spinner fa-spin mr-1"></i>
-                Mengunggah...
+                            {{__('global.mengunggah')}}
             </button>
             
             </div>
@@ -739,7 +740,7 @@
             <div class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <div class="flex items-center text-red-700 text-sm">
                     <i class="fas fa-exclamation-triangle mr-2"></i>
-                    <span class="font-medium">File tidak valid:</span>
+                    <span class="font-medium">{{__('global.file_failed')}}</span>
                 </div>
                 <ul class="mt-2 text-xs text-red-600 space-y-1">
                     @foreach ($invalidFiles as $invalidFile)
@@ -749,7 +750,7 @@
                         @endphp
                         <li class="flex items-center">
                             <i class="fas fa-times mr-2 text-red-500"></i>
-                            {{ $fileName }} (Format .{{ strtoupper($extension) }} tidak diizinkan)
+                            {{ $fileName }} (Format .{{ strtoupper($extension) }} not allowed)
                         </li>
                     @endforeach
                 </ul>
@@ -759,7 +760,7 @@
         <!-- Tampilkan existing files -->
         @if ($existingFileCount > 0)
             <div class="mt-4">
-                <h4 class="text-sm font-medium text-gray-700 mb-2">File yang sudah ada:</h4>
+                <h4 class="text-sm font-medium text-gray-700 mb-2">{{__('global.file_existing')}}</h4>
                 <div class="space-y-2">
                     @foreach ($existingFiles as $index => $file)
                         @php
@@ -806,7 +807,7 @@
                                         @if(!empty($filePath))
                                         <span>•</span>
                                         <a href="{{ asset('storage/' . $filePath) }}" target="_blank" class="text-blue-600 hover:text-blue-800">
-                                            Lihat File
+                                            {{__('global.view ')}}
                                         </a>
                                         @endif
                                     </div>
@@ -827,7 +828,7 @@
         <!-- Tampilkan file baru yang valid -->
         @if ($newFileCount > 0)
             <div class="mt-4">
-                <h4 class="text-sm font-medium text-gray-700 mb-2">File baru yang akan diunggah:</h4>
+                <h4 class="text-sm font-medium text-gray-700 mb-2">{{__('global.new_file_up')}}</h4>
                 <div class="space-y-2">
                     @foreach ($newFiles as $index => $file)
                         @php
@@ -893,7 +894,7 @@
         <!-- Info total files -->
         @if ($totalFileCount > 0)
             <div class="mt-2 text-sm text-gray-600">
-                Total file: {{ $totalFileCount }} ({{ $existingFileCount }} existing + {{ $newFileCount }} baru)
+                Total file: {{ $totalFileCount }} ({{ $newFileCount }} + {{ $existingFileCount }} existing)
             </div>
         @endif
     </div>
@@ -980,12 +981,12 @@
                     <div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
                         <button type="button" wire:click="{{ $onClose }}"
                             class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
-                            <i class="fas fa-times me-2"></i>Batal
+                            <i class="fas fa-times me-2"></i>{{__('global.censel')}}
                         </button>
                         <button type="submit"
                             class="px-4 py-2 text-white bg-[rgb(0,111,188)] rounded-lg hover:bg-[rgb(0,95,160)] transition-all duration-300 transform hover:scale-105 font-medium">
                             <i class="fas {{ $updateMode ? 'fa-save' : 'fa-plus' }} me-2"></i>
-                            {{ $updateMode ? 'Update' : 'Simpan' }}
+                            {{ $updateMode ? 'Update' : 'Save' }}
                         </button>
                     </div>
                 </form>

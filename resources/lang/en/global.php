@@ -75,6 +75,8 @@ return [
     'no_activity' => 'No recent activity',
     'terbaru' => 'Latest',
     'view_all' => 'View All',
+    'view' => 'View',
+    'censel' => 'Censel',
 
     'need_help' => 'Need Help?',
     'need_help_dsc' => 'Our support team is ready to help.',
@@ -108,5 +110,13 @@ return [
     'lainnya' => 'Other',
     'no_notif' => 'No notifications',
     'all_caught_up' => "You're all caught up!",
+    'pilih_file' => 'Choose File',
+        'file_failed' => 'Invalid file:',
+        'file_existing' => 'File Existing',
+        'new_file_up' => 'New file to upload:',
+                    'err_input_form' => 'There was an error in filling out the form',
+            'singgle_gambar_only' => 'only one latest image/file will be uploaded ',
+
+
 
 ];

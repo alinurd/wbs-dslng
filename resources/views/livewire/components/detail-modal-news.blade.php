@@ -22,9 +22,9 @@
                                 <h5 class="modal-title text-xl font-bold tracking-tight">
                                     {{ $title }}
                                 </h5>
-                                <p class="text-white/80 text-sm">
+                                {{-- <p class="text-white/80 text-sm">
                                     Detail informasi data
-                                </p>
+                                </p> --}}
                             </div>
                         </div>
                         <button type="button" wire:click="{{ $onClose }}"
@@ -42,7 +42,7 @@
                             <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
                                 <h3 class="text-lg font-semibold text-gray-800 flex items-center">
                                     <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                                    Informasi Umum
+                                   {{__('global.info')}}
                                 </h3>
                             </div>
                             <div class="p-4 space-y-4">

@@ -32,9 +32,9 @@
                                 <h5 class="modal-title text-xl font-bold tracking-tight">
                                     {{ $title }}
                                 </h5>
-                                <p class="text-white/80 text-sm">
+                                {{-- <p class="text-white/80 text-sm">
                                     Detail informasi data
-                                </p>
+                                </p> --}}
                             </div>
                         </div>
                         <button type="button" wire:click="{{ $onClose }}"

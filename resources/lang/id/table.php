@@ -27,5 +27,17 @@ return [
     'access_time' => 'Waktu Akses',
     'new_values' => 'Data Baru',
     'old_values' => 'Data Lama',
+    'input_placeh' => 'masukkan data di sini',
+    'input_select_place' => '-Pilih-',
+    'input_required' => 'Wajib diisi!',
+
+    
+    // data
+    'data' => [
+        'on' => 'Aktif',
+        'off' => 'Nonaktif',
+        'created_at' => 'Dibuat Pada',
+    ],
+
 ];
 

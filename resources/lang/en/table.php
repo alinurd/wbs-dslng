@@ -14,7 +14,7 @@ return [
     'no_data' => 'No data found',
     'show' => 'Show',
     'entries' => 'entries',
-    'entries' => 'All',
+    'all' => 'All',
     'search' => 'Search',
     'options' => 'Option',
     'close' => 'Close',
@@ -29,6 +29,17 @@ return [
     'access_time' => 'Access Time',
     'new_values' => 'New Values',
     'old_values' => 'Old Values',
+    'input_placeh' => 'input data here...',
+    'input_required' => 'this required!',
+    'input_select_place' => '-select-',
+
+    //table
+    'data' => [
+        'on' => 'Active',
+        'off' => 'Inactive',
+        'created_at' => 'Created at',
+],
+
 
 ];
 
