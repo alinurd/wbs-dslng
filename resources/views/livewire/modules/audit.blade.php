@@ -27,15 +27,16 @@
 
             @include('livewire.components.table-wrapper', [
                 'records' => $finalRecords,
-                'columns' => [
-                    'user_id' => 'Username',
-                    'table_name' => 'Table/Modules',
-                    'action' => 'Action',
-                    'ip_address' => 'Ip Address',
-                    'created_at' => 'Access Time',
-                    //  'new_values' => 'New values',
-                    //  'old_values' => 'Old Values',
+               'columns' => [
+                    'user_id' => __('table.username'),
+                    'table_name' => __('table.table_name'),
+                    'action' => __('table.action'),
+                    'ip_address' => __('table.ip_address'),
+                    'created_at' => __('table.access_time'),
+                    // 'new_values' => __('table.new_values'),
+                    // 'old_values' => __('table.old_values'),
                 ],
+
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
             

@@ -101,4 +101,8 @@ return [
     'pagination_info' => 'Showing :from to :to of :total',
       'deskripsi' => 'Description', 
     'lokasi' => 'Location', 
+    'aksi' => 'Action', 
+    'user' => 'User', 
+    'info' => 'Information', 
+
 ];

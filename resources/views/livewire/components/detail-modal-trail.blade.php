@@ -20,9 +20,9 @@
                                 <h5 class="modal-title text-xl font-bold tracking-tight">
                                     {{ $title }}
                                 </h5>
-                                <p class="text-white/80 text-sm">
+                                {{-- <p class="text-white/80 text-sm">
                                     Detail informasi audit log
-                                </p>
+                                </p> --}}
                             </div>
                         </div>
                         <button type="button" wire:click="{{ $onClose }}"
@@ -39,12 +39,12 @@
                         <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
                             <h3 class="text-lg font-semibold text-gray-800 flex items-center">
                                 <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                                Informasi Umum
+                                {{__('global.info')}}
                             </h3>
                         </div>
                         <div class="p-4 space-y-4">
                             @foreach ($data['common'] ?? [] as $label => $item)
-                                @if (!in_array($label, ['Data Baru', 'Data Lama']))
+                                @if (!in_array($label, [__('table.new_values'), __('table.old_values')]))
                                     <div class="flex flex-col sm:flex-row sm:items-start justify-between border-b border-gray-100 pb-3 last:border-b-0">
                                         <div class="sm:w-2/5 mb-1 sm:mb-0">
                                             <span class="font-semibold text-gray-700 text-sm">{{ $label }}:</span>
@@ -158,14 +158,14 @@
                                     <div class="flex items-center justify-between">
                                         <h3 class="text-lg font-semibold text-gray-800 flex items-center">
                                             <i class="fas fa-plus-circle text-green-500 mr-2"></i>
-                                            Data Baru
+                                            {{__('table.new_values')}}
                                         </h3>
-                                        @if(isset($data['Data Baru']) && !empty($data['Data Baru']))
+                                        @if(isset($data[__('table.new_values')]) && !empty($data[__('table.new_values')]))
                                             @php
                                                 $count = 0;
-                                                if (is_array($data['Data Baru'])) {
-                                                    $count = count($data['Data Baru']);
-                                                } elseif (is_string($data['Data Baru']) && !empty($data['Data Baru'])) {
+                                                if (is_array($data[__('table.new_values')])) {
+                                                    $count = count($data[__('table.new_values')]);
+                                                } elseif (is_string($data[__('table.new_values')]) && !empty($data[__('table.new_values')])) {
                                                     $count = 1;
                                                 }
                                             @endphp
@@ -177,12 +177,12 @@
                                     </div>
                                 </div>
                                 <div class="p-4">
-                                    @if(isset($data['Data Baru']) && !empty($data['Data Baru']))
+                                    @if(isset($data[__('table.new_values')]) && !empty($data[__('table.new_values')]))
                                         <div class="bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
-                                            @if(is_array($data['Data Baru']))
+                                            @if(is_array($data[__('table.new_values')]))
                                                 <table class="min-w-full divide-y divide-gray-200">
                                                     <tbody class="divide-y divide-gray-200">
-                                                        @foreach($data['Data Baru'] as $key => $item)
+                                                        @foreach($data[__('table.new_values')] as $key => $item)
                                                             @php
                                                                 // Determine the actual value to display
                                                                 $value = $item;
@@ -253,7 +253,7 @@
                                                 </table>
                                             @else
                                                 <div class="px-4 py-3">
-                                                    <pre class="text-sm bg-gray-800 text-gray-100 p-3 rounded-lg overflow-x-auto whitespace-pre-wrap font-mono">{{ $data['Data Baru'] }}</pre>
+                                                    <pre class="text-sm bg-gray-800 text-gray-100 p-3 rounded-lg overflow-x-auto whitespace-pre-wrap font-mono">{{ $data[__('table.new_values')] }}</pre>
                                                 </div>
                                             @endif
                                         </div>
@@ -262,7 +262,7 @@
                                             <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-3">
                                                 <i class="fas fa-database text-gray-400"></i>
                                             </div>
-                                            <p class="text-gray-500">Tidak ada data baru</p>
+                                            <p class="text-gray-500">{{__('table.no_data')}}</p>
                                         </div>
                                     @endif
                                 </div>
@@ -276,14 +276,14 @@
                                     <div class="flex items-center justify-between">
                                         <h3 class="text-lg font-semibold text-gray-800 flex items-center">
                                             <i class="fas fa-history text-gray-500 mr-2"></i>
-                                            Data Lama
+                                            {{__('table.old_values')}}
                                         </h3>
-                                        @if(isset($data['Data Lama']) && !empty($data['Data Lama']))
+                                        @if(isset($data[__('table.old_values')]) && !empty($data[__('table.old_values')]))
                                             @php
                                                 $count = 0;
-                                                if (is_array($data['Data Lama'])) {
-                                                    $count = count($data['Data Lama']);
-                                                } elseif (is_string($data['Data Lama']) && !empty($data['Data Lama'])) {
+                                                if (is_array($data[__('table.old_values')])) {
+                                                    $count = count($data[__('table.old_values')]);
+                                                } elseif (is_string($data[__('table.old_values')]) && !empty($data[__('table.old_values')])) {
                                                     $count = 1;
                                                 }
                                             @endphp
@@ -295,12 +295,12 @@
                                     </div>
                                 </div>
                                 <div class="p-4">
-                                    @if(isset($data['Data Lama']) && !empty($data['Data Lama']))
+                                    @if(isset($data[__('table.old_values')]) && !empty($data[__('table.old_values')]))
                                         <div class="bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
-                                            @if(is_array($data['Data Lama']))
+                                            @if(is_array($data[__('table.old_values')]))
                                                 <table class="min-w-full divide-y divide-gray-200">
                                                     <tbody class="divide-y divide-gray-200">
-                                                        @foreach($data['Data Lama'] as $key => $item)
+                                                        @foreach($data[__('table.old_values')] as $key => $item)
                                                             @php
                                                                 // Determine the actual value to display
                                                                 $value = $item;
@@ -371,7 +371,7 @@
                                                 </table>
                                             @else
                                                 <div class="px-4 py-3">
-                                                    <pre class="text-sm bg-gray-800 text-gray-100 p-3 rounded-lg overflow-x-auto whitespace-pre-wrap font-mono">{{ $data['Data Lama'] }}</pre>
+                                                    <pre class="text-sm bg-gray-800 text-gray-100 p-3 rounded-lg overflow-x-auto whitespace-pre-wrap font-mono">{{ $data[__('table.old_values')] }}</pre>
                                                 </div>
                                             @endif
                                         </div>
@@ -380,7 +380,7 @@
                                             <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-3">
                                                 <i class="fas fa-database text-gray-400"></i>
                                             </div>
-                                            <p class="text-gray-500">Tidak ada data lama</p>
+                                            <p class="text-gray-500">{{__('table.no_data')}}</p>
                                         </div>
                                     @endif
                                 </div>
@@ -393,7 +393,7 @@
                 <div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end">
                     <button type="button" wire:click="{{ $onClose }}"
                         class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
-                        <i class="fas fa-times me-2"></i>Tutup
+                        <i class="fas fa-times me-2"></i>{{__('table.close')}}
                     </button>
                 </div>
             </div>

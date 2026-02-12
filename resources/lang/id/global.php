@@ -89,5 +89,7 @@ return [
     'pagination_info' => 'Menampilkan :from sampai :to dari :total',
     'deskripsi' => 'Deskripsi', 
     'lokasi' => 'Lokasi', 
+    'user' => 'Pengguna', 
+    'info' => 'Informasi', 
 
 ];

@@ -12,7 +12,7 @@
     'onDelete' => '',
     'onSelectItem' => '',
     'firstItem' => 0,
-    'emptyMessage' => 'Tidak ada data ditemukan',
+    'emptyMessage' => __('table.no_data'),
     'extraActions' => [],
 ])
 
@@ -74,7 +74,7 @@
 
                 <th
                     class="px-4 py-3 text-center text-sm font-medium text-white uppercase tracking-wider border-b border-[rgb(0,95,160)]">
-                    Aksi
+                    {{ __('table.aksi') }}
                 </th>
             </tr>
         </thead>
@@ -129,7 +129,7 @@
                     @endphp
  
                     @if($record->sts_fwd ==1 && $isRole6)
-                    <span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'><span class='w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5'></span>Dibaca</span>
+                    <span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'><span class='w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5'></span>{{ __('table.dibaca') }}</span>
                     @else
                         {!! $record->aprv_cco_html ?? '<span class="text-gray-400">-</span>' !!}
                     @endif
@@ -145,7 +145,7 @@
                         <a href="{{ route('roles.permissions', $record->id) }}"
                             class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 text-xs font-medium">
                             <i class="fas fa-key mr-1.5 text-xs"></i>
-                            <span class="whitespace-nowrap">Set Akses</span>
+                            <span class="whitespace-nowrap">{{ __('table.set_akses') }}</span>
                         </a>
                     @else
                         <!-- Main Actions Dropdown -->
@@ -154,7 +154,7 @@
                                 class="inline-flex items-center px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
                                 id="main-actions-{{ $record->id }}" aria-haspopup="true"
                                 :aria-expanded="open">
-                                Options
+                                {{ __('table.options') }}
                                 <i class="fas fa-chevron-down w-3 h-3 ml-2 transition-transform duration-200"
                                     :class="{ 'rotate-180': open }"></i>
                             </button>
@@ -179,7 +179,7 @@
                                             role="menuitem">
                                             <i
                                                 class="fas fa-eye w-4 h-4 text-gray-400 mr-3 group-hover:text-blue-500"></i>
-                                            <span>View </span>
+                                            <span>{{ __('table.view') }} </span>
                                         </button>
                                     @endif
 
@@ -192,13 +192,13 @@
                                             role="menuitem">
                                             <i
                                                 class="fas fa-edit w-4 h-4 text-gray-400 mr-3 group-hover:text-green-500"></i>
-                                            <span>Edit</span>
+                                            <span>{{ __('table.edit') }}</span>
                                         </button>
                                     @endif
                                     @if($modul == 'p_tracking' && in_array($record->status, [8, 10, 9, 11]))
                                         <a href="{{ route('p_report_update', ['code' => $record->code_pengaduan]) }}"  class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                             <i class="fas fa-edit w-4 h-4 text-gray-400 mr-3"></i>
-                                            <span>Perbaiki Laporan</span>
+                                            <span>{{ __('table.perbaiki_laporan') }}</span>
                                         </a>
                                     @endif
 
@@ -233,7 +233,7 @@
                                             role="menuitem">
                                             <i
                                                 class="fas fa-comments w-4 h-4 text-gray-400 mr-3 group-hover:text-teal-500"></i>
-                                            <span>Pesan</span>
+                                            <span>{{ __('table.pesan') }}</span>
                                         </button>
                                     @endif
 
@@ -256,7 +256,7 @@
                                             role="menuitem">
                                             <i
                                                 class="fas fa-bookmark w-4 h-4 text-gray-400 mr-3 group-hover:text-lime-500"></i>
-                                            <span>Update Status</span>
+                                            <span>{{ __('table.update_status') }}</span>
                                         </button>
                                         
                                     @endif
@@ -270,7 +270,7 @@
                                             class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all duration-150 group"
                                             role="menuitem">
                                             <i class="fas fa-trash w-4 h-4 text-red-400 mr-3"></i>
-                                            <span>Delete</span>
+                                            <span>{{ __('table.delete') }}</span>
                                         </button>
                                     @endif
 

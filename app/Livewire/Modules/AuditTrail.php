@@ -119,27 +119,28 @@ protected function isValidFilterValue($value): bool
                  ['label' => ucfirst($record->action), 'color' => 'secondary', 'icon' => 'history'];
 
     $this->detailData = [
-        'common' => [
-            'Action' => [
-                'value' => $record->action,
-                'label' => $actionInfo['label'],
-                'color' => $actionInfo['color'],
-                'icon' => $actionInfo['icon'],
-            ],
-            'Tabel/Module' => $record->table_name,
-            'User' => [
-                'value' => $record->user ? $record->user->name : 'System',
-                'email' => $record->user ? $record->user->email : null,
-            ],
-            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i:s'),
-            'IP Address' => $record->ip_address,
-            'User Agent' => $this->formatUserAgent($record->user_agent),
+    'common' => [
+        __('table.action') => [
+            'value' => $record->action,
+            'label' => $actionInfo['label'],
+            'color' => $actionInfo['color'],
+            'icon' => $actionInfo['icon'],
         ],
-        'Data Baru' => $this->processJsonForDisplay($record->new_values),
-        'Data Lama' => $this->processJsonForDisplay($record->old_values),
-    ];
-    
-    $this->detailTitle = "Detail Audit Log #{$record->id}";
+        __('table.table_name') => $record->table_name,
+        __('global.user') => [
+            'value' => $record->user ? $record->user->name : 'System',
+            'email' => $record->user ? $record->user->email : null,
+        ],
+        __('table.access_time') => $record->created_at->format('d/m/Y H:i:s'),
+        __('table.ip_address') => $record->ip_address,
+        __('table.user_agent') => $this->formatUserAgent($record->user_agent),
+    ],
+    __('table.new_values') => $this->processJsonForDisplay($record->new_values),
+    __('table.old_values') => $this->processJsonForDisplay($record->old_values),
+];
+
+$this->detailTitle = "Detail Audit Log #{$record->id}";
+
     $this->showDetailModal = true;
 }
 
