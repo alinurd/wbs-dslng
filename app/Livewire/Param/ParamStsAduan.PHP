@@ -68,8 +68,8 @@ class ParamStsAduan extends Root
             'Data Indonesia' => $record->data_id,
             'Data English' => $record->data_en,
             'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
-            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
-            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+            __('table.data.created_at') => $record->created_at->format('d/m/Y H:i'),
+            // 'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
         ];
         
         $this->detailTitle = "Detail " . $this->title;
