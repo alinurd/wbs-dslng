@@ -33,6 +33,18 @@ return [
     'input_required' => 'this required!',
     'input_select_place' => '-select-',
 
+    'columns'=>[
+        'code' => 'Kode',
+        'estimasi_waktu' => 'Estimated  Time',
+        'tgl_aduan' => 'Complaint Date',
+        'pelapor_identitas' => 'Informant identity',
+        'terlapor_identitas' => 'Reported Identity',
+        'name' => 'Name',
+        'cont_detail' => 'Contact Details',
+        'no_hp' => 'No Hp',
+
+    ],
+
     
     // Detail Hierarchy / Owner
     'hierarchy' => 'Hierarchy Structure',

@@ -110,7 +110,9 @@ return [
     'preview_success' => 'Preview data berhasil (:total data)',
     
     'semua_bulan' => 'Semua Bulan',
+    'bulan' => 'Bulan',
         'data_to_export' => 'Data to be exported',
     'showing' => 'Menampilkan',
+    'export_pengadual_all' => 'LAPORAN PENGADUAN LENGKAP',
 
 ];

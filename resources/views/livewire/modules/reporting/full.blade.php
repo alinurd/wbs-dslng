@@ -1,5 +1,5 @@
 <div>
-    <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
+    {{-- <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2> --}}
     <div class="container-fluid py-4">
         <div class="container mx-auto">
 
@@ -32,14 +32,14 @@
             @include('livewire.components.table-wrapper', [
                 'records' => $finalRecords, // Gunakan $finalRecords yang sudah diproses
                 'columns' => [
-                    'code_pengaduan' => 'Kode Tracking',
-                    'user_id' => 'Username/Nama',
-                    // 'perihal' => 'Perihal',
-                    'jenis_pengaduan_id' => 'Jenis Pelanggaran',
-                    'tanggal_pengaduan' => 'Tanggal Aduan',
-                    'complien_progress' => 'Progress Status',
-                    'aprv_cco' => 'Persetujuan CCO',
-                ],
+        'code_pengaduan' => __('global.code_pengaduan'),
+        'user_id' => __('global.username'),
+        // 'perihal' => 'Perihal',
+        'jenis_pengaduan_id' => __('global.jenis_pelanggaran'),
+        'tanggal_pengaduan' => __('global.tanggal_aduan'),
+        'complien_progress' => __('global.status_progress'),
+        'aprv_cco' => __('global.persetujuan_cco'),
+    ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
             
@@ -75,32 +75,35 @@
             'filters' => [
                 [
                     'type' => 'select',
-                    'label' => 'Bulan',
+                    'label' => __('global.bulan'),
                     'model' => 'filters.bulan',
                     'options' => collect($bulanList)->mapWithKeys(function ($p) {
                             return [
                                 $p['id'] => $p['full'] ?? 'No Data',
                             ];
                         })->toArray(),
-                    'placeholder' => 'Semua Bulan',
+                    'placeholder' => __('global.bulan'),
                 ],
                 [
                     'type' => 'select',
-                    'label' => 'Tahun Pengaduan',
+                    'label' => __('global.tahun'),
                     'model' => 'filters.tahun',
                     'options' => [] + $this->tahunPengaduanList,
-                    'placeholder' => 'Semua Tahun Pengaduan',
+                    'placeholder' => __('global.tahun'),
                 ],
                 [
                     'type' => 'select',
-                    'label' => 'Jenis Pelanggaran',
+                    'label' => __('global.jenis_pelanggaran'),
                     'model' => 'filters.jenis_pengaduan_id',
-                    'options' => collect($jenisPengaduanList)->mapWithKeys(function ($p) {
+                     'options' => collect($jenisPengaduanList)->mapWithKeys(function ($p) {
                             return [
-                                $p['id'] => $p['data'] ?? ($p['data_id'] ?? ($p['data_en'] ?? 'No Data')),
+                                $p->id => $this->locale === 'en'
+                                    ? ($p->data_en ?? $p->data ?? $p->data_id ?? 'No Data')
+                                    : ($p->data ?? $p->data_id ?? $p->data_en ?? 'No Data')
                             ];
                         })->toArray(),
-                    'placeholder' => 'Semua Jenis Pelanggaran',
+
+                    'placeholder' => __('global.semua'). ' '.__('global.jenis_pelanggaran'), 
                 ],
                 // [
                 //     'type' => 'select',
@@ -118,11 +121,14 @@
                     'label' => 'WBS Forward (Optional)',
                     'model' => 'filters.fwd_id',
                     'options' => collect($fwdList)->mapWithKeys(function ($p) {
-                            return [
-                                $p['id'] => $p['data'] ?? ($p['data_id'] ?? ($p['data_en'] ?? 'No Data')),
-                            ];
-                        })->toArray(),
-                    'placeholder' => 'Semua WBS Forward (Optional)',
+                        return [
+                            $p['id'] => $this->locale === 'en'
+                                ? ($p['data_en'] ?? $p['data'] ?? $p['data_id'] ?? 'No Data')
+                                : ($p['data'] ?? $p['data_id'] ?? $p['data_en'] ?? 'No Data')
+                        ];
+                    })->toArray(),
+
+                    'placeholder' => 'WBS Forward (Optional)',
                 ],
             ],
             'onClose' => 'closeFilterModal',
@@ -150,7 +156,7 @@
             'previewTotal' => $previewTotal,
             'previewData' => $previewData,
             'filterData' => $this->getFilterData(), // Kirim data filter
-            'title' => 'LAPORAN PENGADUAN LENGKAP',
+            'title' => __('global.export_pengadual_all'),
             'onClose' => '$set(\'showPreviewModal\', false)',
         ])
 

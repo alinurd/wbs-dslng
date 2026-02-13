@@ -157,7 +157,7 @@ public function getPeriodInfo()
                 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
             ];
 
-    $monthName = $months[$bulan] ?? 'Semua Bulan';
+    $monthName = $months[$bulan] ?? __('global.semua_bulan');
     
     return $monthName . ' ' . $tahun;
 }

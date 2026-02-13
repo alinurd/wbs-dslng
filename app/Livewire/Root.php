@@ -401,7 +401,7 @@ public $showPreviewModal = false;
         $this->filterMode = true;
         $this->showFilterModal = false;
         $this->resetPage();
-        $this->notify('success', 'Filter diterapkan.');
+        $this->notify('success', __('global.apply_filter'));
     }
 
 
@@ -1617,7 +1617,7 @@ public function getPeriodInfo()
                 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
             ];
 
-    $monthName = $months[$bulan] ?? 'Semua Bulan';
+    $monthName = $months[$bulan] ?? __('global.semua_bulan');
     
     return $monthName . ' ' . $tahun;
 }

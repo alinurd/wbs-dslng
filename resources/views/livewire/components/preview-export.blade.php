@@ -111,12 +111,12 @@
                             <div class="flex items-center space-x-4 text-blue-700">
                                 <span class="flex items-center">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Data yang akan di-export
+                                    {{__('global.data_to_export')}}
                                 </span>
                                 @if ($hasActiveFilters)
                                     <span class="flex items-center">
                                         <i class="fas fa-filter mr-1"></i>
-                                        {{ count($activeFilters) }} filter diterapkan
+                                        {{ count($activeFilters) }}{{__('global.apply_filter')}}  
                                     </span>
                                 @endif
                             </div>
@@ -136,28 +136,29 @@
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r bg-gray-50 sticky left-0 z-20"
                                             rowspan="2">No</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r bg-gray-50 sticky left-12 z-20"
-                                            rowspan="2">Kode</th>
+                                            rowspan="2">{{__('table.columns.code')}}</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r"
-                                            rowspan="2">Perkiraan Waktu Kejadian</th>
+                                            rowspan="2">{{__('table.columns.estimasi_waktu')}}</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r"
-                                            rowspan="2">Tanggal Aduan</th>
+                                            rowspan="2">{{__('table.columns.tgl_aduan')}}</th>
 
                                         <!-- Identitas Pelapor - colspan 3 -->
                                         <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase border-r bg-blue-50"
                                             colspan="3">
-                                            Identitas Pelapor
+                                           {{__('table.columns.pelapor_identitas')}}
                                         </th>
 
                                         <!-- Identitas Terlapor - colspan 2 -->
                                         <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase border-r bg-orange-50"
                                             colspan="2">
-                                            Identitas Terlapor
+                                            {{__('table.columns.terlapor_identitas')}}
+                                            
                                         </th>
 
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r"
                                             rowspan="2">Status</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r"
-                                            rowspan="2">Jenis</th>
+                                            rowspan="2">{{__('global.jenis_pelanggaran')}}</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase border-r"
                                             rowspan="2">Uraian</th>
                                         {{-- <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase"
@@ -168,15 +169,16 @@
                                     <tr>
                                         <!-- Sub-header untuk Identitas Pelapor -->
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase border-r bg-blue-50">
-                                            Nama</th>
+                                            {{__('table.columns.name')}}</th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase border-r bg-blue-50">
-                                            Nomor Ponsel</th>
+                                            {{__('table.columns.no_hp')}}
+                                            </th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase border-r bg-blue-50">
-                                            Kontak Detail</th>
+                                            {{__('table.columns.cont_detail')}}</th>
 
                                         <!-- Sub-header untuk Identitas Terlapor -->
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase border-r bg-orange-50">
-                                            Nama</th>
+                                            {{__('table.columns.name')}}</th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase border-r bg-orange-50">
                                             Direktorat</th>
                                     </tr>
@@ -278,8 +280,8 @@
                                             <td colspan="14" class="px-4 py-8 text-center">
                                                 <div class="flex flex-col items-center justify-center text-gray-500">
                                                     <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
-                                                    <p class="text-lg font-medium">Tidak ada data</p>
-                                                    <p class="text-sm mt-1">Tidak ada data yang sesuai dengan kriteria</p>
+                                                    <p class="text-lg font-medium">{{__('table.no_data')}}</p>
+                                                    {{-- <p class="text-sm mt-1">Tidak ada data yang sesuai dengan kriteria</p> --}}
                                                 </div>
                                             </td>
                                         </tr>
@@ -292,8 +294,8 @@
                                 <div class="absolute inset-0 flex items-center justify-center bg-white/95 backdrop-blur-sm">
                                     <div class="text-center py-12">
                                         <i class="fas fa-search text-gray-400 text-4xl mb-4"></i>
-                                        <p class="text-gray-500 text-lg font-medium">Tidak ada hasil pencarian</p>
-                                        <p class="text-gray-400 text-sm mt-2">Coba kata kunci lain</p>
+                                        <p class="text-gray-500 text-lg font-medium">{{__('table.no_data')}}</p>
+                                        {{-- <p class="text-gray-400 text-sm mt-2">Coba kata kunci lain</p> --}}
                                     </div>
                                 </div>
                             </template>

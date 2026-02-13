@@ -119,7 +119,9 @@ return [
             'singgle_gambar_only' => 'only one latest image/file will be uploaded ',
     'preview_success' => 'Data preview successful (:total records)',
     'semua_bulan' => 'All Month',
+    'bulan' => 'All Month',
     'data_to_export' => 'Data to be exported',
     'showing' => 'Show',
+    'export_pengadual_all' => 'FULL COMPLAINT REPORT',
 
 ];

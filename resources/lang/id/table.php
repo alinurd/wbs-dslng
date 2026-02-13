@@ -30,7 +30,17 @@ return [
     'input_placeh' => 'masukkan data di sini',
     'input_select_place' => '-Pilih-',
     'input_required' => 'Wajib diisi!',
+    'columns'=>[
+        'code' => 'Kode',
+        'estimasi_waktu' => 'Perkiraan Waktu Kejadian',
+        'tgl_aduan' => 'Tanggal Aduan',
+        'pelapor_identitas' => 'Identitas Pelapor',
+        'terlapor_identitas' => 'Identitas Terlapor',
+        'name' => 'Name',
+        'cont_detail' => 'Kontak Detail',
+        'no_hp' => 'No Hp',
 
+    ],
     
     // Detail Hierarchy / Owner
     'hierarchy' => 'Struktur Hirarki',

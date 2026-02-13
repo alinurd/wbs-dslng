@@ -1,5 +1,5 @@
 <div class="header">
-        <h1>LAPORAN PENGADUAN LENGKAP</h1>
+        <h1>{{__('global.export_pengadual_all')}}</h1>
         <div class="subtitle">
             Dicetak pada: {{ date('d/m/Y H:i') }} | Total Data: {{ $data->count() }} records
             @if($periodInfo)
@@ -23,32 +23,32 @@
     <!-- Table -->
 <table border="1" style="border-collapse:collapse; font-size:13px; width:100%;">
         <thead>
-            <tr>
+            <tr class="uppercase">
                 <th rowspan="2" width="30">NO</th>
-                <th rowspan="2" width="100">KODE TRACKING</th>
-                <th rowspan="2" width="80">WAKTU KEJADIAN</th>
-                <th rowspan="2" width="90">TANGGAL ADUAN</th>
+                <th rowspan="2" width="100">{{__('table.columns.code')}}</th>
+                <th rowspan="2" width="80">{{__('table.columns.estimasi_waktu')}}</th>
+                <th rowspan="2" width="90">{{__('table.columns.tgl_aduan')}}</th>
                 
                 <!-- Identitas Pelapor -->
-                <th colspan="3" class="bg-blue">IDENTITAS PELAPOR</th>
+                <th colspan="3" class="bg-blue">{{__('table.columns.pelapor_identitas')}}</th>
                 
                 <!-- Identitas Terlapor -->
-                <th colspan="2" class="bg-orange">IDENTITAS TERLAPOR</th>
+                <th colspan="2" class="bg-orange">{{__('table.columns.terlapor_identitas')}}</th>
                 
                 <th rowspan="2" width="70">STATUS</th>
-                <th rowspan="2" width="100">JENIS PELANGGARAN</th>
+                <th rowspan="2" width="100">{{__('table.columns.jenis_pelanggaran')}}</th>
                 <th rowspan="2" width="150">URAIAN</th>
                 {{-- <th rowspan="2" width="80">ADMIN</th> --}}
-                <th rowspan="2" width="90">TANGGAL DIBUAT</th>
+                <th rowspan="2" width="90">{{__('table.columns.created_at')}}</th>
             </tr>
-            <tr>
+            <tr class="uppercase">
                 <!-- Sub-header Pelapor -->
-                <th width="80" class="bg-blue">NAMA</th>
-                <th width="80" class="bg-blue">NOMOR PONSEL</th>
-                <th width="120" class="bg-blue">KONTAK DETAIL</th>
+                <th width="80" class="bg-blue">{{__('table.columns.name')}}</th>
+                <th width="80" class="bg-blue">{{__('table.columns.no_hp')}}</th>
+                <th width="120" class="bg-blue">{{__('table.columns.cont_detail')}}</th>
                 
                 <!-- Sub-header Terlapor -->
-                <th width="80" class="bg-orange">NAMA</th>
+                <th width="80" class="bg-orange">{{__('table.columns.name')}}</th>
                 <th width="100" class="bg-orange">DIREKTORAT</th>
             </tr>
         </thead>
