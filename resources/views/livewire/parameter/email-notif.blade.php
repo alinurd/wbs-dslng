@@ -9,7 +9,7 @@
                     // 'kelompok' => 'Kelompok',
                     'data' => 'Data Email',
                     'is_active' => 'Status',
-                    'created_at' => 'Dibuat Pada',
+                    'created_at' => __('table.data.created_at'),
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -53,10 +53,10 @@
                     'model' => 'form.data',
                     'label' => 'Email',
                     'required' => true,
-                    'placeholder' => 'Masukan Data....',
                     'error' => 'form.data',
+                    'placeholder' => __('table.input_placeh'),
                     'messages' => [
-                        'required' => 'Email wajib diisi',
+                        'required' => __('table.input_required'),
                     ]
                 ],
                
@@ -65,8 +65,8 @@
                     'label' => 'Status Aktif',
                     'model' => 'form.is_active',
                     'error' => 'form.is_active',
-                    'on_label' => 'AKTIF',
-                    'off_label' => 'NONAKTIF',
+                    'on_label' => __('table.data.on'),
+                    'off_label' => __('table.data.off'),
                 ],
             ],
         ])
@@ -79,18 +79,18 @@
                     'type' => 'email',
                     'label' => 'Filter Email',
                     'model' => 'filters.data',
-                    'placeholder' => 'Cari data ID...',
+                    'placeholder' => __('table.search'),
                 ],
                 
                 [
                     'type' => 'select',
                     'label' => 'Filter Status',
                     'model' => 'filters.is_active',
-                    'options' => [
-                        '1' => 'Aktif',
-                        '0' => 'Nonaktif',
+                     'options' => [
+                        '1' => __('table.data.on'),
+                        '0' => __('table.data.off'),
                     ],
-                    'placeholder' => 'Semua Status', 
+                    'placeholder' => __('table.all') .' Status', 
                 ],
             ],
             'onClose' => 'closeFilterModal',

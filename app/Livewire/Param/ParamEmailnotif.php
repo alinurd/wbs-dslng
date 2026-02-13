@@ -37,8 +37,8 @@ class ParamEmailnotif extends Root
 
     protected $messages = [
         // 'form.data_id.required' => 'Data Indonesia wajib diisi',
-        'form.data.required' => 'Data email wajib diisi',
-        'form.data.email' => 'format email tidak sesuai',
+        // 'form.data.required' => 'Data email wajib diisi',
+        // 'form.data.email' => 'format email tidak sesuai',
     ];
  
     public function columns()
@@ -66,8 +66,10 @@ class ParamEmailnotif extends Root
             // 'Data Indonesia' => $record->data_id,
             'Email' => $record->data,
             'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
-            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
-            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+            
+           __('table.data.created_at') => $record->created_at->format('d/m/Y H:i'),
+            // 'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
+            // 'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
         ];
         
         $this->detailTitle = "Detail " . $this->title;
