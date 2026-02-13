@@ -1,5 +1,6 @@
 <div>
-    <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
+    {{-- {{dd($this->locale)}} --}}
+    {{-- <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2> --}}
     <div class="container-fluid py-4">
         <div class="container mx-auto">
 
@@ -31,15 +32,15 @@
 
             @include('livewire.components.table-wrapper', [
                 'records' => $finalRecords, // Gunakan $finalRecords yang sudah diproses
-                'columns' => [
-                    'code_pengaduan' => 'Kode Tracking',
-                    'user_id' => 'Username/Nama',
-                    // 'perihal' => 'Perihal',
-                    'jenis_pengaduan_id' => 'Jenis Pelanggaran',
-                    'tanggal_pengaduan' => 'Tanggal Aduan',
-                    'complien_progress' => 'Progress Status',
-                    'aprv_cco' => 'Persetujuan CCO',
-                ],
+               'columns' => [
+        'code_pengaduan' => __('global.code_pengaduan'),
+        'user_id' => __('global.username'),
+        // 'perihal' => 'Perihal',
+        'jenis_pengaduan_id' => __('global.jenis_pelanggaran'),
+        'tanggal_pengaduan' => __('global.tanggal_aduan'),
+        'complien_progress' => __('global.status_progress'),
+        'aprv_cco' => __('global.persetujuan_cco'),
+    ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
             
@@ -75,22 +76,26 @@
             'filters' => [
                 [
                     'type' => 'select',
-                    'label' => 'Bulan',
-                    'model' => 'filters.bulan',
-                    'options' => collect($bulanList)->mapWithKeys(function ($p) {
+                    'label' => __('global.jenis_pelanggaran'),
+                    'model' => 'filters.jenis_pengaduan_id',
+                     'options' => collect($jenisPengaduanList)->mapWithKeys(function ($p) {
                             return [
-                                $p['id'] => $p['full'] ?? 'No Data',
+                                $p->id => $this->locale === 'en'
+                                    ? ($p->data_en ?? $p->data ?? $p->data_id ?? 'No Data')
+                                    : ($p->data ?? $p->data_id ?? $p->data_en ?? 'No Data')
                             ];
                         })->toArray(),
-                    'placeholder' => 'Semua Bulan',
+
+                    'placeholder' => __('global.semua'). ' '.__('global.jenis_pelanggaran'), 
                 ],
                 [
-                    'type' => 'select',
-                    'label' => 'Tahun Pengaduan',
-                    'model' => 'filters.tahun',
-                    'options' => [] + $this->tahunPengaduanList,
-                    'placeholder' => 'Semua Tahun Pengaduan',
-                ],
+                'type' => 'select',
+                'label' =>__('global.tahun') ,
+                'model' => 'filters.tahun',
+                'options' => [ 
+                ] + $this->tahunPengaduanList,
+                'placeholder' => __('global.tahun'),
+            ],
                 
             ],
             'onClose' => 'closeFilterModal',

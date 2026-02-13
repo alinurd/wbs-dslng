@@ -28,7 +28,7 @@
         $_records->currentPage(),
         ['path' => request()->url(), 'pageName' => 'page']
     );
-@endphp
+@endphp 
 
             @include('livewire.components.table-wrapper', [
                 'records' => $finalRecords, 
@@ -86,15 +86,18 @@
                 //     'model' => 'filters.perihal',
                 //     'placeholder' => 'Cari Perihal Tracking...',
                 // ],
-                [
+                 [
                     'type' => 'select',
                     'label' => __('global.jenis_pelanggaran'),
                     'model' => 'filters.jenis_pengaduan_id',
                      'options' => collect($jenisPengaduanList)->mapWithKeys(function ($p) {
-                                 return [
-                                     $p->id => $p->data ?? $p->data_id ?? $p->data_en ?? 'No Data'
-                                    ];
-                                })->toArray(),
+                            return [
+                                $p->id => $this->locale === 'en'
+                                    ? ($p->data_en ?? $p->data ?? $p->data_id ?? 'No Data')
+                                    : ($p->data ?? $p->data_id ?? $p->data_en ?? 'No Data')
+                            ];
+                        })->toArray(),
+
                     'placeholder' => __('global.semua'). ' '.__('global.jenis_pelanggaran'), 
                 ],
                 [
