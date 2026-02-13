@@ -104,27 +104,27 @@
         @include('livewire.components.form-filtering', [
             'showFilterModal' => $showFilterModal,
             'filters' => [
-                [
+               [
                     'type' => 'text',
                     'label' => 'Filter Data ID',
                     'model' => 'filters.data_id',
-                    'placeholder' => 'Cari data ID...',
+                    'placeholder' =>__('table.search'). ' data ID...',
                 ],
                 [
                     'type' => 'text',
                     'label' => 'Filter Data EN',
                     'model' => 'filters.data_en', 
-                    'placeholder' => 'Cari data EN...',
+                    'placeholder' =>__('table.search'). ' data En...',
                 ],
                 [
                     'type' => 'select',
                     'label' => 'Filter Status',
                     'model' => 'filters.is_active',
-                    'options' => [
-                        '1' => 'Aktif',
-                        '0' => 'Nonaktif',
+                     'options' => [
+                        '1' => __('table.data.on'),
+                        '0' => __('table.data.off'),
                     ],
-                    'placeholder' => 'Semua Status', 
+                    'placeholder' => __('table.all') .' Status', 
                 ],
             ],
             'onClose' => 'closeFilterModal',
