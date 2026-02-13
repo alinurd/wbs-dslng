@@ -179,10 +179,11 @@ public function dataPreview()
                         $detailHarian[$day] = $jumlahHari;
                     }
                 }
-                
+                            $field = 'data_' . $this->locale;
+
                 return [
                     'id' => $jenisId,
-                    'nama_jenis' => $jenis->data_id,
+                    'nama_jenis' => $jenis->$field,
                     'total' => $totalBulan,
                     'detail_harian' => $detailHarian,
                     'total_harian' => array_sum($detailHarian)
@@ -207,7 +208,7 @@ public function previewJenis()
         $this->showPreviewModal = true;
         
         $totalLaporan = collect($this->previewData['dataRekap'])->sum('total');
-        $this->notify('success', "Preview data berhasil ({$totalLaporan} laporan ditemukan)");
+        $this->notify('success', __('global.preview_success', ['total' => $this->previewTotal]));
         
     } catch (\Exception $e) {
         logger("Preview Error: " . $e->getMessage());
@@ -270,7 +271,7 @@ public function getPeriodInfo()
                 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
             ];
 
-    $monthName = $months[$bulan] ?? 'Semua Bulan';
+    $monthName = $months[$bulan] ??__('global.semua_bulan');
     
     return $monthName . ' ' . $tahun;
 }
@@ -310,7 +311,7 @@ public function getFilterData()
     }
      
     if (empty($filterInfo)) {
-        $filterInfo['Periode'] = 'Semua Data';
+        $filterInfo['Periode'] = __('global.semua').' Data';
     }
     
     return $filterInfo;

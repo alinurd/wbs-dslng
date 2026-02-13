@@ -606,7 +606,10 @@ private function showPreview($data)
         $this->previewTotal = $data->count();
         $this->previewMonth = $this->getPeriodInfo();
         $this->showPreviewModal = true;
-        $this->notify('success', "Preview data berhasil ({$this->previewTotal} records)");
+        $this->notify(
+            'success',
+            __('global.preview_success', ['total' => $this->previewTotal])
+        );
     } catch (\Exception $e) {
         $this->notify('error', "Preview gagal: " . $e->getMessage());
     }
@@ -1545,7 +1548,7 @@ public function getFilterData()
     }
      
     if (empty($filterInfo)) {
-        $filterInfo['Periode'] = 'Semua Data';
+        $filterInfo['Periode'] = __('global.semua').' Data';
     }
     
     return $filterInfo;

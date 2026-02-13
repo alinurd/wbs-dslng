@@ -896,7 +896,7 @@ protected function getDirektoratChart()
         }
 
         if (empty($descriptions)) {
-            return $forChart ? '' : 'Semua Data';
+            return $forChart ? '' : __('global.semua').' Data';
         }
 
         return $forChart ? '(' . implode(', ', $descriptions) . ')' : implode(' • ', $descriptions);

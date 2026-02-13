@@ -19,6 +19,7 @@ return [
     
     'filter' => 'Filter Data',
     'reset_filter' => 'Reset Filter',
+    'apply_filter' => 'filter diterapkan',
 
     'tahun' => 'Tahun',
     'semua_tahun' => 'Semua Tahun',
@@ -106,5 +107,10 @@ return [
             'singgle_gambar_only' => 'hanya satu gambar/file terbaru yang akan di unggah ',
                 'censel' => 'Batal',
 
+    'preview_success' => 'Preview data berhasil (:total data)',
+    
+    'semua_bulan' => 'Semua Bulan',
+        'data_to_export' => 'Data to be exported',
+    'showing' => 'Menampilkan',
 
 ];

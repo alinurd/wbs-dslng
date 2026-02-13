@@ -10,7 +10,7 @@
 
 @if (!empty($filterData) && count($filterData) > 0)
 <div class="filter-info" style="margin:8px 0; padding:6px; background:#f8f8f8; border:1px solid #ccc; border-radius:4px;">
-    <strong>Filter yang diterapkan:</strong>
+    <strong>{{__('global.apply_filter')}}:</strong>
     @foreach ($filterData as $label => $value)
         <span style="display:inline-block; margin-right:6px; padding:2px 6px; background:#e5e7eb; border-radius:3px;">
             <strong>{{ $label }}:</strong> {{ $value }}
@@ -22,14 +22,14 @@
 <table border="1" style="border-collapse:collapse; font-size:13px; width:100%;">
 <thead>
     <tr>
-        <th colspan="34" style="text-align:center; font-weight:bold; font-size:15px; background:#0da7d9; color:white; padding:6px;">
-            BERDASARKAN JENIS PELANGGARAN
+        <th colspan="34" style="text-align:center; font-weight:bold; font-size:15px; background:#0da7d9; color:white; padding:6px;" class="uppercase">
+           {{__('global.jenis_pelanggaran')}}
         </th>
     </tr>
 
     <tr style="background:#f3f4f6; font-weight:bold;">
         <th style="text-align:center; width:40px;">No</th>
-        <th style="text-align:left; width:200px;">Jenis Pelanggaran</th>
+        <th style="text-align:left; width:200px;">{{__('global.jenis_pelanggaran')}}</th>
 
         @for ($i = 1; $i <= 31; $i++)
             <th style="text-align:center; width:30px;">{{ $i }}</th>

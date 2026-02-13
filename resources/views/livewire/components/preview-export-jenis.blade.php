@@ -34,7 +34,7 @@
                                 <i class="fas fa-table text-lg"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold">
+                                <h3 class="text-xl font-bold uppercase">
                                     {{ $title }}
                                 </h3>
                                 <p class="text-white/90 text-sm mt-1">
@@ -43,7 +43,7 @@
                                     @if ($previewMonth)
                                         {{-- •  --}}
                                         <i class="fas fa-calendar mr-1"></i>
-                                        Periode: <strong>{{ $previewMonth }}</strong>
+                                       {{__('global.tahun')}}: <strong>{{ $previewMonth }}</strong>
                                     @endif
                                 </p>
                             </div>
@@ -77,7 +77,7 @@
                             <div class="flex items-start space-x-3 text-sm">
                                 <span class="font-semibold whitespace-nowrap pt-1 flex items-center">
                                     <i class="fas fa-filter mr-1"></i>
-                                    Filter Aktif:
+                                    {{__('global.filter')}}:
                                 </span>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($activeFilters as $label => $value)
@@ -95,11 +95,11 @@
                         <div class="mt-3 pt-3 border-t border-white/20">
                             <div class="text-sm text-white/80 flex items-center">
                                 <i class="fas fa-info-circle mr-2"></i>
-                                Menampilkan
+                                {{__('global.showing')}}
                                 @if ($previewMonth)
-                                    data periode <strong>{{ $previewMonth }}</strong>
+                                    data {{__('global.tahun')}} <strong>{{ $previewMonth }}</strong>
                                 @else
-                                    <strong>semua data</strong>
+                                    <strong>{{__('global.semua')}} data</strong>
                                 @endif
                             </div>
                         </div>
@@ -114,12 +114,12 @@
                             <div class="flex items-center space-x-4 text-blue-700">
                                 <span class="flex items-center">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Data yang akan di-export
+                                   {{__('global.data_to_export')}}  
                                 </span>
                                 @if ($hasActiveFilters)
                                     <span class="flex items-center">
                                         <i class="fas fa-filter mr-1"></i>
-                                        {{ count($activeFilters) }} filter diterapkan
+                                        {{ count($activeFilters) }}{{__('global.apply_filter')}}  
                                     </span>
                                 @endif
                             </div>
@@ -138,26 +138,26 @@
         <!-- TITLE -->
         <tr>
             <th colspan="34"
-                class="border border-gray-400 text-center font-bold py-2 text-lg bg-[rgb(13,167,217)] text-white">
-                BERDASARKAN JENIS PELANGGARAN
+                class="border border-gray-400 text-center font-bold py-2 text-lg bg-[rgb(13,167,217)] text-white uppercase">{{__('global.jenis_pelanggaran')}}
             </th>
         </tr>
 
         <!-- DATE HEADER -->
         <tr class="bg-gray-100 font-semibold">
             <th class="border border-gray-400 text-center w-10">No</th>
-            <th class="border border-gray-400 text-left px-2 text-[15px] whitespace-nowrap">Jenis Pelanggaran</th>
+            <th class="border border-gray-400 text-left px-2 text-[15px] whitespace-nowrap">{{__('global.jenis_pelanggaran')}}</th>
 
             @for ($i = 1; $i <= 31; $i++)
                 <th class="border border-gray-400 text-center text-[15px] w-[32px] px-1 py-1">{{ $i }}</th>
             @endfor
 
-            <th class="border border-gray-400 text-center w-16 text-[15px]">Jumlah</th>
+            <th class="border border-gray-400 text-center w-16 text-[15px]">Total</th>
         </tr>
 
     </thead>
 
     <tbody>
+        
         @foreach ($previewData['dataRekap'] as $index => $data)
             <tr>
                 <td class="border border-gray-400 text-center text-[15px] py-1 w-10">{{ $index + 1 }}</td>
@@ -178,7 +178,7 @@
 
     <tfoot>
         <tr class="bg-gray-100 text-center font-bold">
-            <td class="border border-gray-400 py-2 text-[15px]" colspan="2">Jumlah</td>
+            <td class="border border-gray-400 py-2 text-[15px]" colspan="2">Total</td>
 
             @for ($d = 1; $d <= 31; $d++)
                 <td class="border border-gray-400 text-[15px] py-2 w-[32px]">

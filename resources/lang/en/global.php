@@ -19,6 +19,7 @@ return [
 
     'filter' => 'Filter Data',
     'reset_filter' => 'Reset Filter',
+    'apply_filter' => 'filter is applied',
 
     'tahun' => 'Year',
     'semua_tahun' => 'All Years',
@@ -116,7 +117,9 @@ return [
         'new_file_up' => 'New file to upload:',
                     'err_input_form' => 'There was an error in filling out the form',
             'singgle_gambar_only' => 'only one latest image/file will be uploaded ',
-
-
+    'preview_success' => 'Data preview successful (:total records)',
+    'semua_bulan' => 'All Month',
+    'data_to_export' => 'Data to be exported',
+    'showing' => 'Show',
 
 ];

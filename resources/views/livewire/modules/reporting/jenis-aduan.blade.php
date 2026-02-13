@@ -124,7 +124,7 @@
             'previewTotal' => $previewTotal,
             'previewData' => $previewData,
             'filterData' => $this->getFilterData(), // Kirim data filter
-            'title' => 'REKAP DATA PENGADUAN ',
+            'title' => 'REKAP DATA  '.__('global.pengaduan'),
             'onClose' => '$set(\'showPreviewModal\', false)',
         ])
 

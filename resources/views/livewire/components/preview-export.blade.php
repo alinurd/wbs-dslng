@@ -32,7 +32,7 @@
                                 <i class="fas fa-table text-lg"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold">
+                                <h3 class="text-xl font-bold uppercase">
                                     {{ $title }}
                                 </h3>
                                 <p class="text-white/90 text-sm mt-1">
@@ -92,11 +92,11 @@
                         <div class="mt-3 pt-3 border-t border-white/20">
                             <div class="text-sm text-white/80 flex items-center">
                                 <i class="fas fa-info-circle mr-2"></i>
-                                Menampilkan
+                                {{__('global.showwing')}}
                                 @if ($previewMonth)
-                                    data periode <strong>{{ $previewMonth }}</strong>
+                                    data {{__('global.year')}} <strong>{{ $previewMonth }}</strong>
                                 @else
-                                    <strong>semua data</strong>
+                                    <strong>{{__('global.semua').' Data'}}</strong>
                                 @endif
                             </div>
                         </div>

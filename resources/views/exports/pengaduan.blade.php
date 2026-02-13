@@ -11,7 +11,7 @@
     <!-- Filter Information -->
     @if(!empty($filterData) && count($filterData) > 0)
     <div class="filter-info">
-        <strong>Filter yang diterapkan:</strong>
+        <strong>{{__('global.apply_filter')}}:</strong>
         @foreach($filterData as $label => $value)
             <span class="filter-item">
                 <strong>{{ $label }}:</strong> {{ $value }}
