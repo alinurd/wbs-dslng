@@ -47,7 +47,7 @@
                                 <div class="flex items-center">
                                     <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
                                     <span class="text-red-700 font-medium">
-                                        {{__('global.err_input_form ')}}
+                                        {{__('global.err_input_form')}}
                                         </span>
                                 </div>
                                 <ul class="mt-2 list-disc list-inside text-sm text-red-600">

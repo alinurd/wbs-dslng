@@ -10,7 +10,7 @@
                     'data_id' => 'Data Indonesia',
                     'data_en' => 'Data English',
                     'is_active' => 'Status',
-                    'created_at' => 'Dibuat Pada',
+                    'created_at' => __('table.data.created_at'),
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -54,10 +54,10 @@
                     'model' => 'form.data_id',
                     'label' => 'Data Indonesia',
                     'required' => true,
-                    'placeholder' => 'Masukan Data....',
+                    'placeholder' => __('table.input_placeh'),
                     'error' => 'form.data_id',
                     'messages' => [
-                        'required' => 'Data Indonesia wajib diisi',
+                        'required' => __('table.input_required'),
                     ]
                 ],
                 [
@@ -66,9 +66,10 @@
                     'model' => 'form.data_en',
                     'error' => 'form.data_en',
                     'required' => true,
-                    'placeholder' => 'Masukkan nama dalam bahasa Inggris',
+                    'placeholder' => __('table.input_placeh'),
+                    'error' => 'form.data_en',
                     'messages' => [
-                        'required' => 'Data English wajib diisi',
+                        'required' => __('table.input_required'),
                     ]
                 ],
                 [
@@ -76,8 +77,8 @@
                     'label' => 'Status Aktif',
                     'model' => 'form.is_active',
                     'error' => 'form.is_active',
-                    'on_label' => 'AKTIF',
-                    'off_label' => 'NONAKTIF',
+                   'on_label' => __('table.data.on'),
+                    'off_label' => __('table.data.off'),
                 ],
             ],
         ])
@@ -90,23 +91,23 @@
                     'type' => 'text',
                     'label' => 'Filter Data ID',
                     'model' => 'filters.data_id',
-                    'placeholder' => 'Cari data ID...',
+                    'placeholder' =>__('table.search'). ' data ID...',
                 ],
                 [
                     'type' => 'text',
                     'label' => 'Filter Data EN',
                     'model' => 'filters.data_en', 
-                    'placeholder' => 'Cari data EN...',
+                    'placeholder' =>__('table.search'). ' data EN...',
                 ],
                 [
                     'type' => 'select',
                     'label' => 'Filter Status',
                     'model' => 'filters.is_active',
                     'options' => [
-                        '1' => 'Aktif',
-                        '0' => 'Nonaktif',
+                        '1' => __('table.data.on'),
+                        '0' => __('table.data.off'),
                     ],
-                    'placeholder' => 'Semua Status', 
+                    'placeholder' => __('table.all') .' Status', 
                 ],
             ],
             'onClose' => 'closeFilterModal',
