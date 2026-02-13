@@ -333,7 +333,7 @@
                 <div class="modal-footer border-t border-gray-200 px-6 py-4 flex justify-end">
                     <button type="button" wire:click="{{ $onClose }}"
                         class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105 font-medium">
-                        <i class="fas fa-times me-2"></i>Tutup
+                        <i class="fas fa-times me-2"></i>{{__('table.close')}}
                     </button>
                 </div>
             </div>

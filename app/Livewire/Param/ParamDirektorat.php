@@ -38,10 +38,10 @@ class ParamDirektorat extends Root
 
     protected $messages = [
        
-        'owner_name.required' => 'Data Id wajib diisi!',
-        'owner_name_1.required' => 'Data En wajib diisi!',
-        // 'parent_id.required' => 'Data En wajib diisi!',
-        'is_active.required' => 'Status wajib diisi!',
+        // 'owner_name.required' => 'Data Id wajib diisi!',
+        // 'owner_name_1.required' => 'Data En wajib diisi!',
+        // // 'parent_id.required' => 'Data En wajib diisi!',
+        // 'is_active.required' => 'Status wajib diisi!',
     ];
  
     public function columns()
@@ -136,21 +136,22 @@ public function view($id)
         $hierarchyData['children'] = $record->children->pluck('owner_name')->toArray();
     }
     
-    $this->detailData = [
-        'Struktur Hirarki' => $hierarchyData,
-        'Nama Indonesia' => $record->owner_name,
-        'Nama English' => $record->owner_name_1,
-        'Kode Owner' => $record->owner_code ?? '-',
-        'Level Number' => $record->level_no ?? '-',
-        'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
-        'Status Lapor' => $record->sts_lapor ? 'Aktif' : 'Nonaktif',
-        'Status Lapor Kerja' => $record->sts_lapor_kerja ? 'Aktif' : 'Nonaktif',
-        'Jumlah Children' => $record->children->count(),
-        'Daftar Children' => $record->children->pluck('owner_name')->toArray(),
-        'Deskripsi' => $record->description ?? '-',
-        'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
-        'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
-    ];
+ $this->detailData = [
+    __('table.hierarchy') => $hierarchyData,
+    __('table.name_id') => $record->owner_name,
+    __('table.name_en') => $record->owner_name_1,
+    __('table.owner_code') => $record->owner_code ?? '-',
+    __('table.level_no') => $record->level_no ?? '-',
+    __('table.status') => $record->is_active ? __('table.data.on') : __('table.data.off'),
+    __('table.report_status') => $record->sts_lapor ? __('table.data.on') : __('table.data.off'),
+    __('table.work_report_status') => $record->sts_lapor_kerja ? __('table.data.on') : __('table.data.off'),
+    __('table.children_count') => $record->children->count(),
+    __('table.children_list') => $record->children->pluck('owner_name')->toArray(),
+    __('table.description') => $record->description ?? '-',
+    __('table.data.created_at') => $record->created_at->format('d/m/Y H:i'),
+    __('table.updated_at') => $record->updated_at->format('d/m/Y H:i'),
+];
+
     
     $this->detailTitle = "Detail " . $this->title;
     $this->showDetailModal = true;

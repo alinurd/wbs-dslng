@@ -33,6 +33,21 @@ return [
     'input_required' => 'this required!',
     'input_select_place' => '-select-',
 
+    
+    // Detail Hierarchy / Owner
+    'hierarchy' => 'Hierarchy Structure',
+    'name_id' => 'Name (ID)',
+    'name_en' => 'Name (EN)',
+    'owner_code' => 'Owner Code',
+    'level_no' => 'Level Number',
+    'status' => 'Status',
+    'report_status' => 'Report Status',
+    'work_report_status' => 'Work Report Status',
+    'children_count' => 'Children Count',
+    'children_list' => 'Children List',
+    'description' => 'Description',
+    'updated_at' => 'Updated At',
+
     //table
     'data' => [
         'on' => 'Active',

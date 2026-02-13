@@ -32,6 +32,20 @@ return [
     'input_required' => 'Wajib diisi!',
 
     
+    // Detail Hierarchy / Owner
+    'hierarchy' => 'Struktur Hirarki',
+    'name_id' => 'Nama Indonesia',
+    'name_en' => 'Nama English',
+    'owner_code' => 'Kode Owner',
+    'level_no' => 'Level',
+    'status' => 'Status',
+    'report_status' => 'Status Lapor',
+    'work_report_status' => 'Status Lapor Kerja',
+    'children_count' => 'Jumlah Anak',
+    'children_list' => 'Daftar Anak',
+    'description' => 'Deskripsi', 
+    'updated_at' => 'Diupdate Pada',
+    
     // data
     'data' => [
         'on' => 'Aktif',

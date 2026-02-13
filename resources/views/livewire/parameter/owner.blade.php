@@ -10,7 +10,7 @@
                     'owner_name_1' => 'Data Indonesia',
                     'owner_name' => 'Data English',
                     'is_active' => 'Status',
-                    'created_at' => 'Dibuat Pada',
+                    'created_at' => __('table.data.created_at'),
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -62,7 +62,7 @@
             3 => 'Staff',
             4=> 'Administrator',
         ],
-        'helper' => 'Pilih sesuai dengan posisi di perusahaan',
+        // 'helper' => 'Pilih sesuai dengan posisi di perusahaan',
         'messages' => [
             'required' => 'parent_id wajib dipilih',
         ]
@@ -73,7 +73,7 @@
                     'model' => 'form.owner_name_1',
                     'label' => 'Data Indonesia',
                     'required' => true,
-                    'placeholder' => 'Direktoratd dalam bahasa indonesia....',
+                    'placeholder' => __('table.input_placeh'),
                     'error' => 'form.owner_name_1', 
                 ],
                 [
@@ -82,7 +82,7 @@
                     'model' => 'form.owner_name',
                     'error' => 'form.owner_name',
                     'required' => true,
-                    'placeholder' => 'Direktoratd dalam bahasa  Inggris',
+                    'placeholder' => __('table.input_placeh'),
                     
                 ],
                 [
@@ -90,8 +90,8 @@
                     'label' => 'Status Aktif',
                     'model' => 'form.is_active',
                     'error' => 'form.is_active',
-                    'on_label' => 'AKTIF',
-                    'off_label' => 'NONAKTIF',
+                    'on_label' =>  __('table.data.on'),
+                    'off_label' =>  __('table.data.off'),
                 ],
             ],
         ])
@@ -104,23 +104,24 @@
                     'type' => 'text',
                     'label' => 'Filter Data ID',
                     'model' => 'filters.owner_name_1',
-                    'placeholder' => 'Cari data ID...',
+                     'placeholder' =>__('table.search'). ' data ',
                 ],
                 [
                     'type' => 'text',
                     'label' => 'Filter Data EN',
                     'model' => 'filters.owner_name', 
-                    'placeholder' => 'Cari data EN...',
+                    
+                    'placeholder' =>__('table.search'). ' data ',
                 ],
-                [
+                 [
                     'type' => 'select',
                     'label' => 'Filter Status',
                     'model' => 'filters.is_active',
-                    'options' => [
-                        '1' => 'Aktif',
-                        '0' => 'Nonaktif',
+                     'options' => [
+                        '1' => __('table.data.on'),
+                        '0' => __('table.data.off'),
                     ],
-                    'placeholder' => 'Semua Status', 
+                    'placeholder' => __('table.all') .' Status', 
                 ],
             ],
             'onClose' => 'closeFilterModal',
