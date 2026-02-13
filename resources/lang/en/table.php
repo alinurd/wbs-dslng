@@ -55,6 +55,7 @@ return [
         'created_at' => 'Created at',
         'day' => 'Day',
         'date' => 'Date',
+        'faq_pernyataan' =>  'Will this question be made into a FAQ?',
 ],
 
 

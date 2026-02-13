@@ -53,6 +53,7 @@ return [
         'created_at' => 'Dibuat Pada',
         'day' => 'Hari',
         'date' => 'Waktu',
+        'faq_pernyataan' =>  'Pertanyaan ini akan dijadikan FAQ ?',
     ],
 
 ];
