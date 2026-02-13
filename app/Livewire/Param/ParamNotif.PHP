@@ -39,12 +39,12 @@ class ParamNotif extends Root
         'form.is_active' => 'boolean',
     ];
 
-    protected $messages = [
-        'form.data_id.required' => 'Data Indonesia wajib diisi',
-        'form.data_en.required' => 'Data English wajib diisi',
-        'form.param_int.required' => 'Data Jam wajib diisi',
-        'form.param_int_1.required' => 'Data Hari wajib diisi',
-    ];
+    // protected $messages = [
+    //     'form.data_id.required' => 'Data Indonesia wajib diisi',
+    //     'form.data_en.required' => 'Data English wajib diisi',
+    //     'form.param_int.required' => 'Data Jam wajib diisi',
+    //     'form.param_int_1.required' => 'Data Hari wajib diisi',
+    // ];
  
     public function columns()
     {
@@ -70,10 +70,10 @@ class ParamNotif extends Root
             'Kelompok' => $record->kelompok,
             'Data Indonesia' => $record->data_id,
             'Data English' => $record->data_en, 
-            'Waktu' => $record->param_int. ' Jam '.' - '. $record->param_int_1. ' Hari',
+            __('table.data.date') => $record->param_int. ' '.__('table.data.date').' - '. $record->param_int_1. ' '.__('table.data.day'),
             'Status' => $record->is_active ? 'Aktif' : 'Nonaktif',
-            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
-            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
+           __('table.data.created_at') => $record->created_at->format('d/m/Y H:i'),
+            // 'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
         ];
         
         $this->detailTitle = "Detail " . $this->title;

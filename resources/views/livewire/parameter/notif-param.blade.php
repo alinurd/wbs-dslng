@@ -12,7 +12,7 @@
                     // 'param_int_1' => 'Hari',
                     'data_en' => 'Data English',
                     'is_active' => 'Status',
-                    'created_at' => 'Dibuat Pada',
+                    'created_at' => __('table.data.created_at'),
                 ],
                 'selectedItems' => $selectedItems,
                 'permissions' => $permissions,
@@ -56,10 +56,10 @@
                     'model' => 'form.data_id',
                     'label' => 'Data Indonesia',
                     'required' => true,
-                    'placeholder' => 'Masukan Data....',
                     'error' => 'form.data_id',
+                    'placeholder' => __('table.input_placeh'),
                     'messages' => [
-                        'required' => 'Data Indonesia wajib diisi',
+                        'placeholder' => __('table.input_placeh'),
                     ]
                 ],
                 [
@@ -68,34 +68,34 @@
                     'model' => 'form.data_en',
                     'error' => 'form.data_en',
                     'required' => true,
-                    'placeholder' => 'Masukkan nama dalam bahasa Inggris',
+                    'placeholder' => __('table.input_placeh'),
                     'messages' => [
-                        'required' => 'Data English wajib diisi',
+                        'placeholder' => __('table.input_placeh')
                     ]
                 ],
                 [
                     'type' => 'number',
-                    'label' => 'Jam...',
+                    'label' => __('table.data.date'),
                     'model' => 'form.param_int',
                     'error' => 'form.param_int',
                     'required' => true,
-                    'placeholder' => 'Masukkan  jumlah jam...',
+                    'placeholder' => __('table.input_placeh'),
                 ],
                 [
                     'type' => 'number',
-                    'label' => 'Hari',
+                    'label' =>  __('table.data.day'),
                     'model' => 'form.param_int_1',
                     'error' => 'form.param_int_1',
                     'required' => true,
-                    'placeholder' => 'Masukkan jumlah hari',
+                    'placeholder' => __('table.input_placeh'),
                 ],
                 [
                     'type' => 'switch-single',
                     'label' => 'Status Aktif',
                     'model' => 'form.is_active',
                     'error' => 'form.is_active',
-                    'on_label' => 'AKTIF',
-                    'off_label' => 'NONAKTIF',
+                    'on_label' => __('table.data.on'),
+                    'off_label' => __('table.data.off'),
                 ],
             ],
         ])

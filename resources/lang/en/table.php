@@ -38,6 +38,8 @@ return [
         'on' => 'Active',
         'off' => 'Inactive',
         'created_at' => 'Created at',
+        'day' => 'Day',
+        'date' => 'Date',
 ],
 
 

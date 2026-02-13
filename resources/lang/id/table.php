@@ -37,6 +37,8 @@ return [
         'on' => 'Aktif',
         'off' => 'Nonaktif',
         'created_at' => 'Dibuat Pada',
+        'day' => 'Hari',
+        'date' => 'Waktu',
     ],
 
 ];
