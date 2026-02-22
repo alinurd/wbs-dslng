@@ -272,11 +272,11 @@ public function query()
             'Forward Destination' => $forwardDestination,
             'Email Verified' => $record->email_verified_at ? 
                 $record->email_verified_at->format('d/m/Y H:i') : 
-                'Belum diverifikasi',
-            'Dibuat Pada' => $record->created_at->format('d/m/Y H:i'),
-            'Diupdate Pada' => $record->updated_at->format('d/m/Y H:i'),
-        ];
-        
+                '-',
+             __('table.data.created_at') => $record->created_at->format('d/m/Y H:i'),
+             __('table.updated_at') => $record->updated_at->format('d/m/Y H:i'),
+         ];
+         
         $this->detailTitle = "Detail User: " . $record->name;
         $this->showDetailModal = true;
     }
