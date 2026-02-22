@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 @php
 $locale = Session::get('locale', config('app.locale')); 
+$slug = request()->route()->getName();
+$m = \App\Models\Menu::where('slug', $slug)->first();
+$title = $m 
+    ? ($locale == 'id' ? $m->name : $m->name_en)
+    : '';
 @endphp
+
 <html lang="{{$locale}}">
 <head>
     <meta charset="UTF-8">

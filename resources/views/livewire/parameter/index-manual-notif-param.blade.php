@@ -1,5 +1,5 @@
 <div>
-    <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2>
+    {{-- <h2 class="text-lg font-semibold text-gray-800">{{ $title ?? '' }}</h2> --}}
 <div class="container-fluid py-4">
 
     <!-- Header dengan Search dan Add Button -->
