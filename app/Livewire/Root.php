@@ -1374,7 +1374,7 @@ public function getPengaduanById($id){
             __('global.jenis_pelanggaran') => $this->getJenisPelanggaran($record),
             __('global.tanggal_aduan') => $record->tanggal_pengaduan->format('d/m/Y H:i'),
         //    __('global.status'). __('global.pengaduan') 
-            'Status' => $this->getStatusBadge($record->status) ?? 'Open', 
+            'Status Pengaduan' => $this->getStatusBadge($record->status) ?? 'Open', 
             __('global.lokasi') => $record->alamat_kejadian ?? '-',
             __('global.deskripsi') => $record->uraian ?? '-', 
             'Files' => json_decode($record->lampiran, true)  ?? [],
