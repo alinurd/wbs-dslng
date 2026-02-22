@@ -130,9 +130,9 @@
             'filters' => [
                 [
                     'type' => 'text',
-                    'label' => 'Cari User',
+                    'label' => __('table.search'). ' User',
                     'model' => 'filters.search',
-                    'placeholder' => 'Cari nama atau email...',
+                    'placeholder' => __('table.search'). ' nama / email...',
                 ],
                 [
                     'type' => 'select',
@@ -143,7 +143,7 @@
                             $role->id => $role->name
                         ];
                     })->toArray(),
-                    'placeholder' => 'Semua Roles', 
+                    'placeholder' => __('global.semua'). ' Roles', 
                 ],
                 [
                     'type' => 'select',
@@ -153,7 +153,7 @@
                         '1' => 'Aktif',
                         '0' => 'Nonaktif',
                     ],
-                    'placeholder' => 'Semua Status', 
+                    'placeholder' => __('global.semua').' Status', 
                 ],
             ],
             'onClose' => 'closeFilterModal',
