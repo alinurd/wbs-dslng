@@ -28,6 +28,8 @@ return [
     'new_values' => 'Data Baru',
     'old_values' => 'Data Lama',
     'input_placeh' => 'masukkan data di sini',
+    'input_pw_placeh' => 'Kosongkan jika tidak ingin mengubah password',
+    'input_pw_placeh1' => 'Masukan password...',
     'input_select_place' => '-Pilih-',
     'input_required' => 'Wajib diisi!',
     'columns'=>[

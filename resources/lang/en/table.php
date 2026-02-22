@@ -32,6 +32,8 @@ return [
     'input_placeh' => 'input data here...',
     'input_required' => 'this required!',
     'input_select_place' => '-select-',
+    'input_pw_placeh' => 'Leave blank if you dont want to change the password',
+    'input_pw_placeh1' => 'Input password...',
 
     'columns'=>[
         'code' => 'Kode',

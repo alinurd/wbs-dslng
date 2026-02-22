@@ -91,12 +91,12 @@
                     'model' => 'form.password',
                     'label' => 'Password',
                     'required' => !$updateMode, // Required hanya untuk create
-                    'placeholder' => $updateMode ? 'Kosongkan jika tidak ingin mengubah password' : 'Masukan password...',
+                    'placeholder' => $updateMode ? __('table.input_pw_placeh') :  __('table.input_pw_placeh1'),
                     'error' => 'form.password',
                     'messages' => [
                         'required' => 'Password wajib diisi',
                     ],
-                    'helper_bottom' => $updateMode ? 'Biarkan kosong jika tidak ingin mengubah password' : 'Password minimal 8 karakter'
+                    // 'helper_bottom' => $updateMode ? 'Biarkan kosong jika tidak ingin mengubah password' : 'Password minimal 8 karakter'
                 ],
                 [
                     'type' => 'checkbox-roles',
