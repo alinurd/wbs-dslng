@@ -1373,7 +1373,8 @@ public function getPengaduanById($id){
             // 'Perihal' => $record->perihal,
             __('global.jenis_pelanggaran') => $this->getJenisPelanggaran($record),
             __('global.tanggal_aduan') => $record->tanggal_pengaduan->format('d/m/Y H:i'),
-            'Status Pengaduan' => $this->getStatusBadge($record->status) ?? 'Open', 
+        //    __('global.status'). __('global.pengaduan') 
+            'Status' => $this->getStatusBadge($record->status) ?? 'Open', 
             __('global.lokasi') => $record->alamat_kejadian ?? '-',
             __('global.deskripsi') => $record->uraian ?? '-', 
             'Files' => json_decode($record->lampiran, true)  ?? [],
