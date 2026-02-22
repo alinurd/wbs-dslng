@@ -102,4 +102,5 @@ return [
     'accountBlock' => 'You have failed to log in :count times. Your account is temporarily blocked for 30 minutes.',
     'accountTempBlock' => 'Your account is temporarily blocked. Please try again in :minutes minutes.',
     'remainingAttempts' => 'Remaining login attempts: :attempts',
+        'no_role' => 'Your account does not have a access. Please contact the administrator.',
 ];

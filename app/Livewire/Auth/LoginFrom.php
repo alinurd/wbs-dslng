@@ -119,7 +119,14 @@ public function login()
     if (!$this->attemptLogin($user)) {
         $this->handleFailedLogin($user);
     }
-    
+      if (!$user->roles()->exists()) {
+
+    auth()->logout();
+    session()->invalidate();
+    session()->regenerateToken();
+
+    $this->throwAuthError(__('auth.no_role'));
+}
     // Login successful
     $this->handleSuccessfulLogin($user);
     

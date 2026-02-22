@@ -112,6 +112,5 @@ return [
      'accountBlock' => 'Anda telah gagal login sebanyak :count kali. Akun Anda diblokir sementara selama 30 menit.',
     'accountTempBlock' => 'Akun Anda diblokir sementara. Silakan coba lagi dalam :minutes menit.',
     'remainingAttempts' => 'Sisa percobaan login: :attempts',
-
-
+    'no_role' => 'Akun Anda belum memiliki akses. Silakan hubungi admin.',
 ];
