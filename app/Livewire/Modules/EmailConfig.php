@@ -80,19 +80,25 @@ class EmailConfig extends Root
     
     $record = $this->model::findOrFail($id);
 
-    $this->detailData = [
-        'Mailer' => $record->mailer,
-        'Host' => $record->host,
-        'Port' => $record->port,
-        'Encryption' => $record->encryption ?? '-',
-        'Username' => $record->username,
-        'From Address' => $record->from_address,
-        'From Name' => $record->from_name,
-        'Status' => $record->active ? 'Aktif' : 'Nonaktif',
-        'Dibuat Pada' => $record->created_at ? $record->created_at->format('d/m/Y H:i') : '-',
-        'Diupdate Pada' => $record->updated_at ? $record->updated_at->format('d/m/Y H:i') : '-',
-        'Tes Connect' => $record->id,
-    ];
+   $this->detailData = [
+    __('email.mailer')       => $record->mailer,
+    __('email.host')         => $record->host,
+    __('email.port')         => $record->port,
+    __('email.encryption')   => $record->encryption ?? '-',
+    __('email.username')     => $record->username,
+    __('email.from_address') => $record->from_address,
+    __('email.from_name')    => $record->from_name,
+    __('email.status')       => $record->active 
+        ? __('email.active') 
+        : __('email.inactive'),
+    __('email.created_at')   => $record->created_at 
+        ? $record->created_at->format('d/m/Y H:i') 
+        : '-',
+    __('email.updated_at')   => $record->updated_at 
+        ? $record->updated_at->format('d/m/Y H:i') 
+        : '-',
+    __('email.test_connect') => $record->id,
+];
     
     $this->detailTitle = "Detail " . $this->title;
     $this->showDetailModal = true;
